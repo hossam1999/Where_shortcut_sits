@@ -1,0 +1,33 @@
+% Discussion — interpretation paragraphs are finalised from results; limitations are fixed.
+\paragraph{Practical rule} Overlap decides the method. When the artifact lies outside the ROI, ROI masking
+removes it and is the strongest tested mitigation; when it lies inside, masking keeps the artifact and deletes the
+competing evidence, so the shortcut becomes \emph{easier} to use. Pixel-level repair works only if the artifact
+can be localised, which is not the case for thin, low-contrast artifacts such as hair. Image-level artifact labels
+are cheap and suffice for group-based methods; \ItoE{} needs neither those labels nor localisation, only examples
+of what the artifact looks like.
+
+\paragraph{Reading reversed-environment gains} A reversed-test gain can be manufactured by removing
+diagnosis-correlated signal together with the artifact: erasure fitted on unpaired image-level labels is the clearest
+example, because the artifact label is itself correlated with the diagnosis in the training data. We therefore
+report clean AUROC and the correlated/reversed ordering for every method, and define mitigation as closing the
+clean--reversed gap without lowering clean AUROC.
+
+\paragraph{Why insertion rather than removal} Paired counterfactual erasure is attractive because pairing makes
+the artifact independent of the label; removal-based pairs, however, exist only where the artifact has been
+localised, are few, and are contaminated by repair errors inside the ROI. Insertion yields a pair for every training
+image, at every position including the ROI, and its error mode (an implausible template) is visible. Erasing the
+paired-difference subspace rather than its mean direction matters because an artifact's feature signature depends
+on the image, the position and the template; the rank-1 special case recovers markedly less.
+
+\paragraph{Limitations}
+(i) Backbones are frozen and heads linear, which isolates the representation from the training procedure; an
+end-to-end fine-tuning check is reported but not a full sweep. (ii) Hair and ruler share one semi-automatic
+annotation channel in the ISIC 2019 archive, so Trap~B partly measures rulers. (iii) Lesion masks outside
+HAM10000/ISIC 2018 are U-Net predictions; the mask source changes the overlap stratum of 6.9\% of held-out hair
+images but never moves an image between traps. (iv) Oracle inpainting receives the true artifact mask and is an
+upper bound. (v) Drain labels for pneumothorax-negative radiographs come from a detector trained on non-expert
+labels; errors act as label noise on $A$ and bias group-based baselines, not \ItoE{}, which uses no $A$ labels.
+(vi) \ItoE{} requires a template library; the drain templates are procedural and deliberately imperfect, and the
+dermoscopy templates are real hair transplanted from a disjoint donor pool. (vii) Reversed environments are
+constructed by subsampling; real deployment shifts are less extreme, and the clean-environment results bound the
+cost in the absence of shift.

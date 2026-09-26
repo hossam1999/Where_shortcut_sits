@@ -1,0 +1,18 @@
+\begin{table}
+\caption{Location interaction [Δ vs ERM]_0% − [Δ vs ERM]_100% (DINOv2 @518)}
+\label{tab:synthetic_interaction}
+\begin{tabular}{ll}
+\toprule
+Method & Interaction (0\% − 100\%) \\
+\midrule
+ROI masking & +0.313 [+0.272, +0.353] \\
+Inpainting (oracle) & -0.103 [-0.118, -0.088] \\
+Group-balanced & -0.143 [-0.163, -0.127] \\
+GroupDRO & -0.116 [-0.130, -0.103] \\
+DFR & -0.155 [-0.171, -0.140] \\
+LEACE (paired, oracle renders) & -0.127 [-0.150, -0.104] \\
+Repair consistency & -0.000 [-0.019, +0.021] \\
+Repair consistency, λ=0 & -0.011 [-0.029, +0.009] \\
+\bottomrule
+\end{tabular}
+\end{table}

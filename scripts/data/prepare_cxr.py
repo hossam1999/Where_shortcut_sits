@@ -85,7 +85,7 @@ def stage_synthetic(device, size=518):
 
 
 @torch.inference_mode()
-def stage_detector(device, size=518, workers=8, bs=64):
+def stage_detector(device, size=518, workers=4, bs=64):
     """RAD-DINO features of every NIH image (original view), then a drain probe trained on NEATX."""
     from sklearn.linear_model import LogisticRegression
     from sklearn.metrics import roc_auc_score
@@ -98,22 +98,27 @@ def stage_detector(device, size=518, workers=8, bs=64):
     if fpath.exists():
         z = np.load(fpath); X = z["X"]; assert list(z["ids"]) == d.image_id.tolist()
     else:
+        # bounded pipeline: DataLoader workers decode/resize, prefetch is capped (no unbounded queue)
+        from torch.utils.data import DataLoader, Dataset
+
         be = load_backend("raddino518", device)
-        X = np.zeros((len(d), 768), np.float32)
         ids = d.image_id.tolist()
-        with ThreadPoolExecutor(workers) as ex:
-            nxt = ex.map(lambda i: be.preprocess(Image.fromarray(np.repeat(load_gray(i, size)[..., None], 3, -1))), ids)
-            buf, k0 = [], 0
-            for t in tqdm(nxt, total=len(ids), desc="raddino all NIH", mininterval=30):
-                buf.append(t)
-                if len(buf) == bs:
-                    with torch.autocast("cuda", dtype=torch.float16):
-                        f = be.encode(torch.stack(buf).to(device))
-                    X[k0:k0 + bs] = torch.nn.functional.normalize(f.float(), dim=1).cpu().numpy(); k0 += bs; buf = []
-            if buf:
-                with torch.autocast("cuda", dtype=torch.float16):
-                    f = be.encode(torch.stack(buf).to(device))
-                X[k0:k0 + len(buf)] = torch.nn.functional.normalize(f.float(), dim=1).cpu().numpy()
+
+        class DS(Dataset):
+            def __len__(self):
+                return len(ids)
+
+            def __getitem__(self, k):
+                return be.preprocess(Image.fromarray(np.repeat(load_gray(ids[k], size)[..., None], 3, -1))), k
+
+        X = np.zeros((len(d), 768), np.float32)
+        dl = DataLoader(DS(), batch_size=bs, num_workers=workers, prefetch_factor=2, pin_memory=True)
+        for n, (xb, kb) in enumerate(dl):
+            with torch.autocast("cuda", dtype=torch.float16):
+                f = be.encode(xb.to(device, non_blocking=True))
+            X[kb.numpy()] = torch.nn.functional.normalize(f.float(), dim=1).cpu().numpy()
+            if n % 200 == 0:
+                print(f"[detector] {n * bs}/{len(ids)}", flush=True)
         fpath.parent.mkdir(parents=True, exist_ok=True)
         np.savez(fpath, X=X, ids=np.asarray(ids))
     lab = d.drain_neatx.notna().to_numpy()

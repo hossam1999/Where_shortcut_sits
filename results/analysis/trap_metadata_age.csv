@@ -1,0 +1,13 @@
+source,group_A,age_approx
+BCN,free,61.3
+BCN,trapA,58.9
+BCN,trapB,51.8
+HAM,free,57.9
+HAM,trapA,52.1
+HAM,trapB,49.9
+ISIC_legacy,free,54.4
+ISIC_legacy,trapA,50.2
+ISIC_legacy,trapB,42.1
+MSK,free,51.2
+MSK,trapA,54.5
+MSK,trapB,46.9

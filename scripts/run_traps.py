@@ -51,6 +51,14 @@ def main():
     df, envs, counts, donors, cache, insert_fn = {"isic2019": isic2019, "nih_drain": nih_drain}[a.cohort](a)
     out = paths.RESULTS / "real" / a.cohort / f"{a.backbone}_{a.tag}"
     out.mkdir(parents=True, exist_ok=True)
+    import fcntl
+
+    lock = open(out / ".lock", "w")
+    try:  # one writer per experiment directory (queues may overlap)
+        fcntl.flock(lock, fcntl.LOCK_EX | fcntl.LOCK_NB)
+    except BlockingIOError:
+        print(f"[traps] {out} is being written by another process; exiting")
+        return
     counts.to_csv(out / "trap_counts.csv", index=False)
     agg = counts.groupby(["trap", "env"]).agg(n=("n", "sum"), n_mel=("n_mel", "sum"), n_art=("n_art", "sum")).reset_index()
     print(agg.to_string())
