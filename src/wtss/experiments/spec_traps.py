@@ -63,6 +63,11 @@ def _fold_job(job):
         fin(clf, m, m)
         if m == "erm" and "prevcal" in arms:
             fin(H.PrevalenceCalibrated(clf, ytr, atr), "prevcal", "erm", test_a=True)
+    for m, view, bal in _CTX.get("view_arms", ()):  # extra (method, feature view, balanced?) arms, e.g. SLAS
+        if bal:
+            fin(H.fit_balanced(X(view, tr), ytr, atr, X(view, cv), yv, seed)[0], m, view)
+        else:
+            fin(H.fit_erm(X(view, tr), ytr, X(view, cv), yv, seed)[0], m, view)
     Xtr, Xv = X("erm", tr), X("erm", cv)
     if "balanced" in arms:
         fin(H.fit_balanced(Xtr, ytr, atr, Xv, yv, seed)[0], "balanced", "erm")

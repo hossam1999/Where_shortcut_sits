@@ -1,0 +1,36 @@
+# Pre-registration — Self-Localising Artifact Suppression (SLAS) on in-ROI artifact traps
+
+Committed before any SLAS model is evaluated on a trap. Protocol, cohorts, seeds, folds, thresholds, bootstrap:
+unchanged from docs/REPLICATION_SPEC.md (E13, ISIC 2019 hair) and docs/PREREGISTRATION_THYROID_TRAPS.md.
+
+## Motivation (evidence available before this registration)
+Pixel masking cannot remove an artifact that lies inside the ROI (E13 Trap A: mask − ERM < 0). Pixel artifact
+detectors are poor on thin in-ROI artifacts (hair IoU 0.22). Localisation-only test (results/slas/
+localisation_isic_hair.json; no trap outcome used): a linear probe on DINOv2@518 patch tokens trained on real
+Wegley hair/ruler masks localises hair on held-out images with patch AUROC 0.977 (0.969 inside the lesion);
+a probe trained on synthetic generic overlays only reaches 0.64 — so SLAS uses a few real annotated images.
+
+## Method (frozen)
+1. Probe: logistic regression (C=1, balanced) on DINOv2 ViT-B/14 @518 patch tokens; patch label = artifact
+   coverage >= 0.2 (positive) / 0 (negative). Trained on k = 50 annotated images drawn (seed 20260927) from the
+   donor pool (0.1 <= r < 0.5; hair_frac >= 0.02), which is disjoint from both trap pools and shares no leakage
+   group with them. The same procedure is used for every artifact type — only the k annotated images change.
+2. Representation: L2-normalised mean of patch tokens. Patches with probe probability >= tau = 0.5 are dropped;
+   ROI patches = >= 50 % lesion pixels.
+3. Arms (heads, thresholds and validation exactly as E13):
+   tok_erm (all patches) · tok_mask (ROI patches) · slas (probe-clean patches) · mts (ROI ∩ probe-clean;
+   "mask-then-suppress") · mts_oracle (ROI minus real-mask patches; ceiling, not a method) ·
+   tok_balanced · mts_balanced.
+Secondary: k ∈ {10, 25, 100} (learning curve); thyroid markers (probe trained on 50 donor images with detector
+masks); DermLIP / MedSigLIP token versions if the primary is positive.
+
+## Claims (reversed-test AUROC, 95 % hierarchical paired CI, seeds as clusters)
+- **S0 (sanity, token space reproduces the thesis)**: tok_mask − tok_erm < 0 in Trap A and > 0 in Trap B.
+- **S1 (primary)**: mts − tok_mask > 0 in Trap A.
+- **S2**: slas − tok_erm > 0 in Trap A.
+- **S3 (no harm out of ROI)**: mts − tok_mask CI lower bound > −0.01 in Trap B.
+- **S4 (no gaming)**: clean-AUROC loss of mts vs tok_mask <= 0.02 in both traps.
+- **S5**: mts_balanced − tok_balanced > 0 in Trap A.
+- **S6**: mts reaches >= 50 % of the oracle gain (mts_oracle − tok_mask) in Trap A.
+All outcomes are reported whichever way they go. If S0 fails (token pooling does not reproduce the in-ROI
+harm), SLAS results are reported as exploratory only.
