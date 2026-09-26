@@ -30,3 +30,24 @@ evidence contradicts the claim. Filled in as verification proceeds (see `results
 (fp16 non-determinism) for every sklearn-head arm; the GPU-trained consistency head within ≤ 0.008.
 All 21 reversed-test Δ-vs-ERM estimates and CIs agree to 3 decimals; all 21 CI decisions identical.
 Location interaction (mask): +0.312 [+0.272, +0.353].
+
+## §9 / E13 under the author's protocol (docs/REPLICATION_SPEC.md), DINOv2 @518, 5 seeds × 5 folds
+Outcome-free anchors: hair-free group ≤ 30 native px reproduces A0 cells and all six source proportions;
+reversed-test melanomas 172 per trap (spec 172). A1 cells differ by 5–15 % (lesion masks from a re-trained
+spec U-Net, held-out Dice 0.890 vs 0.876).
+
+| Claim | Spec | Replication | Verdict (sign, CI status) |
+|---|---|---|---|
+| C1 mask − ERM, Trap B | +0.124 [+0.105, +0.143] | +0.107 [+0.078, +0.135] | MATCH (point Δ 0.017) |
+| C2 mask − ERM, Trap A | −0.064 [−0.079, −0.049] | −0.037 [−0.057, −0.019] | SIGN+CI match (point Δ 0.027) |
+| C3 crossover B − A | +0.188 [+0.179, +0.194] | +0.145 [+0.105, +0.181]; seeds 0.087–0.175 | SIGN+CI match |
+| C4 balanced / DFR both traps | all CIs > 0 | +0.225 / +0.251 (A), +0.209 / +0.215 (B), all CIs > 0 | MATCH |
+| C5 paired LEACE < ½ best label-only | +0.068 vs +0.112 | +0.084 vs +0.117 | MATCH |
+| Inpaint (oracle) A / B | +0.101 / +0.108 | +0.103 / +0.096 | MATCH |
+| Source-stratified Trap A, BCN | −0.078 [−0.099, −0.058] | −0.051 [−0.075, −0.027] | SIGN+CI match |
+| Source-stratified Trap A, HAM | −0.030 [−0.059, −0.003] | −0.009 [−0.036, +0.017] | sign match; CI now includes 0 |
+| Unpaired A-erasure Trap A | +0.316, corr < rev | +0.326, corr 0.618 < rev 0.817 | MATCH (gaming reproduced) |
+
+Sensitivity: the author-independent reconstruction (`results/real/isic2019/dino518_main`: hair-free < 0.1 %
+of pixels, hair ≥ 0.5 %, artifact-free clean test) gives C1/C3/C4/C5 but a null C2 (+0.012 [−0.042, +0.062]):
+the in-ROI harm depends on including lightly-haired images and on the strictly hair-free comparison group.

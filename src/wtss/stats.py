@@ -89,7 +89,12 @@ class _WeightedAUC:
             return np.where(den > 0, num / den, np.nan)
 
 
-def _cluster_bootstrap_fast(arrays: Dict[int, tuple], stat: str, n_boot: int, seed: int, chunk: int = 2000) -> np.ndarray:
+def _multinomial_counts(rng, n: int, b: int) -> np.ndarray:
+    """(b, n) bootstrap resample counts (multinomial; benchmarked faster than index+bincount here)."""
+    return rng.multinomial(n, np.full(n, 1.0 / n), size=b).astype(np.float64)
+
+
+def _cluster_bootstrap_fast(arrays: Dict[int, tuple], stat: str, n_boot: int, seed: int, chunk: int = 500) -> np.ndarray:
     """Vectorised equivalent of _cluster_bootstrap for AUROC statistics.
 
     stat: 'auc' (arrays: y, a), 'delta' (y, a, b), 'inter' (y, a0, b0, a1, b1).
@@ -108,7 +113,7 @@ def _cluster_bootstrap_fast(arrays: Dict[int, tuple], stat: str, n_boot: int, se
         rows, cols = np.nonzero(clusters == c)
         for k in range(0, len(rows), chunk):
             rr, cc = rows[k:k + chunk], cols[k:k + chunk]
-            w = rng.multinomial(n, np.full(n, 1.0 / n), size=len(rr)).astype(np.float64)
+            w = _multinomial_counts(rng, n, len(rr))
             a = [f(w) for f in aucs]
             v = a[0] if stat == "auc" else a[0] - a[1] if stat == "delta" else (a[0] - a[1]) - (a[2] - a[3])
             vals[rr, cc] = v
@@ -250,11 +255,13 @@ def difference_of_deltas(pred_1: pd.DataFrame, pred_2: pd.DataFrame, method: str
         point[-2:] = [binary_auc(by1[int(c)].y.to_numpy(), by1[int(c)].pa.to_numpy()) - binary_auc(by1[int(c)].y.to_numpy(), by1[int(c)].pb.to_numpy()),
                       binary_auc(by2[int(c)].y.to_numpy(), by2[int(c)].pa.to_numpy()) - binary_auc(by2[int(c)].y.to_numpy(), by2[int(c)].pb.to_numpy())]
         rows, cols = np.nonzero(clusters == c)
-        d = []
-        for fa, fb, n in eff:
-            w = rng.multinomial(n, np.full(n, 1.0 / n), size=len(rows)).astype(np.float64)
-            d.append(fa(w) - fb(w))
-        vals[rows, cols] = d[0] - d[1]
+        for k in range(0, len(rows), 500):  # chunked: bounded memory (n can be ~10^4 per cluster)
+            rr, cc = rows[k:k + 500], cols[k:k + 500]
+            d = []
+            for fa, fb, n in eff:
+                w = _multinomial_counts(rng, n, len(rr))
+                d.append(fa(w) - fb(w))
+            vals[rr, cc] = d[0] - d[1]
     arr = np.nanmean(vals, 1)
     arr = arr[np.isfinite(arr)]
     pts = [point[i] - point[i + 1] for i in range(0, len(point), 2)]

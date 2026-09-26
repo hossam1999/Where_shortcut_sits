@@ -28,7 +28,7 @@ def hashes(files, cache):
     if cache.exists():
         d = pd.read_csv(cache, dtype={"h": str})
         return d.f.tolist(), np.array([int(x, 16) for x in d.h], dtype=np.uint64)
-    with ProcessPoolExecutor(8) as ex:
+    with ProcessPoolExecutor(4) as ex:  # capped: shares the host with feature extraction
         hs = list(ex.map(ph, files, chunksize=256))
     pd.DataFrame({"f": [str(f) for f in files], "h": [f"{h:016x}" for h in hs]}).to_csv(cache, index=False)
     return [str(f) for f in files], np.array(hs, dtype=np.uint64)

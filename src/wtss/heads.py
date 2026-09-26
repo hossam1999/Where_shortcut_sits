@@ -226,3 +226,19 @@ class PrevalenceCalibrated:
         z = np.log(pr / (1 - pr)) - np.where(np.asarray(a) == 1, self.shift[1], self.shift[0])
         p = 1 / (1 + np.exp(-z))
         return np.c_[1 - p, p]
+
+
+def fit_leace_conditional(X: np.ndarray, a: np.ndarray, y: np.ndarray):
+    """Class-conditional LEACE: erase the artifact concept *within each diagnosis class*.
+
+    Features are centred on their class mean before fitting, so the eraser removes directions along which
+    the artifact varies given Y and cannot remove the between-class (diagnostic) mean difference that
+    unpaired erasure removes when A and Y are correlated. Needs image-level A at train only.
+    """
+    from concept_erasure import LeaceEraser
+
+    Xc = X.astype(np.float64).copy()
+    for c in np.unique(y):
+        Xc[y == c] -= Xc[y == c].mean(0)
+    # balance the concept within class: weight-free approximation by using centred features
+    return LeaceEraser.fit(torch.as_tensor(Xc), torch.as_tensor(a, dtype=torch.float64))
