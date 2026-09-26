@@ -1,0 +1,234 @@
+"""Uncertainty estimators.
+
+Primary CI (pilot v3 estimator, unchanged): hierarchical paired bootstrap that
+resamples training-seed (or CV-fold) clusters with replacement, then paired
+test images within each sampled cluster, computes the AUROC delta *inside* each
+cluster, and averages cluster-specific deltas per replicate. Predictions from
+different trained models are never pooled into one ROC curve.
+
+The RNG draw order is identical to ``pilot_core.py`` so CIs recomputed from the
+archived predictions reproduce the archived numbers exactly.
+"""
+from __future__ import annotations
+
+import json
+from typing import Dict, List, Sequence, Tuple
+
+import numpy as np
+import pandas as pd
+from sklearn.metrics import roc_auc_score
+
+
+def safe_auc(y, prob) -> float:
+    y = np.asarray(y)
+    return float(roc_auc_score(y, prob)) if len(np.unique(y)) == 2 else float("nan")
+
+
+def binary_auc(y: np.ndarray, s: np.ndarray) -> float:
+    """Mann-Whitney AUROC (same estimand as sklearn, no pandas; handles ties)."""
+    pos = s[y == 1]
+    neg = s[y == 0]
+    n1, n0 = pos.size, neg.size
+    if n1 == 0 or n0 == 0:
+        return float("nan")
+    neg = np.sort(neg)
+    left = np.searchsorted(neg, pos, side="left")
+    right = np.searchsorted(neg, pos, side="right")
+    return float((left + 0.5 * (right - left)).sum() / (n1 * n0))
+
+
+def _ci(arr: np.ndarray) -> Tuple[float, float]:
+    return float(np.percentile(arr, 2.5)), float(np.percentile(arr, 97.5))
+
+
+def paired_by_cluster(predictions: pd.DataFrame, method_a: str, method_b: str, env: str,
+                      cluster_col: str = "seed") -> Tuple[Dict[int, pd.DataFrame], List[float]]:
+    x = predictions[predictions["env"] == env]
+    by: Dict[int, pd.DataFrame] = {}
+    deltas: List[float] = []
+    for s in sorted(x[cluster_col].unique().tolist()):
+        ss = x[x[cluster_col] == s]
+        a = ss[ss["method"] == method_a][["image_id", "y", "prob"]].rename(columns={"prob": "pa"})
+        b = ss[ss["method"] == method_b][["image_id", "y", "prob"]].rename(columns={"prob": "pb"})
+        p = a.merge(b, on=["image_id", "y"], how="inner")
+        if len(p) == 0 or p.y.nunique() < 2:
+            continue
+        by[int(s)] = p
+        deltas.append(safe_auc(p.y.to_numpy(), p.pa.to_numpy()) - safe_auc(p.y.to_numpy(), p.pb.to_numpy()))
+    if not by:
+        raise ValueError(f"No paired predictions for {method_a} vs {method_b} on {env}")
+    return by, deltas
+
+
+def _cluster_bootstrap(arrays: Dict[int, tuple], stat_fn, n_boot: int, seed: int) -> np.ndarray:
+    rng = np.random.default_rng(seed)
+    keys = np.array(sorted(arrays))
+    boots: List[float] = []
+    for _ in range(n_boot):
+        vals = []
+        for s in rng.choice(keys, size=len(keys), replace=True):
+            arr = arrays[int(s)]
+            y = arr[0]
+            n = y.shape[0]
+            d = None
+            for _attempt in range(10):
+                idx = rng.integers(0, n, size=n)
+                yy = y[idx]
+                if yy.min() == yy.max():
+                    continue
+                d = stat_fn(yy, *(a[idx] for a in arr[1:]))
+                break
+            if d is not None and np.isfinite(d):
+                vals.append(float(d))
+        if vals:
+            boots.append(float(np.mean(vals)))
+    out = np.asarray(boots, dtype=float)
+    if len(out) == 0:
+        raise ValueError("No valid bootstrap replicates")
+    return out
+
+
+def hierarchical_paired_bootstrap(predictions: pd.DataFrame, method_a: str, method_b: str, env: str,
+                                  n_boot: int = 10000, seed: int = 20260918,
+                                  cluster_col: str = "seed") -> Dict:
+    """Mean cluster-specific paired AUROC delta (method_a - method_b) with hierarchical 95% CI."""
+    by, deltas = paired_by_cluster(predictions, method_a, method_b, env, cluster_col)
+    arrays = {s: (p.y.to_numpy(), p.pa.to_numpy(), p.pb.to_numpy()) for s, p in by.items()}
+    arr = _cluster_bootstrap(arrays, lambda y, a, b: binary_auc(y, a) - binary_auc(y, b), n_boot, seed)
+    lo, hi = _ci(arr)
+    return {
+        "method_a": method_a, "method_b": method_b, "env": env,
+        "estimand": "mean_seed_specific_paired_auc_delta",
+        "delta_mean_bootstrap": float(arr.mean()), "ci95_lo": lo, "ci95_hi": hi,
+        "n_boot_valid": int(len(arr)), "bootstrap_seed_clusters_per_rep": len(arrays),
+        "seed_delta_mean": float(np.mean(deltas)),
+        "seed_delta_sd": float(np.std(deltas, ddof=1)) if len(deltas) > 1 else float("nan"),
+        "seed_deltas_json": json.dumps([float(x) for x in deltas]),
+        "ci_excludes_zero": bool(lo > 0 or hi < 0),
+    }
+
+
+def hierarchical_auc_bootstrap(predictions: pd.DataFrame, method: str, env: str, n_boot: int = 10000,
+                               seed: int = 20260918, cluster_col: str = "seed") -> Dict:
+    """Mean cluster-specific AUROC of one method with hierarchical CI."""
+    x = predictions[(predictions.env == env) & (predictions.method == method)]
+    arrays = {int(s): (q.y.to_numpy(), q.prob.to_numpy()) for s, q in x.groupby(cluster_col) if q.y.nunique() == 2}
+    arr = _cluster_bootstrap(arrays, lambda y, a: binary_auc(y, a), n_boot, seed)
+    lo, hi = _ci(arr)
+    point = float(np.mean([binary_auc(*v) for v in arrays.values()]))
+    return {"method": method, "env": env, "auc_mean": point, "ci95_lo": lo, "ci95_hi": hi}
+
+
+def hierarchical_interaction(predictions: pd.DataFrame, method: str, baseline: str, env: str,
+                             key_col: str, lo_val, hi_val, n_boot: int = 10000, seed: int = 20260918,
+                             cluster_col: str = "seed") -> Dict:
+    """[method-baseline]_{lo} - [method-baseline]_{hi} on the *same* image IDs.
+
+    Used for the synthetic location interaction (key_col='overlap', same test images at
+    0% and 100%). For real traps, whose test sets differ, use ``difference_of_deltas``.
+    """
+    x = predictions[predictions["env"] == env]
+    by: Dict[int, pd.DataFrame] = {}
+    effects: List[float] = []
+    for s in sorted(x[cluster_col].unique()):
+        ss = x[x[cluster_col] == s]
+        pieces = {}
+        for v, tag in [(lo_val, "lo"), (hi_val, "hi")]:
+            sel = np.isclose(ss[key_col].astype(float), float(v)) if not isinstance(v, str) else (ss[key_col] == v)
+            for m, name in [(method, "arm"), (baseline, "base")]:
+                q = ss[(ss["method"] == m) & sel]
+                pieces[f"{name}_{tag}"] = q[["image_id", "y", "prob"]].rename(columns={"prob": f"p_{name}_{tag}"})
+        z = pieces["arm_lo"].merge(pieces["base_lo"], on=["image_id", "y"])
+        z = z.merge(pieces["arm_hi"], on=["image_id", "y"]).merge(pieces["base_hi"], on=["image_id", "y"])
+        if z.empty or z.y.nunique() < 2:
+            continue
+        d_lo = safe_auc(z.y, z.p_arm_lo) - safe_auc(z.y, z.p_base_lo)
+        d_hi = safe_auc(z.y, z.p_arm_hi) - safe_auc(z.y, z.p_base_hi)
+        by[int(s)] = z
+        effects.append(float(d_lo - d_hi))
+    if not by:
+        raise ValueError(f"No paired rows for interaction {method} vs {baseline}")
+    arrays = {s: (z.y.to_numpy(), z.p_arm_lo.to_numpy(), z.p_base_lo.to_numpy(),
+                  z.p_arm_hi.to_numpy(), z.p_base_hi.to_numpy()) for s, z in by.items()}
+    fn = lambda y, a0, b0, a1, b1: (binary_auc(y, a0) - binary_auc(y, b0)) - (binary_auc(y, a1) - binary_auc(y, b1))
+    arr = _cluster_bootstrap(arrays, fn, n_boot, seed)
+    lo, hi = _ci(arr)
+    return {"method": method, "baseline": baseline, "env": env, "lo": lo_val, "hi": hi_val,
+            "estimand": "mean_seed_specific_interaction", "delta_mean_bootstrap": float(arr.mean()),
+            "ci95_lo": lo, "ci95_hi": hi, "n_boot_valid": int(len(arr)),
+            "seed_delta_mean": float(np.mean(effects)),
+            "seed_delta_sd": float(np.std(effects, ddof=1)) if len(effects) > 1 else float("nan"),
+            "seed_deltas_json": json.dumps(effects), "ci_excludes_zero": bool(lo > 0 or hi < 0)}
+
+
+def difference_of_deltas(pred_1: pd.DataFrame, pred_2: pd.DataFrame, method: str, baseline: str, env: str,
+                         n_boot: int = 10000, seed: int = 20260918, cluster_col: str = "seed") -> Dict:
+    """Crossover between two *independent* test sets (e.g. Trap B vs Trap A):
+    [method-baseline]_{set1} - [method-baseline]_{set2}.
+
+    Each replicate resamples clusters (shared cluster ids, e.g. CV folds), then images
+    independently within each set, and averages cluster-specific crossovers.
+    """
+    by1, _ = paired_by_cluster(pred_1, method, baseline, env, cluster_col)
+    by2, _ = paired_by_cluster(pred_2, method, baseline, env, cluster_col)
+    keys = np.array(sorted(set(by1) & set(by2)))
+    if len(keys) == 0:
+        raise ValueError("No shared clusters")
+    a1 = {s: (by1[s].y.to_numpy(), by1[s].pa.to_numpy(), by1[s].pb.to_numpy()) for s in keys}
+    a2 = {s: (by2[s].y.to_numpy(), by2[s].pa.to_numpy(), by2[s].pb.to_numpy()) for s in keys}
+    point = [(binary_auc(*a1[s][:2]) - binary_auc(a1[s][0], a1[s][2]))
+             - (binary_auc(*a2[s][:2]) - binary_auc(a2[s][0], a2[s][2])) for s in keys]
+    rng = np.random.default_rng(seed)
+
+    def one(arr):
+        y, pa, pb = arr
+        for _ in range(10):
+            idx = rng.integers(0, len(y), size=len(y))
+            if y[idx].min() != y[idx].max():
+                return binary_auc(y[idx], pa[idx]) - binary_auc(y[idx], pb[idx])
+        return np.nan
+
+    boots = []
+    for _ in range(n_boot):
+        v = [one(a1[int(s)]) - one(a2[int(s)]) for s in rng.choice(keys, size=len(keys), replace=True)]
+        v = [x for x in v if np.isfinite(x)]
+        if v:
+            boots.append(float(np.mean(v)))
+    arr = np.asarray(boots)
+    lo, hi = _ci(arr)
+    return {"method": method, "baseline": baseline, "env": env, "estimand": "crossover_set1_minus_set2",
+            "delta_mean_bootstrap": float(arr.mean()), "ci95_lo": lo, "ci95_hi": hi,
+            "seed_delta_mean": float(np.mean(point)), "seed_deltas_json": json.dumps([float(p) for p in point]),
+            "ci_excludes_zero": bool(lo > 0 or hi < 0)}
+
+
+def hierarchical_paired_mean_bootstrap(paired_rows: pd.DataFrame, value_a: str, value_b: str,
+                                       n_boot: int = 10000, seed: int = 20260918,
+                                       cluster_col: str = "seed") -> Dict:
+    """Hierarchical CI for an image-level paired mean effect (A - B), e.g. |Δp| differences."""
+    by = {int(s): q.dropna(subset=[value_a, value_b]) for s, q in paired_rows.groupby(cluster_col)}
+    by = {s: q for s, q in by.items() if len(q)}
+    if not by:
+        raise ValueError("No paired rows for mean bootstrap")
+    effects = [float((q[value_a] - q[value_b]).mean()) for q in by.values()]
+    keys = np.array(sorted(by))
+    arrays = {s: (q[value_a].to_numpy(), q[value_b].to_numpy()) for s, q in by.items()}
+    rng = np.random.default_rng(seed)
+    boots = []
+    for _ in range(n_boot):
+        e = []
+        for s in rng.choice(keys, size=len(keys), replace=True):
+            a, b = arrays[int(s)]
+            idx = rng.integers(0, len(a), size=len(a))
+            e.append(float((a[idx] - b[idx]).mean()))
+        boots.append(float(np.mean(e)))
+    arr = np.asarray(boots)
+    lo, hi = _ci(arr)
+    return {"delta_mean_bootstrap": float(arr.mean()), "ci95_lo": lo, "ci95_hi": hi,
+            "n_boot_valid": int(len(arr)), "seed_delta_mean": float(np.mean(effects)),
+            "seed_delta_sd": float(np.std(effects, ddof=1)) if len(effects) > 1 else float("nan")}
+
+
+def fmt_ci(d: Dict, key: str = "delta_mean_bootstrap", point_key: str = "seed_delta_mean", signed: bool = True) -> str:
+    f = "{:+.3f}" if signed else "{:.3f}"
+    return f"{f.format(d[point_key])} [{f.format(d['ci95_lo'])}, {f.format(d['ci95_hi'])}]"

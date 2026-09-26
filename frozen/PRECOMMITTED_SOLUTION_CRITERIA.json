@@ -1,0 +1,38 @@
+{
+  "backbone": "DINOv2 ViT-B/14 frozen",
+  "baseline": "erm",
+  "lambda_candidates": [
+    0.1,
+    0.5,
+    1.0
+  ],
+  "lambda_selection": "highest clean-validation AUROC only; tie -> smaller lambda",
+  "oracle_note": "Synthetic artifact localization is exact/oracle for inpainting in this phase.",
+  "outcome_labels": {
+    "FULL_SUPPORT": "all success criteria pass",
+    "NOT_SUPPORTED": "otherwise",
+    "PARTIAL_SUPPORT": "clean-cost and outside-safety pass, and robustness passes at at least 2 of 3 in-lesion overlaps"
+  },
+  "overlaps": [
+    0.0,
+    0.5,
+    0.75,
+    1.0
+  ],
+  "primary_ci": "hierarchical paired bootstrap: resample seed clusters, then paired images within seed; compute seed-specific paired AUROC delta, average seed deltas per replicate",
+  "primary_method": "inpaint_consistency",
+  "resolution": 518,
+  "seeds": [
+    42,
+    123,
+    456
+  ],
+  "success": {
+    "clean_cost": "mean clean AUROC(inpaint_consistency) >= mean clean AUROC(ERM) - 0.02 at every tested overlap",
+    "counterfactual_sensitivity": "mean |p(clean)-p(artifact)| lower than ERM at 0.50, 0.75 and 1.00; hierarchical paired mean-difference 95% CI upper bound < 0 at each overlap",
+    "outside_safety": "at overlap 0.00, mean reversed AUROC(inpaint_consistency) >= mean reversed AUROC(ERM) - 0.02",
+    "robustness": "inpaint_consistency - ERM reversed AUROC > 0 at overlap 0.50, 0.75 and 1.00, with hierarchical paired 95% CI lower bound > 0 at each overlap"
+  },
+  "threshold_selection": "maximum balanced accuracy on clean validation only; frozen for every test environment",
+  "version": "pilot_patch_v3_precommit_2026-09-18"
+}
