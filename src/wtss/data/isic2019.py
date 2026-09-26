@@ -60,7 +60,21 @@ class TrapEnvs:
     envs: Dict[tuple, pd.DataFrame]
 
 
-def build_trap_envs(df: pd.DataFrame, seed: int = 20260926) -> Dict[tuple, pd.DataFrame]:
+SITE_GROUP = {"anterior torso": "torso", "posterior torso": "torso", "lateral torso": "torso",
+              "upper extremity": "upper_ext", "lower extremity": "lower_ext", "head/neck": "head_neck",
+              "palms/soles": "acral", "oral/genital": "other"}
+
+
+def add_match_strata(df: pd.DataFrame) -> pd.DataFrame:
+    """source x site group x sex x age band (docs/PRECOMMIT_MATCHED_TRAPS.md)."""
+    df = df.copy()
+    site = df.anatom_site_general.map(SITE_GROUP).fillna("NA")
+    age = pd.cut(df.age_approx, [-1, 39, 59, 200], labels=["<40", "40-59", ">=60"]).astype(object).fillna("NA")
+    df["stratum"] = [f"{a}|{b}|{c}|{d}" for a, b, c, d in zip(df.source, site, df.sex.fillna("NA"), age)]
+    return df
+
+
+def build_trap_envs(df: pd.DataFrame, seed: int = 20260926, match_col: str = "source") -> Dict[tuple, pd.DataFrame]:
     """Source-matched environments for both traps, for each fold as test fold.
 
     Returns {(trap, fold, split_env): DataFrame[image_id, y, a, source]} where split_env in
@@ -73,8 +87,8 @@ def build_trap_envs(df: pd.DataFrame, seed: int = 20260926) -> Dict[tuple, pd.Da
             split = "train" if env == "train_corr" else "test"
             p1, p0 = RATES[env]
             chosen = {"trapA": [], "trapB": []}
-            for src in sorted(df.source.unique()):
-                base = (role == split) & (df.source == src).to_numpy()
+            for src in sorted(df[match_col].unique()):
+                base = (role == split) & (df[match_col] == src).to_numpy()
                 for y, p in [(1, p1), (0, p0)]:
                     free = df[base & (df.group_A == "free").to_numpy() & (df.y == y).to_numpy()]
                     arts = {t: df[base & (df.group_A == t).to_numpy() & (df.y == y).to_numpy()] for t in ("trapA", "trapB")}
@@ -92,7 +106,8 @@ def build_trap_envs(df: pd.DataFrame, seed: int = 20260926) -> Dict[tuple, pd.Da
                     for t in arts:
                         r2 = np.random.default_rng(stable_int(seed, k, env, src, y, t))
                         pos_ids = r2.choice(arts[t].image_id.to_numpy(), npos, replace=False) if npos else []
-                        chosen[t] += [(i, y, 1, src) for i in pos_ids] + [(i, y, 0, src) for i in neg_ids]
+                        s_src = src.split("|")[0]
+                        chosen[t] += [(i, y, 1, s_src) for i in pos_ids] + [(i, y, 0, s_src) for i in neg_ids]
             for t in chosen:
                 out[(t, k, env)] = pd.DataFrame(chosen[t], columns=["image_id", "y", "a", "source"])
         for t in ("trapA", "trapB"):

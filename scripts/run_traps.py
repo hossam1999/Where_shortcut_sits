@@ -20,7 +20,13 @@ def isic2019(args):
     from wtss.data.isic2019 import build_trap_envs, load_cohort, trap_count_table
 
     df = load_cohort(518, exclude_vignetting=args.exclude_vignetting)
-    envs = build_trap_envs(df)
+    if getattr(args, "matched", False):
+        from wtss.data.isic2019 import add_match_strata
+
+        df = add_match_strata(df)
+        envs = build_trap_envs(df, match_col="stratum")
+    else:
+        envs = build_trap_envs(df)
     counts = trap_count_table(envs)
     donors = df[df.group_A == "donor"].image_id.tolist()
     cache = RealCache(paths.DATA / "isic2019" / "prepared" / "cache_518")
@@ -44,6 +50,7 @@ def main():
     ap.add_argument("--traps", nargs="*", default=None)
     ap.add_argument("--tag", default="main")
     ap.add_argument("--exclude_vignetting", action="store_true")
+    ap.add_argument("--matched", action="store_true", help="metadata-matched follow-up (docs/PRECOMMIT_MATCHED_TRAPS.md)")
     ap.add_argument("--counts_only", action="store_true")
     ap.add_argument("--analyse_only", action="store_true")
     ap.add_argument("--workers", type=int, default=6)
