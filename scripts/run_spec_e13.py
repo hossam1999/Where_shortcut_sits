@@ -61,6 +61,8 @@ def main():
     ap.add_argument("--counts_only", action="store_true")
     ap.add_argument("--r_col", default="r_spec")
     ap.add_argument("--tag", default="spec")
+    ap.add_argument("--generic", action="store_true", help="artifact-agnostic insertion library (U-I2E / U-MtE)")
+    ap.add_argument("--arms", nargs="*", default=None)
     a = ap.parse_args()
     c = load_spec_cohort(r_col=a.r_col)
     envs = build_spec_envs(c)
@@ -76,8 +78,16 @@ def main():
     cache = RealCache(paths.DATA / "isic2019" / "prepared" / "cache_518", roi_file="roi_spec.npy")
     donors = c[~c.A0 & (c[a.r_col] >= 0.1) & (c[a.r_col] < 0.5)].image_id.tolist()
     if not (out / "predictions.csv.gz").exists():
+        kw = {}
+        if a.generic:
+            from wtss.synthetic import draw_generic_artifact
+            from PIL import Image as _I
+            kw = dict(insert_fn=lambda i, rgb, roi: np.asarray(draw_generic_artifact(_I.fromarray(rgb), roi, f"u|{i}")),
+                      insert_tag="_generic")
+        if a.arms:
+            kw["arms"] = tuple(a.arms)
         run_spec(envs, cache, a.backbone, out, paths.CACHE / "features" / "spec_isic2019" / BACKBONE_DIR[a.backbone], donors,
-                 device=torch.device("cuda"))
+                 device=torch.device("cuda"), **kw)
     preds = pd.read_csv(out / "predictions.csv.gz")
     arms = [m for m in preds.method.unique() if m != "erm"]
     jobs, keys = [], []

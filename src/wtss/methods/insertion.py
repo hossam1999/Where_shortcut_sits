@@ -152,4 +152,81 @@ def synthetic_extra_arms(cfg) -> Dict[str, Callable]:
         # inserted copy of the clean image (random position and style)
         return insert_aug_head(ctx["Xtr"], ctx["ytr"], Xins[tr], ctx["Xc"][va], ctx["y"][va], ctx["seed"])
 
-    return {"i2e": arm_i2e, "i2e_balanced": arm_i2e_bal, "i2e_rank1": arm_rank1, "insert_aug": arm_aug}
+    def mask_insertion_view(ctx):
+        """Masked image with a random-style artifact inserted at a random position whose centre is in the ROI."""
+        views = ctx["views"]
+        key = f"mask_insert_roi_{cfg.artifact.split('_')[0]}"
+        if key in state:
+            return state[key]
+        from ..ops import apply_roi_mask
+        size = views.backend.size
+        w, h = cfg.geometry[size]
+
+        def render(i):
+            img, roi = views.cache.image(i), views.cache.roi_mask(i)
+            rng = np.random.default_rng(stable_int("mte_insert", i))
+            ys, xs = np.nonzero(roi)
+            if len(ys):
+                j = int(rng.integers(0, len(ys)))
+                x = int(np.clip(xs[j] - w // 2, 0, size - w)); y = int(np.clip(ys[j] - h // 2, 0, size - h))
+            else:
+                x = int(rng.integers(0, size - w)); y = int(rng.integers(0, size - h))
+            if cfg.artifact.startswith("ruler"):
+                img, _ = draw_ruler_variable(img, x, y, w, h, sample_ruler_style(f"mte|{i}", 0.5))
+            else:
+                img, _ = draw_tube(img, x, y, w, h, image_id=f"mte|{i}")
+            return apply_roi_mask(img, roi)
+
+        X = extract_view(views.backend, views.ids, render, views.dir / f"{key}.npz", views.device,
+                         cfg.batch_size, cfg.workers, desc=key)
+        state[key] = X
+        return X
+
+    def _mte(ctx, balanced):
+        tr, va = ctx["sp"]["train"], ctx["sp"]["val"]
+        Xm_c, Em = ctx["env_X"]("mask")
+        Xmi = mask_insertion_view(ctx)
+        er = fit_difference_subspace(Xm_c[tr], Xmi[tr], energy=0.9, seed=ctx["seed"])
+        Xtr = Em[ctx["train_env"]][0][tr]
+        clf, C, vauc = H.fit_on_transformed(er, Xtr, ctx["ytr"], Xm_c[va], ctx["y"][va], ctx["seed"],
+                                            atr=ctx["a_tr"], balanced=balanced)
+        return clf, C, vauc, {"k": er.k, "_view": "mask"}
+
+    def generic_view(ctx, masked: bool):
+        """Universal (artifact-agnostic) insertion: same procedural library for every artifact/modality."""
+        views = ctx["views"]
+        key = "generic_insert_masked" if masked else "generic_insert"
+        if key in state:
+            return state[key]
+        from ..ops import apply_roi_mask
+        from ..synthetic import draw_generic_artifact
+
+        def render(i):
+            img, roi = views.cache.image(i), views.cache.roi_mask(i)
+            out = draw_generic_artifact(img, roi, f"u|{i}")
+            return apply_roi_mask(out, roi) if masked else out
+
+        X = extract_view(views.backend, views.ids, render, views.dir / f"{key}.npz", views.device,
+                         cfg.batch_size, cfg.workers, desc=key)
+        state[key] = X
+        return X
+
+    def _ui2e(ctx, balanced):
+        tr, va = ctx["sp"]["train"], ctx["sp"]["val"]
+        er = fit_difference_subspace(ctx["Xc"][tr], generic_view(ctx, False)[tr], energy=0.9, seed=ctx["seed"])
+        clf, C, vauc = H.fit_on_transformed(er, ctx["Xtr"], ctx["ytr"], ctx["Xc"][va], ctx["y"][va], ctx["seed"],
+                                            atr=ctx["a_tr"], balanced=balanced)
+        return clf, C, vauc, {"k": er.k}
+
+    def _umte(ctx, balanced):
+        tr, va = ctx["sp"]["train"], ctx["sp"]["val"]
+        Xm_c, Em = ctx["env_X"]("mask")
+        er = fit_difference_subspace(Xm_c[tr], generic_view(ctx, True)[tr], energy=0.9, seed=ctx["seed"])
+        clf, C, vauc = H.fit_on_transformed(er, Em[ctx["train_env"]][0][tr], ctx["ytr"], Xm_c[va], ctx["y"][va],
+                                            ctx["seed"], atr=ctx["a_tr"], balanced=balanced)
+        return clf, C, vauc, {"k": er.k, "_view": "mask"}
+
+    return {"i2e": arm_i2e, "i2e_balanced": arm_i2e_bal, "i2e_rank1": arm_rank1, "insert_aug": arm_aug,
+            "mte": lambda ctx: _mte(ctx, False), "mte_balanced": lambda ctx: _mte(ctx, True),
+            "ui2e": lambda ctx: _ui2e(ctx, False), "ui2e_balanced": lambda ctx: _ui2e(ctx, True),
+            "umte": lambda ctx: _umte(ctx, False), "umte_balanced": lambda ctx: _umte(ctx, True)}

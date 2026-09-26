@@ -177,3 +177,69 @@ def _box(shape, x, y, w, h):
     b = np.zeros(shape, np.uint8)
     b[y:y + h, x:x + w] = 1
     return b
+
+
+# --------------------------------------------------------------------------- universal artifact prior
+def draw_generic_artifact(img: Image.Image, roi: np.ndarray | None, key: str, n_max: int = 3) -> Image.Image:
+    """Artifact-agnostic overlay generator (Universal Insert-to-Erase).
+
+    One procedural family used unchanged for every artifact and modality. It deliberately contains no
+    ruler-with-ticks and no real hair: thin curvilinear strokes, thick bands, solid / translucent patches,
+    blobs, dashed lines and small glyphs, with random colour (incl. greyscale), opacity, width and position
+    (half of the elements centred inside the ROI when one is given).
+    """
+    rng = np.random.default_rng(stable_int("generic_artifact_v1", key))
+    W, H = img.size
+    overlay = Image.new("RGBA", img.size, (0, 0, 0, 0))
+    d = ImageDraw.Draw(overlay)
+    ys, xs = (np.nonzero(roi) if roi is not None and roi.any() else (np.array([]), np.array([])))
+
+    def centre():
+        if len(ys) and rng.random() < 0.5:
+            j = int(rng.integers(0, len(ys)))
+            return float(xs[j]), float(ys[j])
+        return float(rng.uniform(0, W)), float(rng.uniform(0, H))
+
+    def colour():
+        if rng.random() < 0.5:  # greyscale (dark or bright), as most real artifacts
+            g = int(rng.choice([rng.integers(0, 60), rng.integers(190, 256)]))
+            c = (g, g, g)
+        else:
+            c = tuple(int(v) for v in rng.integers(0, 256, 3))
+        return c + (int(255 * rng.uniform(0.35, 1.0)),)
+
+    s = min(W, H)
+    for _ in range(int(rng.integers(1, n_max + 1))):
+        kind = rng.choice(["stroke", "band", "patch", "blob", "dashed", "glyph"])
+        cx, cy = centre()
+        col = colour()
+        if kind in ("stroke", "band", "dashed"):
+            L = rng.uniform(0.08, 0.45) * s
+            ang = rng.uniform(0, np.pi)
+            bend = rng.uniform(-0.3, 0.3) * L
+            t = np.linspace(-0.5, 0.5, 40)
+            px = cx + t * L * np.cos(ang) - bend * (1 - 4 * t ** 2) * np.sin(ang)
+            py = cy + t * L * np.sin(ang) + bend * (1 - 4 * t ** 2) * np.cos(ang)
+            wdt = int(max(1, rng.uniform(0.002, 0.006) * s)) if kind != "band" else int(max(2, rng.uniform(0.01, 0.03) * s))
+            pts = list(zip(px, py))
+            if kind == "dashed":
+                for k in range(0, len(pts) - 1, 4):
+                    d.line(pts[k:k + 2], fill=col, width=wdt)
+            else:
+                d.line(pts, fill=col, width=wdt, joint="curve")
+        elif kind == "patch":
+            w_, h_ = rng.uniform(0.02, 0.12, 2) * s
+            d.rectangle([cx - w_ / 2, cy - h_ / 2, cx + w_ / 2, cy + h_ / 2], fill=col)
+        elif kind == "blob":
+            r = rng.uniform(0.01, 0.06) * s
+            k = int(rng.integers(6, 12))
+            ang = np.sort(rng.uniform(0, 2 * np.pi, k))
+            rr = r * rng.uniform(0.6, 1.4, k)
+            d.polygon(list(zip(cx + rr * np.cos(ang), cy + rr * np.sin(ang))), fill=col)
+        else:  # glyph: short strokes forming a small symbol
+            r = rng.uniform(0.01, 0.03) * s
+            for _k in range(int(rng.integers(2, 5))):
+                a1, a2 = rng.uniform(0, 2 * np.pi, 2)
+                d.line([(cx + r * np.cos(a1), cy + r * np.sin(a1)), (cx + r * np.cos(a2), cy + r * np.sin(a2))],
+                       fill=col, width=max(1, int(0.004 * s)))
+    return Image.alpha_composite(img.convert("RGBA"), overlay).convert("RGB")

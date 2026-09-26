@@ -81,15 +81,23 @@ def make_renderers(cache: RealCache, out_size: int, donors: Sequence[str], inser
         rgb, _, art = cache.get(i)
         return fin(np.asarray(apply_inpaint(Image.fromarray(rgb), art)))
 
-    def insert(i):
+    def _insert_arr(i):
         rgb, roi, _ = cache.get(i)
         if insert_fn is not None:
-            return fin(insert_fn(i, rgb, roi))
+            return insert_fn(i, rgb, roi), roi
         d = donors[stable_int("i2e_donor", i) % len(donors)]
         drgb, _, dmask = cache.get(d)
-        return fin(transplant(rgb, drgb, dmask, i))
+        return transplant(rgb, drgb, dmask, i), roi
 
-    return {"erm": erm, "mask": mask, "inpaint": inpaint, "insert": insert}
+    def insert(i):
+        return fin(_insert_arr(i)[0])
+
+    def mask_insert(i):
+        """Mask-then-Erase view: insert an artifact template, then apply the ROI mask (what survives is in-ROI)."""
+        arr, roi = _insert_arr(i)
+        return fin(np.asarray(apply_roi_mask(Image.fromarray(arr), roi)))
+
+    return {"erm": erm, "mask": mask, "inpaint": inpaint, "insert": insert, "mask_insert": mask_insert}
 
 
 @dataclass

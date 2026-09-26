@@ -149,8 +149,10 @@ def run_synthetic(cohort, backend_name: str, placements: Dict, out_dir: Path, cf
             test_feats = {e: E[e] for e in test_envs}
 
             def fin(clf, name, C, vauc, **kw):
-                thr, _ = select_threshold_clean_val(y_all[va], clf.predict_proba(Xc[va])[:, 1])
-                record(clf, thr, name, ov, seed, Xc, test_feats, {"C": C, "clean_val_auc": vauc, "thr": thr, **kw})
+                view = kw.pop("_view", "erm")  # arms may be trained/evaluated on another pixel view (e.g. masked)
+                Xcv, tf = (Xc, test_feats) if view == "erm" else (lambda c_, E_: (c_, {e: E_[e] for e in test_envs}))(*env_X(view))
+                thr, _ = select_threshold_clean_val(y_all[va], clf.predict_proba(Xcv[va])[:, 1])
+                record(clf, thr, name, ov, seed, Xcv, tf, {"C": C, "clean_val_auc": vauc, "thr": thr, **kw})
 
             if "balanced" in arms:
                 clf, C, vauc = H.fit_balanced(Xtr, ytr, a_tr, Xc[va], y_all[va], seed)
@@ -178,7 +180,7 @@ def run_synthetic(cohort, backend_name: str, placements: Dict, out_dir: Path, cf
                     fin(clf, "inpaint_consistency_lam0", None, vauc, lam=0.0)
             for name, fn in cfg.extra_arms.items():
                 ctx = dict(views=views, ov=ov, seed=seed, sp=sp, y=y_all, ids=ids_all, Xc=Xc, Xtr=Xtr, ytr=ytr,
-                           a_tr=a_tr, pres=pres, train_env=train_env, device=device, cohort=cohort)
+                           a_tr=a_tr, pres=pres, train_env=train_env, device=device, cohort=cohort, env_X=env_X)
                 clf, C, vauc, extra = fn(ctx)
                 fin(clf, name, C, vauc, **extra)
         print(f"[synthetic] {backend.name} {cfg.artifact} ov={ov:.2f} done", flush=True)
@@ -208,7 +210,8 @@ def analyse_synthetic(out_dir: Path, baseline: str = "erm", n_boot: int = 10000,
              20260918 + int(ov * 1000) + sum(map(ord, a))) for a in arms for ov in ovs]
     with ProcessPoolExecutor(workers) as ex:
         res = list(ex.map(_boot_job, jobs))
-    boot = pd.DataFrame([{"overlap": j[0].overlap.iloc[0], **r} for j, r in zip(jobs, res)])
+    job_ov = [ov for a in arms for ov in ovs]  # same order as `jobs`
+    boot = pd.DataFrame([{"overlap": o, **r} for o, r in zip(job_ov, res)])
     boot.to_csv(out_dir / "bootstrap_vs_erm.csv", index=False)
     inter = []
     if lo in ovs and hi in ovs and env == "test_rev":

@@ -18,7 +18,7 @@ from ..methods.insertion import fit_difference_subspace, insert_aug_head, rank1_
 from .real_traps import make_renderers
 
 ARMS = ("erm", "mask", "inpaint", "balanced", "dfr", "leace_paired", "leace_unpaired",
-        "i2e", "i2e_balanced", "i2e_rank1", "insert_aug", "prevcal")
+        "i2e", "i2e_balanced", "i2e_rank1", "insert_aug", "prevcal", "mte", "mte_balanced")
 
 
 _CTX: dict = {}
@@ -77,6 +77,13 @@ def _fold_job(job):
     if "leace_unpaired" in arms:
         er = H.fit_leace_labels(Xtr, atr)
         fin(H.fit_on_transformed(H.eraser_fn(er), Xtr, ytr, Xv, yv, seed)[0], "leace_unpaired", "erm")
+    if "mask_insert" in V:  # Mask-then-Erase: erase the insertion subspace *in the masked view*
+        mtr, mv = X("mask", tr), X("mask", cv)
+        er_m = fit_difference_subspace(X("mask", ta), X("mask_insert", ta), energy=0.9, seed=seed)
+        if "mte" in arms:
+            fin(H.fit_on_transformed(er_m, mtr, ytr, mv, yv, seed)[0], "mte", "mask")
+        if "mte_balanced" in arms:
+            fin(H.fit_on_transformed(er_m, mtr, ytr, mv, yv, seed, atr=atr, balanced=True)[0], "mte_balanced", "mask")
     if "insert" in V:
         X0, X1 = X("erm", ta), X("insert", ta)
         er = fit_difference_subspace(X0, X1, energy=0.9, seed=seed)
@@ -93,17 +100,19 @@ def _fold_job(job):
 
 def run_spec(envs: Dict, cache, backend_name: str, out_dir: Path, feat_dir: Path, donors: Sequence[str],
              arms=ARMS, traps=("trapA", "trapB"), device=None, batch_size=64, workers=5, extra_meta=None,
-             n_jobs: int = 4):
+             n_jobs: int = 4, insert_fn=None, insert_tag: str = ""):
     device = device or torch.device("cuda")
     out_dir.mkdir(parents=True, exist_ok=True)
     pool = sorted(set().union(*[set(d.image_id) for k, d in envs.items() if k[0] in traps]))
     pos = {k: j for j, k in enumerate(pool)}
-    need = {"erm", "mask", "inpaint"} | ({"insert"} if any(a.startswith(("i2e", "insert")) for a in arms) else set())
+    need = {"erm", "mask", "inpaint"} | ({"insert"} if any(a.startswith(("i2e", "insert")) for a in arms) else set()) | \
+        ({"mask_insert"} if any(a.startswith("mte") for a in arms) else set())
     from ..backbones import Backend  # noqa: F401
-    cached = all((feat_dir / f"{v}.npz").exists() for v in need)
+    cached = all((feat_dir / (f"{v}{insert_tag}.npz" if v in ("insert", "mask_insert") else f"{v}.npz")).exists() for v in need)
     backend = None if cached else load_backend(backend_name, device)
-    rend = make_renderers(cache, BACKEND_SIZE[backend_name], donors)
-    V = {v: extract_view(backend, pool, rend[v], feat_dir / f"{v}.npz", device, batch_size, workers, desc=v)
+    rend = make_renderers(cache, BACKEND_SIZE[backend_name], donors, insert_fn)
+    fname = lambda v: f"{v}{insert_tag}.npz" if v in ("insert", "mask_insert") else f"{v}.npz"
+    V = {v: extract_view(backend, pool, rend[v], feat_dir / fname(v), device, batch_size, workers, desc=v)
          for v in sorted(need)}
     del backend; gc.collect(); torch.cuda.empty_cache()
     global _CTX
