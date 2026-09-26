@@ -51,3 +51,19 @@ spec U-Net, held-out Dice 0.890 vs 0.876).
 Sensitivity: the author-independent reconstruction (`results/real/isic2019/dino518_main`: hair-free < 0.1 %
 of pixels, hair ≥ 0.5 %, artifact-free clean test) gives C1/C3/C4/C5 but a null C2 (+0.012 [−0.042, +0.062]):
 the in-ROI harm depends on including lightly-haired images and on the strictly hair-free comparison group.
+
+## Leakage (§3.1) — controlled experiment (`scripts/run_leakage_experiment.py`)
+Same 2,437 images, same features and protocol; grouped split vs 5 random image-level splits (93 near-duplicate
+pHash ≤ 8 pairs cross train/test). ERM shortcut gap: 0.241 → 0.284 at 0 % (+18 %), 0.422 → 0.465 at 100 % (+10 %);
+mask − ERM: +0.184 → +0.223 (0 %), −0.129 → −0.088 (100 %). **Direction of the "27 %" claim supported; supported
+magnitude 10–18 %.**
+
+## E12 — overlap-contrast trap
+Author protocol, full ISIC 2019 spec cohort: A=1 hair r ≥ 0.5 vs A=0 hair r < 0.1. ERM corr 0.884 / rev 0.479;
+mask − ERM −0.083 [−0.097, −0.072]; balanced +0.169, DFR +0.214. **Not null** (spec: null). The spec's E12 predates
+E13 and likely used a different cohort; here the contrast is learnable and masking harms, consistent with the
+retention mechanism.
+
+## DermLIP availability
+`redlessone/DermLIP_PanDerm-base-w-PubMed-256` became gated (`gated="auto"`) on 2026-09-21, after the pilot ran;
+access is granted automatically after accepting the terms on the model page.

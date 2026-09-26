@@ -107,6 +107,17 @@ if e10.exists():
     add("E10", "clean melanoma AUROC after erasure", .814, j["H2"]["clean_auroc_leace"], source=str(e10))
     add("E10", "melanoma-head |Δp| after erasure", .058, j["H2"]["abs_dp_leace"], source=str(e10))
     add("E10", "LEACE projection rank", 1.0, float(j["H2"]["leace_rank"]), source=str(e10))
+# E12
+e12 = R / "spec_e13" / "dino518_e12_contrast" / "E12.json"
+if e12.exists():
+    j = json.loads(e12.read_text())["mask"]
+    add("E12", "overlap-contrast trap mask − ERM (spec: null)", .047, j["seed_delta_mean"], j["ci95_lo"], j["ci95_hi"], -.05, .15, str(e12))
+# §3.1 leakage
+lk = R / "leakage" / "LEAKAGE_SUMMARY.csv"
+if lk.exists():
+    l = pd.read_csv(lk); g = l[l.split == "grouped"].set_index("overlap").erm_gap; r = l[l.split != "grouped"].groupby("overlap").erm_gap.mean()
+    add("§3.1", "shortcut-gap inflation by leakage @0% (ratio − 1)", .27, float(r[0.0] / g[0.0] - 1), source=str(lk))
+    add("§3.1", "shortcut-gap inflation by leakage @100% (ratio − 1)", .27, float(r[1.0] / g[1.0] - 1), source=str(lk))
 # E8/E9
 for arm, ov, e, lo, hi in [("inpaint", 0.5, .211, .187, .234), ("inpaint", 1.0, .244, .218, .269),
                            ("inpaint_consistency", 0.5, .046, None, None), ("inpaint_consistency_lam0", 0.5, .036, None, None),
