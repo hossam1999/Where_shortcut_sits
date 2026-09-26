@@ -30,7 +30,8 @@ from ..utils import stable_int
 class RealCache:
     """Memmapped rgb/roi/artifact-mask arrays written by scripts/data/prepare_*.py."""
 
-    def __init__(self, cdir: Path, roi_file: str = "roi.npy", art_file: str = "hair.npy"):
+    def __init__(self, cdir: Path, roi_file: str = "roi.npy", art_file: str = "hair.npy", art_bit: int | None = None):
+        self.art_bit = art_bit  # bit-packed device masks (CXR): select one device type
         # grayscale caches (CXR) are stored with one channel and expanded on read
         self.gray = not (cdir / "rgb.npy").exists()
         self.rgb = np.load(cdir / ("gray.npy" if self.gray else "rgb.npy"), mmap_mode="r")
@@ -42,6 +43,8 @@ class RealCache:
     def get(self, i):
         j = self.index[i]
         art = np.asarray(self.art[j]) if self.art is not None else None
+        if art is not None and self.art_bit is not None:
+            art = ((art & self.art_bit) > 0).astype(np.uint8)
         img = np.asarray(self.rgb[j])
         if self.gray:
             img = np.repeat(img[..., None], 3, -1)

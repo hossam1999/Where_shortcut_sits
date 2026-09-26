@@ -22,16 +22,18 @@ ARMS = ("erm", "mask", "inpaint", "balanced", "dfr", "leace_paired", "leace_unpa
 
 
 def run_spec(envs: Dict, cache, backend_name: str, out_dir: Path, feat_dir: Path, donors: Sequence[str],
-             arms=ARMS, traps=("trapA", "trapB"), device=None, batch_size=64, workers=5):
+             arms=ARMS, traps=("trapA", "trapB"), device=None, batch_size=64, workers=5, extra_meta=None):
     device = device or torch.device("cuda")
     out_dir.mkdir(parents=True, exist_ok=True)
-    pool = sorted(set().union(*[set(d.image_id) for d in envs.values()]))
+    pool = sorted(set().union(*[set(d.image_id) for k, d in envs.items() if k[0] in traps]))
     pos = {k: j for j, k in enumerate(pool)}
-    backend = load_backend(backend_name, device)
-    rend = make_renderers(cache, BACKEND_SIZE[backend_name], donors)
     need = {"erm", "mask", "inpaint"} | ({"insert"} if any(a.startswith(("i2e", "insert")) for a in arms) else set())
-    V = {v: extract_view(backend, pool, rend[v], feat_dir / backend.name / f"{v}.npz", device, batch_size, workers,
-                         desc=v) for v in sorted(need)}
+    from ..backbones import Backend  # noqa: F401
+    cached = all((feat_dir / f"{v}.npz").exists() for v in need)
+    backend = None if cached else load_backend(backend_name, device)
+    rend = make_renderers(cache, BACKEND_SIZE[backend_name], donors)
+    V = {v: extract_view(backend, pool, rend[v], feat_dir / f"{v}.npz", device, batch_size, workers, desc=v)
+         for v in sorted(need)}
     del backend; gc.collect(); torch.cuda.empty_cache()
     X = lambda v, d: V[v][[pos[i] for i in d.image_id]]
     rows, frames = [], []
@@ -60,7 +62,7 @@ def run_spec(envs: Dict, cache, backend_name: str, out_dir: Path, feat_dir: Path
                             c = _G()
                         _, f = evaluate(c, thr, X(view, d), d.y.to_numpy(), d.image_id.to_numpy(), d.a.to_numpy(),
                                         {"backbone": backend_name, "trap": trap, "seed": seed, "fold": k,
-                                         "method": method, "env": env})
+                                         "method": method, "env": env, **(extra_meta or {})})
                         f["source"] = d.source.to_numpy()
                         frames.append(f)
 

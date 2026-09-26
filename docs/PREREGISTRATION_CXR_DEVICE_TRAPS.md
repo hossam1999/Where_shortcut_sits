@@ -40,3 +40,11 @@ Backbones: RAD-DINO @518 (primary; chest-X-ray foundation model), MedSigLIP-448,
 - **X5** paired LEACE gain < ½ best label-only gain.
 - **X6** (proposed) i2e − ERM > 0 in Trap A with clean AUROC loss ≤ 0.02 and correlated ≥ reversed − 0.02.
 Reported whatever the outcome; the primary backbone is RAD-DINO, the others are replications.
+
+## Amendment 1 (committed before any model fit; stricter)
+View matching to the A = 0 view mix is infeasible for Trap B: intubated patients are imaged supine (AP), so
+ETT images have almost no PA counterpart (matched cells collapse to 7–35 images). Both traps are therefore
+**restricted to AP radiographs**, which removes the view confound instead of re-weighting it. Counts after the
+amendment (outcome-free): every matched cell ≥ 25 for all four pre-registered diseases; estimated reversed-test
+positives Trap A / Trap B: Infiltration 218 / 3,318, Effusion 125 / 2,316, Atelectasis 140 / 1,918,
+Consolidation 66 / 915. Disease selection unchanged.

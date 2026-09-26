@@ -57,7 +57,7 @@ def _max_sub(n1, n0, p):
 
 def matched_pool(c: pd.DataFrame, trap: str, seed: int = 20260926) -> pd.DataFrame:
     """A=0 (all) + A=1 subsampled per label to the A=0 source mix."""
-    a0 = c[c.A0]
+    a0 = c[c[f"{trap}_A0"]] if f"{trap}_A0" in c else c[c.A0]  # per-trap artifact-free group (CXR)
     a1 = c[c[f"{trap}_A1"]]
     keep = [a0.assign(a=0)]
     for y in (0, 1):
@@ -117,13 +117,13 @@ def _env(pool: pd.DataFrame, env: str, seed: int, fold: int, trap: str) -> pd.Da
     return pd.concat(out)[["image_id", "y", "a", "source"]].reset_index(drop=True)
 
 
-def build_spec_envs(c: pd.DataFrame, traps=("trapA", "trapB"), seeds=SEEDS, pht: int = 8) -> Dict:
+def build_spec_envs(c: pd.DataFrame, traps=("trapA", "trapB"), seeds=SEEDS, pht: int = 8, group_col=None) -> Dict:
     """{(trap, seed, fold, env): DataFrame}. env in train_corr, val_clean, val_groups, test_corr, test_rev, clean,
     train_all (all training-fold pool images, for paired erasure / insertion)."""
     envs = {}
     for trap in traps:
         pool = matched_pool(c, trap)
-        pool["group"] = pool_groups(pool, pht)
+        pool["group"] = pool[group_col].to_numpy() if group_col else pool_groups(pool, pht)
         for seed in seeds:
             sg = StratifiedGroupKFold(5, shuffle=True, random_state=seed)
             fold = np.zeros(len(pool), int)

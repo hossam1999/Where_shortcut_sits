@@ -20,6 +20,8 @@ from wtss.experiments.real_traps import RealCache
 from wtss.experiments.spec_traps import run_spec
 from wtss.stats import difference_of_deltas, hierarchical_paired_bootstrap
 
+BACKBONE_DIR = {"dino518": "dinov2_b14_518", "dermlip224": "dermlip_panderm_224", "dino224": "dinov2_b14_224"}
+
 EXPECTED = {  # docs/REPLICATION_SPEC.md E13 / E15: (trap, arm) -> (clean, rev, delta, lo, hi)
     "dino518": {("trapA", "erm"): (0.782, 0.516, None, None, None), ("trapB", "erm"): (None, 0.510, None, None, None),
                 ("trapA", "mask"): (0.769, 0.452, -0.064, -0.079, -0.049), ("trapB", "mask"): (None, None, 0.124, 0.105, 0.143),
@@ -74,7 +76,8 @@ def main():
     cache = RealCache(paths.DATA / "isic2019" / "prepared" / "cache_518", roi_file="roi_spec.npy")
     donors = c[~c.A0 & (c[a.r_col] >= 0.1) & (c[a.r_col] < 0.5)].image_id.tolist()
     if not (out / "predictions.csv.gz").exists():
-        run_spec(envs, cache, a.backbone, out, paths.CACHE / "features" / "spec_isic2019", donors, device=torch.device("cuda"))
+        run_spec(envs, cache, a.backbone, out, paths.CACHE / "features" / "spec_isic2019" / BACKBONE_DIR[a.backbone], donors,
+                 device=torch.device("cuda"))
     preds = pd.read_csv(out / "predictions.csv.gz")
     arms = [m for m in preds.method.unique() if m != "erm"]
     jobs, keys = [], []
