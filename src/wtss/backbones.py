@@ -46,13 +46,11 @@ def load_dino(size: int, device) -> Backend:
 
 def _derm1m_src() -> Path:
     repo = CACHE / "third_party" / "Derm1M"
-    vendored = Path("/root/isic_pcam_code_results/isic_overlap_pilot_patch_v2/third_party/Derm1M")
-    if not (repo / "src" / "open_clip").exists():
+    # always the official repo: the archived copy lacks the tokenizer vocab (.gz files were not archived)
+    if not (repo / "src" / "open_clip" / "bpe_simple_vocab_16e6.txt.gz").exists():
+        subprocess.run(["rm", "-rf", str(repo)], check=True)
         repo.parent.mkdir(parents=True, exist_ok=True)
-        if (vendored / "src" / "open_clip").exists():
-            subprocess.run(["cp", "-r", str(vendored), str(repo)], check=True)
-        else:
-            subprocess.run(["git", "clone", "--depth", "1", "https://github.com/SiyuanYan1/Derm1M.git", str(repo)], check=True)
+        subprocess.run(["git", "clone", "--depth", "1", "https://github.com/SiyuanYan1/Derm1M.git", str(repo)], check=True)
     return repo / "src"
 
 
@@ -89,6 +87,32 @@ def load_raddino(device, size: int = 518) -> Backend:
     return Backend(f"raddino_{size}", size, model, pre, enc)
 
 
+def load_medsiglip(device, size: int = 448) -> Backend:
+    """MedSigLIP-448 (Google Health AI, 2025): SigLIP vision tower trained on medical images incl. chest X-rays.
+    Gated on Hugging Face: needs HF_TOKEN with the licence accepted."""
+    import os
+
+    from transformers import AutoModel
+
+    model = AutoModel.from_pretrained("google/medsiglip-448", cache_dir=str(CACHE / "hf"),
+                                      token=os.environ.get("HF_TOKEN")).eval().to(device)
+    for p in model.parameters():
+        p.requires_grad_(False)
+    mean = torch.tensor([0.5, 0.5, 0.5]).view(3, 1, 1)
+    std = torch.tensor([0.5, 0.5, 0.5]).view(3, 1, 1)
+
+    def pre(img: Image.Image) -> torch.Tensor:
+        if img.size != (size, size):
+            img = img.resize((size, size), Image.BILINEAR)
+        return (TF.to_tensor(img) - mean) / std
+
+    def enc(x):
+        out = model.get_image_features(pixel_values=x)
+        return out.pooler_output if hasattr(out, "pooler_output") else out
+
+    return Backend(f"medsiglip_{size}", size, model, pre, enc)
+
+
 def load_backend(name: str, device) -> Backend:
     if name == "dino224":
         return load_dino(224, device)
@@ -98,7 +122,10 @@ def load_backend(name: str, device) -> Backend:
         return load_dermlip(device)
     if name == "raddino518":
         return load_raddino(device, 518)
+    if name == "medsiglip448":
+        return load_medsiglip(device, 448)
     raise ValueError(name)
 
 
-BACKEND_SIZE = {"dino224": 224, "dino518": 518, "dermlip224": 224, "raddino518": 518}
+BACKEND_SIZE = {"dino224": 224, "dino518": 518, "dermlip224": 224, "raddino518": 518, "medsiglip448": 518}
+# medsiglip448 renders views at 518 (shared caches) and resizes to its native 448 in preprocessing

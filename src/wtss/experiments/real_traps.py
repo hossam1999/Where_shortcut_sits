@@ -30,9 +30,9 @@ from ..utils import stable_int
 class RealCache:
     """Memmapped rgb/roi/artifact-mask arrays written by scripts/data/prepare_*.py."""
 
-    def __init__(self, cdir: Path):
+    def __init__(self, cdir: Path, roi_file: str = "roi.npy"):
         self.rgb = np.load(cdir / "rgb.npy", mmap_mode="r")
-        self.roi = np.load(cdir / "roi.npy", mmap_mode="r")
+        self.roi = np.load(cdir / roi_file, mmap_mode="r")
         self.art = np.load(cdir / "hair.npy", mmap_mode="r") if (cdir / "hair.npy").exists() else None
         self.ids = (cdir / "ids.txt").read_text().split()
         self.index = {k: j for j, k in enumerate(self.ids)}
