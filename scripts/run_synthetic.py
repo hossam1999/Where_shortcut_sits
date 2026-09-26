@@ -29,6 +29,10 @@ def cohort_and_placements(name: str, size: int):
         from wtss.data.cxr import load_nih_synthetic_cohort
 
         return load_nih_synthetic_cohort(size)
+    if name == "thyroid":
+        from wtss.data.thyroid import load_thyroid_synthetic_cohort
+
+        return load_thyroid_synthetic_cohort(size)
     raise ValueError(name)
 
 

@@ -34,3 +34,14 @@ Backbones: DINOv2 ViT-B/14 @518 (primary), MedSigLIP-448 (medical foundation mod
 - **T5** paired LEACE gain < ½ best label-only gain.
 - **T6** U-MtE − mask > 0 in Trap A; U-I2E − ERM > 0 in Trap A; no gaming (clean loss ≤ 0.02, corr ≥ rev − 0.02).
 Outcomes reported whichever way they go.
+
+## Amendment 1 (2026-09-27, before any synthetic-thyroid model is fitted) — controlled synthetic calipers
+Real-marker results (DINOv2) are known at this point: mask − ERM is positive in both traps, much smaller in Trap A.
+To test the location effect under control, the thesis Result-1 design is transferred unchanged:
+- Cohort: marker-free images only (1,663 after common support; `wtss.data.thyroid`); split TN3K test -> test,
+  trainval -> train/val 80/20 by pHash group.
+- Artifact: synthetic sonographer caliper (`wtss.synthetic.draw_caliper`: dotted line + '+' ends), 65x19 box at
+  518 px (same geometry as the ISIC ruler); overlap with the nodule r ∈ {0, 0.25, 0.5, 0.75, 1}.
+- Seeds 42/123/456; arms erm, mask, inpaint, balanced, dfr, leace + proposed arms (I2E, MtE, U-I2E, U-MtE).
+- Claims: **TS1** mask − ERM (reversed AUROC) decreases with overlap (r=1 minus r=0 interaction < 0);
+  **TS2** mask − ERM < 0 at r = 1; **TS3** mask − ERM > 0 at r = 0; **TS4** U-MtE − mask > 0 at r = 1.

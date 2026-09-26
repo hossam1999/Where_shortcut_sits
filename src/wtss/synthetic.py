@@ -173,6 +173,31 @@ def draw_tube(img: Image.Image, x: int, y: int, w: int, h: int, image_id: str = 
     return Image.fromarray(out.clip(0, 255).astype(np.uint8)), m
 
 
+# --------------------------------------------------------------------------- ultrasound caliper
+def draw_caliper(img: Image.Image, x: int, y: int, w: int, h: int, image_id: str = "") -> Tuple[Image.Image, np.ndarray]:
+    """Sonographer measurement marker inside box (x,y,w,h): evenly spaced bright dots along the box's long
+    axis with '+' calipers at both ends (appearance of the TN3K markers; see wtss.data.us_markers)."""
+    rng = np.random.default_rng(stable_int("caliper_style_v1", image_id))
+    arr = np.asarray(img.convert("RGB")).copy()
+    m = np.zeros(arr.shape[:2], np.uint8)
+    horiz = w >= h
+    L = (w if horiz else h) - 1
+    c0 = (y + h // 2) if horiz else (x + w // 2)
+    arm = max(2, min(w, h) // 2 - 1)
+    step = int(rng.integers(5, 9))
+    grey = int(rng.integers(215, 256))
+    pts = [(x + t, c0) if horiz else (c0, y + t) for t in range(arm + step, L - arm - step + 1, step)]
+    for px, py in pts:
+        cv2.circle(m, (int(px), int(py)), 1, 1, -1)
+    for t in (arm, L - arm):  # '+' ends
+        px, py = (x + t, c0) if horiz else (c0, y + t)
+        cv2.line(m, (px - arm, py), (px + arm, py), 1, 1)
+        cv2.line(m, (px, py - arm), (px, py + arm), 1, 1)
+    m = m & _box(m.shape, x, y, w, h)
+    arr[m == 1] = grey
+    return Image.fromarray(arr), m
+
+
 def _box(shape, x, y, w, h):
     b = np.zeros(shape, np.uint8)
     b[y:y + h, x:x + w] = 1
