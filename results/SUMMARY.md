@@ -2,7 +2,7 @@
 
 Rule: MATCH = same sign, same CI-excludes-0 verdict, |Δ| ≤ 0.02; SIGN+CI = sign and CI verdict match, |Δ| > 0.02; MISMATCH otherwise.
 
-Verdict counts: {'MATCH': 47, 'PENDING': 27, 'SIGN+CI': 10, 'MISMATCH': 1}
+Verdict counts: {'MATCH': 57, 'PENDING': 16, 'SIGN+CI': 10, 'MISMATCH': 2}
 
 | E     | quantity                                 | expected                | obtained                | verdict   | source                                                                                             |
 |:------|:-----------------------------------------|:------------------------|:------------------------|:----------|:---------------------------------------------------------------------------------------------------|
@@ -28,17 +28,17 @@ Verdict counts: {'MATCH': 47, 'PENDING': 27, 'SIGN+CI': 10, 'MISMATCH': 1}
 | E3    | variable ruler balanced − ERM @0%        | 0.103                   | PENDING                 | PENDING   | /root/wtss/results/synthetic/isic2018/dino518_ruler_variable_corr_stress/bootstrap_vs_erm.csv      |
 | E3    | variable ruler balanced − ERM @50%       | 0.171                   | PENDING                 | PENDING   | /root/wtss/results/synthetic/isic2018/dino518_ruler_variable_corr_stress/bootstrap_vs_erm.csv      |
 | E3    | variable ruler balanced − ERM @100%      | 0.222                   | PENDING                 | PENDING   | /root/wtss/results/synthetic/isic2018/dino518_ruler_variable_corr_stress/bootstrap_vs_erm.csv      |
-| E4    | occlusion (50/50) mask − ERM @0%         | 0.035                   | PENDING                 | PENDING   | /root/wtss/results/synthetic/isic2018/dino518_ruler_fixed_occlusion_occlusion/bootstrap_vs_erm.csv |
-| E4    | occlusion (50/50) mask − ERM @50%        | 0.033                   | PENDING                 | PENDING   | /root/wtss/results/synthetic/isic2018/dino518_ruler_fixed_occlusion_occlusion/bootstrap_vs_erm.csv |
-| E4    | occlusion (50/50) mask − ERM @100%       | 0.039                   | PENDING                 | PENDING   | /root/wtss/results/synthetic/isic2018/dino518_ruler_fixed_occlusion_occlusion/bootstrap_vs_erm.csv |
-| E5    | dilate0 − ERM @50%                       | -0.097                  | PENDING                 | PENDING   | /root/wtss/results/synthetic/isic2018/dino518_ruler_fixed_corr_dilation/bootstrap_vs_erm.csv       |
-| E5    | dilate10 − ERM @50%                      | -0.138                  | PENDING                 | PENDING   | /root/wtss/results/synthetic/isic2018/dino518_ruler_fixed_corr_dilation/bootstrap_vs_erm.csv       |
-| E5    | dilate25 − ERM @50%                      | -0.153                  | PENDING                 | PENDING   | /root/wtss/results/synthetic/isic2018/dino518_ruler_fixed_corr_dilation/bootstrap_vs_erm.csv       |
-| E5    | dilate50 − ERM @50%                      | -0.142                  | PENDING                 | PENDING   | /root/wtss/results/synthetic/isic2018/dino518_ruler_fixed_corr_dilation/bootstrap_vs_erm.csv       |
-| E5    | dilate0 − ERM @100%                      | -0.128                  | PENDING                 | PENDING   | /root/wtss/results/synthetic/isic2018/dino518_ruler_fixed_corr_dilation/bootstrap_vs_erm.csv       |
-| E5    | dilate10 − ERM @100%                     | -0.143                  | PENDING                 | PENDING   | /root/wtss/results/synthetic/isic2018/dino518_ruler_fixed_corr_dilation/bootstrap_vs_erm.csv       |
-| E5    | dilate25 − ERM @100%                     | -0.144                  | PENDING                 | PENDING   | /root/wtss/results/synthetic/isic2018/dino518_ruler_fixed_corr_dilation/bootstrap_vs_erm.csv       |
-| E5    | dilate50 − ERM @100%                     | -0.138                  | PENDING                 | PENDING   | /root/wtss/results/synthetic/isic2018/dino518_ruler_fixed_corr_dilation/bootstrap_vs_erm.csv       |
+| E4    | occlusion (50/50) mask − ERM @0%         | +0.035 [+0.006, +0.065] | +0.036 [+0.007, +0.065] | MATCH     | /root/wtss/results/synthetic/isic2018/dino518_ruler_fixed_occlusion_occlusion/bootstrap_vs_erm.csv |
+| E4    | occlusion (50/50) mask − ERM @50%        | +0.033 [-0.000, +0.066] | +0.040 [+0.011, +0.070] | MISMATCH  | /root/wtss/results/synthetic/isic2018/dino518_ruler_fixed_occlusion_occlusion/bootstrap_vs_erm.csv |
+| E4    | occlusion (50/50) mask − ERM @100%       | +0.039 [+0.010, +0.067] | +0.039 [+0.011, +0.068] | MATCH     | /root/wtss/results/synthetic/isic2018/dino518_ruler_fixed_occlusion_occlusion/bootstrap_vs_erm.csv |
+| E5    | dilate0 − ERM @50%                       | -0.097                  | -0.097 [-0.138, -0.057] | MATCH     | /root/wtss/results/synthetic/isic2018/dino518_ruler_fixed_corr_dilation/bootstrap_vs_erm.csv       |
+| E5    | dilate10 − ERM @50%                      | -0.138                  | -0.138 [-0.178, -0.099] | MATCH     | /root/wtss/results/synthetic/isic2018/dino518_ruler_fixed_corr_dilation/bootstrap_vs_erm.csv       |
+| E5    | dilate25 − ERM @50%                      | -0.153                  | -0.154 [-0.194, -0.115] | MATCH     | /root/wtss/results/synthetic/isic2018/dino518_ruler_fixed_corr_dilation/bootstrap_vs_erm.csv       |
+| E5    | dilate50 − ERM @50%                      | -0.142                  | -0.142 [-0.182, -0.105] | MATCH     | /root/wtss/results/synthetic/isic2018/dino518_ruler_fixed_corr_dilation/bootstrap_vs_erm.csv       |
+| E5    | dilate0 − ERM @100%                      | -0.128                  | -0.129 [-0.170, -0.086] | MATCH     | /root/wtss/results/synthetic/isic2018/dino518_ruler_fixed_corr_dilation/bootstrap_vs_erm.csv       |
+| E5    | dilate10 − ERM @100%                     | -0.143                  | -0.144 [-0.184, -0.103] | MATCH     | /root/wtss/results/synthetic/isic2018/dino518_ruler_fixed_corr_dilation/bootstrap_vs_erm.csv       |
+| E5    | dilate25 − ERM @100%                     | -0.144                  | -0.144 [-0.184, -0.106] | MATCH     | /root/wtss/results/synthetic/isic2018/dino518_ruler_fixed_corr_dilation/bootstrap_vs_erm.csv       |
+| E5    | dilate50 − ERM @100%                     | -0.138                  | -0.139 [-0.177, -0.099] | MATCH     | /root/wtss/results/synthetic/isic2018/dino518_ruler_fixed_corr_dilation/bootstrap_vs_erm.csv       |
 | E6    | |Δp| erm @100%                           | +0.235                  | +0.235                  | MATCH     | /root/wtss/results/synthetic/isic2018/dino518_ruler_fixed_corr_main/counterfactual_summary.csv     |
 | E6    | |Δp| mask @100%                          | +0.490                  | +0.491                  | MATCH     | /root/wtss/results/synthetic/isic2018/dino518_ruler_fixed_corr_main/counterfactual_summary.csv     |
 | E6    | |Δp| mask @0%                            | +0.000                  | +0.000                  | MATCH     | /root/wtss/results/synthetic/isic2018/dino518_ruler_fixed_corr_main/counterfactual_summary.csv     |

@@ -19,6 +19,15 @@ import pandas as pd
 from sklearn.metrics import roc_auc_score
 
 
+KEEP = ["seed", "method", "image_id", "y", "prob"]
+
+
+def slim(preds: pd.DataFrame, env: str, methods, cluster_col: str = "seed") -> pd.DataFrame:
+    """Rows/columns needed by one paired bootstrap (keeps worker payloads small)."""
+    cols = [c for c in dict.fromkeys(KEEP + [cluster_col]) if c in preds.columns] + ["env"]
+    return preds.loc[(preds.env == env) & preds.method.isin(list(methods)), cols]
+
+
 def safe_auc(y, prob) -> float:
     y = np.asarray(y)
     return float(roc_auc_score(y, prob)) if len(np.unique(y)) == 2 else float("nan")

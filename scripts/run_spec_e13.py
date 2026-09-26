@@ -18,7 +18,7 @@ from wtss import paths
 from wtss.data.isic2019_spec import build_spec_envs, load_spec_cohort, spec_counts
 from wtss.experiments.real_traps import RealCache
 from wtss.experiments.spec_traps import run_spec
-from wtss.stats import difference_of_deltas, hierarchical_paired_bootstrap
+from wtss.stats import difference_of_deltas, hierarchical_paired_bootstrap, slim
 
 BACKBONE_DIR = {"dino518": "dinov2_b14_518", "dermlip224": "dermlip_panderm_224", "dino224": "dinov2_b14_224"}
 
@@ -85,10 +85,10 @@ def main():
         q = preds[preds.trap == trap]
         for arm in arms:
             for env in ("test_rev", "clean"):
-                jobs.append((q, arm, env, 20260918 + sum(map(ord, arm + trap + env)))); keys.append((trap, arm, env, "all"))
+                jobs.append((slim(q, env, (arm, "erm")), arm, env, 20260918 + sum(map(ord, arm + trap + env)))); keys.append((trap, arm, env, "all"))
         for s in ("HAM", "BCN"):
-            jobs.append((q[q.source == s], "mask", "test_rev", 7)); keys.append((trap, "mask", "test_rev", s))
-    with ProcessPoolExecutor(8) as ex:
+            jobs.append((slim(q[q.source == s], "test_rev", ("mask", "erm")), "mask", "test_rev", 7)); keys.append((trap, "mask", "test_rev", s))
+    with ProcessPoolExecutor(4) as ex:
         res = list(ex.map(_b, jobs))
     boot = pd.DataFrame([{"trap": t, "arm": m, "env": e, "source": s, **r} for (t, m, e, s), r in zip(keys, res)])
     boot.to_csv(out / "bootstrap_vs_erm.csv", index=False)

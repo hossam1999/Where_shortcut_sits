@@ -195,7 +195,7 @@ def run_synthetic(cohort, backend_name: str, placements: Dict, out_dir: Path, cf
 
 
 def analyse_synthetic(out_dir: Path, baseline: str = "erm", n_boot: int = 10000, lo=0.0, hi=1.0,
-                      workers: int = 8) -> pd.DataFrame:
+                      workers: int = 4) -> pd.DataFrame:
     """Bootstrap tables: every arm vs ERM at every overlap; location interaction; same-head |Δp|."""
     from concurrent.futures import ProcessPoolExecutor
 
@@ -203,7 +203,8 @@ def analyse_synthetic(out_dir: Path, baseline: str = "erm", n_boot: int = 10000,
     env = "test_rev" if "test_rev" in set(preds.env) else "test_uncorr"
     arms = [a for a in preds.method.unique() if a != baseline]
     ovs = sorted(preds.overlap.unique())
-    jobs = [(preds[np.isclose(preds.overlap, ov)], a, baseline, env, n_boot,
+    from ..stats import slim
+    jobs = [(slim(preds[np.isclose(preds.overlap, ov)], env, (a, baseline)), a, baseline, env, n_boot,
              20260918 + int(ov * 1000) + sum(map(ord, a))) for a in arms for ov in ovs]
     with ProcessPoolExecutor(workers) as ex:
         res = list(ex.map(_boot_job, jobs))
@@ -212,7 +213,10 @@ def analyse_synthetic(out_dir: Path, baseline: str = "erm", n_boot: int = 10000,
     inter = []
     if lo in ovs and hi in ovs and env == "test_rev":
         with ProcessPoolExecutor(workers) as ex:
-            inter = list(ex.map(_inter_job, [(preds, a, baseline, env, lo, hi, n_boot) for a in arms]))
+            cols = ["seed", "method", "image_id", "y", "prob", "overlap", "env"]
+            inter = list(ex.map(_inter_job, [(preds.loc[(preds.env == env) & preds.method.isin([a, baseline]) &
+                                                         preds.overlap.isin([lo, hi]), cols], a, baseline, env, lo, hi, n_boot)
+                                             for a in arms]))
         pd.DataFrame(inter).to_csv(out_dir / "location_interaction.csv", index=False)
     cf = same_head_counterfactual(preds, env)
     if len(cf):

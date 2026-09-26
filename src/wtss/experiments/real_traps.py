@@ -23,7 +23,7 @@ from ..evaluation import evaluate, same_head_counterfactual, select_threshold_cl
 from ..features import extract_view
 from ..methods.insertion import fit_difference_subspace, insert_aug_head, rank1_head
 from ..ops import apply_inpaint, apply_roi_mask
-from ..stats import difference_of_deltas, hierarchical_paired_bootstrap
+from ..stats import difference_of_deltas, hierarchical_paired_bootstrap, slim
 from ..utils import stable_int
 
 
@@ -219,7 +219,7 @@ def _x(j):
     return difference_of_deltas(p1, p2, a, b, env, n, s)
 
 
-def analyse_traps(out_dir: Path, n_boot: int = 10000, workers: int = 8, sources: Sequence[str] = ()) -> Dict:
+def analyse_traps(out_dir: Path, n_boot: int = 10000, workers: int = 4, sources: Sequence[str] = ()) -> Dict:
     preds = pd.read_csv(out_dir / "predictions.csv.gz")
     arms = [a for a in preds.method.unique() if a != "erm"]
     jobs, keys = [], []
@@ -227,7 +227,7 @@ def analyse_traps(out_dir: Path, n_boot: int = 10000, workers: int = 8, sources:
         q = preds[preds.trap == trap]
         for env in ["test_rev", "clean", "test_corr"]:
             for a in arms:
-                jobs.append((q, a, "erm", env, n_boot, 20260918 + sum(map(ord, a + trap + env))))
+                jobs.append((slim(q, env, (a, "erm")), a, "erm", env, n_boot, 20260918 + sum(map(ord, a + trap + env))))
                 keys.append((trap, env, a, "all"))
         for s in sources:
             qs = q[q.source == s]

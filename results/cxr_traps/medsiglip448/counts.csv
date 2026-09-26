@@ -1,0 +1,9 @@
+disease,trap,A0_Y0,A0_Y1,A1_Y0,A1_Y1,rev_pos_est
+Infiltration,trapA,502,197,2656,988,218
+Infiltration,trapB,11225,2987,1501,821,3318
+Effusion,trapA,586,113,3008,636,125
+Effusion,trapB,12127,2085,1808,514,2316
+Atelectasis,trapA,573,126,3155,489,140
+Atelectasis,trapB,12485,1727,1984,338,1918
+Consolidation,trapA,639,60,3345,299,66
+Consolidation,trapB,13388,824,2036,286,915

@@ -17,7 +17,7 @@ from wtss import paths
 from wtss.data.isic2019_spec import build_spec_envs, matched_pool
 from wtss.experiments.real_traps import RealCache
 from wtss.experiments.spec_traps import run_spec
-from wtss.stats import difference_of_deltas, hierarchical_paired_bootstrap
+from wtss.stats import difference_of_deltas, hierarchical_paired_bootstrap, slim
 
 DISEASES = ("Infiltration", "Effusion", "Atelectasis", "Consolidation")
 TRAPS = {"trapA": ("CVC", 4), "trapB": ("ETT", 1)}  # trap -> (device, bit in dev.npy)
@@ -90,9 +90,9 @@ def main():
             q = preds[preds.trap == trap]
             for arm in arms:
                 for env in ("test_rev", "clean"):
-                    jobs.append((q, arm, env, 20260918 + sum(map(ord, arm + trap + env + dis))))
+                    jobs.append((slim(q, env, (arm, "erm")), arm, env, 20260918 + sum(map(ord, arm + trap + env + dis))))
                     keys.append((trap, arm, env))
-        with ProcessPoolExecutor(6) as ex:
+        with ProcessPoolExecutor(4) as ex:
             res = list(ex.map(_b, jobs))
         boot = pd.DataFrame([{"disease": dis, "trap": t, "arm": m, "env": e, **r} for (t, m, e), r in zip(keys, res)])
         boot.to_csv(out / "bootstrap_vs_erm.csv", index=False)
