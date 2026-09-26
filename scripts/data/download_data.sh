@@ -32,6 +32,13 @@ for k, n in {0: "vignetting.zip", 1: "hair_ruler.zip", 2: "inkmark.zip"}.items()
                      impersonate="chrome", timeout=3600, stream=True)
     with open(p, "wb") as f:
         for c in r.iter_content(chunk_size=1 << 20): f.write(c)
+# Mendeley hair masks (Kabir et al., doi:10.17632/j5ywpd2p27.2, CC BY 4.0) via the public zip endpoint
+import zipfile, io
+mh = f"{D}/mendeley_hair"
+if not os.path.isdir(mh):
+    os.makedirs(mh, exist_ok=True)
+    r = requests.get("https://data.mendeley.com/public-api/zip/j5ywpd2p27/download/2", impersonate="chrome", timeout=3600)
+    zipfile.ZipFile(io.BytesIO(r.content)).extractall(mh)
 from huggingface_hub import hf_hub_download
 files = ["data/Data_Entry_2017_v2020.csv", "data/BBox_List_2017.csv", "data/train_val_list.txt", "data/test_list.txt"] + \
         [f"data/images/images_{i:03d}.zip" for i in range(1, 13)]

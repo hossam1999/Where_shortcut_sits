@@ -81,6 +81,32 @@ if cf.exists():
     c = pd.read_csv(cf).set_index(["method", "overlap"]).abs_delta_p
     for (m, ov, e) in [("erm", 1.0, .235), ("mask", 1.0, .490), ("mask", 0.0, .000), ("erm", 0.0, .128), ("erm", 0.5, .195)]:
         add("E6", f"|Δp| {m} @{int(ov * 100)}%", e, float(c.get((m, ov), np.nan)), source=str(cf))
+# E7
+e7f = R / "analysis" / "E7_lesion_tertiles.csv"
+if e7f.exists():
+    e7 = pd.read_csv(e7f).set_index(["overlap", "tertile"]).mask_minus_erm
+    for (ov, t, e) in [(0.0, "large", .249), (0.0, "medium", .214), (0.0, "small", .150), (0.5, "large", .087),
+                       (0.5, "medium", -.129), (0.5, "small", -.325), (1.0, "large", .064), (1.0, "medium", -.158), (1.0, "small", -.364)]:
+        add("E7", f"mask − ERM, {t} lesions @{int(ov * 100)}%", e, float(e7.get((ov, t), np.nan)), source=str(e7f))
+# E14
+e14f = R / "analysis" / "E14_area_ratio.json"
+if e14f.exists():
+    j = json.loads(e14f.read_text())
+    add("E14", "in-lesion hair median area ratio", .033, j["hair_ratio_median_trapA"], source=str(e14f))
+    for t, e in zip(("T1", "T2", "T3"), (-.064, -.057, -.059)):
+        add("E14", f"Trap A mask − ERM, area-ratio tertile {t}", e, j[t]["seed_delta_mean"], j[t]["ci95_lo"], j[t]["ci95_hi"],
+            -1, -0.001, str(e14f))
+# E10
+e10 = R / "analysis" / "E10" / "E10.json"
+if e10.exists():
+    j = json.loads(e10.read_text())
+    add("E10", "hair decodability test AUROC", .943, j["H1"]["auroc"], *j["H1"]["ci"], .919, .964, str(e10))
+    add("E10", "detector mean IoU", .22, j["detector"]["mean_iou"], source=str(e10))
+    add("E10", "detector median IoU", .18, j["detector"]["median_iou"], source=str(e10))
+    add("E10", "LEACE A-decoder after erasure", .500, j["H2"]["A_decoder_leace"], source=str(e10))
+    add("E10", "clean melanoma AUROC after erasure", .814, j["H2"]["clean_auroc_leace"], source=str(e10))
+    add("E10", "melanoma-head |Δp| after erasure", .058, j["H2"]["abs_dp_leace"], source=str(e10))
+    add("E10", "LEACE projection rank", 1.0, float(j["H2"]["leace_rank"]), source=str(e10))
 # E8/E9
 for arm, ov, e, lo, hi in [("inpaint", 0.5, .211, .187, .234), ("inpaint", 1.0, .244, .218, .269),
                            ("inpaint_consistency", 0.5, .046, None, None), ("inpaint_consistency_lam0", 0.5, .036, None, None),
