@@ -122,9 +122,18 @@ def run_spec(envs: Dict, cache, backend_name: str, out_dir: Path, feat_dir: Path
     import multiprocessing as mp
     frames = []
     # (seed, fold) fits are independent: fork-based pool shares the cached features copy-on-write
-    with mp.get_context("fork").Pool(n_jobs) as pool:
-        for (trap, seed, k), fr in zip(jobs, pool.imap(_fold_job, jobs)):
-            frames.extend(fr)
+    # Forking after torch/CUDA ran in this process can deadlock workers (OpenMP / CUDA state). Parallelise only
+    # when no backbone was loaded here (all views cached); otherwise fit sequentially.
+    if cached and n_jobs > 1:
+        with mp.get_context("fork").Pool(n_jobs) as pool:
+            results = pool.imap(_fold_job, jobs)
+            for (trap, seed, k), fr in zip(jobs, results):
+                frames.extend(fr)
+                if k == 4:
+                    print(f"[spec] {backend_name} {trap} seed {seed} done", flush=True)
+    else:
+        for trap, seed, k in jobs:
+            frames.extend(_fold_job((trap, seed, k)))
             if k == 4:
                 print(f"[spec] {backend_name} {trap} seed {seed} done", flush=True)
     preds = pd.concat(frames, ignore_index=True)
