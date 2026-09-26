@@ -1,0 +1,12 @@
+[build-system]
+requires = ["setuptools>=68"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "wtss"
+version = "1.0.0"
+description = "Where the Shortcut Sits: location-dependent failure of ROI-based artifact mitigation, and localisation-free Insert-to-Erase"
+requires-python = ">=3.10"
+
+[tool.setuptools.packages.find]
+where = ["src"]

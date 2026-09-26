@@ -8,7 +8,11 @@ Outputs (under $WTSS_DATA/isic2019/prepared):
 Steps
   1. unzip images, artifact masks (Wegley et al. 2026, Scholars' Mine doi:10.71674/man1-qa33),
      HAM10000 manual lesion masks (Tschandl 2020), ISIC 2018 Task 1 manual lesion masks;
-  2. leakage groups: union-find over lesion_id and pHash Hamming <= 8 (identical rule to the pilot);
+  2. leakage groups: union-find over lesion_id and pHash Hamming <= 2. The pilot used <= 8 on 2,594
+     images; at ISIC 2019 scale that threshold chains unrelated lesions into one component of 10,974
+     images (same-lesion precision of pHash pairs: 82% at d=0, 50% at d=2, 18% at d=4, 2% at d=8), so
+     the threshold is lowered to 2 (largest group 54). Cross-fold near-duplicates are audited separately
+     with DINOv2 embeddings (scripts/verify/near_duplicate_audit.py);
   3. lesion mask: manual (HAM10000 or ISIC 2018 Task 1) where available, else U-Net prediction
      (``scripts/data/train_lesion_unet.py`` must run first for those images);
   4. per-image artifact geometry at 518 px: hair fraction, hair-lesion overlap r, ink, vignetting.
@@ -126,7 +130,8 @@ def per_image(args):
 
 def main():
     ap = argparse.ArgumentParser()
-    ap.add_argument("--stage", choices=["unzip", "groups", "cache"], required=True)
+    ap.add_argument("--stage", choices=["unzip", "groups", "regroup", "cache"], required=True)
+    ap.add_argument("--phash_threshold", type=int, default=2)
     ap.add_argument("--size", type=int, default=518)
     ap.add_argument("--workers", type=int, default=8)
     a = ap.parse_args()
@@ -152,13 +157,23 @@ def main():
     imgs = find_file(paths.ISIC2019_IMAGES, "*.jpg")
     df["image_path"] = [str(imgs[f"{i}.jpg"]) for i in df.image_id]
 
+    if a.stage == "regroup":  # recompute groups from saved hashes with a new threshold
+        g = pd.read_csv(prep / "cohort_groups.csv")
+        hs = np.array([int(x, 16) for x in g.phash_hex], dtype=np.uint64)
+        roots, edges = leakage_groups(g, hs, a.phash_threshold)
+        g["group"] = roots
+        print(f"[groups] pHash edges<={a.phash_threshold}: {edges}; groups: {g.group.nunique()}; "
+              f"largest: {g.group.value_counts().iloc[0]}")
+        g.to_csv(prep / "cohort_groups.csv", index=False)
+        return
+
     if a.stage == "groups":
         with ProcessPoolExecutor(a.workers) as ex:
             hs = list(tqdm(ex.map(phash_one, df.image_path, chunksize=64), total=len(df), desc="pHash"))
         df["phash_hex"] = [f"{h:016x}" for h in hs]
-        roots, edges = leakage_groups(df, np.array(hs, dtype=np.uint64), 8)
+        roots, edges = leakage_groups(df, np.array(hs, dtype=np.uint64), a.phash_threshold)
         df["group"] = roots
-        print(f"[groups] pHash edges<=8: {edges}; groups: {df.group.nunique()} for {len(df)} images")
+        print(f"[groups] pHash edges<={a.phash_threshold}: {edges}; groups: {df.group.nunique()} for {len(df)} images")
         df.drop(columns=["image_path"]).to_csv(prep / "cohort_groups.csv", index=False)
         return
 

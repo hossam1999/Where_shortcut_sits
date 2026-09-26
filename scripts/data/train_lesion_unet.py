@@ -45,11 +45,11 @@ def build_train_table():
     rows = []
     for r in ham_meta.itertuples():
         if r.image_id in ham_masks:
-            rows.append(dict(image_id=r.image_id, img=str(isic19 / f"{r.image_id}.jpg"), mask=str(ham_masks[r.image_id]),
+            rows.append(dict(image_id=r.image_id, img=str(isic19 / f"{r.image_id}.jpg"), mpath=str(ham_masks[r.image_id]),
                              group=r.lesion_id, src="ham"))
     for p in sorted(paths.ISIC2018_MASKS.glob("*_segmentation.png")):
         i = p.name.split("_segmentation")[0]
-        rows.append(dict(image_id=i, img=str(paths.ISIC2018_IMAGES / f"{i}.jpg"), mask=str(p), group=i, src="isic2018"))
+        rows.append(dict(image_id=i, img=str(paths.ISIC2018_IMAGES / f"{i}.jpg"), mpath=str(p), group=i, src="isic2018"))
     df = pd.DataFrame(rows)
     rng = np.random.default_rng(20260926)
     groups = df.group.unique()
@@ -82,8 +82,9 @@ def train(epochs=25, bs=24):
     df = build_train_table()
     df.to_csv(OUT / "unet_split.csv", index=False)
     with ThreadPoolExecutor(8) as ex:
-        pairs = list(ex.map(load_pair, zip(df.img, df.mask)))
+        pairs = list(ex.map(load_pair, zip(df.img, df.mpath)))
     X = np.stack([p[0] for p in pairs]); Y = np.stack([p[1] for p in pairs])
+    del pairs  # avoid holding two copies of the image set in RAM
     tr, ho = np.flatnonzero(df.split == "train"), np.flatnonzero(df.split == "heldout")
     dev = torch.device("cuda")
     torch.manual_seed(0)
@@ -117,6 +118,7 @@ def train(epochs=25, bs=24):
             tot += float(loss) * len(b)
         d = evaluate(net, X[ho], Y[ho], dev)
         print(f"[unet] epoch {ep + 1}/{epochs} loss {tot / len(tr):.4f} heldout Dice {d.mean():.4f}", flush=True)
+        torch.save(net.state_dict(), OUT / "unet_resnet34_384.pt")  # checkpoint every epoch (fixed schedule)
     torch.save(net.state_dict(), OUT / "unet_resnet34_384.pt")
     d = evaluate(net, X[ho], Y[ho], dev)
     hs = df.iloc[ho].src.to_numpy()

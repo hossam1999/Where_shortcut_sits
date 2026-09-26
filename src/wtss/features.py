@@ -70,6 +70,11 @@ def extract_view(backend: Backend, ids: Sequence[str], render: Callable[[str], I
         f = torch.nn.functional.normalize(f.float(), dim=1).cpu().numpy()
         if out is None:
             out = np.zeros((len(ids), f.shape[1]), np.float32)
+        bad = ~np.isfinite(f).all(1)
+        if bad.any():  # rare fp16 overflow in ViT attention: recompute those rows in fp32
+            f[bad] = torch.nn.functional.normalize(backend.encode(xb[torch.as_tensor(bad, device=device)]).float(),
+                                                   dim=1).cpu().numpy()
+            print(f"[features] fp32 recompute for {int(bad.sum())} image(s) in {cache.stem}", flush=True)
         out[idx.numpy()] = f
     cache.parent.mkdir(parents=True, exist_ok=True)
     np.savez(cache, X=out, ids=np.asarray(ids))
