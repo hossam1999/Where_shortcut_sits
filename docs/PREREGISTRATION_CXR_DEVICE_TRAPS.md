@@ -1,0 +1,42 @@
+# Pre-registration — chest radiography real-device traps (multi-disease), NIH ChestX-ray14 × RANZCR-CLiP
+
+Committed before any model is fitted on this cohort (check `git log` against `results/cxr_traps/`).
+Protocol = the author's E13 protocol (docs/REPLICATION_SPEC.md) transferred to radiographs; only the items
+below differ.
+
+## Cohort
+- RANZCR-CLiP training images (30,083; human image-level labels for ETT / NGT / CVC / Swan-Ganz; human
+  polylines on 9,095 images) linked to NIH ChestX-ray14 by 64-bit pHash (nearest neighbour ≤ 6 bits, runner-up
+  ≥ 4 bits further): 28,786 images, 3,227 patients. Disease labels = NIH findings.
+- ROI = both lungs (TorchXRayVision PSPNet, p > 0.5) at 518 px.
+- Device masks = CLiP polylines rasterised at 518 px (ETT 12 px, NGT 7 px, CVC / Swan-Ganz 4 px wide).
+- Overlap r = |device ∩ lungs| / |device| per device type (observed, outcome-free: median r ETT 0.00,
+  NGT 0.00, CVC 0.52).
+
+## Traps (artifact-free comparison group per device, as in E13)
+- **Trap A (in-ROI): CVC.** A = 1: CVC present and annotated with r ≥ 0.5. A = 0: no CVC (human label).
+- **Trap B (out-of-ROI): ETT.** A = 1: ETT present and annotated with r < 0.1. A = 0: no ETT.
+- Source matching: within each label, A = 1 cells are subsampled to the A = 0 **view-position** (AP/PA) mix.
+- Groups: NIH patient id; 5-fold group-safe CV per seed; seeds 42, 123, 456, 789, 2026; fold predictions pooled
+  per seed (seed = bootstrap cluster). Train 90/10, correlated test 90/10, reversed 10/90, clean 50/50,
+  inner validation = 20 % of training patients (clean 50/50 for C and thresholds; all groups for DFR).
+
+## Diseases (co-primary; chosen on counts only)
+Every NIH finding with ≥ 40 estimated reversed-test positives in **both** traps: **Infiltration, Effusion,
+Atelectasis, Consolidation**. Holm correction over the four diseases for each claim.
+
+## Arms
+erm, mask (lung ROI), inpaint (Telea of the trap's device mask; oracle), balanced, dfr, leace_paired
+(orig ↔ device-inpainted training A = 1 images), leace_unpaired (A-erasure), prevcal (Kina & Petersen 2026),
+i2e / i2e_balanced (device pixels transplanted from donor images of the same device type that are in neither
+trap: CVC with 0.1 ≤ r < 0.5; ETT with r ≥ 0.1).
+Backbones: RAD-DINO @518 (primary; chest-X-ray foundation model), MedSigLIP-448, DINOv2 ViT-B/14 @518.
+
+## Claims (hierarchical paired bootstrap, 10,000 replicates, 95 % CI; per disease, Holm across diseases)
+- **X1** mask − ERM on Trap B (ETT, outside the lungs) reversed AUROC > 0.
+- **X2** mask − ERM on Trap A (CVC, inside the lungs) reversed AUROC < 0.
+- **X3** crossover [mask − ERM]_B − [mask − ERM]_A > 0.
+- **X4** balanced and DFR − ERM > 0 in both traps.
+- **X5** paired LEACE gain < ½ best label-only gain.
+- **X6** (proposed) i2e − ERM > 0 in Trap A with clean AUROC loss ≤ 0.02 and correlated ≥ reversed − 0.02.
+Reported whatever the outcome; the primary backbone is RAD-DINO, the others are replications.

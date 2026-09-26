@@ -30,17 +30,22 @@ from ..utils import stable_int
 class RealCache:
     """Memmapped rgb/roi/artifact-mask arrays written by scripts/data/prepare_*.py."""
 
-    def __init__(self, cdir: Path, roi_file: str = "roi.npy"):
-        self.rgb = np.load(cdir / "rgb.npy", mmap_mode="r")
+    def __init__(self, cdir: Path, roi_file: str = "roi.npy", art_file: str = "hair.npy"):
+        # grayscale caches (CXR) are stored with one channel and expanded on read
+        self.gray = not (cdir / "rgb.npy").exists()
+        self.rgb = np.load(cdir / ("gray.npy" if self.gray else "rgb.npy"), mmap_mode="r")
         self.roi = np.load(cdir / roi_file, mmap_mode="r")
-        self.art = np.load(cdir / "hair.npy", mmap_mode="r") if (cdir / "hair.npy").exists() else None
+        self.art = np.load(cdir / art_file, mmap_mode="r") if (cdir / art_file).exists() else None
         self.ids = (cdir / "ids.txt").read_text().split()
         self.index = {k: j for j, k in enumerate(self.ids)}
 
     def get(self, i):
         j = self.index[i]
         art = np.asarray(self.art[j]) if self.art is not None else None
-        return np.asarray(self.rgb[j]), np.asarray(self.roi[j]), art
+        img = np.asarray(self.rgb[j])
+        if self.gray:
+            img = np.repeat(img[..., None], 3, -1)
+        return img, np.asarray(self.roi[j]), art
 
 
 def transplant(target: np.ndarray, donor_rgb: np.ndarray, donor_mask: np.ndarray, key: str, sigma: float = 0.7):

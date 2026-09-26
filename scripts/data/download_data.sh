@@ -4,12 +4,13 @@ set -euo pipefail
 D=${WTSS_DATA:-/root/data}
 mkdir -p $D/{isic2019,isic2018,artifact_masks,ham_seg,cxr/nih,cxr/neatx}
 S=https://isic-challenge-data.s3.amazonaws.com
-dl(){ [ -s "$2" ] || { wget -q -c -O "$2.part" "$1" && mv "$2.part" "$2"; }; }
+# skip archives whose extracted folder already exists (archives are deleted after extraction to save disk)
+dl(){ [ -s "$2" ] && return; [ -n "${3:-}" ] && [ -d "$3" ] && return; wget -q -c -O "$2.part" "$1" && mv "$2.part" "$2"; }
 # ISIC 2019 (CC-BY-NC) and ISIC 2018 Task 1/2 (CC-BY-NC)
-dl $S/2019/ISIC_2019_Training_Input.zip $D/isic2019/ISIC_2019_Training_Input.zip &
+dl $S/2019/ISIC_2019_Training_Input.zip $D/isic2019/ISIC_2019_Training_Input.zip $D/isic2019/ISIC_2019_Training_Input &
 dl $S/2019/ISIC_2019_Training_GroundTruth.csv $D/isic2019/ISIC_2019_Training_GroundTruth.csv
 dl $S/2019/ISIC_2019_Training_Metadata.csv $D/isic2019/ISIC_2019_Training_Metadata.csv
-dl $S/2018/ISIC2018_Task1-2_Training_Input.zip $D/isic2018/ISIC2018_Task1-2_Training_Input.zip &
+dl $S/2018/ISIC2018_Task1-2_Training_Input.zip $D/isic2018/ISIC2018_Task1-2_Training_Input.zip $D/isic2018/ISIC2018_Task1-2_Training_Input &
 dl $S/2018/ISIC2018_Task1_Training_GroundTruth.zip $D/isic2018/ISIC2018_Task1_Training_GroundTruth.zip
 # HAM10000 manual lesion segmentations (Tschandl et al. 2020, Harvard Dataverse doi:10.7910/DVN/DBW86T)
 dl "https://dataverse.harvard.edu/api/access/datafile/3838943" $D/ham_seg/HAM10000_segmentations_lesion_tschandl.zip
