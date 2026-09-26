@@ -52,6 +52,24 @@ reversed (10/90) test environments plus an artifact-free clean test; C, λ and t
 chosen on clean validation only; hierarchical paired bootstrap over training seeds / CV folds; success
 criteria pre-registered (`docs/`) and reported whether positive or negative.
 
+## Replication of the pilot (author spec: docs/REPLICATION_SPEC.md)
+`python scripts/make_summary.py` writes `results/SUMMARY.md`: every expected number beside the obtained one with
+MATCH / SIGN+CI / MISMATCH (spec tolerance rule). Deviations: `CHANGES.md`; claim-by-claim audit:
+`docs/THESIS_CLAIMS_AUDIT.md`.
+
+| Block | Entry point | Notes |
+| --- | --- | --- |
+| E1–E9 synthetic | `scripts/run_synthetic.py` | frozen manifest + placements |
+| E10 real-hair linear | `scripts/analysis/e10_hair.py` | Mendeley masks, Bissoto labels |
+| E12 contrast trap | `scripts/analysis/e12_contrast_trap.py` | |
+| E13 / E15 real hair | `scripts/run_spec_e13.py --backbone {dino518,dermlip224}` | spec U-Net + cohort: `scripts/data/train_unet_spec.py`, `prepare_spec_cohort.py` |
+| E7 / E14 | `scripts/analysis/e7_e14.py` | |
+| leakage (§3.1) | `scripts/run_leakage_experiment.py` | |
+| CXR multi-disease real devices | `scripts/run_cxr_traps.py --backbone {raddino518,medsiglip448,dino518} [--device_matched]` | CLiP × NIH linkage: `scripts/data/link_clip_nih.py`, `prepare_clip.py` |
+
+Credentials: gated models (DermLIP since 2026-09-21, MedSigLIP) and Kaggle (RANZCR-CLiP) read `HF_TOKEN` /
+`KAGGLE_API_TOKEN` from the environment (e.g. a `chmod 600` file sourced by the queue scripts); never commit them.
+
 ## Verification
 - `scripts/verify/recompute_archived_cis.py` — all archived bridge CIs recomputed exactly (max diff 1e-16).
 - `scripts/verify/compare_synthetic_to_archive.py` — rerun from raw images: 252 per-seed AUROCs within

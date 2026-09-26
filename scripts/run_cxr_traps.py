@@ -83,9 +83,15 @@ def main():
         if (out / "bootstrap_vs_erm.csv").exists():
             continue
         c = cohort(dis)
-        envs = build_spec_envs(c, traps=tuple(TRAPS), group_col="patient")
+        ok = cnt[(cnt.disease == dis)].set_index("trap")
+        traps_ok = tuple(t for t in TRAPS if min(ok.loc[t, ["A0_Y0", "A0_Y1", "A1_Y0", "A1_Y1"]]) >= 25)
+        for t in set(TRAPS) - set(traps_ok):
+            print(f"[gate] {dis} {t}: a matched cell < 25 -> underpowered, not fitted", flush=True)
+        if not traps_ok:
+            continue
+        envs = build_spec_envs(c, traps=traps_ok, group_col="patient")
         frames = []
-        for trap, (dev, bit) in TRAPS.items():
+        for trap, (dev, bit) in [(t, TRAPS[t]) for t in traps_ok]:
             cache = RealCache(PREP / "cache_clip_518", roi_file="roi.npy", art_file="dev.npy", art_bit=bit)
             sub = paths.ensure(out / trap)
             run_spec(envs, cache, a.backbone, sub, paths.CACHE / "features" / "cxr_clip" / trap / BDIR[a.backbone],
@@ -95,7 +101,7 @@ def main():
         preds.to_csv(out / "predictions.csv.gz", index=False, compression="gzip")
         arms = [m for m in preds.method.unique() if m != "erm"]
         jobs, keys = [], []
-        for trap in TRAPS:
+        for trap in traps_ok:
             q = preds[preds.trap == trap]
             for arm in arms:
                 for env in ("test_rev", "clean"):
@@ -105,7 +111,9 @@ def main():
             res = list(ex.map(_b, jobs))
         boot = pd.DataFrame([{"disease": dis, "trap": t, "arm": m, "env": e, **r} for (t, m, e), r in zip(keys, res)])
         boot.to_csv(out / "bootstrap_vs_erm.csv", index=False)
-        cr = difference_of_deltas(preds[preds.trap == "trapB"], preds[preds.trap == "trapA"], "mask", "erm", "test_rev", 10000, 11)
+        cr = {"seed_delta_mean": float("nan"), "ci95_lo": float("nan"), "ci95_hi": float("nan")}
+        if len(traps_ok) == 2:
+            cr = difference_of_deltas(preds[preds.trap == "trapB"], preds[preds.trap == "trapA"], "mask", "erm", "test_rev", 10000, 11)
         (out / "X3_crossover.json").write_text(json.dumps(cr, indent=2, default=float))
         from wtss.stats import safe_auc
         auc = preds.groupby(["trap", "method", "env", "seed"]).apply(lambda q: safe_auc(q.y, q.prob), include_groups=False)
