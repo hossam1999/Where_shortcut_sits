@@ -1,0 +1,56 @@
+% Dermoscopy results. Every number is produced by scripts in the repository; see results/SUMMARY.md.
+\section{Results: dermoscopy}\label{sec:derm}
+
+\subsection{Masking reverses with location (controlled)}
+With a synthetic ruler whose overlap with the lesion is swept from 0 to 100\% (2,437 ISIC 2018 images,
+DINOv2 ViT-B/14 at 518\,px, three seeds), ROI masking improves reversed-environment AUROC over ERM by
+$+0.184$ [$+0.146, +0.224$] when the ruler lies outside the lesion and \emph{lowers} it by $-0.097$
+[$-0.138, -0.056$], $-0.112$ [$-0.155, -0.068$] and $-0.129$ [$-0.170, -0.087$] at 50, 75 and 100\% overlap
+(location interaction $+0.313$ [$+0.272, +0.353$]; Table~\ref{tab:synthetic_isic_dino518}). The sign flip is
+reproduced at 224\,px ($+0.361$ at 0\%; $-0.095$ at 100\%) and under randomised ruler colour, opacity, ticks and
+scale. At 0\% overlap the masked model's correlated and reversed AUROC coincide (0.849/0.849): the shortcut is
+removed. At 100\% the masked model's correlated AUROC exceeds ERM's (0.961 vs 0.937): it uses the ruler \emph{more}.
+
+\subsection{Mechanism: retention, not occlusion or context}
+Three explanations were tested separately. \emph{Occlusion}: with the ruler present but uncorrelated with the
+label (50/50), masking helps at every overlap ($+0.036$, $+0.040$, $+0.039$ at 0/50/100\%); covering lesion
+pixels costs nothing measurable, so the harm requires the correlation. \emph{Lost context}: dilating the mask at
+50\% overlap \emph{increases} harm ($-0.097 \rightarrow -0.138 \rightarrow -0.154$ for margins 0/10/25\,px) as the
+margin restores ruler pixels (retention $0.50 \rightarrow 0.73 \rightarrow 0.95$); at 100\% overlap, where retention
+is already 1, harm is flat ($-0.129$ to $-0.144$) although the ruler's share of visible pixels falls threefold.
+\emph{Amplified reliance}: masking doubles the same-head counterfactual sensitivity to the ruler
+($|\Delta p|$ 0.235 $\rightarrow$ 0.491 at 100\%). Harm is largest for small lesions ($-0.364$ vs $+0.064$ for large
+lesions at 100\%), where the ruler is a larger share of what survives the mask.
+
+\subsection{Real hair (ISIC 2019), pre-registered}
+Two traps share one hair-free group (at most 30 hair pixels): Trap~A contains hair lying mostly inside the lesion
+($r\ge0.5$), Trap~B hair mostly outside ($r<0.1$); cells are matched to the hair-free source mix, and five seeds
+of five-fold group-safe cross-validation give 172 reversed-test melanomas per trap. Masking helps in Trap~B
+($+0.107$ [$+0.078, +0.135$]), harms in Trap~A ($-0.037$ [$-0.057, -0.019$], negative in all five seeds) and the
+crossover is $+0.145$ [$+0.105, +0.181$]. The harm holds in BCN images ($-0.051$ [$-0.075, -0.027$]); in HAM it
+is not distinguishable from zero ($-0.009$ [$-0.036, +0.017$]). Oracle hair inpainting helps in both traps
+($+0.103$, $+0.096$). Group-balanced training and DFR, which need only an image-level hair label, give the largest
+gains ($+0.225$/$+0.251$ in Trap~A, $+0.209$/$+0.215$ in Trap~B). Paired linear erasure recovers less than half of
+that ($+0.086$/$+0.081$). The magnitude of the in-ROI harm depends on the definition of the comparison group: with
+a looser hair-free group ($<0.1\%$ of pixels) and only heavily haired images, masking gives no benefit but no
+measurable harm inside the lesion ($+0.012$ [$-0.042, +0.062$]) while still helping outside ($+0.178$); the
+benefit shrinks to zero as more of the hair lies inside the lesion.
+
+\subsection{What the real-hair shortcut is made of}
+Removing hair pixels at test time only closes 44--47\% of the ERM clean--reversed gap: most of what a frozen
+encoder exploits in a real hair trap is not the hair pixels but what accompanies hair (hair-bearing images differ in
+sex, age and body site). This bounds every pixel-level method, including oracle inpainting and \ItoE{}, and
+explains why image-level-label methods, which remove everything correlated with the label, recover more.
+
+\subsection{Reversed-environment gains can be gamed}
+Erasing the artifact concept from unpaired image-level labels yields the largest reversed gain in the study
+($+0.326$ in Trap~A) while \emph{inverting} the correlated/reversed ordering (0.618 vs 0.817). Post-hoc
+prevalence-equalised recalibration \citep{kina2026prevalence} behaves the same way under the trap's 90/10 shift
+($+0.427$; correlated 0.433 vs reversed 0.918). Both remove diagnosis-correlated signal or over-correct the
+group prior rather than removing reliance on the artifact; we therefore read every reversed gain together with
+clean AUROC and the correlated/reversed ordering.
+
+\subsection{Leakage}
+Holding cohort, features and protocol fixed, replacing the grouped split with random image-level splits (93
+near-duplicate pairs across train/test) inflates the measured shortcut gap by 18\% (0\% overlap) and 10\% (100\%)
+and distorts both masking effects ($+0.184\rightarrow+0.223$; $-0.129\rightarrow-0.088$).

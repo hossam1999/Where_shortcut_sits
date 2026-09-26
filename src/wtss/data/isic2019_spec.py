@@ -60,14 +60,15 @@ def matched_pool(c: pd.DataFrame, trap: str, seed: int = 20260926) -> pd.DataFra
     a0 = c[c[f"{trap}_A0"]] if f"{trap}_A0" in c else c[c.A0]  # per-trap artifact-free group (CXR)
     a1 = c[c[f"{trap}_A1"]]
     keep = [a0.assign(a=0)]
+    scol = f"{trap}_source" if f"{trap}_source" in c else "source"  # per-trap matching strata (CXR follow-up)
     for y in (0, 1):
-        mix = a0[a0.y == y].source.value_counts(normalize=True)
+        mix = a0[a0.y == y][scol].value_counts(normalize=True)
         cand = a1[a1.y == y]
-        have = cand.source.value_counts()
+        have = cand[scol].value_counts()
         N = min(have.get(s, 0) / mix[s] for s in mix.index)
         for s in mix.index:
             n = int(math.floor(N * mix[s]))
-            pool = cand[cand.source == s].image_id.to_numpy()
+            pool = cand[cand[scol] == s].image_id.to_numpy()
             rng = np.random.default_rng(stable_int("match", trap, y, s, seed))
             keep.append(c[c.image_id.isin(rng.choice(pool, n, replace=False))].assign(a=1))
     return pd.concat(keep, ignore_index=True)

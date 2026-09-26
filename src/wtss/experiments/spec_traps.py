@@ -21,8 +21,79 @@ ARMS = ("erm", "mask", "inpaint", "balanced", "dfr", "leace_paired", "leace_unpa
         "i2e", "i2e_balanced", "i2e_rank1", "insert_aug", "prevcal")
 
 
+_CTX: dict = {}
+
+
+def _fold_job(job):
+    """Fit every arm for one (trap, seed, fold); runs in a forked worker (reads _CTX)."""
+    trap, seed, k = job
+    from threadpoolctl import threadpool_limits
+
+    threadpool_limits(2)  # 4 workers x 2 BLAS threads = 8 cores (avoids oversubscription)
+    V, pos, envs, arms = _CTX["V"], _CTX["pos"], _CTX["envs"], _CTX["arms"]
+    X = lambda v, d: V[v][[pos[i] for i in d.image_id]]
+    frames = []
+    E = {e: envs[(trap, seed, k, e)] for e in ("train_corr", "val_clean", "val_groups", "train_all",
+                                             "test_corr", "test_rev", "clean")}
+    tr, cv = E["train_corr"], E["val_clean"]
+    ytr, atr, yv = tr.y.to_numpy(), tr.a.to_numpy(), cv.y.to_numpy()
+
+    def fin(clf, method, view, test_a=False):
+        if test_a:  # needs A at test time (prevalence calibration)
+            pv = clf.predict_proba_groups(X(view, cv), cv.a.to_numpy())[:, 1]
+        else:
+            pv = clf.predict_proba(X(view, cv))[:, 1]
+        thr, _ = select_threshold_clean_val(yv, pv)
+        for env in ("clean", "test_corr", "test_rev"):
+            d = E[env]
+            c = clf
+            if test_a:
+                class _G:
+                    def predict_proba(self, Xq, _a=d.a.to_numpy()):
+                        return clf.predict_proba_groups(Xq, _a)
+                c = _G()
+            _, f = evaluate(c, thr, X(view, d), d.y.to_numpy(), d.image_id.to_numpy(), d.a.to_numpy(),
+                            {"backbone": _CTX["backend_name"], "trap": trap, "seed": seed, "fold": k,
+                             "method": method, "env": env, **_CTX["extra_meta"]})
+            f["source"] = d.source.to_numpy()
+            frames.append(f)
+
+    for m in [a for a in arms if a in ("erm", "mask", "inpaint")]:
+        clf = H.fit_erm(X(m, tr), ytr, X(m, cv), yv, seed)[0]
+        fin(clf, m, m)
+        if m == "erm" and "prevcal" in arms:
+            fin(H.PrevalenceCalibrated(clf, ytr, atr), "prevcal", "erm", test_a=True)
+    Xtr, Xv = X("erm", tr), X("erm", cv)
+    if "balanced" in arms:
+        fin(H.fit_balanced(Xtr, ytr, atr, Xv, yv, seed)[0], "balanced", "erm")
+    if "dfr" in arms:
+        g = E["val_groups"]
+        fin(H.fit_dfr(X("erm", g), g.y.to_numpy(), g.a.to_numpy(), Xv, yv, seed)[0], "dfr", "erm")
+    ta = E["train_all"]
+    if "leace_paired" in arms:
+        hp = ta[ta.a == 1]
+        er = H.fit_leace(X("inpaint", hp), X("erm", hp))
+        fin(H.fit_on_transformed(H.eraser_fn(er), Xtr, ytr, Xv, yv, seed)[0], "leace_paired", "erm")
+    if "leace_unpaired" in arms:
+        er = H.fit_leace_labels(Xtr, atr)
+        fin(H.fit_on_transformed(H.eraser_fn(er), Xtr, ytr, Xv, yv, seed)[0], "leace_unpaired", "erm")
+    if "insert" in V:
+        X0, X1 = X("erm", ta), X("insert", ta)
+        er = fit_difference_subspace(X0, X1, energy=0.9, seed=seed)
+        if "i2e" in arms:
+            fin(H.fit_on_transformed(er, Xtr, ytr, Xv, yv, seed)[0], "i2e", "erm")
+        if "i2e_balanced" in arms:
+            fin(H.fit_on_transformed(er, Xtr, ytr, Xv, yv, seed, atr=atr, balanced=True)[0], "i2e_balanced", "erm")
+        if "i2e_rank1" in arms:
+            fin(rank1_head(X0, X1, Xtr, ytr, Xv, yv, seed)[0], "i2e_rank1", "erm")
+        if "insert_aug" in arms:
+            fin(insert_aug_head(Xtr, ytr, X("insert", tr), Xv, yv, seed)[0], "insert_aug", "erm")
+    return frames
+
+
 def run_spec(envs: Dict, cache, backend_name: str, out_dir: Path, feat_dir: Path, donors: Sequence[str],
-             arms=ARMS, traps=("trapA", "trapB"), device=None, batch_size=64, workers=5, extra_meta=None):
+             arms=ARMS, traps=("trapA", "trapB"), device=None, batch_size=64, workers=5, extra_meta=None,
+             n_jobs: int = 4):
     device = device or torch.device("cuda")
     out_dir.mkdir(parents=True, exist_ok=True)
     pool = sorted(set().union(*[set(d.image_id) for k, d in envs.items() if k[0] in traps]))
@@ -35,68 +106,18 @@ def run_spec(envs: Dict, cache, backend_name: str, out_dir: Path, feat_dir: Path
     V = {v: extract_view(backend, pool, rend[v], feat_dir / f"{v}.npz", device, batch_size, workers, desc=v)
          for v in sorted(need)}
     del backend; gc.collect(); torch.cuda.empty_cache()
-    X = lambda v, d: V[v][[pos[i] for i in d.image_id]]
-    rows, frames = [], []
+    global _CTX
+    _CTX = dict(V=V, pos=pos, envs=envs, arms=arms, backend_name=backend_name, extra_meta=extra_meta or {})
     seeds = sorted({k[1] for k in envs})
-    for trap in traps:
-        for seed in seeds:
-            for k in range(5):
-                E = {e: envs[(trap, seed, k, e)] for e in ("train_corr", "val_clean", "val_groups", "train_all",
-                                                         "test_corr", "test_rev", "clean")}
-                tr, cv = E["train_corr"], E["val_clean"]
-                ytr, atr, yv = tr.y.to_numpy(), tr.a.to_numpy(), cv.y.to_numpy()
-
-                def fin(clf, method, view, test_a=False):
-                    if test_a:  # needs A at test time (prevalence calibration)
-                        pv = clf.predict_proba_groups(X(view, cv), cv.a.to_numpy())[:, 1]
-                    else:
-                        pv = clf.predict_proba(X(view, cv))[:, 1]
-                    thr, _ = select_threshold_clean_val(yv, pv)
-                    for env in ("clean", "test_corr", "test_rev"):
-                        d = E[env]
-                        c = clf
-                        if test_a:
-                            class _G:
-                                def predict_proba(self, Xq, _a=d.a.to_numpy()):
-                                    return clf.predict_proba_groups(Xq, _a)
-                            c = _G()
-                        _, f = evaluate(c, thr, X(view, d), d.y.to_numpy(), d.image_id.to_numpy(), d.a.to_numpy(),
-                                        {"backbone": backend_name, "trap": trap, "seed": seed, "fold": k,
-                                         "method": method, "env": env, **(extra_meta or {})})
-                        f["source"] = d.source.to_numpy()
-                        frames.append(f)
-
-                for m in [a for a in arms if a in ("erm", "mask", "inpaint")]:
-                    clf = H.fit_erm(X(m, tr), ytr, X(m, cv), yv, seed)[0]
-                    fin(clf, m, m)
-                    if m == "erm" and "prevcal" in arms:
-                        fin(H.PrevalenceCalibrated(clf, ytr, atr), "prevcal", "erm", test_a=True)
-                Xtr, Xv = X("erm", tr), X("erm", cv)
-                if "balanced" in arms:
-                    fin(H.fit_balanced(Xtr, ytr, atr, Xv, yv, seed)[0], "balanced", "erm")
-                if "dfr" in arms:
-                    g = E["val_groups"]
-                    fin(H.fit_dfr(X("erm", g), g.y.to_numpy(), g.a.to_numpy(), Xv, yv, seed)[0], "dfr", "erm")
-                ta = E["train_all"]
-                if "leace_paired" in arms:
-                    hp = ta[ta.a == 1]
-                    er = H.fit_leace(X("inpaint", hp), X("erm", hp))
-                    fin(H.fit_on_transformed(H.eraser_fn(er), Xtr, ytr, Xv, yv, seed)[0], "leace_paired", "erm")
-                if "leace_unpaired" in arms:
-                    er = H.fit_leace_labels(Xtr, atr)
-                    fin(H.fit_on_transformed(H.eraser_fn(er), Xtr, ytr, Xv, yv, seed)[0], "leace_unpaired", "erm")
-                if "insert" in V:
-                    X0, X1 = X("erm", ta), X("insert", ta)
-                    er = fit_difference_subspace(X0, X1, energy=0.9, seed=seed)
-                    if "i2e" in arms:
-                        fin(H.fit_on_transformed(er, Xtr, ytr, Xv, yv, seed)[0], "i2e", "erm")
-                    if "i2e_balanced" in arms:
-                        fin(H.fit_on_transformed(er, Xtr, ytr, Xv, yv, seed, atr=atr, balanced=True)[0], "i2e_balanced", "erm")
-                    if "i2e_rank1" in arms:
-                        fin(rank1_head(X0, X1, Xtr, ytr, Xv, yv, seed)[0], "i2e_rank1", "erm")
-                    if "insert_aug" in arms:
-                        fin(insert_aug_head(Xtr, ytr, X("insert", tr), Xv, yv, seed)[0], "insert_aug", "erm")
-            print(f"[spec] {backend_name} {trap} seed {seed} done", flush=True)
+    jobs = [(trap, seed, k) for trap in traps for seed in seeds for k in range(5)]
+    import multiprocessing as mp
+    frames = []
+    # (seed, fold) fits are independent: fork-based pool shares the cached features copy-on-write
+    with mp.get_context("fork").Pool(n_jobs) as pool:
+        for (trap, seed, k), fr in zip(jobs, pool.imap(_fold_job, jobs)):
+            frames.extend(fr)
+            if k == 4:
+                print(f"[spec] {backend_name} {trap} seed {seed} done", flush=True)
     preds = pd.concat(frames, ignore_index=True)
     preds.to_csv(out_dir / "predictions.csv.gz", index=False, compression="gzip")
     from ..stats import safe_auc

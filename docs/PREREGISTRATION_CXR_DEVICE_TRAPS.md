@@ -48,3 +48,12 @@ ETT images have almost no PA counterpart (matched cells collapse to 7–35 image
 amendment (outcome-free): every matched cell ≥ 25 for all four pre-registered diseases; estimated reversed-test
 positives Trap A / Trap B: Infiltration 218 / 3,318, Effusion 125 / 2,316, Atelectasis 140 / 1,918,
 Consolidation 66 / 915. Disease selection unchanged.
+
+## Follow-up 1 (committed after the pre-registered Infiltration/RAD-DINO result, before any follow-up fit)
+Observed confound (descriptive): in the Trap A pool the CVC-free group carries far more out-of-lung tubes than the
+CVC group (ETT 77 % vs 39 %, NGT 83 % vs 42 %), because CLiP's CVC-free images were selected for other tubes. The
+A contrast is then partly "fewer tubes outside the lungs", which lung masking removes. The pre-registered results
+stand as reported. Follow-up design (stricter, same everything else): cells are matched within label on
+**view × presence of the other devices** — Trap A: view × ETT × NGT; Trap B: view × CVC × NGT — so the only device
+difference between A = 1 and A = 0 is the trap's own device. Questions: X1–X3 and X6 as above; reported beside,
+never instead of, the pre-registered results.

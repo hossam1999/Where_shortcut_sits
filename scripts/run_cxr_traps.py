@@ -25,6 +25,9 @@ BDIR = {"raddino518": "raddino_518", "medsiglip448": "medsiglip_448", "dino518":
 PREP = paths.DATA / "cxr" / "prepared"
 
 
+DEVICE_MATCH = False  # follow-up 1 (--device_matched)
+
+
 def cohort(disease: str) -> pd.DataFrame:
     c = pd.read_csv(PREP / "clip_cohort.csv").rename(columns={"StudyInstanceUID": "image_id"})
     c["y"] = c.findings.str.contains(disease).astype(int)
@@ -35,6 +38,9 @@ def cohort(disease: str) -> pd.DataFrame:
     c["trapB_A0"] = c.has_ETT == 0
     c["trapB_A1"] = (c.has_ETT == 1) & (c.r_ETT < 0.1)
     c["A0"] = False
+    if DEVICE_MATCH:  # follow-up 1: match on the other devices, so only the trap's device differs
+        c["trapA_source"] = c.view + "|ETT" + c.has_ETT.astype(str) + "|NGT" + c.has_NGT.astype(str)
+        c["trapB_source"] = c.view + "|CVC" + c.has_CVC.astype(str) + "|NGT" + c.has_NGT.astype(str)
     return c[c.view == "AP"].reset_index(drop=True)  # Amendment 1: AP radiographs only
 
 
@@ -54,8 +60,11 @@ def main():
     ap.add_argument("--backbone", default="raddino518")
     ap.add_argument("--diseases", nargs="+", default=list(DISEASES))
     ap.add_argument("--counts_only", action="store_true")
+    ap.add_argument("--device_matched", action="store_true", help="follow-up 1")
     a = ap.parse_args()
-    out_root = paths.ensure(paths.RESULTS / "cxr_traps" / a.backbone)
+    global DEVICE_MATCH
+    DEVICE_MATCH = a.device_matched
+    out_root = paths.ensure(paths.RESULTS / "cxr_traps" / (a.backbone + ("_devmatched" if a.device_matched else "")))
     rows = []
     for dis in a.diseases:
         c = cohort(dis)
