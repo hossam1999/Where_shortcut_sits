@@ -2,7 +2,7 @@
 
 Rule: MATCH = same sign, same CI-excludes-0 verdict, |Δ| ≤ 0.02; SIGN+CI = sign and CI verdict match, |Δ| > 0.02; MISMATCH otherwise.
 
-Verdict counts: {'MATCH': 57, 'PENDING': 16, 'SIGN+CI': 12, 'MISMATCH': 3}
+Verdict counts: {'MATCH': 62, 'SIGN+CI': 12, 'PENDING': 11, 'MISMATCH': 3}
 
 | E     | quantity                                            | expected                | obtained                | verdict   | source                                                                                             |
 |:------|:----------------------------------------------------|:------------------------|:------------------------|:----------|:---------------------------------------------------------------------------------------------------|
@@ -89,8 +89,8 @@ Verdict counts: {'MATCH': 57, 'PENDING': 16, 'SIGN+CI': 12, 'MISMATCH': 3}
 | E13   | C3 crossover B − A (mask)                           | +0.188 [+0.179, +0.194] | +0.145 [+0.105, +0.181] | SIGN+CI   | /root/wtss/results/spec_e13/dino518_spec/C3_crossover.json                                         |
 | E13   | trapA mask − ERM, HAM only                          | -0.030 [-0.059, -0.003] | -0.009 [-0.036, +0.017] | MISMATCH  | /root/wtss/results/spec_e13/dino518_spec/bootstrap_vs_erm.csv                                      |
 | E13   | trapA mask − ERM, BCN only                          | -0.078 [-0.099, -0.058] | -0.051 [-0.075, -0.027] | SIGN+CI   | /root/wtss/results/spec_e13/dino518_spec/bootstrap_vs_erm.csv                                      |
-| E15   | trapA mask − ERM (rev)                              | -0.069                  | PENDING                 | PENDING   | /root/wtss/results/spec_e13/dermlip224_spec/bootstrap_vs_erm.csv                                   |
-| E15   | trapA balanced − ERM (rev)                          | 0.126                   | PENDING                 | PENDING   | /root/wtss/results/spec_e13/dermlip224_spec/bootstrap_vs_erm.csv                                   |
-| E15   | trapA dfr − ERM (rev)                               | 0.114                   | PENDING                 | PENDING   | /root/wtss/results/spec_e13/dermlip224_spec/bootstrap_vs_erm.csv                                   |
-| E15   | trapA leace_paired − ERM (rev)                      | 0.031                   | PENDING                 | PENDING   | /root/wtss/results/spec_e13/dermlip224_spec/bootstrap_vs_erm.csv                                   |
-| E15   | trapA leace_unpaired − ERM (rev)                    | 0.192                   | PENDING                 | PENDING   | /root/wtss/results/spec_e13/dermlip224_spec/bootstrap_vs_erm.csv                                   |
+| E15   | trapA mask − ERM (rev)                              | -0.069 [-0.088, -0.051] | -0.085 [-0.107, -0.063] | MATCH     | /root/wtss/results/spec_e13/dermlip224_spec/bootstrap_vs_erm.csv                                   |
+| E15   | trapA balanced − ERM (rev)                          | +0.126 [+0.115, +0.138] | +0.143 [+0.130, +0.157] | MATCH     | /root/wtss/results/spec_e13/dermlip224_spec/bootstrap_vs_erm.csv                                   |
+| E15   | trapA dfr − ERM (rev)                               | +0.114 [+0.091, +0.138] | +0.110 [+0.078, +0.138] | MATCH     | /root/wtss/results/spec_e13/dermlip224_spec/bootstrap_vs_erm.csv                                   |
+| E15   | trapA leace_paired − ERM (rev)                      | +0.031 [+0.028, +0.034] | +0.041 [+0.034, +0.048] | MATCH     | /root/wtss/results/spec_e13/dermlip224_spec/bootstrap_vs_erm.csv                                   |
+| E15   | trapA leace_unpaired − ERM (rev)                    | +0.192                  | +0.198 [+0.178, +0.217] | MATCH     | /root/wtss/results/spec_e13/dermlip224_spec/bootstrap_vs_erm.csv                                   |
