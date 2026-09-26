@@ -24,7 +24,7 @@ RATES = {"train_corr": (0.9, 0.1), "test_corr": (0.9, 0.1), "test_rev": (0.1, 0.
 def load_cohort(size: int = 518, hair_free_max=HAIR_FREE_MAX, hair_min=HAIR_MIN, exclude_vignetting=False) -> pd.DataFrame:
     df = pd.read_csv(paths.DATA / "isic2019" / "prepared" / f"cohort_{size}.csv")
     df["qc_ok"] = df.lesion_frac.between(LESION_MIN, LESION_MAX) & (df.ink_frac == 0) & \
-        (df.lesion_mask_source != "missing")
+        (df.lesion_mask_source != "missing") & ~df.get("ink_uncertain", False)
     if exclude_vignetting:
         df["qc_ok"] &= df.vig_frac == 0
     df["hair_free"] = df.hair_frac < hair_free_max

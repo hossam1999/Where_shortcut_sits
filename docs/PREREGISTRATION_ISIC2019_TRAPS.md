@@ -68,3 +68,10 @@ with a σ=0.7 px Gaussian-softened donor hair mask. I2E energy threshold 0.90, m
 - **P2** i2e recovers ≥ ½ of the balanced gain on Trap A without any artifact label.
 - **P3** i2e_balanced ≥ balanced on Trap A reversed AUROC (point estimate) with clean loss ≤ 0.02.
 Outcomes are reported whether positive or negative.
+
+## Deviations recorded after commit (before any AUROC)
+- Leakage groups use pHash ≤ 2 (not the pilot's ≤ 8): at ISIC 2019 scale ≤ 8 chains unrelated lesions into
+  one component of 10,974 images. Recorded in `scripts/data/prepare_isic2019.py`.
+- Artifact-mask file names in the archive are irregular; masks are matched on the zero-padded numeric id.
+  24 ink files carry truncated ids (e.g. `ISIC_002431`); all ten candidate images of each are flagged
+  `ink_uncertain` and excluded by quality control, like confirmed ink images.

@@ -1,0 +1,24 @@
+{
+  "n_heldout_manual": 1073,
+  "dice_mean": 0.9478343753678795,
+  "dice_median": 0.969400982443373,
+  "n_hair_present": 824,
+  "stratum_change_rate": 0.0691747572815534,
+  "crosstab": {
+    "A": {
+      "A": 133,
+      "B": 0,
+      "donor": 17
+    },
+    "B": {
+      "A": 0,
+      "B": 235,
+      "donor": 11
+    },
+    "donor": {
+      "A": 19,
+      "B": 10,
+      "donor": 399
+    }
+  }
+}

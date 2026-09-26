@@ -6,7 +6,6 @@ source /venv/main/bin/activate
 export PYTHONPATH=/root/wtss/src TQDM_DISABLE=1 WTSS_DATA=/root/data
 L=logs
 while pgrep -f queue_gpu.sh >/dev/null; do sleep 30; done
-python scripts/run_traps.py --cohort isic2019 --backbone dino518 > $L/traps_isic2019_dino518.log 2>&1
 python scripts/data/prepare_cxr.py --stage drain > $L/prep_cxr_drain.log 2>&1
 python scripts/run_synthetic.py --cohort nih_ptx --backbone raddino518 --artifact tube --tag main --workers 4 --arms erm mask inpaint balanced dfr leace --proposed > $L/synth_cxr_raddino.log 2>&1
 python scripts/run_traps.py --cohort nih_drain --backbone raddino518 > $L/traps_drain_raddino.log 2>&1

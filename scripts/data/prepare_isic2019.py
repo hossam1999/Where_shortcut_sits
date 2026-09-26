@@ -45,6 +45,16 @@ def unzip(zp: Path, dest: Path, marker: str):
     (dest / marker).write_text("ok")
 
 
+def isic_key(name: str) -> str:
+    """Canonical image key from an artifact-mask file name. The archive's names are irregular
+    ('_downsampled_mvig', '_downsam_inkmark', 'ISIC_0011393i_', 'ISIC_000051_'), so match on the
+    numeric id, zero-padded to 7 digits."""
+    import re
+
+    m = re.match(r"ISIC_(\d+)", name)
+    return f"ISIC_{int(m.group(1)):07d}" if m else name
+
+
 def find_file(root: Path, pattern: str) -> dict:
     return {p.name: p for p in root.rglob(pattern)}
 
@@ -108,6 +118,11 @@ def load_bin(p: Path | None, size: int) -> np.ndarray:
     return (np.asarray(m) >= 128).astype(np.uint8)
 
 
+def mask_frac(args):
+    p, size = args
+    return float(load_bin(p, size).mean()) if p is not None else 0.0
+
+
 def per_image(args):
     """Resize image + masks to `size`; return arrays and geometry stats."""
     (image_id, img_p, lesion_p, hair_p, ink_p, vig_p, size) = args
@@ -130,7 +145,7 @@ def per_image(args):
 
 def main():
     ap = argparse.ArgumentParser()
-    ap.add_argument("--stage", choices=["unzip", "groups", "regroup", "cache"], required=True)
+    ap.add_argument("--stage", choices=["unzip", "groups", "regroup", "cache", "artifact_stats"], required=True)
     ap.add_argument("--phash_threshold", type=int, default=2)
     ap.add_argument("--size", type=int, default=518)
     ap.add_argument("--workers", type=int, default=8)
@@ -177,19 +192,39 @@ def main():
         df.drop(columns=["image_path"]).to_csv(prep / "cohort_groups.csv", index=False)
         return
 
+    if a.stage == "artifact_stats":  # recompute ink / vignetting fractions only (no image re-caching)
+        c = pd.read_csv(prep / f"cohort_{a.size}.csv")
+        ink = {isic_key(p.name): p for p in (D / "artifact_masks" / "inkmark").rglob("*.tif*")}
+        vig = {isic_key(p.name): p for p in (D / "artifact_masks" / "vignetting").rglob("*.tif")}
+        with ProcessPoolExecutor(a.workers) as ex:
+            c["ink_frac"] = list(ex.map(mask_frac, [(ink.get(isic_key(i)), a.size) for i in c.image_id], chunksize=64))
+            c["vig_frac"] = list(ex.map(mask_frac, [(vig.get(isic_key(i)), a.size) for i in c.image_id], chunksize=64))
+        c["has_ink_mask"] = [isic_key(i) in ink for i in c.image_id]
+        # 23 ink files carry truncated ids (ISIC_002431 = one of ISIC_0024310..9): flag all candidates
+        import re
+        trunc = [m.group(1) for p in (D / "artifact_masks" / "inkmark").rglob("*.tif*")
+                 if (m := re.match(r"ISIC_(\d{6})_", p.name))]
+        cand = {f"ISIC_{t}{d}" for t in trunc for d in range(10)}
+        c["ink_uncertain"] = [isic_key(i) in cand for i in c.image_id]
+        print(f"[artifact_stats] truncated ink ids: {len(trunc)} -> {int(c.ink_uncertain.sum())} candidate images flagged")
+        c["has_vig_mask"] = [isic_key(i) in vig for i in c.image_id]
+        print(f"[artifact_stats] ink masks matched {c.has_ink_mask.sum()}/{len(ink)}, vignetting {c.has_vig_mask.sum()}/{len(vig)}")
+        c.to_csv(prep / f"cohort_{a.size}.csv", index=False)
+        return
+
     # ---- cache stage
     g = pd.read_csv(prep / "cohort_groups.csv")
     df = df.merge(g[["image_id", "phash_hex", "group"]], on="image_id")
-    hair = {p.name.split("_hairmask")[0]: p for p in (D / "artifact_masks" / "hair_ruler").rglob("*.tif")}
-    ink = {p.name.replace("_downsample", "").split("_inkmark")[0]: p for p in (D / "artifact_masks" / "inkmark").rglob("*.tif*")}
-    vig = {p.name.split("_mvig")[0]: p for p in (D / "artifact_masks" / "vignetting").rglob("*.tif")}
+    hair = {isic_key(p.name): p for p in (D / "artifact_masks" / "hair_ruler").rglob("*.tif")}
+    ink = {isic_key(p.name): p for p in (D / "artifact_masks" / "inkmark").rglob("*.tif*")}
+    vig = {isic_key(p.name): p for p in (D / "artifact_masks" / "vignetting").rglob("*.tif")}
     ham = {p.name.split("_segmentation")[0]: p for p in paths.HAM_SEG.parent.rglob("*_segmentation.png")}
     t1 = {p.name.split("_segmentation")[0]: p for p in paths.ISIC2018_MASKS.rglob("*_segmentation.png")}
     unet_dir = D / "isic2019" / "unet_masks"
     unet = {p.name.split("_unet")[0]: p for p in unet_dir.glob("*_unet.png")} if unet_dir.exists() else {}
 
     def base(i):
-        return i.replace("_downsampled", "")
+        return isic_key(i)
 
     lesion_src, lesion_p = [], []
     for i in df.image_id:
