@@ -66,3 +66,36 @@ def test_difference_subspace_removes_inserted_direction():
     assert er.k == 3
     D = er(X1) - er(X0)
     assert np.abs(D).max() < 1e-4
+
+
+def test_slas_tool_backbone_agnostic(tmp_path):
+    """SLAS fit/embed/localise/save/load with a stub backbone: tokens = per-patch mean colour (no downloads)."""
+    import numpy as np
+    import torch
+    from PIL import Image
+
+    from wtss.slas import SLAS, TokenBackbone
+
+    def tokens(x):  # (B,3,56,56) -> 4x4 grid of 14px patches, D=3 (+ a constant dim)
+        p = torch.nn.functional.avg_pool2d(x, 14).flatten(2).transpose(1, 2)
+        return torch.cat([p, torch.ones_like(p[..., :1])], -1)
+
+    bb = TokenBackbone("stub", 56, lambda im: torch.from_numpy(np.asarray(im.convert("RGB"), np.float32) / 255).permute(2, 0, 1), tokens)
+    rng = np.random.default_rng(0)
+    ims, ms = [], []
+    for k in range(6):
+        a = (rng.random((56, 56, 3)) * 60 + 80).astype(np.uint8)
+        m = np.zeros((56, 56), np.uint8)
+        r, c = rng.integers(0, 4, 2)
+        a[r * 14:(r + 1) * 14, c * 14:(c + 1) * 14] = (250, 20, 20)  # red artifact patch
+        m[r * 14:(r + 1) * 14, c * 14:(c + 1) * 14] = 1
+        ims.append(Image.fromarray(a)); ms.append(m)
+    s = SLAS(bb, device="cpu").fit(ims, ms)
+    h = s.localise(ims)
+    assert h.shape == (6, 4, 4)
+    assert all(h[k].reshape(-1)[np.argmax(ms[k][::14, ::14].reshape(-1))] > 0.5 for k in range(6))
+    E = s.embed(ims, rois=[np.ones((56, 56))] * 6)
+    assert set(E) == {"all", "clean", "roi", "roiclean"} and E["clean"].shape == (6, 4)
+    s.save(tmp_path / "p.pt")
+    s2 = SLAS.load(tmp_path / "p.pt", device="cpu", backbone=bb)
+    assert np.allclose(s2.embed(ims)["clean"], E["clean"], atol=1e-5)
