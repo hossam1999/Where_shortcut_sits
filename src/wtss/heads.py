@@ -201,3 +201,28 @@ def fit_consistency_select(Xo, Xi, y, Xval, yval, seed, device, lambdas=(0.1, 0.
         if best is None or (auc, -lam) > best[0]:
             best = ((auc, -lam), head, lam, auc)
     return best[1], best[2], best[3]
+
+
+class PrevalenceCalibrated:
+    """Post-hoc prevalence-equalised recalibration (Kina & Petersen 2026, arXiv:2609.07922), linear-probe form.
+
+    The ERM head implicitly calibrates to the training prevalence *within* each shortcut group a.
+    We remove the group-specific prior: logit'(x) = logit(x) - [logit P(Y=1|A=a)_train - logit P(Y=1)_train].
+    Needs the image-level artifact label A at *test* time.
+    """
+
+    def __init__(self, clf, ytr, atr):
+        self.clf = clf
+        p = np.clip(np.mean(ytr), 1e-4, 1 - 1e-4)
+        base = np.log(p / (1 - p))
+        self.shift = {}
+        for a in (0, 1):
+            q = np.clip(np.mean(ytr[atr == a]) if (atr == a).any() else p, 1e-4, 1 - 1e-4)
+            self.shift[a] = np.log(q / (1 - q)) - base
+        self.a_test = None
+
+    def predict_proba_groups(self, X, a):
+        pr = np.clip(self.clf.predict_proba(X)[:, 1], 1e-7, 1 - 1e-7)
+        z = np.log(pr / (1 - pr)) - np.where(np.asarray(a) == 1, self.shift[1], self.shift[0])
+        p = 1 / (1 + np.exp(-z))
+        return np.c_[1 - p, p]

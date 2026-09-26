@@ -63,6 +63,9 @@ def main():
         cfg.traps = a.traps
     elif a.cohort == "nih_drain":
         cfg.traps = ("drain",)
+    if a.cohort == "nih_drain" and not a.arms:
+        # no drain pixel masks exist: removal-based arms (oracle inpaint, removal-paired LEACE) are undefined
+        cfg.arms = tuple(x for x in cfg.arms if x not in ("inpaint", "leace_paired"))
     if not a.analyse_only:
         run_traps(a.cohort, df, envs, cache, a.backbone, out, paths.CACHE / "features" / f"real_{a.cohort}", cfg,
                   donors, insert_fn, torch.device("cuda"))

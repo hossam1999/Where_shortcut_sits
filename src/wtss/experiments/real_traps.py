@@ -87,7 +87,7 @@ def make_renderers(cache: RealCache, out_size: int, donors: Sequence[str], inser
 @dataclass
 class TrapConfig:
     arms: Sequence[str] = ("erm", "mask", "inpaint", "balanced", "dfr", "leace_paired", "leace_unpaired",
-                           "i2e", "i2e_balanced", "i2e_rank1", "insert_aug")
+                           "i2e", "i2e_balanced", "i2e_rank1", "insert_aug", "prevcal")
     traps: Sequence[str] = ("trapA", "trapB")
     folds: Sequence[int] = (0, 1, 2, 3, 4)
     energy: float = 0.90
@@ -124,6 +124,21 @@ def run_traps(name: str, cohort: pd.DataFrame, envs: Dict, cache: RealCache, bac
             ytr, atr, yv = tr.y.to_numpy(), tr.a.to_numpy(), cv.y.to_numpy()
 
             def fin(clf, method, view, C, vauc, **extra):
+                if isinstance(clf, H.PrevalenceCalibrated):  # needs A at test: wrap per evaluation set
+                    base = clf
+                    class _G:  # noqa: N801
+                        def __init__(self, a): self.a = a
+                        def predict_proba(self, Xq): return base.predict_proba_groups(Xq, self.a)
+                    thr, _ = select_threshold_clean_val(yv, _G(np.zeros(len(cv), int)).predict_proba(X(view, cv))[:, 1])
+                    meta = {"cohort": name, "backbone": backend.name, "trap": trap, "seed": k, "method": method}
+                    for env in ["clean_test", "test_corr", "test_rev"]:
+                        d = E[env]
+                        r, f = evaluate(_G(d.a.to_numpy()), thr, X(view, d), d.y.to_numpy(), d.image_id.to_numpy(),
+                                        d.a.to_numpy(), {**meta, "env": "clean" if env == "clean_test" else env})
+                        f["source"] = src.loc[f.image_id].to_numpy()
+                        rows.append(r); frames.append(f)
+                    heads.append({**meta, "C": C, "clean_val_auc": vauc, "thr": thr, **extra})
+                    return
                 thr, _ = select_threshold_clean_val(yv, clf.predict_proba(X(view, cv))[:, 1])
                 meta = {"cohort": name, "backbone": backend.name, "trap": trap, "seed": k, "method": method}
                 for env in ["clean_test", "test_corr", "test_rev"]:
@@ -137,6 +152,8 @@ def run_traps(name: str, cohort: pd.DataFrame, envs: Dict, cache: RealCache, bac
             for m in [a for a in cfg.arms if a in ("erm", "mask", "inpaint")]:
                 clf, C, v = H.fit_erm(X(m, tr), ytr, X(m, cv), yv, k)
                 fin(clf, m, m, C, v)
+                if m == "erm" and "prevcal" in cfg.arms:
+                    fin(H.PrevalenceCalibrated(clf, ytr, atr), "prevcal", "erm", C, v)
             Xtr, Xv = X("erm", tr), X("erm", cv)
             if "balanced" in cfg.arms:
                 clf, C, v = H.fit_balanced(Xtr, ytr, atr, Xv, yv, k)
