@@ -57,3 +57,15 @@ stand as reported. Follow-up design (stricter, same everything else): cells are 
 **view × presence of the other devices** — Trap A: view × ETT × NGT; Trap B: view × CVC × NGT — so the only device
 difference between A = 1 and A = 0 is the trap's own device. Questions: X1–X3 and X6 as above; reported beside,
 never instead of, the pre-registered results.
+
+## Results — pre-registered primary (RAD-DINO @518, AP films, 5 seeds × 5 folds)
+| Disease | X1 mask−ERM, ETT (out) | X2 mask−ERM, CVC (in) | X3 crossover | balanced A / B | I2E+balanced A / B |
+| --- | --- | --- | --- | --- | --- |
+| Infiltration | +0.063 [+0.058, +0.068] | +0.094 [+0.075, +0.113] | −0.032 [−0.051, −0.013] | +0.319 / +0.234 | +0.329 / +0.221 |
+| Effusion | +0.100 [+0.092, +0.109] | +0.104 [+0.078, +0.129] | −0.004 [−0.027, +0.021] | +0.302 / +0.315 | +0.316 / +0.315 |
+| Atelectasis | +0.105 [+0.094, +0.114] | +0.045 [+0.013, +0.077] | +0.060 [+0.028, +0.089] | +0.266 / +0.302 | +0.256 / +0.285 |
+| Consolidation | +0.068 [+0.049, +0.086] | +0.070 [+0.044, +0.096] | −0.002 [−0.030, +0.025] | +0.286 / +0.190 | +0.298 / +0.192 |
+
+X1 supported (4/4). **X2 not supported (0/4): lung masking helps even for the in-lung CVC.** X3 supported 1/4
+(Atelectasis). X4 supported (4/4). Interpretation (descriptive, see Follow-up 1): the CVC contrast is confounded by
+out-of-lung tubes that masking removes; the device-matched follow-up tests this.
