@@ -42,3 +42,11 @@ F1 not supported (crossover +0.136 [−0.085, +0.329]); F2 not supported at 95 %
 
 ## Amendment (before training): ViT-S/16 (timm vit_small_patch16_224.augreg_in21k_ft_in1k), lr 3e-5, thyroid, same
 design and claims F1–F3 (transformer replication of the ResNet-50 check).
+
+## Results — thyroid, ViT-S/16 fine-tuned (results/finetune/thyroid/vit_small_patch16_224.augreg_in21k_ft_in1k)
+Trap A reversed / corr (clean): ERM 0.377 / 0.860 (0.640); mask 0.465 / 0.868 (0.688); balanced 0.693;
+mask_balanced 0.710 / 0.788 (0.760); mte_ft 0.475 / 0.878 (0.695).
+- **F1 supported**: crossover +0.168 [+0.074, +0.265] (mask − ERM: +0.088 in-ROI vs +0.256 out-of-ROI).
+- **F2 not supported**: mte_ft − mask (A) +0.009 [−0.021, +0.040] (ResNet-50: +0.143) — the end-to-end invariance
+  analogue does not transfer to ViT-S at this learning rate / epoch budget.
+- F3 not supported: mask_balanced − balanced (A) +0.017 [−0.023, +0.055].
