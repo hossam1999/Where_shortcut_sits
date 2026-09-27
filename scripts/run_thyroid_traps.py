@@ -83,8 +83,12 @@ def main():
     ap.add_argument("--min_px", type=int, default=15, help="sensitivity: minimum detected marker pixels for A=1")
     ap.add_argument("--rA", type=float, default=0.5, help="sensitivity: Trap A overlap threshold (r >=)")
     ap.add_argument("--rB", type=float, default=0.1, help="sensitivity: Trap B overlap threshold (r <)")
+    ap.add_argument("--max_cover_B", type=float, default=None,
+                    help="capsule sensitivity: Trap B also requires lesion coverage (roi_cover) below this")
     a = ap.parse_args()
     c = {"thyroid": cohort, "capsule": capsule_cohort, "ovary": ovary_cohort}[a.cohort]()
+    if a.max_cover_B is not None and a.cohort == "capsule":  # large debris can cover the lesion while r is small
+        c["trapB_A1"] = c.trapB_A1 & (c.roi_cover < a.max_cover_B)
     if a.cohort in ("thyroid", "ovary") and (a.min_px, a.rA, a.rB) != (15, 0.5, 0.1):  # sensitivity analysis
         pres = c.marker_px >= a.min_px
         c["trapA_A1"] = pres & (c.r >= a.rA)
