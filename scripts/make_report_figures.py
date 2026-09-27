@@ -140,4 +140,4 @@ def charts():
 
 
 if __name__ == "__main__":
-    cohorts(); synthetic_and_generic(); charts(); print("report figures ->", F)
+    cohorts(); charts(); print("report figures ->", F)  # report shows real images only (user request)
