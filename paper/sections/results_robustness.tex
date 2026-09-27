@@ -1,0 +1,20 @@
+\section{Results: natural distribution, fine-tuning and label robustness}\label{sec:robust}
+
+\subsection{Unaltered test distribution}
+In TN3K, in-ROI calipers occur naturally more often in benign nodules (37.6\% vs 24.1\%). Training on the official
+training split and testing on the untouched official test split (614 images; five validation-split seeds), masking
+leaves overall AUROC unchanged ($-0.005$ [$-0.027, +0.018$]) but lowers AUROC on shortcut-conflicting cases
+(malignant nodules with in-ROI calipers vs benign nodules without) by $-0.102$ [$-0.139, -0.066$] and raises it on
+shortcut-consistent cases ($+0.048$ [$+0.019, +0.079$]): masking amplifies the natural in-ROI shortcut. U-MtE recovers
+half of the loss ($+0.051$ [$+0.033, +0.072$] over masking) with the best overall AUROC (0.742); group balancing
+recovers all of it ($+0.142$ [$+0.107, +0.178$]). The disease-protected variant did not help here (pre-registered
+claims N1--N2 not supported).
+
+\subsection{End-to-end fine-tuning}\label{sec:ft}
+Fine-tuning ResNet-50 end-to-end (five folds) reproduces the frozen-backbone findings. Capsule: masking harms
+in-ROI ($-0.284$ [$-0.347, -0.226$]) and helps out-of-ROI ($+0.301$), crossover $+0.584$ [$+0.469, +0.691$].
+Thyroid: the crossover points the same way ($+0.057$ [$-0.021, +0.130$], five folds), and an end-to-end analogue of
+U-MtE---an invariance penalty between masked images with and without a generic overlay---improves on masking by
+$+0.143$ [$+0.099, +0.188$] without shortcut flipping (reversed 0.679, correlated 0.703), matching the best
+label-using arm. It fails on capsule ($-0.021$), where the artifact resembles the pathology. Ovary (1,202 images)
+is underpowered: U-MtE end-to-end has the best reversed, correlated and clean AUROC, with CIs overlapping masking.

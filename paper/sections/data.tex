@@ -5,23 +5,33 @@ from the union of the ISIC 2016 and 2017 tables (three images with conflicting l
 $518\times518$ image) can be placed at 0/25/50/75/100\% overlap with the lesion within 10 percentage points
 (train/val/test 1,849/371/371 before common support).
 
-\paragraph{Real hair cohort} All 25,331 ISIC 2019 training images. Artifact masks for hair and rulers (one
-channel, semi-automatic), ink and vignetting come from the archive of \citet{wegley2026artifacts}. Lesion masks are
-manual for HAM10000 \citep{tschandl2018ham} (10,015) and ISIC 2018 Task 1 (2,593) images and predicted elsewhere
-(12,723) by a U-Net (ResNet-34 encoder) trained on those manual masks (held-out Dice 0.939; 0.948 against manual
-masks on held-out ISIC 2019 images). Leakage groups join lesion identifiers and pHash Hamming $\le 2$ (the pilot's
-$\le 8$ chains unrelated dermoscopy images into a single component of 10,974 images at this scale). After quality
-control (lesion area 0.5--95\%, no ink), images are hair-free (hair/ruler fraction $<0.001$; 2,287), Trap~A
-(hair fraction $\ge 0.005$ and $r\ge0.5$; 5,095), Trap~B ($r<0.1$; 4,486) or template donors
-($0.1\le r<0.5$; 8,104), which are used only by \ItoE{} and never trained or tested on. Swapping the lesion-mask
-source (manual vs.\ U-Net) changes the stratum of 6.9\% of held-out hair images and never moves an image between
-Trap~A and Trap~B.
+\paragraph{Real hair cohort (ISIC 2019)} All 25,331 ISIC 2019 training images; hair/ruler masks from the archive of
+\citet{wegley2026artifacts}; lesion masks manual for HAM10000 \citep{tschandl2018ham} and predicted elsewhere by a
+U-Net trained on ISIC 2018 Task 1. Two traps share one hair-free group ($\le 30$ hair pixels at native resolution):
+Trap~A contains hair with overlap $r=|\text{hair}\cap\text{lesion}|/|\text{hair}|\ge0.5$, Trap~B $r<0.1$. Cells are
+subsampled to the hair-free source mix (HAM/BCN/MSK) within each label, giving Trap~A 704/157/2,738/989 and Trap~B
+704/157/4,327/930 images (hair-free benign/melanoma, hair benign/melanoma); five seeds of five-fold group-safe
+cross-validation (leakage groups: lesion identifiers and pHash); 172 reversed-test melanomas per trap and seed.
 
-\paragraph{Chest radiography} NIH ChestX-ray14 \citep{wang2017chestxray8}. Lung ROIs are the union of both lungs
-from the TorchXRayVision PSPNet \citep{cohen2022xrv}. \emph{Controlled cohort:} 1,906 pneumothorax images without a
-chest drain (NEATX annotations) and 5,718 \emph{No Finding} images from other patients, patient-grouped 60/20/20;
-a $100\times12$\,px radio-opaque tube (0.45\% of the image) is placed at controlled overlap with the lung ROI
-(7,610 images in common support). \emph{Real drains:} NEATX provides two non-expert drain annotations for 3,543
-pneumothorax images (1,637 with a drain); drains on pneumothorax-negative images are labelled by a drain detector
-trained on NEATX (Sec.~\ref{sec:drain_detector}). Environments are built within view position (AP/PA), the
-radiographic analogue of image source.
+\paragraph{Thyroid ultrasound} TN3K images with TNCD benign/malignant labels (3,493 images; 1,210 malignant) and
+manual nodule masks. Sonographer calipers were segmented by a frozen rule-based detector (dotted measurement lines
+and `+' ends; audit in Sec.~\ref{sec:limits}). Trap~A: calipers with $r\ge0.5$ (1,150 images); Trap~B: $r<0.1$ (326);
+caliper-free: 1,801. No patient identifiers are published; leakage groups are pHash chains.
+
+\paragraph{Ovarian tumour ultrasound} MMOTU OTU\_2d \citep{zhao2022mmotu} (CC BY 4.0): 1,202 images with tumour
+masks, labelled benign cystic (chocolate cyst, serous cystadenoma, simple cyst) versus lesions with solid
+components (teratoma, theca-cell tumour, mucinous cystadenoma, high-grade serous carcinoma). The thyroid detector is
+applied unchanged: Trap~A 341/276, Trap~B 91/103, caliper-free 170/178 (benign-cystic/solid).
+
+\paragraph{Capsule endoscopy} SEE-AI frames \citep{seeai2023} (CC BY 4.0) containing only erosions (3,550) or only
+polyp-like lesions (1,931); the ROI is the union of the expert lesion boxes. Contamination (debris, bubbles, bile)
+is segmented by a linear probe on DINOv2 patch tokens trained on 2,160 expert-masked frames (held-out pixel accuracy
+0.92, IoU 0.62; expert masks are used where available). Debris-free: $<3\%$ of the frame; Trap~A: debris $\ge10\%$
+with $r\ge0.5$; Trap~B: $r<0.1$. Leakage groups: blocks of 100 consecutive frame numbers plus pHash duplicates.
+
+\paragraph{Chest radiography} NIH ChestX-ray14 \citep{wang2017chestxray8}; lung ROIs from the TorchXRayVision
+PSPNet \citep{cohen2022xrv}. \emph{Controlled cohort:} 1,906 pneumothorax images without a chest drain (NEATX
+annotations) and 5,718 \emph{No Finding} images from other patients; a $100\times12$\,px radio-opaque tube is
+placed at controlled overlap with the lungs (7,610 images in common support). \emph{Real drains} (in-ROI only):
+29,687 images; drains are labelled by NEATX for pneumothorax-positive images and by a drain detector (precision
+0.95) for negatives; environments are built within view position (AP/PA); five patient-grouped folds.

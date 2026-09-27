@@ -87,6 +87,8 @@ from synthetic insertions. Random erasing and occlusion augmentation \citep{zhon
 use similar overlays as training noise; we show that this does not remove the shortcut. Test-time selection
 \citep{bissoto2023tts} steers dermoscopy models with user keypoints.
 
+\input{sections/data}
+
 \section{Problem setup and protocol}\label{sec:setup}
 Let $Y\in\{0,1\}$ be the diagnosis and $A\in\{0,1\}$ the presence of an artifact. A \emph{trap} trains with
 $P(A{=}1\mid Y{=}1)=0.9$ and $P(A{=}1\mid Y{=}0)=0.1$ and tests on a correlated environment with the same rates,
@@ -134,7 +136,7 @@ backbone (ViTs and CNNs) through a two-call API.
 % Results sections are generated: \input{sections/results_generated}
 \input{sections/results}
 
-\section{Discussion and limitations}
+\section{Discussion and limitations}\label{sec:limits}
 \input{sections/discussion}
 
 \bibliographystyle{elsarticle-harv}

@@ -34,3 +34,19 @@ only $+0.015$). In both controlled sweeps the benefit of U-MtE$_{\text{bal}}$ no
 does ($+0.205$, $+0.432$).
 The capsule findings replicate with MedSigLIP (crossover $+0.332$ [$+0.296, +0.365$]; masking plus DFR 0.901).
 All thyroid and capsule findings replicate with a CNN (ConvNeXt-Base): crossovers $+0.284$ and $+0.292$; U-MtE $-$ mask $+0.128$ [$+0.112, +0.145$] and erase $-$ augment $+0.120$ [$+0.102, +0.139$] on thyroid.
+
+\subsection{Label-free and erasure baselines}
+Among methods that need no artifact labels, U-MtE beats JTT \citep{liu2021jtt} by $+0.198$ [$+0.167, +0.231$]
+(thyroid), $+0.137$ [$+0.098, +0.179$] (ovary) and $+0.094$ [$+0.077, +0.109$] (chest drains); JTT on the unmasked
+view is best on hair. Task-preserving concept removal (SPLICE; \citealp{splice2025}) fitted with artifact labels
+\emph{flips} the shortcut in thyroid, capsule and hair (reversed 0.83--0.95 but correlated 0.60--0.73): when artifact
+and label are strongly associated in training their covariance directions are nearly collinear. By
+min(reversed, correlated) U-MtE$_{\text{bal}}$ exceeds SPLICE in all three (0.788 vs 0.646; 0.857 vs 0.734; 0.704 vs
+0.601).
+
+\subsection{A single procedure: validation-driven selection}
+Selecting, per fold, the candidate with the best group-aware validation score (image-level artifact labels needed on
+validation images only) beats masking in all five cohorts ($+0.17$ to $+0.40$), is within 0.02 of the best
+candidate in each, and beats DFR in three (thyroid $+0.057$, capsule $+0.047$, ovary $+0.010$); it chooses
+U-MtE$_{\text{bal}}$ where the artifact is an overlay and plain balancing on hair and drains, where DFR remains
+better. A split-validation variant that admits DFR as a candidate is reported in the supplement.
