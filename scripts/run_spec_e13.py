@@ -63,6 +63,7 @@ def main():
     ap.add_argument("--tag", default="spec")
     ap.add_argument("--generic", action="store_true", help="artifact-agnostic insertion library (U-I2E / U-MtE)")
     ap.add_argument("--arms", nargs="*", default=None)
+    ap.add_argument("--lama", action="store_true", help="LaMa-inpainted hair cache (docs/PREREGISTRATION_INPAINT_LAMA.md)")
     ap.add_argument("--save_val", action="store_true", help="also save val_groups predictions (adaptive selection)")
     a = ap.parse_args()
     c = load_spec_cohort(r_col=a.r_col)
@@ -76,7 +77,7 @@ def main():
     print(cnt.T.to_string())
     if a.counts_only:
         return
-    cache = RealCache(paths.DATA / "isic2019" / "prepared" / "cache_518", roi_file="roi_spec.npy")
+    cache = RealCache(paths.DATA / "isic2019" / "prepared" / ("cache_518_lama" if a.lama else "cache_518"), roi_file="roi_spec.npy")
     donors = c[~c.A0 & (c[a.r_col] >= 0.1) & (c[a.r_col] < 0.5)].image_id.tolist()
     if not (out / "predictions.csv.gz").exists():
         kw = {}
@@ -87,7 +88,7 @@ def main():
                       insert_tag="_generic")
         if a.arms:
             kw["arms"] = tuple(a.arms)
-        run_spec(envs, cache, a.backbone, out, paths.CACHE / "features" / "spec_isic2019" / BACKBONE_DIR[a.backbone], donors,
+        run_spec(envs, cache, a.backbone, out, paths.CACHE / "features" / ("spec_isic2019_lama" if a.lama else "spec_isic2019") / BACKBONE_DIR[a.backbone], donors,
                  device=torch.device("cuda"), save_val=a.save_val, **kw)
     preds = pd.read_csv(out / "predictions.csv.gz")
     arms = [m for m in preds.method.unique() if m != "erm"]
