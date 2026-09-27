@@ -23,6 +23,20 @@ from wtss.stats import difference_of_deltas, hierarchical_paired_bootstrap, safe
 BDIR = {"dino518": "dinov2_b14_518", "medsiglip448": "medsiglip_448", "convnext384": "convnext_b_384"}
 T = paths.DATA / "us" / "tncd"
 CAP = paths.DATA / "capsule"
+OV = paths.DATA / "ovary"
+
+
+def ovary_cohort() -> pd.DataFrame:
+    """MMOTU ovarian tumours: cystic benign vs solid-component; calipers (docs/PREREGISTRATION_OVARY_TRAPS.md)."""
+    c = pd.read_csv(OV / "ovary_cohort.csv")
+    c["source"] = "MMOTU"
+    c["lesion_id"] = c.image_id
+    c["A0"] = c.marker_px == 0
+    pres = c.marker_px >= 15
+    c["trapA_A1"] = pres & (c.r >= 0.5)
+    c["trapB_A1"] = pres & (c.r < 0.1)
+    c["group"] = c.group.astype(str)
+    return c
 
 
 def capsule_cohort() -> pd.DataFrame:
@@ -58,14 +72,14 @@ def _b(j):
 def main():
     ap = argparse.ArgumentParser()
     ap.add_argument("--backbone", default="dino518")
-    ap.add_argument("--cohort", default="thyroid", choices=("thyroid", "capsule"))
+    ap.add_argument("--cohort", default="thyroid", choices=("thyroid", "capsule", "ovary"))
     ap.add_argument("--generic", action="store_true")
     ap.add_argument("--tag", default="main")
     ap.add_argument("--counts_only", action="store_true")
     ap.add_argument("--arms", nargs="*", default=None)
     ap.add_argument("--save_val", action="store_true", help="also save val_groups predictions (adaptive selection)")
     a = ap.parse_args()
-    c = cohort() if a.cohort == "thyroid" else capsule_cohort()
+    c = {"thyroid": cohort, "capsule": capsule_cohort, "ovary": ovary_cohort}[a.cohort]()
     envs = build_spec_envs(c, group_col="group")
     rows = []
     for trap in ("trapA", "trapB"):
@@ -80,6 +94,9 @@ def main():
         return
     if a.cohort == "thyroid":
         cache = RealCache(T / "cache_518", roi_file="roi.npy", art_file="marker.npy")
+        donors = c[(c.marker_px >= 15) & c.r.between(0.1, 0.5, inclusive="left")].image_id.tolist()
+    elif a.cohort == "ovary":
+        cache = RealCache(OV / "cache_518", roi_file="roi.npy", art_file="marker.npy")
         donors = c[(c.marker_px >= 15) & c.r.between(0.1, 0.5, inclusive="left")].image_id.tolist()
     else:
         cache = RealCache(CAP / "cache_518", roi_file="roi.npy", art_file="contam.npy")
