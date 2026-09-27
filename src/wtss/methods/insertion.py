@@ -230,3 +230,33 @@ def synthetic_extra_arms(cfg) -> Dict[str, Callable]:
             "mte": lambda ctx: _mte(ctx, False), "mte_balanced": lambda ctx: _mte(ctx, True),
             "ui2e": lambda ctx: _ui2e(ctx, False), "ui2e_balanced": lambda ctx: _ui2e(ctx, True),
             "umte": lambda ctx: _umte(ctx, False), "umte_balanced": lambda ctx: _umte(ctx, True)}
+
+
+# ----------------------------------------------------------------------------- disease-protected erasure
+def disease_directions(Xclean: np.ndarray, yclean: np.ndarray, m: int = 5, C: float = 0.1, seed: int = 0) -> np.ndarray:
+    """(d, m') orthonormal basis of the label directions of ARTIFACT-FREE images: logistic weights on m bootstrap
+    resamples (captures a small disease subspace, not just one direction)."""
+    from sklearn.linear_model import LogisticRegression
+    rng = np.random.default_rng(seed + 991)
+    Ws = []
+    for b in range(m):
+        idx = rng.integers(0, len(yclean), len(yclean)) if b else np.arange(len(yclean))
+        if len(np.unique(yclean[idx])) < 2:
+            continue
+        clf = LogisticRegression(C=C, class_weight="balanced", max_iter=3000, solver="liblinear",
+                                 random_state=seed).fit(Xclean[idx], yclean[idx])
+        Ws.append(clf.coef_.ravel())
+    Q, R = np.linalg.qr(np.stack(Ws, 1))
+    keep = np.abs(np.diag(R)) > 1e-6 * np.abs(np.diag(R)).max()
+    return Q[:, keep].astype(np.float32)
+
+
+def protect(er: SubspaceEraser, W: np.ndarray) -> SubspaceEraser:
+    """Remove the disease subspace W from the erased subspace U: U' = orth((I - W W^T) U).
+    Guarantees w^T P(x) = w^T x for every w in span(W): a head fitted on artifact-free images is untouched."""
+    if er.k == 0:
+        return er
+    Up = er.U - W @ (W.T @ er.U)
+    Q, R = np.linalg.qr(Up)
+    keep = np.abs(np.diag(R)) > 1e-6
+    return SubspaceEraser(Q[:, keep].astype(np.float32), er.mu, int(keep.sum()), er.energy_curve)

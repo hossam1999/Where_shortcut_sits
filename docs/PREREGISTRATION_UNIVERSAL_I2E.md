@@ -49,3 +49,12 @@ images; Otsu's threshold on its logits gives pseudo-A (`wtss.heads.pseudo_artifa
 Arms: pbal (balanced ERM head with pseudo-A) and umte_pbal (U-MtE + pseudo-A balancing).
 Claims **U8a** umte_pbal − U-MtE > 0 and **U8b** pbal − ERM > 0 (reversed AUROC, Trap A), thyroid + ISIC hair,
 DINOv2@518. Diagnostic: AUROC of the detector score vs true A. Reported either way.
+
+## Amendment (2026-09-27, before fitting) — disease-protected erasure (U9)
+Motivation: on capsule endoscopy, template MtE removed disease evidence (debris resembles erosion fibrin).
+Method: W = orthonormal basis of logistic label weights (C=0.1, 5 bootstrap fits) on the ARTIFACT-FREE training
+images (A=0) in the masked view; erased subspace U' = orth((I − W Wᵀ) U) (`insertion.protect`). Guarantee:
+wᵀP(x) = wᵀx for w ∈ span(W). Arms mte_protect / mte_protect_balanced, both with the template library
+(where it exists) and the generic library. Claims **U9a** mte_protect − mte > 0 (Trap A) on capsule;
+**U9b** mte_protect − mask > 0 (Trap A) on capsule, thyroid and ISIC hair; **U9c** mte_protect − mte ≥ −0.02 on
+thyroid and ISIC hair (protection costs little where erasure already works). Reported either way.

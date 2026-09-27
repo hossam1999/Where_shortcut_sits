@@ -100,6 +100,15 @@ def _fold_job(job):
                 fin(H.fit_balanced(Xtr, ytr, pa, Xv, yv, seed)[0], "pbal", "erm")
             for f in frames[n0:]:
                 f["pseudo_a_auc"], f["pseudo_a_rate"] = pauc, float(pa.mean())
+        if any(a in arms for a in ("mte_protect", "mte_protect_balanced")):
+            # disease-protected erasure: erased subspace made orthogonal to label directions of artifact-free images
+            from ..methods.insertion import disease_directions, protect
+            W = disease_directions(mtr[atr == 0], ytr[atr == 0], seed=seed)
+            er_p = protect(er_m, W)
+            if "mte_protect" in arms:
+                fin(H.fit_on_transformed(er_p, mtr, ytr, mv, yv, seed)[0], "mte_protect", "mask")
+            if "mte_protect_balanced" in arms:
+                fin(H.fit_on_transformed(er_p, mtr, ytr, mv, yv, seed, atr=atr, balanced=True)[0], "mte_protect_balanced", "mask")
         if "mte_aug" in arms:  # ablation: same overlays used as training augmentation instead of erasure
             fin(insert_aug_head(mtr, ytr, X("mask_insert", tr), mv, yv, seed)[0], "mte_aug", "mask")
     if "insert" in V:
