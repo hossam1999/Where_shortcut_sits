@@ -35,3 +35,9 @@ Closest generic baseline to U-MtE: the SAME generic overlays used as training au
 occlusion-augmentation style) instead of subspace erasure. Arms: insert_aug (ERM view + overlaid copies of a
 random 50 % of training images) and mte_aug (masked view + masked overlaid copies). Claim **U7**: U-MtE − mte_aug
 > 0 (reversed AUROC, Trap A) on ISIC 2019 hair and thyroid markers (DINOv2@518). Reported either way.
+
+### U7 results (results/ablation_u7.json; reversed AUROC, Trap A)
+- Thyroid: U-MtE − mte_aug = **+0.207 [+0.182, +0.235]** (mte_aug − mask only +0.015); Trap B −0.003 [−0.020, +0.014].
+- ISIC 2019 hair: U-MtE − mte_aug = **+0.045 [+0.037, +0.054]** (mte_aug − mask +0.007); Trap B +0.015 [−0.000, +0.030].
+**U7 supported in both cohorts**: the same generic overlays help only when used to *estimate and erase* a
+subspace, not as training augmentation.

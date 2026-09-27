@@ -1,0 +1,122 @@
+{
+ "thyroid|trapA|mte-mte_aug|test_rev": [
+  0.207,
+  0.182,
+  0.235
+ ],
+ "thyroid|trapA|mte-mte_aug|clean": [
+  0.038,
+  0.014,
+  0.062
+ ],
+ "thyroid|trapA|mte_aug-mask|test_rev": [
+  0.015,
+  0.012,
+  0.018
+ ],
+ "thyroid|trapA|mte_aug-mask|clean": [
+  0.003,
+  0.001,
+  0.005
+ ],
+ "thyroid|trapA|insert_aug-erm|test_rev": [
+  0.029,
+  0.026,
+  0.033
+ ],
+ "thyroid|trapA|insert_aug-erm|clean": [
+  0.012,
+  0.009,
+  0.015
+ ],
+ "thyroid|trapB|mte-mte_aug|test_rev": [
+  -0.003,
+  -0.02,
+  0.014
+ ],
+ "thyroid|trapB|mte-mte_aug|clean": [
+  0.005,
+  -0.011,
+  0.022
+ ],
+ "thyroid|trapB|mte_aug-mask|test_rev": [
+  -0.004,
+  -0.017,
+  0.009
+ ],
+ "thyroid|trapB|mte_aug-mask|clean": [
+  -0.008,
+  -0.022,
+  0.007
+ ],
+ "thyroid|trapB|insert_aug-erm|test_rev": [
+  0.036,
+  0.026,
+  0.045
+ ],
+ "thyroid|trapB|insert_aug-erm|clean": [
+  0.015,
+  0.007,
+  0.022
+ ],
+ "isic2019|trapA|mte-mte_aug|test_rev": [
+  0.045,
+  0.037,
+  0.054
+ ],
+ "isic2019|trapA|mte-mte_aug|clean": [
+  0.017,
+  0.011,
+  0.023
+ ],
+ "isic2019|trapA|mte_aug-mask|test_rev": [
+  0.007,
+  0.001,
+  0.016
+ ],
+ "isic2019|trapA|mte_aug-mask|clean": [
+  0.006,
+  -0.001,
+  0.017
+ ],
+ "isic2019|trapA|insert_aug-erm|test_rev": [
+  0.01,
+  0.001,
+  0.023
+ ],
+ "isic2019|trapA|insert_aug-erm|clean": [
+  0.008,
+  -0.001,
+  0.022
+ ],
+ "isic2019|trapB|mte-mte_aug|test_rev": [
+  0.015,
+  -0.0,
+  0.03
+ ],
+ "isic2019|trapB|mte-mte_aug|clean": [
+  0.005,
+  -0.008,
+  0.016
+ ],
+ "isic2019|trapB|mte_aug-mask|test_rev": [
+  0.01,
+  -0.002,
+  0.027
+ ],
+ "isic2019|trapB|mte_aug-mask|clean": [
+  0.0,
+  -0.005,
+  0.006
+ ],
+ "isic2019|trapB|insert_aug-erm|test_rev": [
+  0.008,
+  0.003,
+  0.012
+ ],
+ "isic2019|trapB|insert_aug-erm|clean": [
+  0.003,
+  -0.001,
+  0.007
+ ]
+}

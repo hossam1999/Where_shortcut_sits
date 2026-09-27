@@ -59,3 +59,8 @@ Reversed-test AUROC, delta vs ERM [95 % CI]:
   **U-MtE − mask = +0.222 [+0.197, +0.251] with the generic library (no marker example used)**.
   U-MtE_balanced: reversed 0.788, clean 0.807 (template MtE_balanced 0.818 / 0.812); Trap B U-MtE 0.740 vs
   mask 0.747. No gaming: U-MtE corr 0.822 ≥ rev 0.622.
+
+## Replication — MedSigLIP-448 (results/thyroid/medsiglip448_main)
+T1 mask − ERM (B) +0.228 [+0.203, +0.252] supported; T3 crossover +0.163 [+0.132, +0.194] supported; T2 not
+supported (Trap A mask 0.348 vs ERM 0.284: small gain); T6 MtE − mask (A) +0.310 supported; MtE_balanced reversed
+0.814 / clean 0.805 (best). Same qualitative pattern as DINOv2.
