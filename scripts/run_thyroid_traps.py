@@ -78,6 +78,7 @@ def main():
     ap.add_argument("--tag", default="main")
     ap.add_argument("--counts_only", action="store_true")
     ap.add_argument("--arms", nargs="*", default=None)
+    ap.add_argument("--text_dirs", default=None, help="npz from scripts/make_text_directions.py (text-prompted arms)")
     ap.add_argument("--save_val", action="store_true", help="also save val_groups predictions (adaptive selection)")
     ap.add_argument("--lama", action="store_true", help="LaMa-inpainted cache (docs/PREREGISTRATION_INPAINT_LAMA.md)")
     ap.add_argument("--min_px", type=int, default=15, help="sensitivity: minimum detected marker pixels for A=1")
@@ -127,7 +128,8 @@ def main():
                           art_file="contam.npy" if a.cohort == "capsule" else "marker.npy")
     if not (out / "predictions.csv.gz").exists():
         run_spec(envs, cache, a.backbone, out, paths.CACHE / "features" / (a.cohort + ("_lama" if a.lama else "")) / BDIR[a.backbone], donors,
-                 device=torch.device("cuda"), save_val=a.save_val, **kw)
+                 device=torch.device("cuda"), save_val=a.save_val, **kw,
+                 extra_ctx={"text_U": np.load(a.text_dirs)["U"]} if a.text_dirs else None)
     preds = pd.read_csv(out / "predictions.csv.gz")
     arms = [m for m in preds.method.unique() if m != "erm"]
     jobs, keys = [], []

@@ -71,6 +71,22 @@ def _fold_job(job):
     Xtr, Xv = X("erm", tr), X("erm", cv)
     if "jtt" in arms:
         fin(H.fit_jtt(Xtr, ytr, Xv, yv, seed)[0], "jtt", "erm")
+    if _CTX.get("text_U") is not None and any(a.startswith(("text_erase", "mask_text")) for a in arms):
+        # text-prompted artifact subspace (docs/PREREGISTRATION_TEXT_PROMPT.md)
+        from ..methods.insertion import SubspaceEraser, disease_directions, protect
+        U = np.asarray(_CTX["text_U"], np.float32)
+        if "text_erase" in arms:
+            er_t = SubspaceEraser(U, Xtr.mean(0).astype(np.float32), U.shape[1], np.zeros(1))
+            fin(H.fit_on_transformed(er_t, Xtr, ytr, Xv, yv, seed)[0], "text_erase", "erm")
+        mtr_t, mv_t = X("mask", tr), X("mask", cv)
+        er_mt = SubspaceEraser(U, mtr_t.mean(0).astype(np.float32), U.shape[1], np.zeros(1))
+        if "mask_text_erase" in arms:
+            fin(H.fit_on_transformed(er_mt, mtr_t, ytr, mv_t, yv, seed)[0], "mask_text_erase", "mask")
+        if "mask_text_erase_balanced" in arms:
+            fin(H.fit_on_transformed(er_mt, mtr_t, ytr, mv_t, yv, seed, atr=atr, balanced=True)[0], "mask_text_erase_balanced", "mask")
+        if "mask_text_erase_protect" in arms:
+            er_p = protect(er_mt, disease_directions(mtr_t[atr == 0], ytr[atr == 0], seed=seed))
+            fin(H.fit_on_transformed(er_p, mtr_t, ytr, mv_t, yv, seed)[0], "mask_text_erase_protect", "mask")
     if "mask_balanced" in arms:
         fin(H.fit_balanced(X("mask", tr), ytr, atr, X("mask", cv), yv, seed)[0], "mask_balanced", "mask")
     if "splice" in arms:  # task-preserving concept removal with artifact labels (baseline)
@@ -157,7 +173,8 @@ def _fold_job(job):
 
 def run_spec(envs: Dict, cache, backend_name: str, out_dir: Path, feat_dir: Path, donors: Sequence[str],
              arms=ARMS, traps=("trapA", "trapB"), device=None, batch_size=64, workers=5, extra_meta=None,
-             n_jobs: int = 4, insert_fn=None, insert_tag: str = "", folds=range(5), save_val: bool = False):
+             n_jobs: int = 4, insert_fn=None, insert_tag: str = "", folds=range(5), save_val: bool = False,
+             extra_ctx: dict | None = None):
     device = device or torch.device("cuda")
     out_dir.mkdir(parents=True, exist_ok=True)
     pool = sorted(set().union(*[set(d.image_id) for k, d in envs.items() if k[0] in traps]))
@@ -179,7 +196,7 @@ def run_spec(envs: Dict, cache, backend_name: str, out_dir: Path, feat_dir: Path
     del backend; gc.collect(); torch.cuda.empty_cache()
     global _CTX
     _CTX = dict(V=V, pos=pos, envs=envs, arms=arms, backend_name=backend_name, extra_meta=extra_meta or {},
-                save_val=save_val)
+                save_val=save_val, **(extra_ctx or {}))
     seeds = sorted({k[1] for k in envs})
     jobs = [(trap, seed, k) for trap in traps for seed in seeds for k in folds]
     import multiprocessing as mp

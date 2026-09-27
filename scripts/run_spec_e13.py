@@ -64,6 +64,7 @@ def main():
     ap.add_argument("--generic", action="store_true", help="artifact-agnostic insertion library (U-I2E / U-MtE)")
     ap.add_argument("--arms", nargs="*", default=None)
     ap.add_argument("--lama", action="store_true", help="LaMa-inpainted hair cache (docs/PREREGISTRATION_INPAINT_LAMA.md)")
+    ap.add_argument("--text_dirs", default=None, help="npz from scripts/make_text_directions.py (text-prompted arms)")
     ap.add_argument("--save_val", action="store_true", help="also save val_groups predictions (adaptive selection)")
     a = ap.parse_args()
     c = load_spec_cohort(r_col=a.r_col)
@@ -89,7 +90,8 @@ def main():
         if a.arms:
             kw["arms"] = tuple(a.arms)
         run_spec(envs, cache, a.backbone, out, paths.CACHE / "features" / ("spec_isic2019_lama" if a.lama else "spec_isic2019") / BACKBONE_DIR[a.backbone], donors,
-                 device=torch.device("cuda"), save_val=a.save_val, **kw)
+                 device=torch.device("cuda"), save_val=a.save_val, **kw,
+                 extra_ctx={"text_U": np.load(a.text_dirs)["U"]} if a.text_dirs else None)
     preds = pd.read_csv(out / "predictions.csv.gz")
     arms = [m for m in preds.method.unique() if m != "erm"]
     jobs, keys = [], []
