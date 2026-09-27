@@ -74,3 +74,5 @@ Reversed AUROC vs ERM [95 % CI]:
 - **TS4 supported**: U-MtE − mask at r=1 = +0.278 [+0.232, +0.325]; U-MtE_balanced − balanced = +0.091
   [+0.042, +0.142]; U-MtE_balanced − mask = +0.471 [+0.402, +0.534]. U-MtE's location interaction is +0.156
   (vs +0.432 for masking); U-MtE_balanced's is −0.054 [−0.098, −0.004] (location-invariant or better inside).
+
+## Amendment 2 (before fitting): controlled synthetic-caliper replication with MedSigLIP-448 — same design and claims TS1–TS4.

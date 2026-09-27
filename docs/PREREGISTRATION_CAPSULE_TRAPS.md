@@ -64,3 +64,5 @@ artifact labels, masking + DFR is the most robust arm.
 ## Replication — ConvNeXt-Base (CNN), generic library (results/capsule/convnext384_universal)
 Crossover +0.292 [+0.248, +0.337]; Trap A reversed: ERM 0.545, mask 0.639, U-MtE 0.559, U-MtE_protect 0.643,
 mte_aug 0.655, U-MtE_balanced 0.803, mask+DFR 0.864 (corr 0.878; most robust). Same pattern as DINOv2/MedSigLIP.
+
+## Amendment (before fitting): controlled synthetic-debris replication with MedSigLIP-448 — same design and claims CS1–CS4.
