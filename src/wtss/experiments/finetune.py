@@ -139,8 +139,7 @@ def train_eval(arm: str, E: Dict[str, pd.DataFrame], render: Dict, arch: str = "
             body.eval()
             out = []
             for x, _, _, _ in DataLoader(TrapImages(df, render, v, size, False), batch_size=128, num_workers=workers):
-                with torch.autocast("cuda", dtype=torch.float16):
-                    out.append(body(x.to(device)).float().cpu().numpy())
+                out.append(body(x.to(device)).float().cpu().numpy())  # fp32: fp16 features overflowed (NaN)
             return np.concatenate(out)
         F0, F1 = feats(tr, "mask"), feats(tr, "mask_insert")
         er = fit_difference_subspace(F0, F1, energy=0.9, seed=seed)
