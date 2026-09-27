@@ -7,6 +7,7 @@
 from __future__ import annotations
 
 import argparse
+from pathlib import Path
 import json
 from concurrent.futures import ProcessPoolExecutor
 
@@ -78,6 +79,7 @@ def main():
     ap.add_argument("--counts_only", action="store_true")
     ap.add_argument("--arms", nargs="*", default=None)
     ap.add_argument("--save_val", action="store_true", help="also save val_groups predictions (adaptive selection)")
+    ap.add_argument("--lama", action="store_true", help="LaMa-inpainted cache (docs/PREREGISTRATION_INPAINT_LAMA.md)")
     ap.add_argument("--min_px", type=int, default=15, help="sensitivity: minimum detected marker pixels for A=1")
     ap.add_argument("--rA", type=float, default=0.5, help="sensitivity: Trap A overlap threshold (r >=)")
     ap.add_argument("--rB", type=float, default=0.1, help="sensitivity: Trap B overlap threshold (r <)")
@@ -116,8 +118,11 @@ def main():
                   insert_tag="_generic", arms=("erm", "mask", "balanced", "dfr", "i2e", "i2e_balanced", "mte", "mte_balanced"))
     if a.arms:
         kw["arms"] = tuple(a.arms)
+    if a.lama:  # same envs, images with LaMa-inpainted artifact pixels
+        cache = RealCache(Path(str(cache.rgb.filename).rsplit("/", 1)[0] + "_lama"), roi_file="roi.npy",
+                          art_file="contam.npy" if a.cohort == "capsule" else "marker.npy")
     if not (out / "predictions.csv.gz").exists():
-        run_spec(envs, cache, a.backbone, out, paths.CACHE / "features" / a.cohort / BDIR[a.backbone], donors,
+        run_spec(envs, cache, a.backbone, out, paths.CACHE / "features" / (a.cohort + ("_lama" if a.lama else "")) / BDIR[a.backbone], donors,
                  device=torch.device("cuda"), save_val=a.save_val, **kw)
     preds = pd.read_csv(out / "predictions.csv.gz")
     arms = [m for m in preds.method.unique() if m != "erm"]
