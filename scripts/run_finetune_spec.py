@@ -24,7 +24,7 @@ from wtss.synthetic import draw_generic_artifact
 
 spec = importlib.util.spec_from_file_location("rt", Path(__file__).with_name("run_thyroid_traps.py"))
 rt = importlib.util.module_from_spec(spec); spec.loader.exec_module(rt)
-COMP = [("mask", "erm"), ("mte_ft", "mask"), ("mask_balanced", "balanced"), ("mte_ft", "erm")]
+COMP = [("mask", "erm"), ("mte_ft", "mask"), ("mask_balanced", "balanced"), ("mte_ft", "erm"), ("mte_post", "mask"), ("mte_post", "mask_post")]
 
 
 def main():
@@ -35,6 +35,7 @@ def main():
     ap.add_argument("--folds", nargs="+", type=int, default=[0, 1, 2, 3, 4])
     ap.add_argument("--epochs", type=int, default=8)
     ap.add_argument("--lr", type=float, default=1e-4)
+    ap.add_argument("--traps", nargs="+", default=["trapA", "trapB"])
     a = ap.parse_args()
     if a.cohort == "thyroid":
         c = rt.cohort(); cache = RealCache(rt.T / "cache_518", roi_file="roi.npy", art_file="marker.npy")
@@ -49,7 +50,7 @@ def main():
     pf = out / "predictions.csv.gz"
     done = pd.read_csv(pf) if pf.exists() else None
     frames = [] if done is None else [done]
-    for trap in ("trapA", "trapB"):
+    for trap in a.traps:
         for k in a.folds:
             E = {e: envs[(trap, 42, k, e)] for e in ("train_corr", "test_corr", "test_rev")}
             E["clean_test"], E["clean_val"] = envs[(trap, 42, k, "clean")], envs[(trap, 42, k, "val_clean")]
@@ -59,9 +60,10 @@ def main():
                 res = train_eval(arm, E, render, arch=a.arch, epochs=a.epochs, seed=k, lr=a.lr, device=torch.device("cuda"), workers=6)
                 meta = {"cohort": a.cohort, "backbone": f"ft_{a.arch}", "trap": trap, "seed": k, "method": arm}
                 msg = []
-                for env, (clf, thr, d) in res.items():
+                for key, (clf, thr, d) in res.items():
+                    m_, env = key if isinstance(key, tuple) else (arm, key)  # mte_post also returns mask_post
                     r, f = evaluate(clf, thr, None, d.y.to_numpy(), d.image_id.to_numpy(), d.a.to_numpy(),
-                                    {**meta, "env": "clean" if env == "clean_test" else env})
+                                    {**meta, "method": m_, "env": "clean" if env == "clean_test" else env})
                     frames.append(f); msg.append(f"{r['env']}={r['auc']:.3f}")
                 print(f"[ft] {a.cohort} {trap} fold {k} {arm}: " + " ".join(msg), flush=True)
                 pd.concat(frames, ignore_index=True).to_csv(pf, index=False, compression="gzip")

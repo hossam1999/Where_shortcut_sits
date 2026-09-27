@@ -8,6 +8,9 @@ Arms (same trap environments as the linear-probe study):
   i2e_ft     : insertion invariance — BCE + λ ||g(x) - g(x+)||² on the penultimate embedding
                (end-to-end analogue of I2E: the network is trained so that inserting the artifact
                does not move the representation; no artifact label, no mask)
+  mte_post   : fine-tune exactly like `mask`, then apply U-MtE to the fine-tuned network's penultimate features
+               (generic-overlay difference subspace on masked training images, 90 % energy) and refit a linear head
+               on clean validation (docs/PREREGISTRATION_FT_ERASE.md)
 Model selection: fixed epochs; decision threshold / reporting on clean validation only.
 """
 from __future__ import annotations
@@ -73,7 +76,7 @@ def train_eval(arm: str, E: Dict[str, pd.DataFrame], render: Dict, arch: str = "
                device=None, workers: int = 6):
     device = device or torch.device("cuda")
     seed_all(seed)
-    view = "mask" if arm in ("mask", "mte_ft", "mask_balanced") else "erm"
+    view = "mask" if arm in ("mask", "mte_ft", "mask_balanced", "mte_post") else "erm"
     tr = E["train_corr"]
     with_ins = arm in ("i2e_ft", "insert_aug", "mte_ft")
     ins_view = "mask_insert" if arm == "mte_ft" else "insert"
@@ -127,6 +130,33 @@ def train_eval(arm: str, E: Dict[str, pd.DataFrame], render: Dict, arch: str = "
         def __init__(self, p): self.p = p
         def predict_proba(self, _): return np.c_[1 - self.p, self.p]
 
+    if arm == "mte_post":  # fine-tune-then-erase
+        from .. import heads as H
+        from ..methods.insertion import fit_difference_subspace
+
+        @torch.inference_mode()
+        def feats(df, v):
+            body.eval()
+            out = []
+            for x, _, _, _ in DataLoader(TrapImages(df, render, v, size, False), batch_size=128, num_workers=workers):
+                with torch.autocast("cuda", dtype=torch.float16):
+                    out.append(body(x.to(device)).float().cpu().numpy())
+            return np.concatenate(out)
+        F0, F1 = feats(tr, "mask"), feats(tr, "mask_insert")
+        er = fit_difference_subspace(F0, F1, energy=0.9, seed=seed)
+        cv = E["clean_val"]
+        Fv = feats(cv, "mask")
+        res = {}
+        Fe = {env: feats(E[env], "mask") for env in ["clean_test", "test_corr", "test_rev"]}
+        # mask_post: same fine-tuned body and head fitting without erasure (isolates the erasure step)
+        for name, tf in (("mte_post", er), ("mask_post", lambda X: X)):
+            clf = H.fit_on_transformed(tf, F0, tr.y.to_numpy(), Fv, cv.y.to_numpy(), seed)[0]
+            thr, _ = select_threshold_clean_val(cv.y.to_numpy(), clf.predict_proba(Fv)[:, 1])
+            for env, Fx in Fe.items():
+                res[(name, env)] = (_P(clf.predict_proba(Fx)[:, 1]), thr, E[env])
+        del body, head, opt
+        gc.collect(); torch.cuda.empty_cache()
+        return res
     pv = predict(E["clean_val"])
     thr, _ = select_threshold_clean_val(E["clean_val"].y.to_numpy(), pv)
     res = {}
