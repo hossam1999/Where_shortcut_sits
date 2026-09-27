@@ -1,0 +1,13 @@
+{
+  "method": "mask",
+  "baseline": "erm",
+  "env": "test_rev",
+  "estimand": "crossover_set1_minus_set2",
+  "p_boot_two_sided": 0.0001,
+  "delta_mean_bootstrap": 0.23851813772842614,
+  "ci95_lo": 0.2115140968384701,
+  "ci95_hi": 0.26392907782869235,
+  "seed_delta_mean": 0.2385752065741104,
+  "seed_deltas_json": "[0.20749362733282467, 0.2461727932734354, 0.2444542229697862, 0.2521986814320591, 0.2425567078624467]",
+  "ci_excludes_zero": true
+}

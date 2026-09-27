@@ -1,0 +1,7 @@
+cohort,contrast,archived,archived_lo,archived_hi,repro,repro_lo,repro_hi
+thyroid,hard | mask-erm,-0.102,-0.139,-0.066,-0.095,-0.128,-0.061
+thyroid,all | mask-erm,-0.005,-0.027,0.018,-0.004,-0.025,0.017
+thyroid,hard | mte_balanced-mask,0.088,0.071,0.108,0.069,0.05,0.088
+capsule,hard | mask-erm,0.021,0.0,0.044,0.021,0.0,0.044
+capsule,all | mask-erm,0.077,0.062,0.093,0.077,0.062,0.093
+capsule,hard | mte_balanced-mask,0.014,0.003,0.025,0.014,0.003,0.025

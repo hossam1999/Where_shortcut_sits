@@ -1,53 +1,49 @@
-% Discussion — every number is taken from results/CROSS_COHORT.md and the pre-registration result sections.
-\paragraph{What carries the shortcut decides the method} Across six real and controlled settings three regimes
-emerge. (1) \emph{Distinct overlays that carry the shortcut in their pixels} (sonographer calipers, synthetic
-rulers, debris and tubes): masking removes an out-of-ROI copy but leaves an in-ROI copy intact, and U-MtE removes
-most of what masking leaves (thyroid $+0.22$, $+0.20$, $+0.13$ on three backbones; controlled sweeps $+0.08$ to
-$+0.28$). (2) \emph{Artifacts that resemble the pathology} (capsule debris versus erosion fibrin): any subspace
-estimated from artifact appearance removes disease evidence; disease protection makes erasure safe, and with
-image-level artifact labels masking plus last-layer retraining is the most robust option. (3) \emph{Artifacts
-whose shortcut is carried by correlates} (dermoscopic hair co-varies with body site, age and sex; a chest drain
-comes with a treated, re-expanded lung): removing even every artifact patch with an oracle mask gains little
-($+0.015$ for hair), no pixel- or insertion-based method can close the gap, and label-based group methods (DFR,
-balancing, JTT on hair) are preferable. The oracle-removal ceiling is a cheap diagnostic of the regime.
+% Discussion — every number is taken from results/CROSS_COHORT.md, results/review2/* and the pre-registration result sections.
+\paragraph{What the evidence supports} Masking is not a neutral preprocessing step: its benefit depends on where the
+artifact sits. The strongest evidence is the real-artifact transplant, in which the same real calipers, hair or debris
+on the same images are removed by masking outside the ROI and retained---with amplified reliance---inside it; the
+real traps, covariate-matched traps, controlled sweeps, fine-tuned networks and foundation-model zero-shot scores all
+point the same way. The claim is about the \emph{gap}. Whether in-ROI masking helps a little or harms depends on
+whether the mask also removes disease context, which the linear-Gaussian account makes explicit and which differs
+between modalities (harm in dermoscopy, small gains in ultrasound and capsule endoscopy).
 
-\paragraph{Why erasure works where masking and patch removal do not} In thyroid ultrasound, dropping every patch
-token that contains a caliper (oracle masks) before mean-pooling improves the reversed AUROC by only $+0.047$
-over pooling all ROI tokens, whereas erasing the generic-overlay subspace from the class-token representation
-improves on masking by $+0.22$ (the two representations differ, so the comparison is indicative). Self-attention distributes the
-information about a salient overlay across the whole representation; an in-ROI artifact is therefore not
-contained in ``its'' pixels or patches, and a representation-level operation is needed to remove it.
+\paragraph{Why this matters clinically} On the patient-disjoint official thyroid test split the in-ROI caliper is
+associated with benign nodules; masking keeps it and removes competing evidence, and the malignant nodules that carry a
+caliper are then missed more often at every operating point we examined. An ROI-masked model can therefore look
+unchanged by overall AUROC while failing on exactly the cases in which the shortcut points the wrong way. Audits of
+masked models should stratify performance by artifact presence and location.
 
-\paragraph{Erasure, not augmentation} The same overlays used as training augmentation gain at most $+0.03$ over
-masking in every cohort; used to estimate and erase a subspace they gain up to $+0.21$ more. Augmentation teaches
-invariance to the \emph{generated} overlays; erasure removes the directions along which \emph{any} overlay moves
-the representation, which transfers to real artifacts the generator never produced.
-
-\paragraph{Reading reversed-environment gains} A reversed-test gain can be manufactured by removing
-diagnosis-correlated signal together with the artifact: erasure fitted on unpaired image-level labels and post-hoc
-prevalence recalibration invert the correlated/reversed ordering. We report reversed, correlated and clean AUROC
-for every method and summarise robustness by the minimum of correlated and reversed AUROC.
-
-\paragraph{Decision rule for practitioners} (1) Measure where artifacts sit relative to the ROI; out-of-ROI
-artifacts are removed by masking. (2) For in-ROI artifacts without any artifact annotation, use protected U-MtE;
-it matches oracle-mask LaMa inpainting where the artifact is a distinct overlay. (3) With image-level artifact
-labels, combine masking or U-MtE with group balancing or last-layer retraining, choosing among them on a group-aware
-validation split; prefer label-based reweighting alone when the shortcut is carried by correlates of the artifact,
-which the oracle-removal ceiling (a handful of annotated masks) reveals.
+\paragraph{Reading reversed-environment gains} A reversed-test gain can be manufactured by removing diagnosis-correlated
+signal together with the artifact: erasure fitted on unpaired image-level labels and post-hoc prevalence recalibration
+invert the correlated/reversed ordering. We report reversed, correlated and clean AUROC for every method and summarise
+robustness by the minimum of correlated and reversed AUROC.
 
 \paragraph{Limitations}
-(i) U-MtE is a representation-level intervention for frozen (foundation-model) features with linear heads, the
-setting in which it is evaluated throughout; end-to-end fine-tuning is a secondary check (the location law
-replicates; post-hoc erasure of a fine-tuned network's features does not help, whereas erasing during fine-tuning
-works for ResNet-50 and ViT-S on thyroid), not a full sweep.
-(ii) Artifact masks for thyroid calipers and capsule debris come from an audited rule-based detector
-(precision/recall 0.86--0.89) and a patch-token probe (IoU 0.62); errors act as label noise on $A$ and on the
-overlap strata. (iii) Hair and ruler share one annotation channel in the ISIC 2019 archive. (iv) No patient or
-video identifiers are published for TN3K, MMOTU or SEE-AI; leakage groups use perceptual hashes and frame
-blocks, and a stricter embedding-based grouping leaves 11 of 12 primary estimates unchanged (Sec.~\ref{sec:leak_emb}).
-(v) Chest-drain labels for pneumothorax-negative radiographs come from a detector. (vi) The controlled chest-X-ray
-sweep did not show the sign reversal: the encoder ignored extra-pulmonary tubes. (vii) Reversed environments are
-constructed by subsampling; real deployment shifts are less extreme, and the clean results bound the cost without
-shift. (viii) The disease-protection step needs diagnosis labels of artifact-free images, and the balanced variants
-need image-level artifact labels. (ix) The linear-Gaussian account is fitted per model; it cannot anticipate a
-shortcut carried by correlates that the clean and correlated environments do not expose (chest drains).
+(i) \emph{Artifact labels.} Calipers are segmented by a rule-based detector and capsule debris by a patch-token probe
+(IoU 0.62 against expert masks); hair masks are published semi-automatic masks. Our visual audits were carried out by
+the analysis team, not by clinicians; an expert audit with two independent raters and inter-rater agreement is
+prepared (blinded kit and scoring script in the repository) but not yet done. Label errors dilute the constructed
+correlation and should bias effects toward zero, and stricter label definitions strengthen rather than weaken the
+results (Sec.~\ref{sec:robustness}); the transplant experiment does not depend on the artifact-free group being
+perfectly clean because the transplanted instance is identical at both locations.
+(ii) \emph{Patient identifiers.} TN3K/TNCD, MMOTU and SEE-AI publish no patient or video identifiers for the pooled
+images, so the trap splits group near-duplicates by perceptual hash and frame blocks (a stricter embedding grouping
+leaves 11 of 12 primary estimates unchanged); the official TN3K/TNCD test split used for the unaltered-data analysis is
+patient-disjoint. The one open cohort we found with patient identifiers, pathology labels and real calipers
+(ThyUS2Path; 842 patients) has no nodule masks and uses a scanner interface on which our frozen caliper detector
+fires on interface elements; external validation on it requires a transferred nodule segmentation and a re-validated
+detector and is left for future work.
+(iii) \emph{Constructed shifts.} Reversed environments are constructed by subsampling; real deployment shifts are
+less extreme, which is why we report the unaltered test distributions separately.
+(iv) \emph{Absolute performance.} Frozen encoders with linear heads are below the best published fine-tuned models on
+the one cohort with a directly comparable benchmark (official TNCD split: 0.736 AUROC versus 0.773--0.784 for
+fine-tuned CNNs with cross-entropy and up to 0.799 with curriculum learning, \citealp{gong2022acl}). The law
+replicates with end-to-end fine-tuned networks in every cohort (Sec.~\ref{sec:replication}), and the other cohorts'
+binary tasks have no published benchmark on the same split (Supplement~S10).
+(v) \emph{Scope.} Chest radiography is a boundary case: the encoder ignored extra-pulmonary tubes and real drains carry
+the shortcut through correlates. The linear-Gaussian account is fitted per model and cannot anticipate a shortcut
+carried by correlates that the clean and correlated environments do not expose.
+(vi) \emph{Pre-registration.} Every registration is committed before its outcome results (registry with commit hashes
+and times in Supplement~S1); commit times are set by the committing machine, so only the registrations of the second
+review round carry an external (GitHub push) time stamp, and the 16-test primary family was assembled after the
+individual results.

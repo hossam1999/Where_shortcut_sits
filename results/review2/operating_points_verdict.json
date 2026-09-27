@@ -1,0 +1,19 @@
+{
+ "S1_OP1_sens_loss": true,
+ "S2_ops_with_sens_loss": 4,
+ "S3_conflict_loss_OP2_OP3": [
+  {
+   "op": "OP2_spec0.80",
+   "delta": -0.372,
+   "ci95_lo": -0.436,
+   "ci95_hi": -0.291
+  },
+  {
+   "op": "OP3_spec0.90",
+   "delta": -0.236,
+   "ci95_lo": -0.345,
+   "ci95_hi": -0.132
+  }
+ ],
+ "may_say_masking_lowers_sensitivity": true
+}

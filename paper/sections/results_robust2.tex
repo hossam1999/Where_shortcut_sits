@@ -1,0 +1,29 @@
+% Robustness (docs/SENSITIVITY_ARTIFACT_LABELS.md, docs/PREREGISTRATION_EMBEDDING_GROUPS.md, docs/PREREGISTRATION_REVIEW2.md R0).
+\section{Robustness and reproducibility}\label{sec:robustness}
+\subsection{Robustness to artifact-label definitions}
+Artifact masks for calipers come from a detector (visual audit: 95\% of thyroid detections lie on real calipers;
+92--97\% of caliper-free images contain no visible caliper). Re-running the thyroid and ovary analyses with
+large-marker-only ($\ge 50$ px) and strict-location ($r\ge0.7$ / $r<0.05$) definitions leaves the crossover
+(thyroid $+0.215$ to $+0.262$; ovary $+0.170$ to $+0.195$) and the U-MtE$_{\text{protect}}$ gain over masking
+(thyroid $+0.217$ to $+0.282$; ovary $+0.043$ to $+0.067$) significant in every variant; both grow under stricter
+definitions, as expected if detector errors dilute rather than create the effects.
+
+\subsection{Stricter leakage grouping}\label{sec:leak_emb}
+TN3K/TNCD, MMOTU and SEE-AI publish no patient or video identifiers, so the main analyses group near-duplicates by
+perceptual hash (and, for capsule, blocks of 100 consecutive frames). As a pre-registered sensitivity analysis we
+united these groups with connected components of mean-centred DINOv2 embeddings at the most aggressive cosine
+threshold that keeps every group below 5\% of the cohort (thyroid: 3,455 $\to$ 3,081 groups, $\tau=0.80$; ovary:
+1,059 $\to$ 969, $\tau=0.80$; capsule: 137 $\to$ 135, $\tau=0.93$) and re-ran all primary contrasts. Eleven of twelve
+keep their sign and significance: the location crossover is $+0.235$ [$+0.211, +0.259$] (thyroid), $+0.157$
+[$+0.080, +0.235$] (ovary) and $+0.394$ [$+0.359, +0.430$] (capsule), and protected U-MtE still beats masking on
+thyroid ($+0.251$ [$+0.219, +0.279$]) and ovary ($+0.047$ [$+0.020, +0.072$]). The exception is the small ovary
+advantage of erasure over augmentation, which loses significance ($+0.020$ [$-0.011, +0.053$]). Embedding grouping
+removes visually near-identical images of one patient or session; it cannot exclude differently looking images of
+the same patient.
+
+\subsection{Rebuild on new hardware}\label{sec:repro}
+All data were downloaded again and every derived object---caches, perceptual-hash groups, the retrained lesion U-Net
+(held-out Dice 0.886; HAM10000 agreement 0.895), the caliper scan and the debris probe (IoU 0.625)---was rebuilt on a
+different GPU generation (pre-registered). Trap membership changes slightly where it depends on a retrained model
+(hair traps: Trap~A 2,655/942 artifact-bearing benign/melanoma images instead of 2,738/989); the thyroid and ovary
+cells are identical. \input{tables/review2_repro_text}

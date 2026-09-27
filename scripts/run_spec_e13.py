@@ -67,8 +67,15 @@ def main():
     ap.add_argument("--lama", action="store_true", help="LaMa-inpainted hair cache (docs/PREREGISTRATION_INPAINT_LAMA.md)")
     ap.add_argument("--text_dirs", default=None, help="npz from scripts/make_text_directions.py (text-prompted arms)")
     ap.add_argument("--save_val", action="store_true", help="also save val_groups predictions (adaptive selection)")
+    ap.add_argument("--match", action="store_true", help="covariate-matched trap cells (docs/PREREGISTRATION_REVIEW2.md, R1)")
     a = ap.parse_args()
+    if a.match and a.tag == "spec":
+        raise SystemExit("the matched variant must use its own --tag (it would overwrite the spec results)")
     c = load_spec_cohort(r_col=a.r_col)
+    match_rep = None
+    if a.match:
+        from wtss.matching import match_traps
+        c, match_rep = match_traps("isic", c, strata=("source",))
     envs = build_spec_envs(c)
     cnt = spec_counts(c, envs)
     for t, e in EXPECTED_COUNTS.items():
@@ -76,6 +83,9 @@ def main():
             cnt.loc[cnt.trap == t, f"exp_{k}"] = v
     out = paths.ensure(paths.RESULTS / "spec_e13" / f"{a.backbone}_{a.tag}")
     cnt.to_csv(out / "counts_vs_expected.csv", index=False)
+    if match_rep is not None:
+        for k, v in match_rep.items():
+            v.to_csv(out / f"match_{k}.csv", index=False)
     print(cnt.T.to_string())
     if a.counts_only:
         return

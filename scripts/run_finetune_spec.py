@@ -30,13 +30,14 @@ COMP = [("mask", "erm"), ("mte_ft", "mask"), ("mask_balanced", "balanced"), ("mt
 
 def main():
     ap = argparse.ArgumentParser()
-    ap.add_argument("--cohort", default="thyroid", choices=("thyroid", "capsule", "ovary"))
+    ap.add_argument("--cohort", default="thyroid", choices=("thyroid", "capsule", "ovary", "isic"))
     ap.add_argument("--arch", default="resnet50")
     ap.add_argument("--arms", nargs="+", default=["erm", "mask", "balanced", "mask_balanced", "mte_ft"])
     ap.add_argument("--folds", nargs="+", type=int, default=[0, 1, 2, 3, 4])
     ap.add_argument("--epochs", type=int, default=8)
     ap.add_argument("--lr", type=float, default=1e-4)
     ap.add_argument("--traps", nargs="+", default=["trapA", "trapB"])
+    ap.add_argument("--tag", default="", help="output suffix (keeps new runs apart from archived result folders)")
     ap.add_argument("--env_seed", type=int, default=42,
                     help="split seed of the spec environments; folds of seed s != 42 get cluster id 10*s + fold (power extension)")
     a = ap.parse_args()
@@ -44,12 +45,16 @@ def main():
         c = rt.cohort(); cache = RealCache(rt.T / "cache_518", roi_file="roi.npy", art_file="marker.npy")
     elif a.cohort == "ovary":
         c = rt.ovary_cohort(); cache = RealCache(rt.OV / "cache_518", roi_file="roi.npy", art_file="marker.npy")
+    elif a.cohort == "isic":  # ISIC 2019 hair, spec E13 environments (docs/PREREGISTRATION_REVIEW2.md, R4)
+        from wtss.data.isic2019_spec import load_spec_cohort
+        c = load_spec_cohort()
+        cache = RealCache(paths.DATA / "isic2019" / "prepared" / "cache_518", roi_file="roi_spec.npy", art_file="hair.npy")
     else:
         c = rt.capsule_cohort(); cache = RealCache(rt.CAP / "cache_518", roi_file="roi.npy", art_file="contam.npy")
-    envs = build_spec_envs(c, seeds=(a.env_seed,), group_col="group")
+    envs = build_spec_envs(c, seeds=(a.env_seed,), group_col=None if a.cohort == "isic" else "group")
     ins = lambda i, rgb, roi: np.asarray(draw_generic_artifact(Image.fromarray(rgb), roi, f"u|{i}"))
     render = make_renderers(cache, 518, [], ins)
-    out = paths.ensure(paths.RESULTS / "finetune" / a.cohort / a.arch.replace("/", "_"))
+    out = paths.ensure(paths.RESULTS / "finetune" / a.cohort / (a.arch.replace("/", "_") + (f"_{a.tag}" if a.tag else "")))
     pf = out / "predictions.csv.gz"
     done = pd.read_csv(pf) if pf.exists() else None
     frames = [] if done is None else [done]

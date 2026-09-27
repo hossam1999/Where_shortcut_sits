@@ -43,9 +43,12 @@ class SynthConfig:
     workers: int = 6
     n_boot: int = 10000
     extra_arms: Dict[str, Callable] = field(default_factory=dict)  # name -> fn(ctx) for proposed methods
+    drawer: Callable | None = None  # custom draw(img, image_id, placement, overlap) -> (img, mask), e.g. real transplant
 
 
 def _artifact_drawer(cfg: SynthConfig, size: int):
+    if cfg.drawer is not None:
+        return cfg.drawer
     w, h = cfg.geometry[size]
 
     def draw(img, image_id, pp, ov):

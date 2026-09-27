@@ -75,6 +75,8 @@ def load(cohort):
 def main():
     ap = argparse.ArgumentParser()
     ap.add_argument("--cohort", default="thyroid")
+    ap.add_argument("--tag", default="", help="output suffix, e.g. repro (docs/PREREGISTRATION_REVIEW2.md, R0)")
+    ap.add_argument("--save_val", action="store_true", help="also save validation predictions (operating points, R3)")
     a = ap.parse_args()
     c, cache, fdir, split = load(a.cohort)
     envs, tests = {}, {}
@@ -86,11 +88,11 @@ def main():
         e = {"train_corr": tr, "val_clean": va, "val_groups": va, "train_all": tr, "test_corr": te, "test_rev": te, "clean": te}
         for k, d in e.items():
             envs[("natural", s, 0, k)] = d[COLS].reset_index(drop=True)
-    out = paths.ensure(paths.RESULTS / "natural" / f"{a.cohort}_dino518")
+    out = paths.ensure(paths.RESULTS / "natural" / (f"{a.cohort}_dino518" + (f"_{a.tag}" if a.tag else "")))
     ins = lambda i, rgb, roi: np.asarray(draw_generic_artifact(Image.fromarray(rgb), roi, f"u|{i}"))
     if not (out / "predictions.csv.gz").exists():
         run_spec(envs, cache, "dino518", out, fdir, [], arms=ARMS, traps=("natural",), device=torch.device("cuda"),
-                 insert_fn=ins, insert_tag="_generic", folds=[0])
+                 insert_fn=ins, insert_tag="_generic", folds=[0], save_val=a.save_val)
     p = pd.read_csv(out / "predictions.csv.gz")
     p = p[p.env == "clean"].copy()
     amap = dict(zip(c.image_id, c.a))

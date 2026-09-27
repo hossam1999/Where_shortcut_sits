@@ -1,0 +1,67 @@
+% CLAIM 2024 Update checklist (Tejani et al., Radiology: Artificial Intelligence 6(4):e240300, 2024). Item wording as
+% in the published checklist; answers Yes / No / NA / Partial with the location in the main paper (M) or supplement (S).
+Checklist for Artificial Intelligence in Medical Imaging, 2024 update \citep{tejani2024claim}. M = main paper
+section, S = supplement section.
+{\scriptsize
+\begin{longtable}{p{0.4cm}p{6.2cm}p{0.9cm}p{7.3cm}}
+\toprule
+No. & Item & Answer & Where / comment \\\midrule\endhead
+\multicolumn{4}{l}{\emph{Title / abstract}}\\
+1 & Identification as a study of AI methodology, specifying the category of technology used (eg, deep learning) & Yes & Title, abstract: deep-learning classifiers on frozen foundation-model encoders and fine-tuned CNN/ViT. \\
+2 & Summary of study design, methods, results, and conclusions & Yes & Abstract. \\
+\multicolumn{4}{l}{\emph{Introduction}}\\
+3 & Scientific and/or clinical background, including the intended use and role of the AI approach & Yes & M Introduction, Related work. \\
+4 & Study aims, objectives, and hypotheses & Yes & M Introduction; hypotheses pre-registered (S1). \\
+\multicolumn{4}{l}{\emph{Methods --- study design}}\\
+5 & Prospective or retrospective study & Yes & Retrospective analysis of public datasets (M Data). \\
+6 & Study goal & Yes & Methodological study of shortcut mitigation (not a diagnostic-accuracy study); M Introduction, Setup. \\
+\multicolumn{4}{l}{\emph{Methods --- data}}\\
+7 & Data sources & Yes & M Data (ISIC 2018/2019, HAM10000 masks, TN3K/TNCD, MMOTU, SEE-AI, NIH ChestX-ray14); licences in \texttt{docs/DATA.md}. \\
+8 & Inclusion and exclusion criteria & Yes & M Data (trap cells, artifact-free groups, QC); transplant feasibility (S11). \\
+9 & Data preprocessing & Yes & M Setup (518\,px rendering, ROI masking, feature caching). \\
+10 & Selection of data subsets & Yes & Traps, matched traps and transplant cohorts (M Results, S11). \\
+11 & De-identification methods & NA & Public datasets released de-identified by their providers. \\
+12 & How missing data were handled & Yes & Missing age imputed with an indicator; images without a lesion mask excluded by QC (152 ISIC images). \\
+13 & Image acquisition protocol & Partial & As documented by the dataset providers (cited); no acquisition parameters are released for TN3K, MMOTU or SEE-AI. \\
+\multicolumn{4}{l}{\emph{Methods --- reference standard}}\\
+14 & Definition of method(s) used to obtain reference standard & Yes & Diagnoses as released by the dataset providers (TNCD: cytological biopsy; ISIC: histopathology, follow-up or expert consensus; MMOTU tumour categories; SEE-AI expert lesion annotation) (M Data). \\
+15 & Rationale for choosing the reference standard & Yes & Dataset reference standards; ROI masks from manual annotation or a U-Net (M Data). \\
+16 & Source of reference standard annotations & Yes & Dataset annotators; artifact labels from a rule-based detector, a patch probe and published masks (M Data). \\
+17 & Annotation of test set & Yes & Same procedures as for training images. \\
+18 & Measures of inter- and intrarater variability of features described by the annotators & No & Artifact labels were audited by the analysis team only; a blinded two-rater expert audit kit with Cohen's $\kappa$ is prepared (S4) but not yet carried out (M Limitations). \\
+\multicolumn{4}{l}{\emph{Methods --- data partitions}}\\
+19 & How data were assigned to partitions & Yes & Five seeds of five-fold group-safe cross-validation; official TNCD split; leave-one-hospital-out (M Setup, Consequences on unaltered data). \\
+20 & Level at which partitions are disjoint & Yes & Lesion identifiers (ISIC), patient level for the official TNCD split and chest radiographs, otherwise perceptual-hash and frame-block groups; embedding-group sensitivity (M Robustness). \\
+\multicolumn{4}{l}{\emph{Methods --- testing data}}\\
+21 & Intended sample size & No & No a-priori sample-size calculation; all eligible images used; underpowered contrasts are identified (ovary). \\
+\multicolumn{4}{l}{\emph{Methods --- model}}\\
+22 & Detailed description of model & Yes & Frozen DINOv2 ViT-S/B/L, MedSigLIP, DermLIP, RAD-DINO, ConvNeXt with logistic heads; fine-tuned ResNet-50 and ViT-S (M Setup, Replication; S8). \\
+23 & Software libraries, frameworks, and packages & Yes & \texttt{requirements.txt} (PyTorch 2.11, timm, scikit-learn, open\_clip) (S13). \\
+24 & Initialization of model parameters & Yes & Published pre-trained checkpoints; ImageNet initialisation for fine-tuning. \\
+\multicolumn{4}{l}{\emph{Methods --- training}}\\
+25 & Details of training approach & Yes & Regularisation and decision threshold on clean validation data; fine-tuning recipe (S8). \\
+26 & Method of selecting the final model & Yes & Clean-validation AUROC; no test-set selection. \\
+27 & Ensembling techniques & NA & No ensembles. \\
+\multicolumn{4}{l}{\emph{Methods --- evaluation}}\\
+28 & Metrics of model performance & Yes & Reversed, correlated and clean AUROC; location crossover; AUPRC, Brier, ECE, sensitivity/specificity (M Setup, Consequences on unaltered data). \\
+29 & Statistical measures of significance and uncertainty & Yes & Hierarchical paired bootstrap (10,000); Holm-corrected primary family (M Setup; S1). \\
+30 & Robustness or sensitivity analysis & Yes & Label definitions, leakage grouping, covariate matching, rebuild on new hardware (M Robustness). \\
+31 & Methods for explainability or interpretability & Yes & Same-head counterfactual sensitivity to inserting the artifact (M Mechanism). \\
+32 & Evaluation on internal data & Yes & All traps and sweeps. \\
+33 & Testing on external data & Partial & ISIC leave-one-hospital-out; no external cohort for ultrasound or capsule endoscopy (M Limitations; S3). \\
+34 & Clinical trial registration & NA & Retrospective; analysis pre-registrations in the repository (S1). \\
+\multicolumn{4}{l}{\emph{Results}}\\
+35 & Numbers of patients or examinations included and excluded & Yes & Image counts per cohort, trap cell and transplant feasibility; patients where identifiers exist (M Data; S11). \\
+36 & Demographic and clinical characteristics of cases in each partition & Partial & Age, sex, body site and diagnosis for ISIC; lesion size and acquisition covariates for all cohorts (S11); demographics are not released for TN3K, MMOTU or SEE-AI. \\
+37 & Performance metrics and measures of statistical uncertainty & Yes & All result tables give 95\% CIs. \\
+38 & Estimates of diagnostic performance and their precision & Yes & Sensitivity and specificity at five pre-registered operating points with CIs (M Consequences on unaltered data; S9). \\
+39 & Failure analysis of incorrectly classified cases & Yes & Shortcut-conflicting cases; DermLIP without a hair gap; chest radiography boundary case (M Results). \\
+\multicolumn{4}{l}{\emph{Discussion}}\\
+40 & Study limitations & Yes & M Discussion and limitations. \\
+41 & Implications for practice, including intended use and/or clinical role & Yes & M Discussion; decision guide (M What carries the shortcut decides the fix). \\
+\multicolumn{4}{l}{\emph{Other information}}\\
+42 & Provide a reference to the full study protocol or to additional technical details & Yes & Pre-registration documents and registry (S1); \texttt{report/full/full\_report.pdf}. \\
+43 & Statement about the availability of software, trained model, and/or data & Yes & Code, pre-registrations and result files are public; all datasets are public (M Conclusion). \\
+44 & Sources of funding and other support; role of funders & --- & To be completed by the authors. \\
+\bottomrule
+\end{longtable}}

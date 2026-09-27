@@ -2,6 +2,8 @@
 bins) and sensitivity / specificity at the operating point fixed on clean validation data (the saved `pred`).
 Mean (SD) over training seeds.
   python scripts/analysis/clinical_metrics.py   # -> results/natural/clinical_metrics.csv, paper/tables/natural_clinical.tex
+  python scripts/analysis/clinical_metrics.py --suffix repro   # rebuilt runs (docs/PREREGISTRATION_REVIEW2.md, R0/R3)
+                                                               # -> results/review2/clinical_metrics_repro.csv + the table
 """
 from __future__ import annotations
 
@@ -23,9 +25,12 @@ def ece(y, p, bins=10):
 
 
 def main():
+    import argparse
+    ap = argparse.ArgumentParser(); ap.add_argument("--suffix", default=""); a = ap.parse_args()
+    sfx = f"_{a.suffix}" if a.suffix else ""
     rows = []
     for name, rel in RUNS.items():
-        p = pd.read_csv(paths.RESULTS / "natural" / rel / "predictions.csv.gz")
+        p = pd.read_csv(paths.RESULTS / "natural" / (rel + sfx) / "predictions.csv.gz")
         p = p[(p.env == "clean") & p.method.isin(ARMS)]
         for (m, s), q in p.groupby(["method", "seed"]):
             y, pr, pd_ = q.y.to_numpy(), q.prob.to_numpy(), q.pred.to_numpy()
@@ -36,13 +41,15 @@ def main():
     out = d.groupby(["test", "arm"]).agg(["mean", "std"]).drop(columns="seed")
     out.columns = [f"{a}_{b}" for a, b in out.columns]
     out = out.reset_index()
-    out.to_csv(paths.RESULTS / "natural" / "clinical_metrics.csv", index=False)
+    out.to_csv(paths.ensure(paths.RESULTS / "review2") / "clinical_metrics_repro.csv" if sfx else
+               paths.RESULTS / "natural" / "clinical_metrics.csv", index=False)
     print(out.round(3).to_string())
     cols = ["AUROC", "AUPRC", "Brier", "ECE", "Sens", "Spec"]
     L = ["\\begin{table}[t]\\centering\\scriptsize",
-         "\\caption{Clinical secondary metrics on the unaltered test sets (Sec.~\\ref{sec:robust}): mean (SD) over "
-         "training seeds. Sensitivity and specificity at the operating point fixed on clean validation data; ECE with 10 "
-         "equal-width bins; AUPRC baseline = prevalence.}\\label{tab:natural_clinical}",
+         "\\caption{Clinical secondary metrics on the unaltered test sets (Sec.~\\ref{sec:natural}): mean (SD) over "
+         "training seeds. Sensitivity and specificity at the operating point of maximal balanced accuracy fixed on "
+         "validation data (OP1; other operating points with CIs in Table~\\ref{tab:op}); ECE with 10 equal-width bins; "
+         "AUPRC baseline = prevalence." + (" Rebuilt run (Sec.~\\ref{sec:repro})." if sfx else "") + "}\\label{tab:natural_clinical}",
          "\\begin{tabular}{ll" + "c" * len(cols) + "}\\toprule", "Test set & Arm & " + " & ".join(cols) + " \\\\\\midrule"]
     for name in RUNS:
         q = out[out.test == name]

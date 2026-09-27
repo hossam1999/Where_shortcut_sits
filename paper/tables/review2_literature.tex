@@ -1,0 +1,10 @@
+\begin{center}\small
+\begin{tabular}{llc}\toprule
+Model & Source & Test AUROC \\\midrule
+ResNet-18, cross-entropy (fine-tuned) & \citet{gong2022acl} & 0.773 \\
+DenseNet-121, cross-entropy (fine-tuned) & \citet{gong2022acl} & 0.780 \\
+ConvNeXt-T, cross-entropy (fine-tuned) & \citet{gong2022acl} & 0.784 \\
+ResNet-18, adaptive curriculum (fine-tuned) & \citet{gong2022acl} & 0.799 \\
+DINOv2 ViT-B/14 frozen + linear head, ERM (archived run) & this work & 0.736 \\
+DINOv2 ViT-B/14 frozen + linear head, ERM (rebuilt run) & this work & 0.735 \\
+\bottomrule\end{tabular}\end{center}

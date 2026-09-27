@@ -87,7 +87,10 @@ def main():
     ap.add_argument("--max_cover_B", type=float, default=None,
                     help="capsule sensitivity: Trap B also requires lesion coverage (roi_cover) below this")
     ap.add_argument("--groups_csv", default=None, help="leakage sensitivity: csv image_id,group_emb overriding the groups")
+    ap.add_argument("--match", action="store_true", help="covariate-matched trap cells (docs/PREREGISTRATION_REVIEW2.md, R1)")
     a = ap.parse_args()
+    if a.match and a.tag == "main":
+        raise SystemExit("the matched variant must use its own --tag (it would overwrite the main results)")
     if a.groups_csv and a.tag == "main":
         raise SystemExit("sensitivity variants must use their own --tag (they would overwrite the main results)")
     if ((a.min_px, a.rA, a.rB) != (15, 0.5, 0.1) or a.max_cover_B is not None or a.lama) and a.tag == "main":
@@ -102,6 +105,10 @@ def main():
     if a.groups_csv:  # docs/PREREGISTRATION_EMBEDDING_GROUPS.md
         ge = pd.read_csv(a.groups_csv).astype({"image_id": str})
         c["group"] = c.image_id.astype(str).map(dict(zip(ge.image_id, ge.group_emb))).fillna(c.group)
+    match_rep = None
+    if a.match:
+        from wtss.matching import match_traps
+        c, match_rep = match_traps(a.cohort, c)
     envs = build_spec_envs(c, group_col="group")
     rows = []
     for trap in ("trapA", "trapB"):
@@ -112,6 +119,10 @@ def main():
     out = paths.ensure(paths.RESULTS / a.cohort / f"{a.backbone}_{a.tag}")
     cnt.to_csv(out / "counts.csv", index=False)
     print(cnt.to_string(), flush=True)
+    if match_rep is not None:
+        for k, v in match_rep.items():
+            v.to_csv(out / f"match_{k}.csv", index=False)
+        print("max |SMD| before/after:", match_rep["before"].smd.abs().max().round(3), match_rep["after"].smd.abs().max().round(3))
     if a.counts_only:
         return
     if a.cohort == "thyroid":

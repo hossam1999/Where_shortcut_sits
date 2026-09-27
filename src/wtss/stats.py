@@ -241,7 +241,8 @@ def hierarchical_interaction(predictions: pd.DataFrame, method: str, baseline: s
             "ci95_lo": lo, "ci95_hi": hi, "n_boot_valid": int(len(arr)),
             "seed_delta_mean": float(np.mean(effects)),
             "seed_delta_sd": float(np.std(effects, ddof=1)) if len(effects) > 1 else float("nan"),
-            "seed_deltas_json": json.dumps(effects), "ci_excludes_zero": bool(lo > 0 or hi < 0)}
+            "seed_deltas_json": json.dumps(effects), "ci_excludes_zero": bool(lo > 0 or hi < 0),
+            "p_boot_two_sided": boot_p(arr)}
 
 
 def difference_of_deltas(pred_1: pd.DataFrame, pred_2: pd.DataFrame, method: str, baseline: str, env: str,
