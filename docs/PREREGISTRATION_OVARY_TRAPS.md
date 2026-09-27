@@ -27,3 +27,10 @@ draw_caliper, 65x19 box, r ∈ {0,0.25,0.5,0.75,1}; seeds 42/123/456; DINOv2@518
 - **O3 supported**: crossover +0.170 [+0.116, +0.224].
 - Template MtE − mask (Trap A) +0.070 [+0.030, +0.106]; MtE_balanced reversed 0.729 / corr 0.790 (min 0.729) —
   best robust arm (balanced 0.707, DFR 0.689).
+
+## Results — DINOv2@518, generic library (results/ovary/dino518_universal)
+Trap A reversed / corr: mask 0.545 / 0.828; U-MtE 0.564 / 0.855; U-MtE_protect 0.588 / 0.832; mte_aug 0.529;
+JTT 0.428; balanced 0.707 / 0.732; mask_balanced 0.687; U-MtE_balanced 0.736 / 0.811; mask+DFR 0.752 / 0.757.
+- **O4 not supported**: U-MtE − mask +0.019 [−0.007, +0.043]; protected U-MtE − mask **+0.043 [+0.025, +0.061]**.
+- **O5 supported**: U-MtE − mte_aug +0.035 [+0.010, +0.059]. U-MtE − JTT +0.137 [+0.098, +0.179].
+- **O6 not supported**: by min(rev, corr) mask+DFR (0.752) > U-MtE_balanced (0.736) > balanced (0.707).
