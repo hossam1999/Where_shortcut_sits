@@ -110,6 +110,8 @@ analysis:
 	$(PY) scripts/make_main_table.py
 	$(PY) scripts/analysis/theory_sim.py
 	$(PY) scripts/make_figures.py
+	$(PY) scripts/analysis/adhoc_bootstraps.py
+	$(PY) scripts/verify/audit_paper_numbers.py   # every CI in the paper must trace to a result file
 
 # ---------------------------------------------------------------- chest radiography (WP1)
 cxr:

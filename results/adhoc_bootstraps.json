@@ -1,0 +1,412 @@
+{
+ "finetune|thyroid_resnet50|crossover mask-erm (B-A)": [
+  0.057,
+  -0.021,
+  0.13
+ ],
+ "finetune|capsule_resnet50|crossover mask-erm (B-A)": [
+  0.584,
+  0.469,
+  0.691
+ ],
+ "finetune|ovary_resnet50|crossover mask-erm (B-A)": [
+  0.136,
+  -0.085,
+  0.329
+ ],
+ "finetune|thyroid_vit_s|crossover mask-erm (B-A)": [
+  0.168,
+  0.074,
+  0.265
+ ],
+ "sweep|capsule_dino518|r=0.5|umte-mask": [
+  0.036,
+  0.011,
+  0.062
+ ],
+ "sweep|capsule_dino518|r=0.5|umte_balanced-balanced": [
+  0.055,
+  0.01,
+  0.101
+ ],
+ "sweep|capsule_dino518|r=0.5|umte_balanced-mask": [
+  0.076,
+  0.047,
+  0.105
+ ],
+ "sweep|capsule_dino518|r=1.0|umte-mask": [
+  0.081,
+  0.05,
+  0.112
+ ],
+ "sweep|capsule_dino518|r=1.0|umte_balanced-balanced": [
+  0.047,
+  0.004,
+  0.091
+ ],
+ "sweep|capsule_dino518|r=1.0|umte_balanced-mask": [
+  0.193,
+  0.15,
+  0.235
+ ],
+ "sweep|capsule_medsiglip|r=0.5|umte-mask": [
+  -0.051,
+  -0.084,
+  -0.018
+ ],
+ "sweep|capsule_medsiglip|r=0.5|umte_balanced-balanced": [
+  0.018,
+  -0.031,
+  0.066
+ ],
+ "sweep|capsule_medsiglip|r=0.5|umte_balanced-mask": [
+  0.123,
+  0.075,
+  0.173
+ ],
+ "sweep|capsule_medsiglip|r=1.0|umte-mask": [
+  -0.114,
+  -0.147,
+  -0.082
+ ],
+ "sweep|capsule_medsiglip|r=1.0|umte_balanced-balanced": [
+  -0.026,
+  -0.08,
+  0.031
+ ],
+ "sweep|capsule_medsiglip|r=1.0|umte_balanced-mask": [
+  0.309,
+  0.253,
+  0.369
+ ],
+ "sweep|capsule_medsiglip_protect|r=0.5|umte-mask": [
+  -0.051,
+  -0.084,
+  -0.018
+ ],
+ "sweep|capsule_medsiglip_protect|r=0.5|umte_balanced-balanced": [
+  0.018,
+  -0.031,
+  0.066
+ ],
+ "sweep|capsule_medsiglip_protect|r=0.5|umte_balanced-mask": [
+  0.123,
+  0.075,
+  0.173
+ ],
+ "sweep|capsule_medsiglip_protect|r=0.5|umte_protect-mask": [
+  0.047,
+  0.014,
+  0.082
+ ],
+ "sweep|capsule_medsiglip_protect|r=0.5|umte_protect-umte": [
+  0.098,
+  0.063,
+  0.137
+ ],
+ "sweep|capsule_medsiglip_protect|r=0.5|umte_protect_balanced-balanced": [
+  0.046,
+  0.002,
+  0.089
+ ],
+ "sweep|capsule_medsiglip_protect|r=1.0|umte-mask": [
+  -0.114,
+  -0.147,
+  -0.082
+ ],
+ "sweep|capsule_medsiglip_protect|r=1.0|umte_balanced-balanced": [
+  -0.026,
+  -0.08,
+  0.031
+ ],
+ "sweep|capsule_medsiglip_protect|r=1.0|umte_balanced-mask": [
+  0.309,
+  0.253,
+  0.369
+ ],
+ "sweep|capsule_medsiglip_protect|r=1.0|umte_protect-mask": [
+  0.061,
+  0.032,
+  0.092
+ ],
+ "sweep|capsule_medsiglip_protect|r=1.0|umte_protect-umte": [
+  0.175,
+  0.137,
+  0.217
+ ],
+ "sweep|capsule_medsiglip_protect|r=1.0|umte_protect_balanced-balanced": [
+  -0.002,
+  -0.048,
+  0.046
+ ],
+ "sweep|capsule_dino518_protect|r=0.5|umte-mask": [
+  0.036,
+  0.011,
+  0.062
+ ],
+ "sweep|capsule_dino518_protect|r=0.5|umte_balanced-balanced": [
+  0.055,
+  0.01,
+  0.101
+ ],
+ "sweep|capsule_dino518_protect|r=0.5|umte_balanced-mask": [
+  0.076,
+  0.047,
+  0.105
+ ],
+ "sweep|capsule_dino518_protect|r=0.5|umte_protect-mask": [
+  0.047,
+  0.025,
+  0.072
+ ],
+ "sweep|capsule_dino518_protect|r=0.5|umte_protect-umte": [
+  0.011,
+  -0.013,
+  0.036
+ ],
+ "sweep|capsule_dino518_protect|r=0.5|umte_protect_balanced-balanced": [
+  0.054,
+  0.009,
+  0.099
+ ],
+ "sweep|capsule_dino518_protect|r=1.0|umte-mask": [
+  0.081,
+  0.05,
+  0.112
+ ],
+ "sweep|capsule_dino518_protect|r=1.0|umte_balanced-balanced": [
+  0.047,
+  0.004,
+  0.091
+ ],
+ "sweep|capsule_dino518_protect|r=1.0|umte_balanced-mask": [
+  0.193,
+  0.15,
+  0.235
+ ],
+ "sweep|capsule_dino518_protect|r=1.0|umte_protect-mask": [
+  0.118,
+  0.077,
+  0.167
+ ],
+ "sweep|capsule_dino518_protect|r=1.0|umte_protect-umte": [
+  0.037,
+  0.007,
+  0.072
+ ],
+ "sweep|capsule_dino518_protect|r=1.0|umte_protect_balanced-balanced": [
+  0.051,
+  0.006,
+  0.098
+ ],
+ "sweep|thyroid_dino518|r=0.5|umte-mask": [
+  0.227,
+  0.189,
+  0.264
+ ],
+ "sweep|thyroid_dino518|r=0.5|umte_balanced-balanced": [
+  0.095,
+  0.046,
+  0.145
+ ],
+ "sweep|thyroid_dino518|r=0.5|umte_balanced-mask": [
+  0.321,
+  0.281,
+  0.362
+ ],
+ "sweep|thyroid_dino518|r=1.0|umte-mask": [
+  0.278,
+  0.232,
+  0.325
+ ],
+ "sweep|thyroid_dino518|r=1.0|umte_balanced-balanced": [
+  0.091,
+  0.042,
+  0.142
+ ],
+ "sweep|thyroid_dino518|r=1.0|umte_balanced-mask": [
+  0.471,
+  0.402,
+  0.534
+ ],
+ "sweep|thyroid_medsiglip|r=0.5|umte-mask": [
+  -0.062,
+  -0.087,
+  -0.035
+ ],
+ "sweep|thyroid_medsiglip|r=0.5|umte_balanced-balanced": [
+  0.101,
+  0.055,
+  0.148
+ ],
+ "sweep|thyroid_medsiglip|r=0.5|umte_balanced-mask": [
+  0.413,
+  0.359,
+  0.473
+ ],
+ "sweep|thyroid_medsiglip|r=1.0|umte-mask": [
+  -0.076,
+  -0.11,
+  -0.043
+ ],
+ "sweep|thyroid_medsiglip|r=1.0|umte_balanced-balanced": [
+  0.068,
+  0.022,
+  0.115
+ ],
+ "sweep|thyroid_medsiglip|r=1.0|umte_balanced-mask": [
+  0.458,
+  0.409,
+  0.508
+ ],
+ "sweep|thyroid_medsiglip_protect|r=0.5|umte-mask": [
+  -0.062,
+  -0.087,
+  -0.035
+ ],
+ "sweep|thyroid_medsiglip_protect|r=0.5|umte_balanced-balanced": [
+  0.101,
+  0.055,
+  0.148
+ ],
+ "sweep|thyroid_medsiglip_protect|r=0.5|umte_balanced-mask": [
+  0.413,
+  0.359,
+  0.473
+ ],
+ "sweep|thyroid_medsiglip_protect|r=0.5|umte_protect-mask": [
+  -0.045,
+  -0.099,
+  -0.003
+ ],
+ "sweep|thyroid_medsiglip_protect|r=0.5|umte_protect-umte": [
+  0.016,
+  -0.033,
+  0.062
+ ],
+ "sweep|thyroid_medsiglip_protect|r=0.5|umte_protect_balanced-balanced": [
+  0.093,
+  0.033,
+  0.153
+ ],
+ "sweep|thyroid_medsiglip_protect|r=1.0|umte-mask": [
+  -0.076,
+  -0.11,
+  -0.043
+ ],
+ "sweep|thyroid_medsiglip_protect|r=1.0|umte_balanced-balanced": [
+  0.068,
+  0.022,
+  0.115
+ ],
+ "sweep|thyroid_medsiglip_protect|r=1.0|umte_balanced-mask": [
+  0.458,
+  0.409,
+  0.508
+ ],
+ "sweep|thyroid_medsiglip_protect|r=1.0|umte_protect-mask": [
+  -0.041,
+  -0.089,
+  -0.005
+ ],
+ "sweep|thyroid_medsiglip_protect|r=1.0|umte_protect-umte": [
+  0.035,
+  -0.013,
+  0.085
+ ],
+ "sweep|thyroid_medsiglip_protect|r=1.0|umte_protect_balanced-balanced": [
+  0.052,
+  -0.014,
+  0.11
+ ],
+ "sweep|ovary_dino518|r=0.5|umte-mask": [
+  0.143,
+  0.09,
+  0.201
+ ],
+ "sweep|ovary_dino518|r=0.5|umte_balanced-balanced": [
+  0.005,
+  -0.079,
+  0.09
+ ],
+ "sweep|ovary_dino518|r=0.5|umte_balanced-mask": [
+  0.198,
+  0.136,
+  0.265
+ ],
+ "sweep|ovary_dino518|r=0.5|umte_protect-mask": [
+  0.108,
+  0.064,
+  0.157
+ ],
+ "sweep|ovary_dino518|r=0.5|umte_protect-umte": [
+  -0.034,
+  -0.074,
+  0.006
+ ],
+ "sweep|ovary_dino518|r=0.5|umte_protect_balanced-balanced": [
+  -0.045,
+  -0.138,
+  0.048
+ ],
+ "sweep|ovary_dino518|r=1.0|umte-mask": [
+  0.141,
+  0.091,
+  0.195
+ ],
+ "sweep|ovary_dino518|r=1.0|umte_balanced-balanced": [
+  -0.031,
+  -0.116,
+  0.054
+ ],
+ "sweep|ovary_dino518|r=1.0|umte_balanced-mask": [
+  0.253,
+  0.187,
+  0.325
+ ],
+ "sweep|ovary_dino518|r=1.0|umte_protect-mask": [
+  0.115,
+  0.067,
+  0.165
+ ],
+ "sweep|ovary_dino518|r=1.0|umte_protect-umte": [
+  -0.027,
+  -0.064,
+  0.01
+ ],
+ "sweep|ovary_dino518|r=1.0|umte_protect_balanced-balanced": [
+  -0.068,
+  -0.165,
+  0.028
+ ],
+ "sweep|cxr_raddino518|r=0.5|umte-mask": [
+  0.044,
+  0.036,
+  0.053
+ ],
+ "sweep|cxr_raddino518|r=0.5|umte_balanced-balanced": [
+  -0.03,
+  -0.037,
+  -0.024
+ ],
+ "sweep|cxr_raddino518|r=0.5|umte_balanced-mask": [
+  0.047,
+  0.039,
+  0.056
+ ],
+ "sweep|cxr_raddino518|r=1.0|umte-mask": [
+  0.134,
+  0.12,
+  0.151
+ ],
+ "sweep|cxr_raddino518|r=1.0|umte_balanced-balanced": [
+  -0.031,
+  -0.038,
+  -0.025
+ ],
+ "sweep|cxr_raddino518|r=1.0|umte_balanced-mask": [
+  0.168,
+  0.152,
+  0.185
+ ]
+}
