@@ -105,3 +105,8 @@ generic erasure adds ≤ 0.014 over masking + DFR. The gain over DFR comes from 
 ConvNeXt-Base (timm convnext_base.fb_in22k_ft_in1k_384, global-average-pooled, frozen) on the thyroid and capsule
 traps with the generic library; same arms as the DINOv2 runs. Claims as T6 / C5 / U7 / U9 (U-MtE − mask > 0,
 U-MtE − mte_aug > 0 in Trap A). Purpose: show the methods are not specific to ViTs. Reported either way.
+
+### Replication — MedSigLIP-448, thyroid, generic library (results/thyroid/medsiglip448_universal)
+Trap A reversed AUROC: U-MtE − mask = +0.204 [+0.174, +0.237]; U-MtE − mte_aug = +0.177 [+0.148, +0.211] (U7);
+U-MtE_protect − mask = +0.262 [+0.241, +0.282]; U-MtE_balanced − balanced = +0.096 [+0.083, +0.110].
+U-MtE_balanced: rev 0.792 / corr 0.800 / clean 0.798 — most robust arm (min(rev,corr)).
