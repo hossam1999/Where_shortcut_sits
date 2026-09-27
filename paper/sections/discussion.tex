@@ -12,8 +12,9 @@ comes with a treated, re-expanded lung): removing even every artifact patch with
 balancing, JTT on hair) are preferable. The oracle-removal ceiling is a cheap diagnostic of the regime.
 
 \paragraph{Why erasure works where masking and patch removal do not} In thyroid ultrasound, dropping every patch
-token that contains a caliper (oracle masks) improves the reversed AUROC by only $+0.047$, whereas erasing the
-generic-overlay subspace from the pooled representation improves it by $+0.22$. Self-attention distributes the
+token that contains a caliper (oracle masks) before mean-pooling improves the reversed AUROC by only $+0.047$
+over pooling all ROI tokens, whereas erasing the generic-overlay subspace from the class-token representation
+improves on masking by $+0.22$ (the two representations differ, so the comparison is indicative). Self-attention distributes the
 information about a salient overlay across the whole representation; an in-ROI artifact is therefore not
 contained in ``its'' pixels or patches, and a representation-level operation is needed to remove it.
 
