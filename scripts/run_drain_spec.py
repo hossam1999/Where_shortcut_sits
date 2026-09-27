@@ -36,6 +36,7 @@ def main():
     ap = argparse.ArgumentParser()
     ap.add_argument("--backbone", default="raddino518")
     ap.add_argument("--tag", default="universal")
+    ap.add_argument("--arms", nargs="*", default=None)
     a = ap.parse_args()
     df = load_drain_cohort()
     envs0, counts = build_drain_envs(df)
@@ -52,12 +53,14 @@ def main():
     ins = lambda i, rgb, roi: np.asarray(draw_generic_artifact(Image.fromarray(rgb), roi, f"u|{i}"))
     if not (out / "predictions.csv.gz").exists():
         run_spec(envs, cache, a.backbone, out, paths.CACHE / "features" / "cxr_drain" / BDIR[a.backbone], [],
-                 arms=ARMS, traps=("trapA",), device=torch.device("cuda"), insert_fn=ins, insert_tag="_generic",
+                 arms=tuple(a.arms) if a.arms else ARMS, traps=("trapA",), device=torch.device("cuda"), insert_fn=ins, insert_tag="_generic",
                  folds=[0])
     preds = pd.read_csv(out / "predictions.csv.gz")
     from concurrent.futures import ProcessPoolExecutor
     jobs, keys = [], []
-    for a1, a0 in COMP:
+    have = set(preds.method.unique())
+    for a1, a0 in [c for c in COMP + [("mte_balanced", "mask_splice"), ("mte_protect", "mask_splice"), ("mask_splice", "mask")]
+                   if c[0] in have and c[1] in have]:
         for env in ("test_rev", "clean"):
             jobs.append((slim(preds, env, (a1, a0)), a1, a0, env, 20260927 + sum(map(ord, a1 + a0 + env))))
             keys.append((a1, a0, env))
