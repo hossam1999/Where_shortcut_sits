@@ -69,3 +69,13 @@ never instead of, the pre-registered results.
 X1 supported (4/4). **X2 not supported (0/4): lung masking helps even for the in-lung CVC.** X3 supported 1/4
 (Atelectasis). X4 supported (4/4). Interpretation (descriptive, see Follow-up 1): the CVC contrast is confounded by
 out-of-lung tubes that masking removes; the device-matched follow-up tests this.
+
+## Controlled synthetic tube, RAD-DINO@518, NIH pneumothorax (results/synthetic/nih_ptx/raddino518_tube_corr_main)
+Reversed AUROC (ERM / mask / U-MtE): r=0: 0.913 / 0.910 / 0.891; r=0.5: 0.772 / 0.843 / 0.886; r=1: 0.614 / 0.725 / 0.859.
+- The thesis sign reversal does **not** replicate here: ERM does not use an out-of-lung tube at all (reversed ≈
+  clean at r=0), and lung masking helps more as overlap grows (location interaction [r=0] − [r=1] = −0.113
+  [−0.123, −0.103]); masking cannot remove the in-lung tube (r=1: 0.725 vs clean 0.905).
+- U-MtE − mask = +0.044 [+0.036, +0.053] (r=0.5), **+0.134 [+0.120, +0.151] (r=1)**; U-MtE − ERM (r=1) = +0.245.
+- With artifact labels, balanced alone is better than U-MtE_balanced (−0.031 [−0.038, −0.025]).
+Interpretation: with a strong disease signal (clean AUROC 0.91) RAD-DINO ignores extra-pulmonary overlays; the
+in-ROI residual shortcut after masking is still present and is what U-MtE removes.
