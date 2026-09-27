@@ -6,3 +6,7 @@ logs/
 results/**/predictions*.csv.gz
 !results/**/predictions_summary*.csv
 .ipynb_checkpoints/
+
+# LaTeX build logs
+*.log
+!logs/
