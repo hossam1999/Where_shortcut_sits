@@ -106,3 +106,11 @@ run, they are listed as not run.
 ## Not addressable by computation (documented in docs/REVIEW2_RESPONSE.md)
 Expert audit of artifact labels with inter-rater agreement (an audit kit is provided), a clinical co-author, and
 deposit of the registrations on OSF / Zenodo (a registry table with commit hashes is generated).
+
+## Amendment 1 (2026-09-27, before running) — fine-tuned ovary crossover with more clusters
+The archived fine-tuned ResNet-50 ovary crossover is +0.136 [−0.085, +0.329] with five clusters (seed-42 folds), so
+F1 ("a fine-tuned model shows the effect in every cohort") cannot yet be claimed for ovary. Added: ResNet-50, arms erm
+and mask, both traps, spec split seeds 42, 123 and 456 × folds 0–4 (15 clusters; ids 10·seed + fold for seeds ≠ 42),
+same recipe (`run_finetune_spec.py --cohort ovary --tag power --env_seed s --arms erm mask`). **F1b**: ovary
+fine-tuned crossover > 0 with 15 clusters. Reported whichever way it goes; the paper states the fine-tuned replication
+per cohort as found (significant or not).
