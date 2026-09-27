@@ -89,6 +89,17 @@ def _fold_job(job):
             fin(H.fit_on_transformed(er_m, mtr, ytr, mv, yv, seed)[0], "mte", "mask")
         if "mte_balanced" in arms:
             fin(H.fit_on_transformed(er_m, mtr, ytr, mv, yv, seed, atr=atr, balanced=True)[0], "mte_balanced", "mask")
+        if ("umte_pbal" in arms or "pbal" in arms) and "insert" in V:
+            # annotation-free group balancing: pseudo artifact labels from an overlay detector trained on
+            # (original, inserted) feature pairs, thresholded by Otsu on the training images' logits
+            pa, pauc = H.pseudo_artifact_labels(X("erm", ta), X("insert", ta), X("erm", tr), atr, seed)
+            n0 = len(frames)
+            if "umte_pbal" in arms:
+                fin(H.fit_on_transformed(er_m, mtr, ytr, mv, yv, seed, atr=pa, balanced=True)[0], "umte_pbal", "mask")
+            if "pbal" in arms:
+                fin(H.fit_balanced(Xtr, ytr, pa, Xv, yv, seed)[0], "pbal", "erm")
+            for f in frames[n0:]:
+                f["pseudo_a_auc"], f["pseudo_a_rate"] = pauc, float(pa.mean())
         if "mte_aug" in arms:  # ablation: same overlays used as training augmentation instead of erasure
             fin(insert_aug_head(mtr, ytr, X("mask_insert", tr), mv, yv, seed)[0], "mte_aug", "mask")
     if "insert" in V:
@@ -112,8 +123,8 @@ def run_spec(envs: Dict, cache, backend_name: str, out_dir: Path, feat_dir: Path
     out_dir.mkdir(parents=True, exist_ok=True)
     pool = sorted(set().union(*[set(d.image_id) for k, d in envs.items() if k[0] in traps]))
     pos = {k: j for j, k in enumerate(pool)}
-    need = {"erm", "mask", "inpaint"} | ({"insert"} if any(a.startswith(("i2e", "insert")) for a in arms) else set()) | \
-        ({"mask_insert"} if any(a.startswith("mte") for a in arms) else set())
+    need = {"erm", "mask", "inpaint"} | ({"insert"} if any(a.startswith(("i2e", "insert", "umte", "pbal")) for a in arms) else set()) | \
+        ({"mask_insert"} if any(a.startswith(("mte", "umte", "pbal")) for a in arms) else set())
     from ..backbones import Backend  # noqa: F401
     cached = all((feat_dir / (f"{v}{insert_tag}.npz" if v in ("insert", "mask_insert") else f"{v}.npz")).exists() for v in need)
     backend = None if cached else load_backend(backend_name, device)

@@ -41,3 +41,11 @@ random 50 % of training images) and mte_aug (masked view + masked overlaid copie
 - ISIC 2019 hair: U-MtE − mte_aug = **+0.045 [+0.037, +0.054]** (mte_aug − mask +0.007); Trap B +0.015 [−0.000, +0.030].
 **U7 supported in both cohorts**: the same generic overlays help only when used to *estimate and erase* a
 subspace, not as training augmentation.
+
+## Amendment (2026-09-27, before fitting) — annotation-free balancing (U8)
+Balanced heads need image-level artifact labels A. Label-free replacement: an "overlay detector" (logistic,
+C=1) trained on (original, generic-overlay) feature pairs of the training pool is applied to the real training
+images; Otsu's threshold on its logits gives pseudo-A (`wtss.heads.pseudo_artifact_labels`).
+Arms: pbal (balanced ERM head with pseudo-A) and umte_pbal (U-MtE + pseudo-A balancing).
+Claims **U8a** umte_pbal − U-MtE > 0 and **U8b** pbal − ERM > 0 (reversed AUROC, Trap A), thyroid + ISIC hair,
+DINOv2@518. Diagnostic: AUROC of the detector score vs true A. Reported either way.

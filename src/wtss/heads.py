@@ -242,3 +242,25 @@ def fit_leace_conditional(X: np.ndarray, a: np.ndarray, y: np.ndarray):
         Xc[y == c] -= Xc[y == c].mean(0)
     # balance the concept within class: weight-free approximation by using centred features
     return LeaceEraser.fit(torch.as_tensor(Xc), torch.as_tensor(a, dtype=torch.float64))
+
+
+def pseudo_artifact_labels(X_orig, X_ins, X_train, a_true=None, seed=0):
+    """Annotation-free artifact labels: logistic 'overlay detector' on (original, inserted) feature pairs,
+    applied to the training images; binarised by Otsu's threshold on the logits.
+    Returns (pseudo labels, AUROC vs the true labels (diagnostic only; nan if unknown))."""
+    Xd = np.vstack([X_orig, X_ins])
+    yd = np.r_[np.zeros(len(X_orig)), np.ones(len(X_ins))]
+    det = _logreg(1.0, seed, None).fit(Xd, yd)
+    s = det.decision_function(X_train)
+    # Otsu on a 256-bin histogram of the logits
+    hist, edges = np.histogram(s, 256)
+    mid = (edges[:-1] + edges[1:]) / 2
+    w0 = np.cumsum(hist); w1 = w0[-1] - w0
+    m0 = np.cumsum(hist * mid) / np.maximum(w0, 1); m1 = (np.sum(hist * mid) - np.cumsum(hist * mid)) / np.maximum(w1, 1)
+    t = mid[np.argmax(w0 * w1 * (m0 - m1) ** 2)]
+    pa = (s > t).astype(int)
+    auc = float("nan")
+    if a_true is not None and len(np.unique(a_true)) == 2:
+        from sklearn.metrics import roc_auc_score
+        auc = float(roc_auc_score(a_true, s))
+    return pa, auc
