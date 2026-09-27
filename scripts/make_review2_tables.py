@@ -40,7 +40,7 @@ def location_table():
          "(max $|$SMD$|$ after matching). \\emph{Transplant}: the same real artifact instance pasted inside or outside "
          "the ROI of the same artifact-free images (location interaction). Holm over four cohorts per design.}"
          "\\label{tab:law}",
-         "\\begin{tabular}{lccccc}\\toprule",
+         "\\resizebox{\\linewidth}{!}{\\begin{tabular}{lccccc}\\toprule",
          "Cohort & Real traps & Matched & $|$SMD$|_{\\max}$ before/after & Transplant & $n$ transplant \\\\\\midrule"]
     for cohort in ("ISIC hair", "Thyroid", "Ovary", "Capsule"):
         r = x[(x.cohort == cohort) & (x.run == "repro")]
@@ -62,7 +62,7 @@ def location_table():
         else:
             cells += ["--", "--"]
         L.append(" & ".join(cells) + " \\\\")
-    L += ["\\bottomrule\\end{tabular}",
+    L += ["\\bottomrule\\end{tabular}}",
           "\\par\\smallskip{\\footnotesize $^\\dagger$Fewer than 30 matched pairs per label (pre-registered feasibility "
           "limit): exploratory only. Capsule lesions carrying debris are much larger than those with debris beside them.}",
           "\\end{table}"]
@@ -78,7 +78,7 @@ def transplant_detail():
          "\\caption{Real-artifact transplant: reversed / correlated / clean AUROC of ERM and ROI masking with the same "
          "real artifact inside or outside the ROI of the same images, and the change from masking (95\\% CI). "
          "$|\\Delta p|$: same-head counterfactual sensitivity to inserting the artifact.}\\label{tab:transplant}",
-         "\\begin{tabular}{llcccc}\\toprule",
+         "\\resizebox{\\linewidth}{!}{\\begin{tabular}{llcccc}\\toprule",
          "Cohort & Location & ERM rev / corr / clean & Mask rev / corr / clean & Mask $-$ ERM (rev) & $|\\Delta p|$ ERM / mask \\\\\\midrule"]
     for r in d.itertuples():
         for tag, name in (("out", "outside ROI"), ("in", "inside ROI")):
@@ -88,7 +88,7 @@ def transplant_detail():
             cf = f"{getattr(r, f'cf_absdp_erm_{tag}'):.3f} / {getattr(r, f'cf_absdp_mask_{tag}'):.3f}"
             L.append(f"{r.cohort if tag == 'out' else ''} & {name} & {e} & {m} & {dd} & {cf} \\\\")
         L.append("\\midrule" if r.Index != len(d) - 1 else "\\bottomrule")
-    L += ["\\end{tabular}\\end{table}"]
+    L += ["\\end{tabular}}\\end{table}"]
     write("transplant", L)
 
 
@@ -104,7 +104,7 @@ def op_table():
          "validation data (mean over five seeds; $\\Delta$ = mask $-$ ERM with 95\\% hierarchical bootstrap CI, thresholds "
          "re-estimated in every replicate). \\emph{Conflicting}: malignant nodules with an in-ROI caliper (the caliper marks "
          "benign nodules in this dataset) and benign nodules without one.}\\label{tab:op}",
-         "\\begin{tabular}{lcccc}\\toprule",
+         "\\resizebox{\\linewidth}{!}{\\begin{tabular}{lcccc}\\toprule",
          "Threshold on validation & Sensitivity ERM $\\to$ mask & $\\Delta$ sensitivity & $\\Delta$ sensitivity, conflicting & $\\Delta$ specificity \\\\\\midrule"]
     q = d[(d.cohort == "thyroid") & (d.arm == "mask") & (d.ref == "erm")]
     for op, lab in ops.items():
@@ -114,7 +114,7 @@ def op_table():
         s, sc, sp = g.loc["sens"], g.loc["sens_conflict"], g.loc["spec"]
         L.append(f"{lab} & {s.ref_value:.3f} $\\to$ {s.arm_value:.3f} & {ci(s.delta, s.ci95_lo, s.ci95_hi)} & "
                  f"{ci(sc.delta, sc.ci95_lo, sc.ci95_hi)} & {ci(sp.delta, sp.ci95_lo, sp.ci95_hi)} \\\\")
-    L += ["\\bottomrule\\end{tabular}\\end{table}"]
+    L += ["\\bottomrule\\end{tabular}}\\end{table}"]
     write("op", L)
     g1, g2 = q[q.op == "OP1_maxBA"].set_index("metric"), q[q.op == "OP2_spec0.80"].set_index("metric")
     s1, s2, c2 = g1.loc["sens"], g2.loc["sens"], g2.loc["sens_conflict"]
@@ -216,7 +216,7 @@ def texts():
         write("transplant_text", [
             f"With the artifact outside the ROI masking removes the shortcut entirely---the masked model's reversed, "
             f"correlated and clean AUROC coincide---whereas with the identical artifact inside the ROI the shortcut "
-            f"survives masking (Table~\\ref{{tab:transplant}}). The location interaction is positive and Holm-significant "
+            f"survives masking (Supplement~S11). The location interaction is positive and Holm-significant "
             f"in {sup} of {len(d)} cohorts: " + ", ".join(parts) + " (Table~\\ref{tab:law})." + harm_txt +
             f" Outside the ROI the masked model does not react to inserting the artifact at all; inside it, it still "
             f"reacts strongly (same-head $|\\Delta p|$, mask versus ERM: {cf}). Group balancing, which removes the "
@@ -251,11 +251,51 @@ def texts():
         d = d[~((d.run == "review2") & (d.arch == "resnet50") & (d.cohort != "isic"))]
         parts = [f"{name[r.cohort]} ({arch[r.arch]}, {int(r.clusters)} clusters) {ci(r.crossover, r.ci95_lo, r.ci95_hi)}"
                  for r in d.sort_values(["cohort", "arch"]).itertuples()]
-        write("ft_text", ["(crossover with end-to-end fine-tuning: " + "; ".join(parts) + ").%"])
+        ov = d[(d.cohort == "ovary")]
+        tail = ""
+        if len(ov) and ov.iloc[0].ci95_lo <= 0 and not np.isnan(ov.iloc[0].get("erm_clean_trapA", np.nan)):
+            r = ov.iloc[0]
+            tail = (f"; the fine-tuned ovary network barely learns the task (ERM clean AUROC {r.erm_clean_trapA:.3f} and "
+                    f"{r.erm_clean_trapB:.3f} in Trap~A and B), so its null crossover is uninformative")
+        write("ft_text", ["(" + "; ".join(parts) + tail + ").%"])
+
+
+def natural_texts():
+    """Sentences for the unaltered-data section and the decision guide from the rebuilt natural runs (R0/R3)."""
+    names = {"thyroid": "thyroid", "isic_BCN": "held-out BCN", "isic_HAM": "held-out HAM", "isic_MSK": "held-out MSK",
+             "capsule": "capsule"}
+    J = {}
+    for c in names:
+        f = paths.RESULTS / "natural" / f"{c}_dino518_repro" / "natural_boot.json"
+        if f.exists():
+            J[c] = json.loads(f.read_text())
+    if len(J) < len(names):
+        return
+    c3 = lambda v: ci(*v)
+    hard = {c: J[c]["hard | mask-erm"] for c in names}
+    neg = [c for c in names if hard[c][2] < 0]
+    pos = [c for c in names if hard[c][1] > 0]
+    ns = [c for c in names if c not in neg and c not in pos]
+    parts = [f"On the shortcut-conflicting pairs masking \\emph{{lowers}} AUROC in {len(neg)} of 5 test sets ("
+             + "; ".join(f"{names[c]} {c3(hard[c])}" for c in neg) + ")"]
+    if pos:
+        parts.append("raises it for " + " and ".join(f"{names[c]} ({c3(hard[c])})" for c in pos))
+    if ns:
+        parts.append("and does not change it significantly for " + " and ".join(f"{names[c]} ({c3(hard[c])})" for c in ns))
+    txt = ", ".join(parts) + (". Over all test pairs masking changes thyroid AUROC by only "
+                              f"{c3(J['thyroid']['all | mask-erm'])}: the harm is confined to the cases in which the "
+                              "in-ROI artifact points to the wrong diagnosis, which is exactly where a shortcut is dangerous%")
+    write("natural_text", [txt])
+    g = (f"annotation-free U-MtE changes AUROC over masking by {c3(J['capsule']['all | mte-mask'])} on capsule and "
+         f"{c3(J['isic_BCN']['all | mte-mask'])} for the held-out BCN hospital, its protected variant by "
+         f"{c3(J['capsule']['all | mte_protect-mask'])} on capsule, and group balancing by "
+         f"{c3(J['capsule']['all | balanced-mask'])} on capsule%")
+    write("guide_natural", [g])
 
 
 def main():
     location_table(); transplant_detail(); op_table(); op_all_table(); balance_table(); registry_table(); texts()
+    natural_texts()
 
 
 if __name__ == "__main__":

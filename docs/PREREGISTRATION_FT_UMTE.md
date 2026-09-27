@@ -83,3 +83,8 @@ version, same GPU; no other change). Results below.
 The ovary result (+0.094 [−0.011, +0.210], 5 clusters) is underpowered. Added: spec split seeds 123 and 456, folds 0–4
 (10 more clusters; ids 10·seed + fold), arms mask and umte_cons_ft only, same training. **G4**: umte_cons_ft − mask > 0
 on ovary Trap A with all 15 clusters. Reported whichever way it goes.
+
+### Amendment 3 result (run 2026-09-27 on the rebuilt data; results/finetune/ovary/resnet50_power_g4)
+umte_cons_ft − mask on ovary Trap A with 15 clusters: +0.045 [−0.022, +0.112]. **G4 not supported.** (The fine-tuned
+ResNet-50 barely learns the ovary task — see docs/PREREGISTRATION_REVIEW2.md, amendment 1 — so fine-tuning contrasts on
+this cohort remain uninformative.)

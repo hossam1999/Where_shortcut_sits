@@ -8,8 +8,8 @@ linear-Gaussian account (Sec.~\ref{sec:theory}) explains each.
 
 \input{tables/main_inroi_compact}
 
-\paragraph{(1) The artifact is a distinct overlay that carries the shortcut in its pixels} (sonographer calipers;
-synthetic rulers, debris and tubes). Masking removes an out-of-ROI copy and leaves an in-ROI copy. Without any
+\paragraph{(1) Distinct overlays that carry the shortcut in their pixels} Sonographer calipers and synthetic rulers,
+debris and tubes. Masking removes an out-of-ROI copy and leaves an in-ROI copy. Without any
 artifact annotation, erasing from the frozen features the subspace along which \emph{generic} synthetic overlays move
 the representation of masked images (mask-then-erase, U-MtE; Supplement~S8) removes most of what masking leaves:
 thyroid $+0.222$ [$+0.197, +0.251$] over masking with DINOv2, $+0.204$ [$+0.174, +0.237$] with MedSigLIP and
@@ -17,22 +17,20 @@ $+0.128$ [$+0.112, +0.145$] with a ConvNeXt, and erasure beats augmentation with
 [$+0.182, +0.235$]). With image-level artifact labels, group balancing on top of it is the most robust option
 (Table~\ref{m:tab:remedies}).
 
-\paragraph{(2) The artifact resembles the pathology} (capsule debris versus erosion fibrin). Any subspace estimated
+\paragraph{(2) Artifacts that resemble the pathology} Capsule debris versus erosion fibrin. Any subspace estimated
 from artifact appearance also contains disease evidence ($\rho$ large in Sec.~\ref{sec:theory}); unprotected erasure
 is worse than masking ($-0.115$), protecting the label directions removes the failure but not the shortcut
 ($-0.010$ [$-0.020, -0.001$]). With image-level artifact labels masking plus last-layer retraining is the most robust
 option (0.88).
 
-\paragraph{(3) The shortcut is carried by correlates of the artifact} (dermoscopic hair co-varies with body site, age
-and sex; a chest drain comes with a treated lung). Removing every hair patch with an oracle mask gains only $+0.015$;
+\paragraph{(3) Shortcuts carried by correlates of the artifact} Dermoscopic hair co-varies with body site, age and
+sex; a chest drain comes with a treated lung. Removing every hair patch with an oracle mask gains only $+0.015$;
 no pixel- or insertion-based method closes the gap, and label-based reweighting (DFR, group balancing) is required.
 The oracle-removal ceiling on a handful of annotated images diagnoses this regime.
 
 \paragraph{Remedies do not transfer to unaltered test data} The regimes above are defined on the traps, whose reversed
 test sets are extreme by construction. On the unaltered test distributions (Sec.~\ref{sec:natural}) no remedy is
-uniformly better than the unmasked model: annotation-free U-MtE is flat or negative (capsule $-0.005$
-[$-0.010, +0.000$], held-out BCN hospital $+0.004$ [$+0.002, +0.006$] over masking), its protected variant costs
-$-0.022$ [$-0.026, -0.018$] on capsule, and group balancing can hurt ($-0.086$ [$-0.106, -0.067$] on capsule).
+uniformly better than the unmasked model: \input{tables/review2_guide_natural}.
 We therefore offer the regimes as a decision guide for \emph{auditing} a model, not as a claim that any remedy
 improves deployment performance:
 (i) measure where artifacts sit relative to the ROI; out-of-ROI artifacts are what masking removes;

@@ -51,6 +51,8 @@ DOCS = [("Replication specification of the pilot (author protocol)", "REPLICATIO
         ("Pre-registration: fine-tune, then erase", "PREREGISTRATION_FT_ERASE.md"),
         ("Pre-registration: erase-while-fine-tuning", "PREREGISTRATION_FT_UMTE.md"),
         ("Related work and novelty assessment", "RELATED_WORK_NOVELTY.md"),
+        ("Second external review: verification of the claims and responses", "REVIEW2_RESPONSE.md"),
+        ("Pre-registration: second-review analyses (transplant, matched traps, operating points, fine-tuned hair)", "PREREGISTRATION_REVIEW2.md"),
         ("Findings overview (living document)", "FINDINGS_OVERVIEW.md")]
 RESULT_MD = [("Pilot replication: all 88 numbers", "SUMMARY.md"), ("Holm-corrected primary claims", "PRIMARY_CLAIMS.md"),
              ("Every arm × cohort × backbone", "CROSS_COHORT.md")]
@@ -174,7 +176,8 @@ def main():
     for title, f in RESULT_MD:
         res.append(f"\\section{{{title}}}\n\\noindent\\textit{{Source: results/{f.replace('_', chr(92) + '_')}}}\n\n" + md2tex((R / f).read_text()))
     (GEN / "results_md.tex").write_text("\n".join(res))
-    tabs = sorted((ROOT / "paper" / "tables").glob("*.tex"))
+    tabs = sorted(t for t in (ROOT / "paper" / "tables").glob("*.tex")
+                  if not t.stem.endswith(("_text", "_inline", "_conflict", "_abstract_transplant")))  # inline sentence snippets
     (GEN / "paper_tables.tex").write_text("\n".join(f"\\subsection*{{{t.stem.replace('_', ' ')}}}\n\\input{{../../paper/tables/{t.name}}}\n\\clearpage" for t in tabs))
     print("generated", len(DOCS), "documents,", len(tabs), "paper tables")
 

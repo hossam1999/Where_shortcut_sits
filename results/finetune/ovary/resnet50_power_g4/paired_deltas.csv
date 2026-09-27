@@ -1,0 +1,2 @@
+trap,arm,ref,seed_delta_mean,ci95_lo,ci95_hi
+trapA,umte_cons_ft,mask,0.04526229609110493,-0.022244232323937758,0.11188228125524273

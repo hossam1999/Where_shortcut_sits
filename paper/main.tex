@@ -6,32 +6,31 @@
 \journal{Medical Image Analysis}
 
 \newif\ifdupfloats\dupfloatstrue % NeurIPS version sets false in the appendix
+\setlength{\emergencystretch}{2em}
 \begin{document}
 \begin{frontmatter}
 \title{Masking cannot remove what is inside the region of interest: location-dependent shortcut mitigation across dermoscopy, ultrasound and capsule endoscopy}
 
 \begin{abstract}
 Medical image classifiers exploit acquisition artifacts---hair, sonographer calipers, intestinal debris---that
-correlate with the diagnosis, and the standard defence is to restrict the model to the region of interest (ROI). We
-show that this defence depends on where the artifact sits. In pre-registered traps built from real artifacts in four
-diseases and three modalities, masking removes an out-of-ROI shortcut but leaves an in-ROI one largely intact
-(crossover $+0.15$ to $+0.37$ reversed-test AUROC, all Holm-significant). Because images with in-ROI and out-of-ROI
-artifacts differ (for example in lesion size), we confirmed the law by pasting the \emph{same} real artifact inside or
-outside the ROI of the \emph{same} images: masking then removes the shortcut completely outside the ROI and keeps it,
-with increased reliance, inside (location interaction \input{tables/review2_abstract_transplant}); covariate-matched traps
-agree. The law holds across encoder families, model sizes, fine-tuning and the zero-shot scores of vision--language
-models. A linear-Gaussian account explains when in-ROI masking helps a little and when it harms: fitted only to each
-model's clean and correlated performance, it matches held-out reversed-test AUROC with a mean absolute error of 0.039,
-against 0.108 for a symmetry heuristic. On the unaltered, patient-disjoint thyroid test split, masking lowers AUROC on
-shortcut-conflicting cases and lowers sensitivity at all five pre-registered operating points, most for malignant
-nodules that carry a caliper. Which remedy works depends on what carries the shortcut---the artifact's pixels, an
-appearance that resembles the pathology, or correlates of the artifact---but none transfers uniformly to unaltered
-data. Audits of ROI-masked models should report artifact location and performance on shortcut-conflicting cases.
-Code, pre-registrations and results are public.
+correlate with the diagnosis; the standard defence restricts the model to the region of interest (ROI). We show that
+this defence depends on where the artifact sits. In pre-registered traps built from real artifacts in four diseases
+and three modalities, masking removes an out-of-ROI shortcut but leaves an in-ROI one largely intact (crossover $+0.15$
+to $+0.37$ reversed-test AUROC, all Holm-significant). Because images with in-ROI and out-of-ROI artifacts differ, we
+pasted the \emph{same} real artifact inside or outside the ROI of the \emph{same} images: masking then removes the
+shortcut completely outside the ROI and keeps it inside (location interaction \input{tables/review2_abstract_transplant});
+covariate-matched traps agree. The law holds across encoder families and sizes, fine-tuned networks in three of four
+cohorts, and zero-shot vision--language scores. A linear-Gaussian account explains when in-ROI masking helps a little
+and when it harms; fitted only to each model's clean and correlated performance, it matches held-out reversed-test
+AUROC with a mean absolute error of 0.039, against 0.108 for a symmetry heuristic. On the unaltered, patient-disjoint
+thyroid test split, masking lowers AUROC on shortcut-conflicting cases and lowers sensitivity at all five
+pre-registered operating points, most for malignant nodules carrying a caliper. Which remedy works depends on what
+carries the shortcut, but none transfers uniformly to unaltered data. Audits of ROI-masked models should report
+artifact location and performance on shortcut-conflicting cases. Code, pre-registrations and results are public.
 \end{abstract}
 
 \begin{keyword}
-shortcut learning \sep spurious correlation \sep artifacts \sep dermoscopy \sep chest radiography \sep concept erasure
+shortcut learning \sep spurious correlation \sep region-of-interest masking \sep artifacts \sep dermoscopy \sep ultrasound \sep capsule endoscopy
 \end{keyword}
 \end{frontmatter}
 
@@ -47,9 +46,9 @@ measured and marked, collapsed lungs are drained---so they are present in every 
 The most widely recommended defence is to restrict the classifier to the region of interest (ROI): segment the
 lesion or the lungs and discard the rest of the image. The rationale assumes that the shortcut lives in the
 background. Rulers, hair, ink and drains do not respect that assumption. When the artifact overlaps the ROI,
-masking cannot remove it; it removes everything \emph{else}. We ask whether the effect of a mitigation depends on
-where the artifact sits, which quantity governs that dependence, what supervision each family of mitigations
-actually needs, and whether the in-ROI regime can be mitigated without localising the artifact.
+masking cannot remove it; it removes everything \emph{else}. We ask whether the effect of masking depends on where
+the artifact sits, whether that dependence survives when the artifact is moved while the images stay the same, which
+quantity governs it, what it costs on unaltered clinical test data, and which remedies apply in which regime.
 
 \paragraph{Contributions}
 \begin{enumerate}
@@ -58,7 +57,7 @@ three imaging modalities, masking removes an out-of-ROI shortcut but leaves an i
 crossovers in 4/4 cohorts). Because Trap~A and Trap~B images differ systematically, we establish the law causally with a
 \emph{real-artifact transplant}---the same real artifact pasted inside or outside the ROI of the same images---and
 observationally with covariate-matched traps; it replicates across three encoder families, three model sizes,
-end-to-end fine-tuning in every cohort and the zero-shot scores of vision--language models
+end-to-end fine-tuning in three of four cohorts and the zero-shot scores of vision--language models
 (Sec.~\ref{sec:law}).
 \item \textbf{Mechanism and a closed-form account.} Masking retains an in-ROI artifact while removing competing
 evidence, so reliance on it grows; a linear-Gaussian model states when in-ROI masking harms and, fitted to each
@@ -96,16 +95,16 @@ which requires the artifact label at test time.
 \paragraph{Group robustness and erasure} Reweighting and GroupDRO \citep{sagawa2020groupdro}, last-layer
 retraining \citep{kirichenko2023dfr} and linear concept erasure \citep{ravfogel2020inlp,belrose2023leace}
 require artifact labels or paired data; erasure from unpaired labels removes label-correlated signal when the
-concept is correlated with the label, which is why we build pairs by insertion. Task-preserving linear erasure
+concept is correlated with the label, which is why the mask-then-erase tool we benchmark builds pairs by insertion. Task-preserving linear erasure
 (SPLINCE; \citealp{splice2025}) and projection of biased directions in vision--language models \citep{chuang2023debiasing}
 are the closest erasure methods; both require concept labels or prompts, whereas our concept subspace is estimated
 from synthetic insertions. Random erasing and occlusion augmentation \citep{zhong2020random,fong2019occlusions}
-use similar overlays as training noise; we show that this does not remove the shortcut. Test-time selection
+use similar overlays as training noise; in our traps this does not remove the shortcut. Test-time selection
 \citep{bissoto2023tts} steers dermoscopy models with user keypoints.
 \paragraph{Foundation models} Classifiers trained on frozen foundation-model features inherit shortcut-like
 behaviour that pooled multi-institutional evaluation can hide \citep{germani2026aggregation}, and shortcut testing
 \citep{brown2023shortcut} probes whether a model's performance gaps stem from encoding a sensitive attribute. We ask where in
-the image the shortcut sits and remove it from the frozen representation.
+the image the shortcut sits and what masking can and cannot remove.
 
 \input{sections/data}
 
@@ -142,13 +141,15 @@ blocks); a stricter embedding-based grouping is a sensitivity analysis (Sec.~\re
 
 \section{Conclusion}
 ROI masking is not a neutral preprocessing step. Its benefit depends on where the artifact sits: it removes shortcuts
-that live outside the ROI and leaves---or amplifies---those that live inside it. This held in four diseases, three
-modalities, three frozen backbones, two fine-tuned architectures and on unaltered data, and it follows from a two-parameter
-model of signal and artifact strength. For in-ROI artifacts, erasing a subspace learned from generic synthetic
-overlays removes the shortcut when the artifact is a distinct overlay, needs no annotation of the artifact, and should
-be disease-protected; when the shortcut travels with correlates of the artifact, reweighting with image-level artifact
-labels is required. We recommend that shortcut audits report artifact location relative to the ROI and evaluate
-mitigations on shortcut-conflicting cases, alongside clean and correlated performance.
+that live outside the ROI and leaves---or amplifies---those that live inside it. Moving the same real artifact across
+the ROI boundary of the same images reproduces the effect in all four cohorts, so it is not an artefact of which
+images happen to carry in-ROI artifacts; it holds across encoder families and model sizes and, where the network
+learns the task, after fine-tuning, and it follows
+from a two-parameter model of signal and artifact strength. On unaltered clinical data the cost falls on the cases in
+which the in-ROI artifact points to the wrong diagnosis, and it is visible at every operating point we examined. We
+recommend that shortcut audits of masked models report artifact location relative to the ROI and evaluate performance
+on shortcut-conflicting cases alongside clean and correlated performance, and that the choice of remedy follow what
+carries the shortcut. Code, pre-registrations, result files and a CLAIM 2024 checklist are public.
 
 \bibliographystyle{elsarticle-harv}
 \bibliography{refs}

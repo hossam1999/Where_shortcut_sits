@@ -50,7 +50,7 @@ def main():
          "training seeds. Sensitivity and specificity at the operating point of maximal balanced accuracy fixed on "
          "validation data (OP1; other operating points with CIs in Table~\\ref{tab:op}); ECE with 10 equal-width bins; "
          "AUPRC baseline = prevalence." + (" Rebuilt run (Sec.~\\ref{sec:repro})." if sfx else "") + "}\\label{tab:natural_clinical}",
-         "\\begin{tabular}{ll" + "c" * len(cols) + "}\\toprule", "Test set & Arm & " + " & ".join(cols) + " \\\\\\midrule"]
+         "\\resizebox{\\linewidth}{!}{\\begin{tabular}{ll" + "c" * len(cols) + "}\\toprule", "Test set & Arm & " + " & ".join(cols) + " \\\\\\midrule"]
     for name in RUNS:
         q = out[out.test == name]
         prev = d[d.test == name].prev.mean()
@@ -62,7 +62,7 @@ def main():
             first = f"{name} ($\\pi={prev:.2f}$)" if i == 0 else ""
             L.append(f"{first} & {lab} & " + " & ".join(f"{r[c + '_mean']:.3f} ({r[c + '_std']:.3f})" for c in cols) + " \\\\")
         L.append("\\midrule" if name != list(RUNS)[-1] else "\\bottomrule")
-    L += ["\\end{tabular}\\end{table}"]
+    L += ["\\end{tabular}}\\end{table}"]
     f = paths.REPO_ROOT / "paper" / "tables" / "natural_clinical.tex"
     f.write_text("\n".join(L) + "\n")
 

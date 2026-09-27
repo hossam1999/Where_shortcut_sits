@@ -38,8 +38,9 @@ less extreme, which is why we report the unaltered test distributions separately
 (iv) \emph{Absolute performance.} Frozen encoders with linear heads are below the best published fine-tuned models on
 the one cohort with a directly comparable benchmark (official TNCD split: 0.736 AUROC versus 0.773--0.784 for
 fine-tuned CNNs with cross-entropy and up to 0.799 with curriculum learning, \citealp{gong2022acl}). The law
-replicates with end-to-end fine-tuned networks in every cohort (Sec.~\ref{sec:replication}), and the other cohorts'
-binary tasks have no published benchmark on the same split (Supplement~S10).
+replicates with end-to-end fine-tuned networks in three of four cohorts; on ovarian ultrasound the fine-tuned ResNet-50
+barely learns the task and shows no significant crossover (Sec.~\ref{sec:replication}). The other cohorts' binary
+tasks have no published benchmark on the same split (Supplement~S10).
 (v) \emph{Scope.} Chest radiography is a boundary case: the encoder ignored extra-pulmonary tubes and real drains carry
 the shortcut through correlates. The linear-Gaussian account is fitted per model and cannot anticipate a shortcut
 carried by correlates that the clean and correlated environments do not expose.

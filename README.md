@@ -4,20 +4,24 @@
 paper (`paper/main.pdf`, supplement `paper/supplement.pdf`): data preparation, pre-registered experiments,
 statistics, figures and a backbone-agnostic tool.
 
-Main findings (details: `docs/FINDINGS_OVERVIEW.md`; all numbers are 95 % hierarchical-bootstrap CIs):
-- ROI masking helps much less for artifacts **inside** the ROI than outside, in four diseases / three modalities
-  (dermoscopic hair, thyroid and ovarian sonographer calipers, capsule-endoscopy debris): crossover +0.15 to +0.37
-  reversed-test AUROC, all Holm-significant; it becomes **harmful** when masking also removes disease context
-  (dermoscopy, controlled sweeps, capsule fine-tuning, and on the unaltered thyroid test set: −0.10 on
-  shortcut-conflicting cases).
-- A linear-Gaussian model accounts for these signs in closed form (`docs/THEORY.md`). Fitted only to each model's
-  clean and correlated performance, it matches the held-out reversed-test AUROC (mean absolute error 0.039) and the
-  location crossover across 14 cohort × backbone pairs (r = 0.997; 13/14 signs) — pre-registered test,
-  `docs/PREREGISTRATION_THEORY_PREDICTION.md`.
-- **U-MtE** (mask-then-erase with generic synthetic overlays, for frozen foundation-model features; needs no artifact
-  example, artifact mask or artifact label — only the ROI mask that masking already uses) removes in-ROI
-  shortcuts carried by distinct overlays; erasure beats augmentation; a disease-protected variant prevents failure when
-  the artifact resembles the pathology; label-based reweighting is needed when the shortcut is carried by correlates.
+Main findings (details: `docs/FINDINGS_OVERVIEW.md`, second review: `docs/REVIEW2_RESPONSE.md`; all numbers are 95 %
+hierarchical-bootstrap CIs):
+- **Location law.** ROI masking removes an out-of-ROI shortcut but leaves an in-ROI one largely intact, in four
+  diseases / three modalities (dermoscopic hair, thyroid and ovarian sonographer calipers, capsule-endoscopy debris):
+  crossover +0.15 to +0.37 reversed-test AUROC, all Holm-significant.
+- **Causal, not population differences.** Pasting the *same* real artifact inside or outside the ROI of the *same*
+  images (real-artifact transplant) gives location interactions of +0.25 (hair), +0.28 (thyroid), +0.07 (ovary) and
+  +0.50 (capsule), all Holm-significant; with real hair and debris inside the ROI masking harms (−0.075, −0.175).
+  Covariate-matched traps agree. The law replicates across encoder families, sizes, fine-tuning and zero-shot VLM scores.
+- **Theory.** A linear-Gaussian model fitted only to each model's clean and correlated AUROC matches held-out
+  reversed-test AUROC (MAE 0.039 vs 0.108 for a symmetry heuristic) and explains when in-ROI masking harms
+  (`docs/THEORY.md`, pre-registered test `docs/PREREGISTRATION_THEORY_PREDICTION.md`).
+- **Clinical consequence.** On the unaltered, patient-disjoint thyroid test split masking lowers AUROC on
+  shortcut-conflicting cases and lowers sensitivity at all five pre-registered operating points, most for malignant
+  nodules carrying a caliper.
+- **What carries the shortcut decides the fix** (distinct overlay / pathology-like / correlate-carried); no remedy
+  transfers uniformly to unaltered data. The annotation-free mask-then-erase tool (U-MtE) is kept as a tool
+  (paper supplement S8).
 
 ## Install
 ```bash
@@ -50,6 +54,7 @@ make natural finetune sensitivity lama baselines
 make analysis            # SUMMARY, Holm-corrected primary claims, cross-cohort tables, theory check, figures
 make paper               # LaTeX tables + paper/main.pdf, paper/supplement.pdf
 make test
+make review2     # second-review analyses (rebuild, matched traps, transplant, operating points, fine-tuned hair)
 ```
 Runtime on 1× RTX 3090 (24 GB), 8 CPU cores, 31 GB RAM: about 2 days end to end, dominated by feature extraction
 and fine-tuning. Run heavy targets **one at a time** (two concurrent DataLoader-heavy jobs fit in 31 GB, three do not).
@@ -70,7 +75,8 @@ analysis scripts fall back to it when a historical per-ablation folder is absent
   (11/12 unchanged).
 - `results/natural/clinical_metrics.csv`, `paper/tables/natural_clinical.tex` — AUPRC, Brier, ECE, sensitivity /
   specificity on the unaltered test sets.
-- `paper_neurips/main.pdf` — the same paper in NeurIPS 2025 format (9-page main text, appendix, filled checklist).
+- `paper_neurips/main.pdf` — earlier U-MtE-centred version in NeurIPS 2025 format (not revised after the second review;
+  `paper/` is the current manuscript).
 - `report/full/full_report.pdf` — **complete standalone research record** (pilot → submission): every stage's design,
   data, seeds, leakage assessment, results, figures, real images, conclusions, the external review, and every
   pre-registration/audit document verbatim (`make report_full`).

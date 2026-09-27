@@ -3,7 +3,7 @@
 PY := PYTHONPATH=src TQDM_DISABLE=1 python
 export WTSS_DATA ?= /root/data
 
-.PHONY: all data data_extra verify synthetic isic2019 cxr thyroid ovary capsule drain natural finetune \
+.PHONY: all data data_extra verify synthetic isic2019 cxr thyroid ovary capsule drain natural finetune review2 \
         sensitivity lama baselines analysis paper test
 
 all: data data_extra verify synthetic isic2019 cxr thyroid ovary capsule drain natural finetune sensitivity lama \
@@ -145,3 +145,14 @@ report_full:   # complete standalone research record (report/full/full_report.pd
 
 test:
 	$(PY) -m pytest -q tests
+
+# ---------------------------------------------------------------- second review (docs/PREREGISTRATION_REVIEW2.md)
+review2:
+	bash scripts/queue_review2_us.sh
+	bash scripts/queue_review2_isic.sh
+	$(PY) scripts/analysis/operating_points.py
+	$(PY) scripts/analysis/review2_summary.py
+	$(PY) scripts/analysis/literature_table.py
+	$(PY) scripts/analysis/clinical_metrics.py --suffix repro
+	$(PY) scripts/verify/registry_table.py
+	$(PY) scripts/make_review2_tables.py

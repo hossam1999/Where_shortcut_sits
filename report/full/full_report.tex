@@ -10,6 +10,7 @@
 \providecommand{\tightlist}{\setlength{\itemsep}{0pt}\setlength{\parskip}{0pt}}
 \providecommand{\real}[1]{#1}
 \providecommand{\passthrough}[1]{#1}
+\providecommand{\citet}[1]{[#1]}\providecommand{\citep}[1]{[#1]}\providecommand{\citealp}[1]{#1}
 \newcommand{\ok}{\textcolor{green!50!black}{\textbf{[supported]}}}
 \newcommand{\no}{\textcolor{red!70!black}{\textbf{[not supported]}}}
 \newcommand{\mixed}{\textcolor{orange!80!black}{\textbf{[partial]}}}
@@ -55,12 +56,17 @@ paired test images resampled within clusters; AUROC differences computed within 
 
 \section{Executive summary}
 \begin{enumerate}[leftmargin=*]
+\item \ok\ \textbf{Second review (Stage 14).} Real-artifact transplant: the law holds on the same images with the same
+real artifact in 4/4 cohorts; covariate-matched traps agree (3/3 feasible); masking lowers thyroid sensitivity at 5/5
+operating points; U-MtE demoted to a tool (\S\ref{sec:review2}).
 \item \ok\ \textbf{Location law.} In pre-registered traps built from real artifacts in four diseases and three modalities
 (dermoscopic hair; thyroid and ovarian sonographer calipers; capsule-endoscopy debris), masking helps far more when the
 artifact is outside the ROI than inside: crossover $+0.145$ [$+0.105,+0.181$] (hair), $+0.230$ [$+0.204,+0.255$]
 (thyroid), $+0.368$ [$+0.340,+0.397$] (capsule), $+0.170$ [$+0.116,+0.224$] (ovary); all four survive Holm correction.
 Replicated with MedSigLIP, ConvNeXt, DINOv2 ViT-S/L (9/9 cohort$\times$size), fine-tuned ResNet-50 and ViT-S, and the
-zero-shot scores of MedSigLIP and DermLIP (4/4).
+zero-shot scores of MedSigLIP and DermLIP (4/4). Exception: DermLIP with a trained head shows no hair gap ($-0.002$):
+masking costs it disease signal at both locations (clean $-0.060$/$-0.081$) and removes little of a mostly
+correlate-carried shortcut (oracle hair inpainting $+0.044$/$+0.045$).
 \item \ok\ \textbf{Masking can harm.} In-ROI masking \emph{lowers} reversed AUROC when it also removes disease context:
 real dermoscopic hair ($-0.037$), controlled sweeps (ovary $-0.197$, capsule $-0.102$, dermoscopy rulers $-0.129$ at full
 overlap), fine-tuned capsule ($-0.284$), and on unaltered data (official thyroid split $-0.102$ on shortcut-conflicting
@@ -69,8 +75,11 @@ sensitivity (0.734$\to$0.347).
 \item \ok\ \textbf{Mechanism: retention.} Masking keeps an in-ROI artifact and removes competing evidence, so the masked
 model's counterfactual reliance on the artifact grows with overlap (dermoscopy $|\Delta p|$ 0.235$\to$0.491).
 \item \mixed\ \textbf{Theory.} A linear-Gaussian closed form reproduces every sign; fitted per model on clean and
-correlated AUROC only, it matches held-out reversed AUROC (MAE 0.039, 148 models) and the location crossover (r = 0.997,
-MAE 0.014, 13/14 signs). Pre-registered verdict: ``qualitative account'' (one near-zero sign miss). Fails for chest drains.
+correlated AUROC only, it matches held-out reversed AUROC with MAE 0.039 (148 models) versus 0.108 for the symmetry
+heuristic $2\cdot$clean$-$corr, and the sweep mask gains in 42/45 signs (heuristic 36/45). The crossover correlation
+(r = 0.997) is \emph{not} evidence for the model: the heuristic reaches r = 0.989. Pre-registered verdict: ``qualitative
+account'' (one near-zero sign miss). Fails for chest drains. It anticipates DermLIP's missing hair gap ($-0.003$ vs
+$-0.002$).
 \item \mixed\ \textbf{Remedy for frozen features (U-MtE).} Mask-then-erase with a generic overlay library, no artifact
 annotation: thyroid $+0.13$ to $+0.22$ over masking (three backbone families, three model sizes), ovary (MedSigLIP)
 $+0.215$; erasure beats augmentation (thyroid, hair); disease protection prevents failure when the artifact resembles
@@ -369,6 +378,41 @@ seed 42, folds 0--4; natural tests: 5 seeds; bootstrap seeds deterministic per c
 finetune sensitivity scale lama baselines analysis paper}; tool: \texttt{python -m wtss.umte}, \texttt{python -m wtss.slas}.
 \end{itemize}
 
+\section{Stage 14 --- second external review: confounding, causal control and clinical consequences}\label{sec:review2}
+A second reader of this record ranked the most likely reasons for rejection at a Q1 journal. Every factual claim was
+first checked against the result files (all correct; registry \S\ref{doc:REVIEW2_RESPONSE}); the new analyses were
+pre-registered and pushed to GitHub before any model was fitted (registry \S\ref{doc:PREREGISTRATION_REVIEW2}). All data
+and derived objects were rebuilt on new hardware (RTX PRO 4000 Blackwell) first.
+\begin{itemize}[leftmargin=*]\itemsep1pt
+\item \ok\ \textbf{Rebuild (R0).} Every primary crossover reproduces within 0.01 (hair $+0.147$, thyroid $+0.239$, ovary
+$+0.170$, capsule $+0.377$; archived $+0.145$, $+0.230$, $+0.170$, $+0.368$).
+\item \ok\ \textbf{Trap populations differ (point 1 confirmed).} In-ROI artifacts go with larger lesions (standardised mean
+difference: hair 2.13, capsule 2.57, thyroid nodule area 0.40) and more marker pixels (thyroid 0.53).
+\item \ok\ \textbf{Real-artifact transplant (R2).} The same real caliper, hair strand or debris pasted inside or outside the
+ROI of the same artifact-free images: location interaction hair $+0.253$ [$+0.231,+0.275$], thyroid $+0.277$
+[$+0.264,+0.290$], ovary $+0.074$ [$+0.055,+0.092$], capsule $+0.497$ [$+0.455,+0.539$] (all Holm-significant). Outside the
+ROI masking removes the shortcut completely (reversed $=$ correlated $=$ clean); inside, it survives, and masking
+\emph{harms} with real hair ($-0.075$ [$-0.095,-0.055$]) and real debris ($-0.175$ [$-0.210,-0.141$]).
+\item \ok\ \textbf{Covariate-matched traps (R1).} Hair $+0.154$ [$+0.125,+0.184$], thyroid $+0.238$ [$+0.207,+0.269$],
+ovary $+0.163$ [$+0.087,+0.237$]; capsule infeasible by the pre-registered rule (19 matched pairs in one label).
+\item \ok\ \textbf{Operating points (R3).} Official thyroid split: masking lowers sensitivity at 5/5 validation-fixed
+thresholds; at validation specificity 0.80, sensitivity for malignant nodules with an in-ROI caliper falls by $-0.372$
+[$-0.436,-0.291$]. Decision rule met: the paper may say ``masking lowers sensitivity''.
+\item \mixed\ \textbf{Remedies on unaltered data (point 3 confirmed).} No remedy transfers uniformly; U-MtE is demoted to a
+tool in the supplement and the remedies become a decision guide (author decision).
+\item \mixed\ \textbf{Fine-tuned models and absolute performance (point 5).} Fine-tuned crossover per cohort: see
+\S\ref{sec:review2ft}. Thyroid frozen linear probe 0.735--0.736 AUROC versus 0.773--0.799 for published fine-tuned CNNs
+on the same patient-disjoint split (Gong et al., MICCAI 2022).
+\item \no\ \textbf{Not addressable by computation.} Expert audit with inter-rater agreement (kit and scoring script
+ready), a clinical co-author, OSF/Zenodo deposit, and external validation with patient identifiers (ThyUS2Path is the
+only open candidate; it lacks nodule masks and needs a re-validated caliper detector).
+\end{itemize}
+\input{../../paper/tables/review2_law}
+\input{../../paper/tables/review2_transplant}
+\input{../../paper/tables/review2_op}
+\subsection*{Fine-tuned replication per cohort}\label{sec:review2ft}
+\input{../../paper/tables/review2_ft_text}
+
 \section{External review and responses}\label{sec:review}
 \begin{enumerate}[leftmargin=*]\itemsep1pt
 \item ``U-MtE needs no mask'' is misleading (it uses the ROI mask) --- \emph{valid}; wording fixed everywhere.
@@ -386,8 +430,12 @@ finetune sensitivity scale lama baselines analysis paper}; tool: \texttt{python 
 \section{Conclusions and guidance for writing the paper}
 \textbf{Claims the evidence supports (safe to make).}
 \begin{enumerate}[leftmargin=*]\itemsep1pt
-\item ROI masking helps much less for in-ROI than out-of-ROI artifacts (4/4 real cohorts, Holm; all replications).
-\item In-ROI masking can be harmful, including on unaltered data and in clinical metrics (thyroid sensitivity).
+\item ROI masking helps much less for in-ROI than out-of-ROI artifacts (4/4 real cohorts, Holm; all replications),
+and this is causal: with the same real artifact on the same images the location interaction is positive in 4/4 cohorts
+(Stage 14); covariate-matched traps agree.
+\item In-ROI masking can be harmful: with real transplanted hair and debris, in dermoscopy traps, controlled sweeps,
+fine-tuned capsule, and on unaltered data (thyroid shortcut-conflicting pairs; sensitivity lower at 5/5 pre-registered
+operating points).
 \item The mechanism is retention with amplified reliance (counterfactual sensitivity, dilation, lesion-size strata).
 \item A two-parameter linear-Gaussian account reproduces all signs and closely matches held-out results of real encoders;
 call it a qualitative account.
@@ -398,15 +446,18 @@ protection makes it safe for pathology-like artifacts; text-prompted erasure doe
 mask+DFR), correlates (DFR/balancing).
 \end{enumerate}
 \textbf{Claims to avoid.} ``Masking always harms in-ROI'' (it helps a little on real thyroid/ovary/capsule); ``the
-theory predicts magnitudes''; ``U-MtE works post hoc on fine-tuned networks'' (null); ``erase-while-fine-tuning works for any architecture and
+theory predicts magnitudes''; the crossover correlation $r=0.997$ as evidence for the theory (a symmetry heuristic
+reaches 0.989); ``U-MtE improves deployment performance'' (it does not on unaltered data); ``U-MtE works post hoc on fine-tuned networks'' (null); ``erase-while-fine-tuning works for any architecture and
 disease'' (shown for ResNet-50 and ViT-S on thyroid; see Stage 10 for other cohorts); ``erase beats augment in ovary'' (not robust); ``four diseases and four
 modalities'' (chest radiography is a boundary case); any claim of patient-level independence for TN3K, MMOTU, SEE-AI.
 \textbf{Limitations.} Detector-based artifact labels (audited); no patient IDs for three cohorts; reversed environments are
 constructed by subsampling; disease protection needs diagnosis labels of artifact-free images; balanced variants need
 image-level artifact labels; the theory is fitted per model and blind to correlate-carried shortcuts.
-\textbf{Suggested paper structure} (as in \texttt{paper\_neurips/main.tex}): teaser with real images; location-law table;
-theory with the real-encoder figure; natural-data table; compact remedies table; forest plot; mechanism and dose-response
-figures in the appendix; scale, leakage, clinical metrics and fine-tuning in the robustness appendix.
+\textbf{Paper structure after the second review} (\texttt{paper/main.tex}): one story---location law (real traps,
+real-artifact transplant, matched traps, replication) $\to$ mechanism $\to$ theory $\to$ consequences on unaltered data
+(operating points) $\to$ decision guide (``what carries the shortcut decides the fix''); U-MtE, remedies and ablations in
+the supplement with the registry, operating points for every cohort, literature comparison, covariate balance and the
+CLAIM 2024 checklist. \texttt{paper\_neurips/} is the earlier U-MtE-centred version and was not revised.
 
 \appendix
 \part{Appendices}

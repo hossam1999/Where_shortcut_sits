@@ -40,3 +40,7 @@ Reported whichever way they go.
 The same ViT-S/14 and ViT-L/14 test on the ISIC 2019 hair traps (spec E13 protocol; `run_spec_e13.py --backbone
 {dinos518,dinol518} --generic --tag spec_scale`, arms erm, mask, balanced, dfr, mte, mte_balanced, mte_protect,
 mte_aug). Claim: crossover > 0 for both sizes (hair is the correlate-carried regime, so no U-MtE claim is made).
+
+### Results — ISIC 2019 hair (run 2026-09-27 on the rebuilt data; results/spec_e13/{dinos518,dinol518}_spec_scale)
+Crossover ViT-S +0.163 [+0.139, +0.187], ViT-L +0.153 [+0.118, +0.187] (ViT-B rebuilt +0.147 [+0.119, +0.177]):
+**supported for both sizes**; the hair location law, like the other three cohorts, does not depend on model size.

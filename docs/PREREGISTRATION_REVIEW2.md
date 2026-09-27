@@ -114,3 +114,44 @@ and mask, both traps, spec split seeds 42, 123 and 456 × folds 0–4 (15 cluste
 same recipe (`run_finetune_spec.py --cohort ovary --tag power --env_seed s --arms erm mask`). **F1b**: ovary
 fine-tuned crossover > 0 with 15 clusters. Reported whichever way it goes; the paper states the fine-tuned replication
 per cohort as found (significant or not).
+
+## Results (results/review2/*.csv; generated tables paper/tables/review2_*.tex)
+**Deviations.** (a) Capsule rebuild: the retrained debris probe (IoU 0.625) moves a handful of frames across the 3 % /
+10 % thresholds (A0 164/343 vs 166/338). (b) Hair traps: the retrained spec U-Net (held-out Dice 0.886, HAM agreement
+0.895) changes trap membership by about 3 % (Trap A 2,655/942 vs 2,738/989 artifact-bearing benign/melanoma).
+(c) Transplant feasibility excluded recipients without a donor instance that fits inside their ROI: hair 3/863,
+thyroid 1/1,801, ovary 0/348, capsule 167/507 (37/164 polyp-like, 130/343 erosions — small lesion boxes).
+(d) The ISIC queue was split into parallel lanes after it started (no change to any analysis); the FT_UMTE amendment-3
+runs were written to `finetune/ovary/resnet50_power_g4` so they cannot collide with amendment 1.
+
+**R0 (criterion met, 4/4).** Crossovers: hair +0.147 [+0.119, +0.177], thyroid +0.239 [+0.212, +0.264], ovary +0.170
+[+0.116, +0.223], capsule +0.377 [+0.339, +0.412]; |Δ| to archived 0.003, 0.009, 0.001, 0.008. Natural thyroid:
+hard-pair mask − ERM −0.095 [−0.128, −0.061] (archived −0.102); capsule identical to three decimals; BCN −0.025
+[−0.036, −0.013] (archived −0.016).
+
+**R1a.** Max |SMD| Trap A vs Trap B (pooled): hair 2.13 (lesion area), thyroid 0.53 (caliper pixels; nodule area
+0.40), ovary 0.39, capsule 2.57 (lesion-box area). **R1b / M1 (supported 3/3 feasible; capsule infeasible).** Matched
+crossover hair +0.154 [+0.125, +0.184] (ratio 1.05), thyroid +0.238 [+0.207, +0.269] (1.00), ovary +0.163
+[+0.087, +0.237] (0.96); max |SMD| after matching 0.11 / 0.04 / 0.08. Capsule: 19 matched pairs among polyp-like
+images (< 30) → infeasible; exploratory +0.230 [+0.125, +0.337].
+
+**R2 / T1 (supported 4/4, Holm).** Location interaction hair +0.253 [+0.231, +0.275], thyroid +0.277
+[+0.264, +0.290], ovary +0.074 [+0.055, +0.092], capsule +0.497 [+0.455, +0.539]. **T2** mask − ERM in-ROI: hair −0.075
+[−0.095, −0.055], thyroid +0.072 [+0.058, +0.086], ovary −0.010 [−0.041, +0.022], capsule −0.175 [−0.210, −0.141].
+**T3** |Δp| mask vs ERM in-ROI: hair 0.297 vs 0.340, thyroid 0.271 vs 0.206, ovary 0.116 vs 0.037, capsule 0.551 vs
+0.238 (out-of-ROI: masked |Δp| = 0). **T4** balanced interaction −0.052 to −0.011 (not exactly invariant, 5–10× smaller
+than masking's). By the interpretation rule, the location effect is not explained by Trap-A/Trap-B population
+differences in any cohort.
+
+**R3 (S1 supported; S2 4/4; S3 supported; decision rule met).** Thyroid, mask − ERM sensitivity: OP1 −0.275
+[−0.399, −0.182] (0.699 → 0.424), OP2 −0.202 [−0.265, −0.134], OP3 −0.152 [−0.225, −0.071], OP4 −0.373
+[−0.431, −0.310], OP5 −0.281 [−0.353, −0.221]; conflicting malignant nodules at OP2 −0.372 [−0.436, −0.291], OP3 −0.236
+[−0.345, −0.132]. Capsule: masking raises overall sensitivity but lowers it for conflicting erosions at OP4 (−0.096
+[−0.173, −0.029]) and OP5 (−0.104 [−0.178, −0.048]).
+
+**R4 / F1 (supported).** Fine-tuned ResNet-50 on the hair traps: crossover +0.143 [+0.062, +0.219] (5 clusters).
+With the archived runs a fine-tuned network now reproduces the crossover in three cohorts: hair (ResNet-50), thyroid
+(ViT-S +0.168 [+0.074, +0.265]; ResNet-50 +0.057 [−0.021, +0.130] n.s.) and capsule (ResNet-50 +0.584 [+0.469, +0.691]).
+**F1b (Amendment 1, not supported).** Fine-tuned ResNet-50 on ovary with 15 clusters: +0.058 [−0.037, +0.157]; the
+network barely learns the task (ERM clean AUROC 0.596 in Trap A, 0.500 in Trap B), so the null is uninformative about
+the law. **F2**: thyroid is the only cohort with a published benchmark on the same split (results/review2/literature.csv).

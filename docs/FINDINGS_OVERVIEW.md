@@ -129,3 +129,17 @@ A colleague's review raised seven points; what changed:
 - **Fine-tune, then erase** (`PREREGISTRATION_FT_ERASE.md`): null (+0.004) — U-MtE is for frozen representations.
 - **Mechanism figure** (`paper/figures/mechanism.pdf`): masking increases counterfactual reliance on an in-ROI
   artifact in every controlled sweep; U-MtE and balancing remove it.
+
+## Second external review (2026-09-27, evening) — docs/REVIEW2_RESPONSE.md, docs/PREREGISTRATION_REVIEW2.md
+- **Verification**: every factual claim of the review matched the result files.
+- **Rebuild** on new hardware: all four primary crossovers within 0.01 of the archived values.
+- **Confounding** (point 1): Trap A/B populations differ (lesion-area SMD: hair 2.13, capsule 2.57, thyroid 0.40).
+  *Real-artifact transplant* (same images, same real artifact, in vs out of ROI): interaction hair +0.253, thyroid
+  +0.277, ovary +0.074, capsule +0.497 (4/4 Holm); masking harms with real hair (−0.075) and debris (−0.175) in-ROI.
+  *Matched traps*: hair +0.154, thyroid +0.238, ovary +0.163; capsule infeasible (19 pairs).
+- **Operating points** (thyroid official, patient-disjoint split): sensitivity lower with masking at 5/5 thresholds;
+  conflicting malignant nodules −0.372 at validation specificity 0.80.
+- **Paper restructured**: law → mechanism → theory → unaltered data → decision guide; U-MtE to the supplement; theory
+  led by held-out MAE (0.039 vs 0.108 heuristic), not r = 0.997; DermLIP explained; CLAIM 2024 checklist; registry.
+- **Open**: expert audit (kit ready), clinical co-author, OSF/Zenodo deposit, external cohort with patient IDs
+  (ThyUS2Path needs nodule masks and a re-validated caliper detector).

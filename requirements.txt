@@ -25,3 +25,4 @@ torchxrayvision==1.5.4
 curl_cffi==0.16.3
 tabulate
 pytest
+pypandoc_binary   # report/full build (scripts/make_full_report.py)

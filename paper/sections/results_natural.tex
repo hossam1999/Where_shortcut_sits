@@ -7,11 +7,8 @@ natural training data and tested on untouched data: the official TN3K/TNCD test 
 the training split \citep{gong2022acl}, each ISIC source held out in turn (a real change of hospital and device), and
 held-out capsule frame blocks.
 
-\paragraph{Discrimination} On the shortcut-conflicting pairs, masking \emph{lowers} AUROC for thyroid ($-0.102$
-[$-0.139, -0.066$]) and for two of the three held-out hospitals (BCN $-0.016$ [$-0.027, -0.005$], MSK $-0.056$
-[$-0.084, -0.029$]); it helps for HAM ($+0.053$ [$+0.037, +0.068$]) and does not differ significantly from ERM on
-capsule. Over all test pairs masking changes thyroid AUROC by only $-0.005$ [$-0.027, +0.018$]: the harm is confined to
-the cases in which the in-ROI artifact points to the wrong diagnosis, which is exactly where a shortcut is dangerous.
+\paragraph{Discrimination} All analyses in this section use the rebuilt runs (Sec.~\ref{sec:repro}).
+\input{tables/review2_natural_text}.
 
 \paragraph{Operating points (pre-registered)} Because a clinical decision uses a threshold, we fixed thresholds on
 each seed's validation split at five operating points and compared test sensitivity and specificity

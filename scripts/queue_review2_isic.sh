@@ -13,4 +13,6 @@ t python scripts/run_finetune_spec.py --cohort isic --arms erm mask balanced mas
 for b in dinos518 dinol518; do t python scripts/run_spec_e13.py --backbone $b --generic --tag spec_scale \
     --arms erm mask balanced dfr mte mte_balanced mte_protect mte_aug; done
 for s in 42 123 456; do t python scripts/run_finetune_spec.py --cohort ovary --tag power --env_seed $s --arms mask umte_cons_ft --traps trapA; done
+# amendment 1: fine-tuned ovary crossover with 15 clusters
+for s in 42 123 456; do t python scripts/run_finetune_spec.py --cohort ovary --tag power --env_seed $s --arms erm mask; done
 echo "=== $(date +%T) QUEUE ISIC DONE"
