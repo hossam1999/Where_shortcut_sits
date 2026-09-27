@@ -32,9 +32,11 @@ STD = torch.tensor([0.229, 0.224, 0.225]).view(3, 1, 1)
 
 
 class TrapImages(Dataset):
-    def __init__(self, df: pd.DataFrame, render: Dict, view: str, size: int, train: bool, with_insert: bool = False):
+    def __init__(self, df: pd.DataFrame, render: Dict, view: str, size: int, train: bool, with_insert: bool = False,
+                 insert_view: str = "insert"):
         self.ids, self.y, self.a = df.image_id.tolist(), df.y.to_numpy(), df.a.to_numpy()
         self.render, self.view, self.size, self.train, self.with_insert = render, view, size, train, with_insert
+        self.insert_view = insert_view
 
     def __len__(self):
         return len(self.ids)
@@ -53,7 +55,7 @@ class TrapImages(Dataset):
         flip, rot = (bool(rng.integers(2)), int(rng.integers(4))) if self.train else (False, 0)
         x = self._t(self.render[self.view](self.ids[i]), flip, rot)
         if self.with_insert:
-            xi = self._t(self.render["insert"](self.ids[i]), flip, rot)
+            xi = self._t(self.render[self.insert_view](self.ids[i]), flip, rot)
             return x, xi, self.y[i], self.a[i]
         return x, x, self.y[i], self.a[i]
 
@@ -71,10 +73,11 @@ def train_eval(arm: str, E: Dict[str, pd.DataFrame], render: Dict, arch: str = "
                device=None, workers: int = 6):
     device = device or torch.device("cuda")
     seed_all(seed)
-    view = "mask" if arm == "mask" else "erm"
+    view = "mask" if arm in ("mask", "mte_ft", "mask_balanced") else "erm"
     tr = E["train_corr"]
-    with_ins = arm in ("i2e_ft", "insert_aug")
-    dl = DataLoader(TrapImages(tr, render, view, size, True, with_ins), batch_size=bs, shuffle=True,
+    with_ins = arm in ("i2e_ft", "insert_aug", "mte_ft")
+    ins_view = "mask_insert" if arm == "mte_ft" else "insert"
+    dl = DataLoader(TrapImages(tr, render, view, size, True, with_ins, ins_view), batch_size=bs, shuffle=True,
                     num_workers=workers, drop_last=True, persistent_workers=True)
     body, head = make_model(arch)
     body, head = body.to(device), head.to(device)
@@ -94,7 +97,7 @@ def train_eval(arm: str, E: Dict[str, pd.DataFrame], render: Dict, arch: str = "
                 if arm == "insert_aug":
                     pick = torch.rand(len(x), device=device) < 0.5
                     x = torch.where(pick[:, None, None, None], xi, x)
-                if arm == "i2e_ft":
+                if arm in ("i2e_ft", "mte_ft"):
                     g = body(torch.cat([x, xi]))
                     g0, g1 = g[: len(x)], g[len(x):]
                     logit = head(g0).squeeze(1)
@@ -102,7 +105,7 @@ def train_eval(arm: str, E: Dict[str, pd.DataFrame], render: Dict, arch: str = "
                 else:
                     logit = head(body(x)).squeeze(1)
                     inv = torch.zeros((), device=device)
-                if arm == "balanced":
+                if arm in ("balanced", "mask_balanced"):
                     w = torch.tensor([wmap[(int(t), int(s))] for t, s in zip(y.cpu(), a)], device=device)
                     loss = (F.binary_cross_entropy_with_logits(logit.float(), y, reduction="none") * w).mean()
                 else:
