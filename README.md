@@ -1,101 +1,94 @@
 # Where the Shortcut Sits
 
-Location-dependent failure of region-of-interest (ROI) artifact mitigation in medical image
-classification, what supervision each fix actually needs, and **Insert-to-Erase (I2E)**, a
-localisation-free mitigation that works where the artifact lies *inside* the ROI — in
-dermoscopy (hair, rulers) and chest radiography (chest drains).
+**Masking cannot remove what is inside the region of interest.** This repository contains everything behind the
+paper (`paper/main.pdf`, supplement `paper/supplement.pdf`): data preparation, pre-registered experiments,
+statistics, figures and a backbone-agnostic tool.
 
-This single repository replaces the four pilot folders of `isic_pcam_code_results/`
-(`isic_overlap_pilot_self_contained`, `…patch_v2`, `…patch_v3`; `pcam_spurious_prototypes` belongs to an
-earlier, abandoned thesis direction and is not part of this work). Every pilot number in the thesis proposal
-that had code was re-derived from raw images with this repo (see *Verification*).
+Main findings (details: `docs/FINDINGS_OVERVIEW.md`; all numbers are 95 % hierarchical-bootstrap CIs):
+- ROI masking helps much less for artifacts **inside** the ROI than outside, in four diseases / three modalities
+  (dermoscopic hair, thyroid and ovarian sonographer calipers, capsule-endoscopy debris): crossover +0.15 to +0.37
+  reversed-test AUROC, all Holm-significant; it becomes **harmful** when masking also removes disease context
+  (dermoscopy, controlled sweeps, capsule fine-tuning, and on the unaltered thyroid test set: −0.10 on
+  shortcut-conflicting cases).
+- A linear-Gaussian model predicts these signs in closed form (`docs/THEORY.md`).
+- **U-MtE** (mask-then-erase with generic synthetic overlays; no artifact example, mask or label) removes in-ROI
+  shortcuts carried by distinct overlays; erasure beats augmentation; a disease-protected variant prevents failure when
+  the artifact resembles the pathology; label-based reweighting is needed when the shortcut is carried by correlates.
 
-## Layout
-
-```
-src/wtss/
-  stats.py            hierarchical paired bootstrap (pilot estimator, exact) + vectorised equivalent
-  synthetic.py        controlled-overlap artifacts (ruler, tube), placements, trap environments
-  ops.py              ROI masking (dilation), Telea inpainting
-  backbones.py        DINOv2 ViT-B/14 (224/518), DermLIP/PanDerm (224), RAD-DINO (518)
-  features.py         per-view feature cache, memmapped image caches
-  heads.py            ERM, group-balanced, DFR, GroupDRO, LEACE (paired/unpaired), consistency, prevalence calibration
-  methods/insertion.py  Insert-to-Erase (subspace erasure from insertion pairs) + ablations
-  evaluation.py       clean-val threshold, worst-group accuracy, same-head |Δp|
-  data/               ISIC 2018 pilot, ISIC 2019 traps, NIH ChestX-ray14 (synthetic tube, real drains)
-  experiments/        synthetic driver, real-trap driver, end-to-end fine-tuning
-scripts/              data preparation, experiment entry points, verification
-frozen/               frozen pilot objects: leakage-safe manifest, placements, pre-committed Phase-2 criteria
-docs/                 pre-registrations, thesis-claims audit, data licences
-results/              tables written by the scripts (small CSV/MD/JSON; predictions are gitignored)
-```
-
-## Reproduce
-
+## Install
 ```bash
+git clone https://github.com/hossam1999/Where_shortcut_sits && cd Where_shortcut_sits
 pip install -r requirements.txt && pip install -e .
-export WTSS_DATA=/path/with/100GB          # all downloads, caches and features live here
-make data        # ≈75 GB download + preparation (U-Net, pHash groups, lung masks, drain detector)
-make verify      # pilot CIs from archived predictions + rerun-vs-archive comparison
-make synthetic   # thesis Results 1–2 (+ backbones, occlusion, dilation, appearance stress, leakage)
-make isic2019    # thesis Result 3: real hair, Trap A (in-ROI) / Trap B (out-of-ROI)
-make cxr         # chest radiography: synthetic tube + real chest-drain trap
+export WTSS_DATA=/path/with/350GB     # downloads, caches, features
+export HF_TOKEN=...                   # gated models: DermLIP (redlessone/DermLIP_PanDerm-base-w-PubMed-256), MedSigLIP
+export KAGGLE_API_TOKEN=...           # Kaggle datasets; accept the RANZCR-CLiP competition rules on kaggle.com first
+```
+Keep tokens in a `chmod 600` file that you `source`; never commit them. Optional: `tectonic` to build the PDFs.
+
+## Data (all public; licences in `docs/DATA.md`)
+| Cohort | Source | Download |
+|---|---|---|
+| ISIC 2018 / 2019, HAM10000 masks | ISIC archive (CC BY-NC), Harvard Dataverse | `scripts/data/download_data.sh` |
+| ISIC 2019 artifact masks | Wegley et al. 2026, doi:10.71674/man1-qa33 | `download_data.sh` |
+| NIH ChestX-ray14 + NEATX drains | NIH (HF mirror), zenodo 14944064 | `download_data.sh` |
+| RANZCR-CLiP devices | Kaggle competition | `scripts/data/download_extra.sh` |
+| TN3K + TNCD labels (thyroid) | TRFE-Net / ACL repos (Google Drive archive, verified) | `download_extra.sh` |
+| MMOTU OTU_2d (ovary) | Kaggle, CC BY 4.0 | `download_extra.sh` |
+| SEE-AI (capsule) + expert contamination masks | Kaggle CC BY 4.0; figshare 27645021 | `download_extra.sh` |
+
+## Reproduce everything
+```bash
+make data data_extra     # downloads + preparation (lesion U-Nets, pHash groups, lung masks, detectors, caches)
+make verify              # pilot CIs recomputed from archived predictions
+make synthetic isic2019  # dermoscopy: controlled rulers, real hair (author spec E13/E15)
+make thyroid ovary capsule cxr drain
+make natural finetune sensitivity lama baselines
+make analysis            # SUMMARY, Holm-corrected primary claims, cross-cohort tables, theory check, figures
+make paper               # LaTeX tables + paper/main.pdf, paper/supplement.pdf
 make test
 ```
+Runtime on 1× RTX 3090 (24 GB), 8 CPU cores, 31 GB RAM: about 2 days end to end, dominated by feature extraction
+and fine-tuning. Run heavy targets **one at a time** (two concurrent DataLoader-heavy jobs fit in 31 GB, three do not).
+Every method is deterministic given seed and features: the per-dataset `*_universal` run contains all arms; the
+analysis scripts fall back to it when a historical per-ablation folder is absent (identical predictions, verified).
 
-Hardware used: 1× RTX 3090 (24 GB), 8 CPU cores, 31 GB RAM. Backbones are frozen, so the whole
-study is feature extraction plus linear heads; the fine-tuning robustness check is the only training.
-
-## Protocol (unchanged from the pilot)
-Leakage-safe grouped splits; training environment with P(A|Y=1)=0.9, P(A|Y=0)=0.1; correlated and
-reversed (10/90) test environments plus an artifact-free clean test; C, λ and the decision threshold are
-chosen on clean validation only; hierarchical paired bootstrap over training seeds / CV folds; success
-criteria pre-registered (`docs/`) and reported whether positive or negative.
-
-## Replication of the pilot (author spec: docs/REPLICATION_SPEC.md)
-`python scripts/make_summary.py` writes `results/SUMMARY.md`: every expected number beside the obtained one with
-MATCH / SIGN+CI / MISMATCH (spec tolerance rule). Deviations: `CHANGES.md`; claim-by-claim audit:
-`docs/THESIS_CLAIMS_AUDIT.md`.
-
-| Block | Entry point | Notes |
-| --- | --- | --- |
-| E1–E9 synthetic | `scripts/run_synthetic.py` | frozen manifest + placements |
-| E10 real-hair linear | `scripts/analysis/e10_hair.py` | Mendeley masks, Bissoto labels |
-| E12 contrast trap | `scripts/analysis/e12_contrast_trap.py` | |
-| E13 / E15 real hair | `scripts/run_spec_e13.py --backbone {dino518,dermlip224}` | spec U-Net + cohort: `scripts/data/train_unet_spec.py`, `prepare_spec_cohort.py` |
-| E7 / E14 | `scripts/analysis/e7_e14.py` | |
-| leakage (§3.1) | `scripts/run_leakage_experiment.py` | |
-| CXR multi-disease real devices | `scripts/run_cxr_traps.py --backbone {raddino518,medsiglip448,dino518} [--device_matched]` | CLiP × NIH linkage: `scripts/data/link_clip_nih.py`, `prepare_clip.py` |
-
-Credentials: gated models (DermLIP since 2026-09-21, MedSigLIP) and Kaggle (RANZCR-CLiP) read `HF_TOKEN` /
-`KAGGLE_API_TOKEN` from the environment (e.g. a `chmod 600` file sourced by the queue scripts); never commit them.
-
-## Verification
-- `scripts/verify/recompute_archived_cis.py` — all archived bridge CIs recomputed exactly (max diff 1e-16).
-- `scripts/verify/compare_synthetic_to_archive.py` — rerun from raw images: 252 per-seed AUROCs within
-  ≤ 0.0005; all 21 Δ-vs-ERM CIs and significance decisions identical.
-- `docs/THESIS_CLAIMS_AUDIT.md` — every quantitative claim of the proposal, its status and evidence.
-
-## Data
-ISIC 2018/2019 (CC-BY-NC), HAM10000 lesion masks (Tschandl et al. 2020), ISIC 2019 artifact masks
-(Wegley et al. 2026, doi:10.71674/man1-qa33), NIH ChestX-ray14, NEATX drain labels
-(Jiménez-Sánchez et al., zenodo 14944064, CC BY-NC-SA). See `docs/DATA.md`.
+## Results you will get
+- `results/SUMMARY.md` — pilot replication (73/88 numbers matched; 12 same sign and significance; 3 differ).
+- `results/PRIMARY_CLAIMS.md` — Holm-corrected primary family (12/16 supported).
+- `results/CROSS_COHORT.md`, `paper/tables/main_inroi.tex` — every arm × cohort × backbone.
+- `docs/PREREGISTRATION_*.md` — each experiment's registration **and** its results section (supported / not).
+- `paper/figures/` — dose–response, forest plot, theory, examples.
 
 ## Use the methods on your own data (any backbone, any artifact)
-
-**U-MtE** (artifact-agnostic mask-then-erase; the paper's method). Needs images + ROI masks only:
+**U-MtE** (images + ROI masks only):
 ```bash
 python -m wtss.umte fit   --backbone dino518 --images "train/*.png" --rois train_rois/ --out umte.pt
 python -m wtss.umte embed --model umte.pt --images "test/*.png" --rois test_rois/ --out test_feats.npz
 ```
 Python: `UMtE(backbone).fit(imgs, rois[, y=..., artifact_free=...])` → `.transform(imgs, rois)` → any head
-(`UMtE.fit_head(Z, y, artifact=a)` gives the group-balanced variant). Backbones: `dino518`, `dermlip224`,
-`raddino518`, `medsiglip448`, `convnext384`, or any `wtss.backbones.Backend`. The tool reproduces the experiments'
-features exactly (verified: cosine 1.0 on thyroid).
+(`UMtE.fit_head(Z, y, artifact=a)` for the group-balanced variant). Backbones: `dino518`, `dermlip224`, `raddino518`,
+`medsiglip448`, `convnext384`, or any `wtss.backbones.Backend`. Reproduces the experimental features exactly.
 
-**SLAS** (few-shot patch-token artifact localisation; annotate ~5–50 images of ANY artifact):
+**SLAS** (few-shot patch-token artifact localisation; annotate ~5–50 images of any artifact):
 ```bash
 python -m wtss.slas fit   --backbone dinov2 --images "ann/*.jpg" --masks ann_masks/ --out probe.pt
 python -m wtss.slas embed --probe probe.pt --images "test/*.jpg" --rois test_rois/ --out feats.npz
 ```
-Backbones: `dinov2`, `raddino`, `medsiglip`, `dermlip`, `timm:<any timm model>` (ViT or CNN).
+
+## Layout
+```
+src/wtss/
+  stats.py            hierarchical paired bootstrap (+ p-values), crossover test
+  synthetic.py        controlled artifacts (ruler, tube, caliper, debris), generic overlay library, placements
+  heads.py            ERM, balanced, DFR, GroupDRO, JTT, LEACE, SPLICE, prevalence calibration, pseudo-groups
+  methods/insertion.py  insertion-pair subspace erasure (I2E / U-MtE), disease protection
+  umte.py, slas.py    public tools
+  backbones.py        DINOv2, DermLIP, RAD-DINO, MedSigLIP, ConvNeXt
+  data/               ISIC 2018/2019, thyroid & ovary (caliper detector us_markers.py), capsule, CXR
+  experiments/        synthetic sweeps, real/spec traps, fine-tuning
+scripts/              data preparation, run_* entry points, analysis/, verify/, make_* (tables, figures)
+docs/                 pre-registrations + results, statistical plan, theory, audits, sensitivity, related work
+paper/                main.tex, supplement.tex, sections/, tables/ (generated), figures/ (generated)
+```
+The original pilot folders (`isic_pcam_code_results/`) are superseded; the pilot's numbers are reproduced by
+`make verify` and `scripts/make_summary.py` (author specification: `docs/REPLICATION_SPEC.md`).
