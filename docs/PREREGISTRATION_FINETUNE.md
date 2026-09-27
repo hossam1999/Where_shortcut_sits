@@ -22,3 +22,12 @@ mask_balanced 0.747 / 0.677 (0.721); **mte_ft 0.679 / 0.703 (0.698)**.
 - **F3 supported**: mask_balanced − balanced (Trap A) = +0.147 [+0.104, +0.192].
 min(rev, corr), Trap A: mte_ft 0.679 ≈ mask_balanced 0.677 > mask 0.536 > balanced 0.599 — the label-free
 end-to-end U-MtE matches the best label-using arm.
+
+## Results — capsule, ResNet-50 fine-tuned (results/finetune/capsule/resnet50; 5 folds)
+Trap A reversed / corr (clean): ERM 0.495 / 0.900 (0.719); mask **0.211** / 0.915 (0.596); balanced 0.670;
+mask_balanced 0.687 / 0.780 (0.754); mte_ft 0.190 / 0.904 (0.567).
+- **F1 supported (strongly)**: crossover = +0.584 [+0.469, +0.691]; masking HARMS in-ROI end-to-end
+  (−0.284 [−0.347, −0.226]) and helps out-of-ROI (+0.301 [+0.225, +0.380]).
+- **F2 not supported**: mte_ft − mask (A) −0.021 [−0.039, −0.003]; mte_ft also lowers clean AUROC (debris ≈ fibrin
+  regime, as in the frozen analysis).
+- F3 not supported: mask_balanced − balanced (A) +0.017 [−0.070, +0.105].
