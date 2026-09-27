@@ -1,14 +1,17 @@
 \section{Results: natural distribution, fine-tuning and label robustness}\label{sec:robust}
 
-\subsection{Unaltered test distribution}
-In TN3K, in-ROI calipers occur naturally more often in benign nodules (37.6\% vs 24.1\%). Training on the official
-training split and testing on the untouched official test split (614 images; five validation-split seeds), masking
-leaves overall AUROC unchanged ($-0.005$ [$-0.027, +0.018$]) but lowers AUROC on shortcut-conflicting cases
-(malignant nodules with in-ROI calipers vs benign nodules without) by $-0.102$ [$-0.139, -0.066$] and raises it on
-shortcut-consistent cases ($+0.048$ [$+0.019, +0.079$]): masking amplifies the natural in-ROI shortcut. U-MtE recovers
-half of the loss ($+0.051$ [$+0.033, +0.072$] over masking) with the best overall AUROC (0.742); group balancing
-recovers all of it ($+0.142$ [$+0.107, +0.178$]). The disease-protected variant did not help here (pre-registered
-claims N1--N2 not supported).
+\subsection{Unaltered test distributions}
+Without any resampling, in-ROI artifacts are naturally associated with the label in every cohort (thyroid calipers:
+37.6\% of benign vs 24.1\% of malignant nodules; in-lesion hair: 31\% of melanomas vs 20\% of benign lesions;
+capsule debris on the lesion: 23\% of polyp-like lesions vs 10\% of erosions). We trained on natural training data
+and tested on untouched data: the official TN3K test split, each ISIC source held out in turn (a real change of
+hospital and device), and held-out capsule frame blocks. On the shortcut-conflicting pairs, masking \emph{lowers}
+AUROC for thyroid ($-0.102$ [$-0.139, -0.066$]) and for two of the three held-out hospitals (BCN $-0.016$
+[$-0.027, -0.005$], MSK $-0.056$ [$-0.084, -0.029$]); it helps for HAM ($+0.053$) and does not differ significantly
+from ERM on capsule. U-MtE with group balancing improves on masking for these pairs in every cohort in which it was
+evaluated ($+0.014$ to $+0.065$) and gives the best or tied-best cross-group AUROC in three of five settings (HAM
+0.786, BCN 0.734 vs 0.735, capsule 0.947); plain group balancing is best on thyroid and MSK. Without artifact labels,
+U-MtE improves on masking for thyroid ($+0.051$) and HAM ($+0.023$) only.
 
 \subsection{End-to-end fine-tuning}\label{sec:ft}
 Fine-tuning ResNet-50 end-to-end (five folds) reproduces the frozen-backbone findings. Capsule: masking harms
@@ -18,6 +21,8 @@ U-MtE---an invariance penalty between masked images with and without a generic o
 $+0.143$ [$+0.099, +0.188$] without shortcut flipping (reversed 0.679, correlated 0.703), matching the best
 label-using arm. It fails on capsule ($-0.021$), where the artifact resembles the pathology. Ovary (1,202 images)
 is underpowered: U-MtE end-to-end has the best reversed, correlated and clean AUROC, with CIs overlapping masking.
+A fine-tuned ViT-S reproduces the crossover on thyroid ($+0.168$ [$+0.074, +0.265$]), but the end-to-end U-MtE
+analogue does not improve on masking with this architecture ($+0.009$ [$-0.021, +0.040$]).
 
 \subsection{Robustness to artifact-label definitions}
 Artifact masks for calipers come from a detector (visual audit: 95\% of thyroid detections lie on real calipers;

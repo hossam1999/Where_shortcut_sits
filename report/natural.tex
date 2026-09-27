@@ -1,4 +1,19 @@
-% filled by the analysis once all natural-distribution runs finish
-\mixed\ Thyroid (official split, 614 test images): masking lowers AUROC on shortcut-conflicting cases by $-0.10$
-[$-0.14$, $-0.07$] and raises it on consistent cases ($+0.05$); U-MtE recovers half the loss, group balancing all of it.
-Leave-one-hospital-out dermoscopy and capsule results: pending.
+\plain{We trained on data exactly as the hospitals released it and tested on untouched data---including testing on a
+hospital the model never saw. The question: on the naturally occurring ``hard'' cases (where the artifact points the
+wrong way), does masking hurt?}
+\begin{center}\small
+\begin{tabular}{lcccc}
+\toprule
+Natural test & masking vs plain model (hard cases) & ours + balancing vs masking & best method (hard cases) \\
+\midrule
+Thyroid, official split & \textbf{$-0.102$} [$-0.139$, $-0.066$] & --- & balancing \\
+Melanoma, BCN held out & \textbf{$-0.016$} [$-0.027$, $-0.005$] & $+0.034$ & balancing $\approx$ ours+bal. \\
+Melanoma, MSK held out & \textbf{$-0.056$} [$-0.084$, $-0.029$] & $+0.041$ & balancing \\
+Melanoma, HAM held out & $+0.053$ [$+0.037$, $+0.068$] & $+0.065$ & \textbf{ours + balancing} \\
+Capsule, held-out videos & $+0.021$ [$+0.000$, $+0.044$] & $+0.014$ & \textbf{ours + balancing} \\
+\bottomrule
+\end{tabular}
+\end{center}
+\mixed\ Masking harms the naturally occurring hard cases in 3 of 5 tests (all three significant). Our method with
+balancing improves on masking for these cases in every test where it was measured, and is the best or tied-best in 3
+of 5; plain balancing is best in 2 of 5.

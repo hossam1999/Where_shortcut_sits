@@ -38,6 +38,11 @@ a looser hair-free group ($<0.1\%$ of pixels) and only heavily haired images, ma
 measurable harm inside the lesion ($+0.012$ [$-0.042, +0.062$]) while still helping outside ($+0.178$); the
 benefit shrinks to zero as more of the hair lies inside the lesion.
 
+With the dermatology foundation model DermLIP, the controlled ruler sweep reverses as with DINOv2 ($+0.161$ at no
+overlap, $-0.263$ to $-0.309$ at 25--100\%), but on real hair masking harms at both locations (Trap~A $-0.085$
+[$-0.107, -0.063$], Trap~B $-0.088$): with this encoder masking removes disease context regardless of where the hair
+lies, so no location gap appears.
+
 \subsection{What the real-hair shortcut is made of}
 Removing hair pixels at test time only closes 44--47\% of the ERM clean--reversed gap: most of what a frozen
 encoder exploits in a real hair trap is not the hair pixels but what accompanies hair (hair-bearing images differ in

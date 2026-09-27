@@ -19,8 +19,8 @@ evaluate what to do instead. In pre-registered, leakage-safe traps built from re
 larger for out-of-ROI than for in-ROI artifacts (crossover $+0.15$ to $+0.37$ reversed-test AUROC; all four survive
 Holm correction). The loss becomes harm when masking also removes disease context: in dermoscopy, in controlled
 overlap sweeps (ovary $-0.20$, capsule $-0.10$), with end-to-end fine-tuning (capsule $-0.28$), and on the
-unaltered thyroid test distribution, where masking lowers AUROC on shortcut-conflicting cases by $0.10$
-[$0.07$, $0.14$]. A linear-Gaussian analysis reproduces these signs and orderings in closed form. Among remedies, a
+unaltered test distributions---the official thyroid test split ($-0.10$ [$-0.14$, $-0.07$] on
+shortcut-conflicting cases) and two of three held-out dermoscopy hospitals. A linear-Gaussian analysis reproduces these signs and orderings in closed form. Among remedies, a
 mask-then-erase procedure driven by generic synthetic overlays (U-MtE) needs no artifact example, mask or label,
 removes in-ROI shortcuts where the artifact is a distinct overlay (thyroid $+0.13$ to $+0.22$ over masking on three
 backbones; $+0.14$ end-to-end), and beats using the same overlays as augmentation in three of four cohorts; it fails when the artifact
@@ -54,7 +54,9 @@ actually needs, and whether the in-ROI regime can be mitigated without localisin
 \paragraph{Contributions}
 \begin{enumerate}
 \item \textbf{A location law for ROI masking}, established with pre-registered real-artifact traps in four diseases
-and three imaging modalities, replicated on four frozen backbones and with end-to-end fine-tuning, confirmed on an
+and three imaging modalities, replicated with three frozen backbones on real artifacts (DINOv2, MedSigLIP, ConvNeXt;
+the dermatology model DermLIP shows the reversal in controlled sweeps but harm at both hair locations) and with
+end-to-end fine-tuning (ResNet-50, ViT-S), confirmed on an
 unaltered test distribution, and robust to the artifact-label definition (Secs.~\ref{sec:derm}--\ref{sec:multi}).
 \item \textbf{A closed-form account} (Sec.~\ref{sec:theory}) that predicts when in-ROI masking harms, why erasure
 fails for pathology-like artifacts, and why group reweighting is location-invariant.
@@ -138,6 +140,16 @@ backbone (ViTs and CNNs) through a two-call API.
 
 \section{Discussion and limitations}\label{sec:limits}
 \input{sections/discussion}
+
+\section{Conclusion}
+ROI masking is not a neutral preprocessing step. Its benefit depends on where the artifact sits: it removes shortcuts
+that live outside the ROI and leaves---or amplifies---those that live inside it. This held in four diseases, three
+modalities, three frozen backbones, two fine-tuned architectures and on unaltered data, and it follows from a two-parameter
+model of signal and artifact strength. For in-ROI artifacts, erasing a subspace learned from generic synthetic
+overlays removes the shortcut when the artifact is a distinct overlay, needs no annotation of the artifact, and should
+be disease-protected; when the shortcut travels with correlates of the artifact, reweighting with image-level artifact
+labels is required. We recommend that shortcut audits report artifact location relative to the ROI and evaluate
+mitigations on shortcut-conflicting cases, alongside clean and correlated performance.
 
 \bibliographystyle{elsarticle-harv}
 \bibliography{refs}
