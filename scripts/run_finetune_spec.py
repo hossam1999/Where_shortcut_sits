@@ -34,6 +34,7 @@ def main():
     ap.add_argument("--arms", nargs="+", default=["erm", "mask", "balanced", "mask_balanced", "mte_ft"])
     ap.add_argument("--folds", nargs="+", type=int, default=[0, 1, 2, 3, 4])
     ap.add_argument("--epochs", type=int, default=8)
+    ap.add_argument("--lr", type=float, default=1e-4)
     a = ap.parse_args()
     if a.cohort == "thyroid":
         c = rt.cohort(); cache = RealCache(rt.T / "cache_518", roi_file="roi.npy", art_file="marker.npy")
@@ -44,7 +45,7 @@ def main():
     envs = build_spec_envs(c, seeds=(42,), group_col="group")
     ins = lambda i, rgb, roi: np.asarray(draw_generic_artifact(Image.fromarray(rgb), roi, f"u|{i}"))
     render = make_renderers(cache, 518, [], ins)
-    out = paths.ensure(paths.RESULTS / "finetune" / a.cohort / a.arch)
+    out = paths.ensure(paths.RESULTS / "finetune" / a.cohort / a.arch.replace("/", "_"))
     pf = out / "predictions.csv.gz"
     done = pd.read_csv(pf) if pf.exists() else None
     frames = [] if done is None else [done]
@@ -55,7 +56,7 @@ def main():
             for arm in a.arms:
                 if done is not None and ((done.trap == trap) & (done.seed == k) & (done.method == arm)).any():
                     continue
-                res = train_eval(arm, E, render, arch=a.arch, epochs=a.epochs, seed=k, device=torch.device("cuda"), workers=6)
+                res = train_eval(arm, E, render, arch=a.arch, epochs=a.epochs, seed=k, lr=a.lr, device=torch.device("cuda"), workers=6)
                 meta = {"cohort": a.cohort, "backbone": f"ft_{a.arch}", "trap": trap, "seed": k, "method": arm}
                 msg = []
                 for env, (clf, thr, d) in res.items():

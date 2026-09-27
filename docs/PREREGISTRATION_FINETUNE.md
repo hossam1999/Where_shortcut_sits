@@ -39,3 +39,6 @@ Trap A reversed / corr (clean): ERM 0.457 / 0.671 (0.576); mask 0.556 / 0.570 (0
 mask_balanced 0.593; **mte_ft 0.649 / 0.743 (0.687)** — best reversed, correlated and clean AUROC.
 F1 not supported (crossover +0.136 [−0.085, +0.329]); F2 not supported at 95 % (mte_ft − mask +0.094
 [−0.025, +0.217]; mte_ft − ERM +0.192 [+0.103, +0.278]); F3 not supported (−0.009). Underpowered (1,202 images).
+
+## Amendment (before training): ViT-S/16 (timm vit_small_patch16_224.augreg_in21k_ft_in1k), lr 3e-5, thyroid, same
+design and claims F1–F3 (transformer replication of the ResNet-50 check).
