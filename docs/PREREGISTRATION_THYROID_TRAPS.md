@@ -64,3 +64,13 @@ Reversed-test AUROC, delta vs ERM [95 % CI]:
 T1 mask − ERM (B) +0.228 [+0.203, +0.252] supported; T3 crossover +0.163 [+0.132, +0.194] supported; T2 not
 supported (Trap A mask 0.348 vs ERM 0.284: small gain); T6 MtE − mask (A) +0.310 supported; MtE_balanced reversed
 0.814 / clean 0.805 (best). Same qualitative pattern as DINOv2.
+
+## Results — Amendment 1, controlled synthetic calipers, DINOv2@518 (results/synthetic/thyroid/dino518_caliper_corr_main)
+Reversed AUROC vs ERM [95 % CI]:
+- **TS3 supported**: mask − ERM at r=0 = +0.402 [+0.347, +0.458].
+- **TS2 not supported**: mask − ERM at r=1 = −0.030 [−0.079, +0.016] (the entire masking benefit is lost, no
+  significant harm).
+- **TS1 supported**: location interaction ([r=0] − [r=1]) = +0.432 [+0.377, +0.492].
+- **TS4 supported**: U-MtE − mask at r=1 = +0.278 [+0.232, +0.325]; U-MtE_balanced − balanced = +0.091
+  [+0.042, +0.142]; U-MtE_balanced − mask = +0.471 [+0.402, +0.534]. U-MtE's location interaction is +0.156
+  (vs +0.432 for masking); U-MtE_balanced's is −0.054 [−0.098, −0.004] (location-invariant or better inside).
