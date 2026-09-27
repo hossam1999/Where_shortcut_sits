@@ -25,3 +25,11 @@ C1 mask − ERM > 0 in Trap B · C2 mask − ERM < 0 in Trap A · C3 crossover [
 C4 balanced, DFR − ERM > 0 · C5 U-MtE − mask > 0 in Trap A · C6 U-MtE − mte_aug > 0 in Trap A ·
 no gaming (clean loss <= 0.02; corr >= rev − 0.02). Reported whichever way they go.
 Then (user rule): controlled synthetic-artifact test on the same cohort's low-contamination frames.
+
+## Controlled synthetic-debris test (registered with the real-trap design, before any fitting)
+- Frames with contamination < 5 % (796 after common support); split 60/20/20 by leakage group (seed 20260927).
+- Artifact: `wtss.synthetic.draw_debris` (textured yellow-green blob with bubbles), 48x48 box at 518 px;
+  overlap with the lesion box r ∈ {0, 0.25, 0.5, 0.75, 1}; seeds 42/123/456; arms erm, mask, inpaint, balanced,
+  dfr, leace + proposed (I2E, MtE, U-I2E, U-MtE).
+- Claims: CS1 mask − ERM decreases with overlap (r=1 vs r=0 interaction < 0); CS2 mask − ERM < 0 at r=1;
+  CS3 mask − ERM > 0 at r=0; CS4 U-MtE − mask > 0 at r=1. Small test split (137 frames): wide CIs expected.

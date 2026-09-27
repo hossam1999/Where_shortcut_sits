@@ -198,6 +198,34 @@ def draw_caliper(img: Image.Image, x: int, y: int, w: int, h: int, image_id: str
     return Image.fromarray(arr), m
 
 
+# --------------------------------------------------------------------------- capsule debris
+DEBRIS_PALETTE = ((172, 160, 62), (122, 132, 52), (190, 172, 92), (96, 104, 44), (150, 120, 60))
+
+
+def draw_debris(img: Image.Image, x: int, y: int, w: int, h: int, image_id: str = "") -> Tuple[Image.Image, np.ndarray]:
+    """Intestinal debris inside box (x,y,w,h): an irregular, textured yellow-green blob (smooth-noise-perturbed
+    ellipse) with a few small bright-rimmed bubbles (appearance of capsule-endoscopy contamination)."""
+    rng = np.random.default_rng(stable_int("debris_style_v1", image_id))
+    arr = np.asarray(img.convert("RGB")).astype(np.float32)
+    yy, xx = np.mgrid[0:h, 0:w]
+    ell = ((xx - (w - 1) / 2) / (w / 2)) ** 2 + ((yy - (h - 1) / 2) / (h / 2)) ** 2
+    noise = cv2.GaussianBlur(rng.standard_normal((h, w)).astype(np.float32), (0, 0), max(w, h) / 8)
+    noise /= noise.std() + 1e-6
+    local = (ell + 0.25 * noise < 0.85).astype(np.uint8)
+    col = np.array(DEBRIS_PALETTE[int(rng.integers(len(DEBRIS_PALETTE)))], np.float32)
+    tex = cv2.GaussianBlur(rng.standard_normal((h, w, 3)).astype(np.float32), (0, 0), 1.2) * 18
+    patch = np.clip(col + tex, 0, 255)
+    for _ in range(int(rng.integers(2, 6))):  # bubbles
+        cx, cy, r = int(rng.integers(0, w)), int(rng.integers(0, h)), int(rng.integers(2, max(3, min(w, h) // 8)))
+        if local[cy, cx]:
+            cv2.circle(patch, (cx, cy), r, (235, 235, 215), 1)
+    m = np.zeros(arr.shape[:2], np.uint8)
+    m[y:y + h, x:x + w] = local
+    a = 0.88 * local[..., None]
+    arr[y:y + h, x:x + w] = arr[y:y + h, x:x + w] * (1 - a) + patch * a
+    return Image.fromarray(arr.clip(0, 255).astype(np.uint8)), m
+
+
 def _box(shape, x, y, w, h):
     b = np.zeros(shape, np.uint8)
     b[y:y + h, x:x + w] = 1

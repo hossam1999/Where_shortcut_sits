@@ -24,7 +24,7 @@ from ..evaluation import evaluate, same_head_counterfactual, select_threshold_cl
 from ..features import ImageCache, assemble_env, extract_view
 from ..ops import apply_method
 from ..stats import hierarchical_interaction, hierarchical_paired_bootstrap, hierarchical_paired_mean_bootstrap
-from ..synthetic import (ARTIFACT_GEOMETRY, DEFAULT_SEEDS, draw_caliper, draw_ruler, draw_ruler_variable, draw_tube,
+from ..synthetic import (ARTIFACT_GEOMETRY, DEFAULT_SEEDS, draw_caliper, draw_debris, draw_ruler, draw_ruler_variable, draw_tube,
                          presence_vector, sample_ruler_style)
 
 PIXEL_METHODS = {"erm", "mask", "inpaint", "dilate0", "dilate10", "dilate25", "dilate50"}
@@ -56,6 +56,8 @@ def _artifact_drawer(cfg: SynthConfig, size: int):
             return draw_ruler_variable(img, x, y, w, h, sample_ruler_style(image_id, ov))
         if cfg.artifact == "tube":
             return draw_tube(img, x, y, w, h, image_id=f"{image_id}|{ov:.2f}")
+        if cfg.artifact == "debris":
+            return draw_debris(img, x, y, w, h, image_id=f"{image_id}|{ov:.2f}")
         if cfg.artifact == "caliper":
             return draw_caliper(img, x, y, w, h, image_id=f"{image_id}|{ov:.2f}")
         raise ValueError(cfg.artifact)
