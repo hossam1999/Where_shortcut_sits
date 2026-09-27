@@ -18,3 +18,11 @@ U-MtE---an invariance penalty between masked images with and without a generic o
 $+0.143$ [$+0.099, +0.188$] without shortcut flipping (reversed 0.679, correlated 0.703), matching the best
 label-using arm. It fails on capsule ($-0.021$), where the artifact resembles the pathology. Ovary (1,202 images)
 is underpowered: U-MtE end-to-end has the best reversed, correlated and clean AUROC, with CIs overlapping masking.
+
+\subsection{Robustness to artifact-label definitions}
+Artifact masks for calipers come from a detector (visual audit: 95\% of thyroid detections lie on real calipers;
+92--97\% of caliper-free images contain no visible caliper). Re-running the thyroid and ovary analyses with
+large-marker-only ($\ge 50$ px) and strict-location ($r\ge0.7$ / $r<0.05$) definitions leaves the crossover
+(thyroid $+0.215$ to $+0.262$; ovary $+0.170$ to $+0.195$) and the U-MtE$_{\text{protect}}$ gain over masking
+(thyroid $+0.217$ to $+0.282$; ovary $+0.043$ to $+0.067$) significant in every variant; both grow under stricter
+definitions, as expected if detector errors dilute rather than create the effects.
