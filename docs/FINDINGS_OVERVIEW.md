@@ -54,7 +54,7 @@ removal of every hair patch gains only +0.015).
 ## 5. Datasets evaluated and not used (with reasons)
 CANDID-PTX (no access), CXR CLiP real devices (masking helps both locations), CXR cardiomegaly (too few labelled),
 TCGA/GrandQC pathology (unreliable pen masks), ISIC ink (70 in-lesion images), breast US BUSI/BUS-BRA (marker
-labels ≈ 70 % pure), EAD endoscopy (no disease labels).
+labels ≈ 70 % pure), EAD endoscopy (no disease labels), BKAI-IGH NeoPolyp colonoscopy (specular highlights: 0 specular-free images, 41 in-polyp).
 
 ## 6. Tools
 `python -m wtss.umte` (U-MtE) and `python -m wtss.slas` (SLAS): any backbone (ViT or CNN), two commands.
