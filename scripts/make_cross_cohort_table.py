@@ -15,6 +15,8 @@ RUNS = {  # (cohort label, backbone): result dirs merged (first occurrence of an
     ("Thyroid US markers", "DINOv2"): ["thyroid/dino518_main", "thyroid/dino518_universal", "thyroid/dino518_ablation",
                                        "thyroid/dino518_protect_generic", "thyroid/dino518_pbal", "thyroid/dino518_u10"],
     ("Thyroid US markers", "MedSigLIP"): ["thyroid/medsiglip448_main", "thyroid/medsiglip448_universal"],
+    ("Thyroid US markers", "ConvNeXt"): ["thyroid/convnext384_universal"],
+    ("Capsule debris", "ConvNeXt"): ["capsule/convnext384_universal"],
     ("Capsule debris", "DINOv2"): ["capsule/dino518_main", "capsule/dino518_universal", "capsule/dino518_protect_generic",
                                    "capsule/dino518_u10"],
     ("Capsule debris", "MedSigLIP"): ["capsule/medsiglip448_main", "capsule/medsiglip448_universal"],

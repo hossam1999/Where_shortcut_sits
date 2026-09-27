@@ -127,3 +127,9 @@ umte_jtt (masked + generic-erased view). Claims **U11a** umte_jtt − jtt > 0 an
 U11a/U11b not supported uniformly. Without any labels, the best arm is cohort-dependent: U-MtE where the shortcut is
 in distinct overlay-like pixels (calipers), U-MtE+JTT or mask+JTT where erasure alone removes disease signal
 (debris), and JTT on the unmasked view where masking harms and the shortcut is carried by correlates (hair).
+
+### CNN replication — ConvNeXt-Base, thyroid, generic library (results/thyroid/convnext384_universal)
+Crossover (mask) +0.284 [+0.253, +0.315]; Trap A mask − ERM +0.003 (masking useless in-ROI) vs Trap B +0.288.
+U-MtE − mask +0.128 [+0.112, +0.145]; U-MtE − mte_aug +0.120 [+0.102, +0.139] (U7); U-MtE_protect − mask +0.195
+[+0.153, +0.238]; U-MtE_balanced − balanced +0.084 [+0.051, +0.111]; U-MtE_balanced min(rev,corr) 0.745 (best;
+mask+DFR 0.722, DFR 0.669). The methods are not ViT-specific.
