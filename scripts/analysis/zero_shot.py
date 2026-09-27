@@ -15,7 +15,7 @@ import pandas as pd
 
 from wtss import paths
 from wtss.data.isic2019_spec import build_spec_envs, load_spec_cohort
-from wtss.stats import hierarchical_paired_bootstrap, safe_auc
+from wtss.stats import difference_of_deltas, hierarchical_paired_bootstrap, safe_auc
 
 spec = importlib.util.spec_from_file_location("rt", Path(__file__).resolve().parents[1] / "run_thyroid_traps.py")
 rt = importlib.util.module_from_spec(spec); spec.loader.exec_module(rt)
@@ -58,6 +58,8 @@ def main():
         print(f"== {bb} {cohort}\n{m.to_string()}", flush=True)
         for (trap, meth), r in m.iterrows():
             rows.append({"backbone": bb, "cohort": cohort, "trap": trap, "method": meth, **r.to_dict()})
+        cr = difference_of_deltas(P[P.trap == "trapB"], P[P.trap == "trapA"], "zs_mask", "zs", "test_rev", 10000, 11)
+        boots[f"{bb}|{cohort}|crossover (zs_mask-zs)_B-(zs_mask-zs)_A"] = [round(cr[x], 3) for x in ("seed_delta_mean", "ci95_lo", "ci95_hi")]
         for trap in ("trapA", "trapB"):
             q = P[P.trap == trap]
             r = hierarchical_paired_bootstrap(q, "zs_mask", "zs", "test_rev", 10000, 3, fast=True)

@@ -28,3 +28,26 @@ training* already rely on in-ROI artifacts (correlated vs reversed AUROC gap), a
 - **V3** mask_text_erase_balanced − balanced > 0.
 - **Z1** zero-shot: report correlated − reversed AUROC gap (Trap A) per cohort (descriptive).
 Reported whichever way they go.
+
+## Results (Trap A reversed AUROC [95 % CI]; results/*/medsiglip448_text, results/spec_e13/dermlip224_spec_text)
+| cohort (backbone) | V1 mask_text_erase − mask | U-MtE − mask | V2 mask_text_erase − U-MtE | V3 text_bal − balanced |
+|---|---|---|---|---|
+| thyroid (MedSigLIP) | +0.005 [+0.003, +0.008] | +0.204 [+0.174, +0.237] | −0.199 [−0.230, −0.170] | +0.056 [+0.038, +0.073] |
+| ovary (MedSigLIP) | +0.008 [−0.001, +0.021] | **+0.215 [+0.182, +0.246]** | −0.207 [−0.235, −0.178] | −0.010 [−0.037, +0.020] |
+| capsule (MedSigLIP) | +0.001 [−0.000, +0.003] | −0.236 [−0.252, −0.221] | +0.238 [+0.222, +0.253] | +0.066 [+0.038, +0.093] |
+| ISIC hair (DermLIP) | +0.004 [−0.002, +0.011] | −0.076 [−0.094, −0.060] | +0.080 [+0.064, +0.097] | −0.112 [−0.132, −0.092] |
+- **V1 essentially not supported**: text-prompted erasure is a near no-op (≤ +0.008; significant only on thyroid).
+  The text-space artifact direction does not coincide with the image-space direction along which the artifact moves
+  the representation (modality gap), so erasing it leaves the shortcut intact.
+- V2: U-MtE is far better where the artifact is a distinct overlay (thyroid, ovary); text erasure "wins" on capsule and
+  hair only because it does nothing while U-MtE (unprotected) removes disease signal there.
+- V3: supported 2/4. New replication: U-MtE − mask on ovary with MedSigLIP = +0.215.
+
+## Zero-shot reliance (Z1; results/zero_shot/)
+No task training. Correlated − reversed AUROC gap (unmasked, Trap A): thyroid +0.066, capsule −0.398, ovary −0.126,
+hair +0.081 — the foundation models' zero-shot scores are already swayed by artifacts (capsule debris by 0.40 AUROC).
+Masking effect on zero-shot reversed AUROC, in-ROI vs out-of-ROI (post hoc crossover test):
+thyroid +0.013 vs +0.116 (crossover +0.103 [+0.079, +0.127]); capsule +0.007 vs +0.056 (+0.049 [+0.024, +0.076]);
+ovary −0.235 vs −0.054 (+0.181 [+0.135, +0.228]); hair (DermLIP) −0.078 vs −0.027 (+0.051 [+0.031, +0.071]).
+**The location law holds even without any training** (4/4 crossovers > 0). Caveat: MedSigLIP zero-shot thyroid
+classification is at chance (clean AUROC 0.45), so that row reflects artifact effects on an uninformative score.

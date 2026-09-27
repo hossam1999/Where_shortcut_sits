@@ -1,0 +1,17 @@
+backbone,cohort,trap,method,clean,test_corr,test_rev,corr_minus_rev
+medsiglip448,thyroid,trapA,zs,0.449,0.485,0.419,0.066
+medsiglip448,thyroid,trapA,zs_mask,0.531,0.634,0.433,0.201
+medsiglip448,thyroid,trapB,zs,0.432,0.442,0.428,0.014
+medsiglip448,thyroid,trapB,zs_mask,0.54,0.527,0.545,-0.018
+medsiglip448,capsule,trapA,zs,0.639,0.426,0.824,-0.398
+medsiglip448,capsule,trapA,zs_mask,0.658,0.457,0.831,-0.374
+medsiglip448,capsule,trapB,zs,0.528,0.455,0.609,-0.154
+medsiglip448,capsule,trapB,zs_mask,0.617,0.57,0.665,-0.095
+medsiglip448,ovary,trapA,zs,0.623,0.559,0.685,-0.126
+medsiglip448,ovary,trapA,zs_mask,0.504,0.568,0.449,0.119
+medsiglip448,ovary,trapB,zs,0.642,0.622,0.658,-0.036
+medsiglip448,ovary,trapB,zs_mask,0.535,0.485,0.604,-0.119
+dermlip224,isic,trapA,zs,0.704,0.751,0.67,0.081
+dermlip224,isic,trapA,zs_mask,0.679,0.768,0.592,0.176
+dermlip224,isic,trapB,zs,0.689,0.613,0.752,-0.139
+dermlip224,isic,trapB,zs_mask,0.655,0.581,0.725,-0.144
