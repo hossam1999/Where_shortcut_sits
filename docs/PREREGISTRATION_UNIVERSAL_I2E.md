@@ -195,3 +195,10 @@ reversed values are inflated by flipping).
 **U13a supported (5/5); U13b supported (5/5: within 0.02 of the best candidate); U13c supported 3/5** — fails on
 hair and drains, the correlate-carried regime, where DFR (not a candidate: it trains on the validation set) is best.
 Follow-up registered below: split-validation selection that admits DFR as a candidate.
+
+## Amendment (before fitting) — split-validation adaptive selection (U14)
+val_groups is split per image (stable hash "val_half") into two halves. DFR-type candidates dfr_half and
+mask_dfr_half are trained on half 0 only; ALL candidates (U13 set + these two) are scored on half 1 only with the
+U13 score. Claims: **U14a** auto_split − DFR ≥ −0.02 in all five cohorts (Trap A, reversed); **U14b** auto_split
+within 0.02 of the best fixed candidate (min(rev, corr)) in all five. (Image-level split: near-duplicate images can
+fall in both halves — small optimistic bias, reported as a limitation.) Reported either way.

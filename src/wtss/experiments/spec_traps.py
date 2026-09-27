@@ -84,6 +84,14 @@ def _fold_job(job):
         fin(H.fit_jtt(X("mask", tr), ytr, X("mask", cv), yv, seed)[0], "mask_jtt", "mask")
     if "balanced" in arms:
         fin(H.fit_balanced(Xtr, ytr, atr, Xv, yv, seed)[0], "balanced", "erm")
+    if "dfr_half" in arms or "mask_dfr_half" in arms:  # DFR on the selection-free half of val_groups (U14)
+        from ..utils import stable_int as _si
+        g = E["val_groups"]
+        g = g[np.array([_si("val_half", i) % 2 == 0 for i in g.image_id])]
+        if "dfr_half" in arms:
+            fin(H.fit_dfr(X("erm", g), g.y.to_numpy(), g.a.to_numpy(), Xv, yv, seed)[0], "dfr_half", "erm")
+        if "mask_dfr_half" in arms:
+            fin(H.fit_dfr(X("mask", g), g.y.to_numpy(), g.a.to_numpy(), X("mask", cv), yv, seed)[0], "mask_dfr_half", "mask")
     if "dfr" in arms:
         g = E["val_groups"]
         fin(H.fit_dfr(X("erm", g), g.y.to_numpy(), g.a.to_numpy(), Xv, yv, seed)[0], "dfr", "erm")

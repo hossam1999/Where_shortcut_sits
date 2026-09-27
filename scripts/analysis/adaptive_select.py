@@ -18,7 +18,8 @@ from sklearn.metrics import roc_auc_score
 
 from wtss.stats import hierarchical_paired_bootstrap, safe_auc, slim
 
-CANDIDATES = ["erm", "mask", "balanced", "mask_balanced", "mte", "mte_protect", "mte_balanced",
+SPLIT = "--split" in sys.argv  # U14: score on the val half DFR never saw; DFR-half arms become candidates
+CANDIDATES = (["dfr_half", "mask_dfr_half"] if "--split" in sys.argv else []) + ["erm", "mask", "balanced", "mask_balanced", "mte", "mte_protect", "mte_balanced",
               "mte_protect_balanced", "jtt", "mask_jtt", "umte_jtt"]
 
 
@@ -35,7 +36,7 @@ def val_score(q: pd.DataFrame) -> float:
 
 def main():
     rows_all = []
-    for d in map(Path, sys.argv[1:]):
+    for d in map(Path, [x for x in sys.argv[1:] if not x.startswith("--")]):
         preds = pd.read_csv(d / "predictions.csv.gz")
         if "trap" not in preds:
             preds["trap"] = "trapA"
@@ -43,31 +44,36 @@ def main():
             preds["fold"] = 0
         cands = [c for c in CANDIDATES if c in set(preds.method)]
         v = preds[(preds.env == "val_groups") & preds.method.isin(cands)]
+        if SPLIT:
+            from wtss.utils import stable_int
+            v = v[np.array([stable_int("val_half", i) % 2 == 1 for i in v.image_id])]
         sc = v.groupby(["trap", "seed", "fold", "method"]).apply(val_score, include_groups=False).rename("score").reset_index()
         pick = sc.loc[sc.groupby(["trap", "seed", "fold"]).score.idxmax()][["trap", "seed", "fold", "method"]]
-        pick.to_csv(d / "auto_choices.csv", index=False)
+        pick.to_csv(d / ("auto_split_choices.csv" if SPLIT else "auto_choices.csv"), index=False)
         chosen = preds.merge(pick, on=["trap", "seed", "fold", "method"])
-        chosen = chosen[chosen.env != "val_groups"].assign(method="auto")
+        chosen = chosen[chosen.env != "val_groups"].assign(method="auto_split" if SPLIT else "auto")
         allp = pd.concat([preds[preds.env != "val_groups"], chosen], ignore_index=True)
-        allp.to_csv(d / "predictions_with_auto.csv.gz", index=False, compression="gzip")
+        allp.to_csv(d / ("predictions_with_auto_split.csv.gz" if SPLIT else "predictions_with_auto.csv.gz"), index=False, compression="gzip")
         print(f"== {d}\nchoices:", pick.groupby("trap").method.value_counts().to_dict())
         for trap in sorted(allp.trap.unique()):
             q = allp[allp.trap == trap]
             auc = q.groupby(["method", "env", "seed"]).apply(lambda z: safe_auc(z.y, z.prob), include_groups=False)
             m = auc.groupby(["method", "env"]).mean().unstack()
             m["min_rev_corr"] = m[["test_rev", "test_corr"]].min(1)
-            best_fixed = m.drop(index="auto").min_rev_corr.idxmax()
+            AUTO = "auto_split" if SPLIT else "auto"
+            best_fixed = m.drop(index=AUTO).min_rev_corr.idxmax()
             refs = [r for r in ("mask", "balanced", "dfr", "mask_dfr", best_fixed) if r in m.index]
             for ref in dict.fromkeys(refs):
-                r = hierarchical_paired_bootstrap(slim(q, "test_rev", ("auto", ref)), "auto", ref, "test_rev", 10000, 13, fast=True)
+                r = hierarchical_paired_bootstrap(slim(q, "test_rev", (AUTO, ref)), AUTO, ref, "test_rev", 10000, 13, fast=True)
                 rows_all.append({"run": d.name, "trap": trap, "ref": ref, **{k: r[k] for k in ("seed_delta_mean", "ci95_lo", "ci95_hi")}})
             print(trap, "best fixed (min rev,corr):", best_fixed)
-            print(m.loc[[i for i in ["auto", best_fixed, "mask", "balanced", "dfr", "mask_dfr"] if i in m.index]]
+            print(m.loc[[i for i in [AUTO, best_fixed, "mask", "balanced", "dfr", "mask_dfr"] if i in m.index]]
                   [["clean", "test_corr", "test_rev", "min_rev_corr"]].round(3).drop_duplicates().to_string())
     out = pd.DataFrame(rows_all)
     print(out.round(3).to_string())
-    if len(sys.argv) > 1:
-        out.to_csv(Path(sys.argv[1]).parent.parent / "adaptive_select_summary.csv", index=False)
+    dirs = [x for x in sys.argv[1:] if not x.startswith("--")]
+    if dirs:
+        out.to_csv(Path(dirs[0]).parent.parent / ("adaptive_select_split_summary.csv" if SPLIT else "adaptive_select_summary.csv"), index=False)
 
 
 if __name__ == "__main__":
