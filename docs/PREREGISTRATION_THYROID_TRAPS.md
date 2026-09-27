@@ -76,3 +76,12 @@ Reversed AUROC vs ERM [95 % CI]:
   (vs +0.432 for masking); U-MtE_balanced's is −0.054 [−0.098, −0.004] (location-invariant or better inside).
 
 ## Amendment 2 (before fitting): controlled synthetic-caliper replication with MedSigLIP-448 — same design and claims TS1–TS4.
+
+### Results — Amendment 2, MedSigLIP controlled calipers (results/synthetic/thyroid/medsiglip448_caliper_corr_main)
+- TS3 supported: mask − ERM at r=0 = +0.514 [+0.454, +0.573]. TS1 supported: interaction +0.470 [+0.405, +0.544].
+- TS2 not supported: mask − ERM at r=1 = +0.044 [+0.001, +0.089] (benefit almost entirely lost, no harm).
+- TS4 **not supported**: U-MtE − mask at r=1 = −0.076 [−0.110, −0.043]. U-MtE_balanced − balanced = +0.068
+  [+0.022, +0.115]; U-MtE_balanced − mask = +0.458 [+0.409, +0.508]; U-MtE_balanced location interaction +0.002
+  [−0.038, +0.041] (location-invariant).
+Across the four controlled sweeps (capsule/thyroid × DINOv2/MedSigLIP) unbalanced U-MtE beats masking with DINOv2
+only; U-MtE_balanced beats masking in all four and is location-invariant in all four.
