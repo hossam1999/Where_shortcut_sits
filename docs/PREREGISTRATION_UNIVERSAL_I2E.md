@@ -90,3 +90,13 @@ capsule and ISIC hair (DINOv2@518, generic library). Reported either way.
 Interpretation: protection is a safety net — it removes the catastrophic failure when the artifact resembles the
 disease (capsule template −0.395 → −0.012 vs mask) at ≤ 0.012 cost elsewhere; it does not by itself beat masking
 when the artifact subspace overlaps the disease subspace.
+
+### U10 results (reversed AUROC, Trap A; paired_deltas.csv)
+| cohort | mte_dfr − dfr | mte_dfr − mask_dfr | mask_dfr − dfr |
+|---|---|---|---|
+| thyroid | +0.101 [+0.083, +0.120] | +0.007 [+0.002, +0.011] | +0.095 [+0.075, +0.116] |
+| capsule | +0.080 [+0.054, +0.107] | +0.000 [−0.015, +0.014] | +0.080 [+0.062, +0.099] |
+| ISIC hair | −0.039 [−0.066, −0.009] | +0.014 [−0.004, +0.032] | −0.053 [−0.076, −0.030] |
+U10 (mte_dfr > dfr and > mask_dfr) **not supported as a whole**: once a group-robust head (DFR) is used, the
+generic erasure adds ≤ 0.014 over masking + DFR. The gain over DFR comes from *masking* in marker/debris cohorts
+(+0.08–0.10) and masking costs −0.05 on hair — again location/type dependent.
