@@ -13,6 +13,11 @@ unaffected.
   (the most aggressive threshold that still allows 5-fold grouped splits). Chosen without labels or results.
 - Images without a cached embedding keep their existing group.
 
+**Amendment (before any refit, after inspecting only the similarity distribution):** raw CLS cosine is dominated by
+the shared ultrasound appearance (ovary: median nearest-neighbour similarity 0.99; at τ = 0.99 the largest group
+already held 26 % of the cohort, so no grid value met the 5 % cap). Embeddings are therefore **mean-centred per cohort
+before L2 normalisation**, for all three cohorts; the rest of the rule is unchanged.
+
 ## Re-analysis
 Same traps, same seeds, same arms (erm, mask, balanced, U-MtE, U-MtE_balanced, U-MtE_protect, overlay augmentation;
 generic overlays), only the grouping changes: `run_thyroid_traps.py --cohort {thyroid,ovary,capsule} --generic

@@ -86,7 +86,10 @@ def main():
     ap.add_argument("--rB", type=float, default=0.1, help="sensitivity: Trap B overlap threshold (r <)")
     ap.add_argument("--max_cover_B", type=float, default=None,
                     help="capsule sensitivity: Trap B also requires lesion coverage (roi_cover) below this")
+    ap.add_argument("--groups_csv", default=None, help="leakage sensitivity: csv image_id,group_emb overriding the groups")
     a = ap.parse_args()
+    if a.groups_csv and a.tag == "main":
+        raise SystemExit("sensitivity variants must use their own --tag (they would overwrite the main results)")
     if ((a.min_px, a.rA, a.rB) != (15, 0.5, 0.1) or a.max_cover_B is not None or a.lama) and a.tag == "main":
         raise SystemExit("sensitivity variants must use their own --tag (they would overwrite the main results)")
     c = {"thyroid": cohort, "capsule": capsule_cohort, "ovary": ovary_cohort}[a.cohort]()
@@ -96,6 +99,9 @@ def main():
         pres = c.marker_px >= a.min_px
         c["trapA_A1"] = pres & (c.r >= a.rA)
         c["trapB_A1"] = pres & (c.r < a.rB)
+    if a.groups_csv:  # docs/PREREGISTRATION_EMBEDDING_GROUPS.md
+        ge = pd.read_csv(a.groups_csv).astype({"image_id": str})
+        c["group"] = c.image_id.astype(str).map(dict(zip(ge.image_id, ge.group_emb))).fillna(c.group)
     envs = build_spec_envs(c, group_col="group")
     rows = []
     for trap in ("trapA", "trapB"):
