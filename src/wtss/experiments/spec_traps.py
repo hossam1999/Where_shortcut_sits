@@ -71,6 +71,13 @@ def _fold_job(job):
     Xtr, Xv = X("erm", tr), X("erm", cv)
     if "jtt" in arms:
         fin(H.fit_jtt(Xtr, ytr, Xv, yv, seed)[0], "jtt", "erm")
+    if "splice" in arms:  # task-preserving concept removal with artifact labels (baseline)
+        sp = H.SpliceProjection(Xtr, atr, ytr)
+        fin(H.fit_on_transformed(sp, Xtr, ytr, Xv, yv, seed)[0], "splice", "erm")
+    if "mask_splice" in arms:
+        mtr_, mv_ = X("mask", tr), X("mask", cv)
+        sp = H.SpliceProjection(mtr_, atr, ytr)
+        fin(H.fit_on_transformed(sp, mtr_, ytr, mv_, yv, seed)[0], "mask_splice", "mask")
     if "mask_jtt" in arms:
         fin(H.fit_jtt(X("mask", tr), ytr, X("mask", cv), yv, seed)[0], "mask_jtt", "mask")
     if "balanced" in arms:

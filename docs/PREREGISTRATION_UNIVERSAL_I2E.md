@@ -153,3 +153,10 @@ umte_protect − umte = +0.175 [+0.137, +0.217]; umte_protect_balanced − balan
   (claim **not supported**); − umte = +0.035 [−0.013, +0.085]; umte_protect_balanced at r=1: +0.486 vs ERM.
 Summary: protection turned 1 of 2 MedSigLIP controlled failures into a win and never cost > 0.012 anywhere; the
 balanced (protected or not) variant is the only one that beats masking in every controlled sweep.
+
+## Amendment (2026-09-27, before fitting) — SPLICE baseline (U12)
+`wtss.heads.SpliceProjection`: task-preserving oblique projection (Cov(PX, A) = 0, Cov(PX, Y) preserved), fitted
+on the training environment with image-level artifact labels; arms splice (ERM view) and mask_splice (masked
+view). Compared with U-MtE_protect (label-free w.r.t. A) and U-MtE_balanced (uses A) on thyroid, capsule, ISIC hair
+(DINOv2) and chest drains (RAD-DINO). Claims **U12a** U-MtE_balanced − mask_splice > 0 and **U12b**
+U-MtE_protect − mask_splice ≥ 0 (reversed AUROC, Trap A), with gaming flags reported. Reported either way.

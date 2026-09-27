@@ -280,3 +280,23 @@ def fit_jtt(Xtr, ytr, Xval, yval, seed, ups=(5.0, 20.0, 50.0)):
         if best is None or s > best[2]:
             best = (clf, C, s)
     return best
+
+
+class SpliceProjection:
+    """SPLICE-style task-preserving linear concept removal (oblique projection; 'Preserving task-relevant
+    information under linear concept removal', 2025). With a = Cov(X, z) (concept) and b = Cov(X, y) (task),
+    P = I − a wᵀ / (wᵀ a) with w = a − (aᵀb / bᵀb) b, so that P a = 0 (no linear covariance with z) and
+    P b = b (covariance with the task label preserved). Needs concept (artifact) labels."""
+
+    def __init__(self, X, z, y):
+        X = np.asarray(X, np.float64)
+        self.mu = X.mean(0)
+        Xc = X - self.mu
+        a = Xc.T @ (np.asarray(z, float) - np.mean(z)) / len(X)
+        b = Xc.T @ (np.asarray(y, float) - np.mean(y)) / len(X)
+        w = a - (a @ b) / (b @ b) * b
+        self.a, self.w, self.den = a, w, float(w @ a)
+
+    def __call__(self, X):
+        Xc = np.asarray(X, np.float64) - self.mu
+        return (Xc - np.outer(Xc @ self.w, self.a) / self.den + self.mu).astype(np.float32)
