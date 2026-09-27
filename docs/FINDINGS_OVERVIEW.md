@@ -5,8 +5,8 @@ bootstrap CIs; full tables in results/CROSS_COHORT.md and results/SUMMARY.md. "H
 test set (reversed AUROC). Trap A = artifact inside the ROI, Trap B = outside.
 
 ## 1. Replication of the original pilot (the PDF)
-67 of 88 PDF numbers MATCH (same sign, same CI verdict, |Δ| ≤ 0.02), 12 agree in sign and significance,
-3 mismatch (E4 occlusion borderline CI, E12 contrast trap not null, one HAM-only stratum), 6 pending (E3 re-run).
+73 of 88 PDF numbers MATCH (same sign, same CI verdict, |Δ| ≤ 0.02), 12 agree in sign and significance,
+3 mismatch (E4 occlusion borderline CI, E12 contrast trap not null, one HAM-only stratum), 0 pending.
 
 ## 2. The phenomenon: does ROI masking depend on where the artifact sits?
 | cohort | artifact | masking gain, out-of-ROI | masking gain, in-ROI | crossover (B − A) |
