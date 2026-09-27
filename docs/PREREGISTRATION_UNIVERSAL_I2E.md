@@ -117,3 +117,13 @@ JTT (Liu et al. 2021): ERM → training errors at the clean-validation threshold
 umte_jtt (masked + generic-erased view). Claims **U11a** umte_jtt − jtt > 0 and **U11b** umte_jtt − U-MtE ≥ 0
 (reversed AUROC, Trap A) on ISIC hair, thyroid and capsule (DINOv2@518). Among label-free arms, the most robust
 (min(rev, corr)) is reported per cohort. Reported either way.
+
+### U11 results — label-free arms (Trap A reversed AUROC; paired_deltas.csv)
+| cohort | JTT | mask+JTT | U-MtE | U-MtE+JTT | U-MtE − JTT | U-MtE+JTT − JTT |
+|---|---|---|---|---|---|---|
+| thyroid | 0.423 | 0.479 | **0.622** | 0.369 | +0.198 [+0.167, +0.231] | −0.054 [−0.069, −0.040] |
+| capsule | 0.607 | 0.769 | 0.569 | **0.771** | −0.038 [−0.065, −0.013] | +0.164 [+0.098, +0.223] |
+| ISIC hair | **0.564** | 0.509 | 0.506 | 0.541 | −0.058 [−0.089, −0.031] | −0.023 [−0.061, +0.007] |
+U11a/U11b not supported uniformly. Without any labels, the best arm is cohort-dependent: U-MtE where the shortcut is
+in distinct overlay-like pixels (calipers), U-MtE+JTT or mask+JTT where erasure alone removes disease signal
+(debris), and JTT on the unmasked view where masking harms and the shortcut is carried by correlates (hair).
