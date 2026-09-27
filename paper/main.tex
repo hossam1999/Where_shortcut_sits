@@ -8,25 +8,28 @@
 
 \begin{document}
 \begin{frontmatter}
-\title{Where the shortcut sits: region-of-interest masking fails for in-ROI artifacts, and insertion-based erasure fixes it in dermoscopy and chest radiography}
+\title{Where the shortcut sits: region-of-interest masking fails for in-ROI artifacts across dermoscopy, ultrasound and capsule endoscopy, and artifact-agnostic insertion erasure repairs it}
 
 \begin{abstract}
-Medical image classifiers exploit acquisition artifacts---rulers, hair, surgical ink, chest drains---that
-correlate with disease in the training data. The standard defence restricts the model to the region of
-interest (ROI) by masking the background. We show that this defence is \emph{location dependent and reverses}:
-it removes a shortcut that lies outside the ROI but amplifies one that lies inside it, because masking
-preserves the artifact while deleting the competing evidence. We establish the effect under full control by
-sweeping the artifact--ROI overlap of a synthetic artifact in dermoscopy and in chest radiography, identify
-artifact \emph{retention} as the governing quantity, and confirm it on real artifacts with pre-registered
-criteria: in 25,331 ISIC 2019 images masking helps against extra-lesional hair and harms against in-lesional
-hair, and in NIH ChestX-ray14 lung masking cannot remove the chest-drain shortcut for pneumothorax, which lies
-inside the lung field. Comparing mitigation families by the supervision they require shows that image-level
-artifact labels suffice where pixel-level localisation fails (a hair detector reached IoU 0.22). Finally we
-propose Insert-to-Erase (\ItoE), which needs neither localisation nor artifact labels: artifacts are
-\emph{inserted}---which requires only a template library---to obtain label-independent counterfactual pairs, and
-the subspace spanned by their feature differences is erased before the classifier is fitted. \ItoE{} recovers
-reversed-environment performance in the in-ROI regime of both modalities without reducing clean accuracy. Code,
-frozen splits and pre-registrations are public.
+Medical image classifiers exploit acquisition artifacts---hair, rulers, sonographer calipers, intestinal
+debris---that correlate with the diagnosis in the training data. The standard defence restricts the model to the
+region of interest (ROI). We show that the value of this defence is governed by \emph{where the artifact sits}. In
+pre-registered, leakage-safe traps built from real artifacts in three modalities---hair in 25,331 ISIC 2019
+dermoscopy images, calipers in 3,493 thyroid ultrasound images and debris in 5,481 capsule-endoscopy frames---ROI
+masking removes most of an out-of-ROI shortcut but little or none of an in-ROI one (crossover of the masking gain
+between the two locations +0.15, +0.23 and +0.37 reversed-test AUROC; 95\,\% hierarchical CIs exclude zero), and in
+dermoscopy it is harmful when the hair lies inside the lesion. Controlled overlap sweeps with synthetic artifacts
+reproduce the sign reversal (dermoscopy rulers, two foundation models; capsule debris: $+0.10$ at no overlap,
+$-0.10$ at full overlap). We then propose \emph{mask-then-erase with a generic insertion library} (U-MtE): after
+masking, procedurally generated overlays that resemble no particular artifact are inserted into training images,
+and the subspace spanned by the resulting feature differences is erased, so no artifact example, mask or label is
+needed. U-MtE improves on masking in the in-ROI regime of all three modalities (thyroid +0.22, capsule synthetic
++0.08, dermoscopy +0.05), the same overlays used as augmentation do not (erase-versus-augment +0.21 and +0.05),
+and combined with group balancing it gives the most robust model in ultrasound and capsule endoscopy with a benefit
+that no longer depends on artifact location. A disease-protected variant prevents the failure mode in which the
+artifact resembles the pathology. Where the shortcut is carried by non-pixel correlates of the artifact
+(dermoscopic hair), label-based group methods remain preferable. Code, frozen splits, pre-registrations and a
+backbone-agnostic tool are public.
 \end{abstract}
 
 \begin{keyword}
@@ -52,19 +55,21 @@ actually needs, and whether the in-ROI regime can be mitigated without localisin
 
 \paragraph{Contributions}
 \begin{enumerate}
-\item \textbf{A controlled, reversing effect.} Sweeping the overlap between a synthetic artifact and the ROI,
-ROI masking changes sign: it is the best method tested when the artifact is outside the ROI and worse than doing
-nothing when it is inside, in dermoscopy and in chest radiography, on general and domain foundation models.
-\item \textbf{A mechanism.} Occlusion and lost context are rejected by dedicated controls; masking roughly doubles
-counterfactual sensitivity to the artifact, and harm tracks artifact \emph{retention} rather than its share of the image.
-\item \textbf{Confirmation on real artifacts} with pre-registered criteria: in-lesion versus extra-lesional hair
-in ISIC 2019 (source-matched traps), and chest drains in NIH ChestX-ray14.
-\item \textbf{A supervision-oriented comparison.} Pixel-level artifact localisation is not obtainable in practice;
-image-level labels are, and they suffice; reversed-environment gains can be gamed by unpaired erasure, so they must
-be read together with clean accuracy and the correlated/reversed ordering.
-\item \textbf{Insert-to-Erase}, a localisation-free, label-free mitigation that works in the in-ROI regime of both modalities.
-\item A reproducible protocol: leakage-safe grouped splits, pre-registration, hierarchical paired bootstrap, and
-an audited public code base.
+\item \textbf{Location governs ROI masking, in three modalities.} Pre-registered real-artifact traps in
+dermoscopy (hair), thyroid ultrasound (calipers) and capsule endoscopy (debris) show a positive crossover of the
+masking gain between out-of-ROI and in-ROI artifacts in every modality, on general (DINOv2) and domain
+(DermLIP, MedSigLIP) foundation models; controlled overlap sweeps reproduce the sign reversal.
+\item \textbf{A mechanism and its limits.} Masking retains an in-ROI artifact while deleting competing evidence;
+when the shortcut is carried by non-pixel correlates of the artifact (hair co-varies with body site, age and sex),
+even oracle removal of every artifact patch cannot help.
+\item \textbf{Artifact-agnostic mask-then-erase (U-MtE).} A procedural overlay library estimates a nuisance
+subspace from insertion pairs without any artifact example, mask or label; erasure, not augmentation, is what
+works; a disease-protected variant guards against artifacts that resemble the pathology.
+\item \textbf{A practical decision rule} for choosing among masking, erasure and group-robust heads by artifact
+location and by whether artifact labels exist, with gaming-aware reporting (reversed \emph{and} correlated AUROC).
+\item \textbf{Reproducibility}: leakage-safe grouped splits, pre-registration before every experiment,
+hierarchical paired bootstrap, a replication of the original pilot (67/88 numbers matched), and a
+backbone-agnostic open-source tool.
 \end{enumerate}
 
 \section{Related work}
@@ -80,7 +85,12 @@ which requires the artifact label at test time.
 \paragraph{Group robustness and erasure} Reweighting and GroupDRO \citep{sagawa2020groupdro}, last-layer
 retraining \citep{kirichenko2023dfr} and linear concept erasure \citep{ravfogel2020inlp,belrose2023leace}
 require artifact labels or paired data; erasure from unpaired labels removes label-correlated signal when the
-concept is correlated with the label, which is why we build pairs by insertion.
+concept is correlated with the label, which is why we build pairs by insertion. Task-preserving linear erasure
+(SPLICE; \citealp{splice2025}) and projection of biased directions in vision--language models \citep{chuang2023debiasing}
+are the closest erasure methods; both require concept labels or prompts, whereas our concept subspace is estimated
+from synthetic insertions. Random erasing and occlusion augmentation \citep{zhong2020random,fong2019occlusions}
+use similar overlays as training noise; we show that this does not remove the shortcut. Test-time selection
+\citep{bissoto2023tts} steers dermoscopy models with user keypoints.
 
 \section{Problem setup and protocol}\label{sec:setup}
 Let $Y\in\{0,1\}$ be the diagnosis and $A\in\{0,1\}$ the presence of an artifact. A \emph{trap} trains with
