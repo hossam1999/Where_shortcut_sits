@@ -2,7 +2,7 @@
 
 Rule: MATCH = same sign, same CI-excludes-0 verdict, |Δ| ≤ 0.02; SIGN+CI = sign and CI verdict match, |Δ| > 0.02; MISMATCH otherwise.
 
-Verdict counts: {'MATCH': 62, 'SIGN+CI': 12, 'PENDING': 11, 'MISMATCH': 3}
+Verdict counts: {'MATCH': 67, 'SIGN+CI': 12, 'PENDING': 6, 'MISMATCH': 3}
 
 | E     | quantity                                            | expected                | obtained                | verdict   | source                                                                                             |
 |:------|:----------------------------------------------------|:------------------------|:------------------------|:----------|:---------------------------------------------------------------------------------------------------|
@@ -17,11 +17,11 @@ Verdict counts: {'MATCH': 62, 'SIGN+CI': 12, 'PENDING': 11, 'MISMATCH': 3}
 | E2    | dino224 mask − ERM @50%                             | -0.076                  | -0.081 [-0.119, -0.043] | MATCH     | /root/wtss/results/synthetic/isic2018/dino224_ruler_fixed_corr_main/bootstrap_vs_erm.csv           |
 | E2    | dino224 mask − ERM @75%                             | -0.102                  | -0.106 [-0.145, -0.069] | MATCH     | /root/wtss/results/synthetic/isic2018/dino224_ruler_fixed_corr_main/bootstrap_vs_erm.csv           |
 | E2    | dino224 mask − ERM @100%                            | -0.092                  | -0.095 [-0.131, -0.059] | MATCH     | /root/wtss/results/synthetic/isic2018/dino224_ruler_fixed_corr_main/bootstrap_vs_erm.csv           |
-| E2    | dermlip224 mask − ERM @0%                           | 0.16                    | PENDING                 | PENDING   | /root/wtss/results/synthetic/isic2018/dermlip224_ruler_fixed_corr_main/bootstrap_vs_erm.csv        |
-| E2    | dermlip224 mask − ERM @25%                          | -0.291                  | PENDING                 | PENDING   | /root/wtss/results/synthetic/isic2018/dermlip224_ruler_fixed_corr_main/bootstrap_vs_erm.csv        |
-| E2    | dermlip224 mask − ERM @50%                          | -0.3                    | PENDING                 | PENDING   | /root/wtss/results/synthetic/isic2018/dermlip224_ruler_fixed_corr_main/bootstrap_vs_erm.csv        |
-| E2    | dermlip224 mask − ERM @75%                          | -0.313                  | PENDING                 | PENDING   | /root/wtss/results/synthetic/isic2018/dermlip224_ruler_fixed_corr_main/bootstrap_vs_erm.csv        |
-| E2    | dermlip224 mask − ERM @100%                         | -0.268                  | PENDING                 | PENDING   | /root/wtss/results/synthetic/isic2018/dermlip224_ruler_fixed_corr_main/bootstrap_vs_erm.csv        |
+| E2    | dermlip224 mask − ERM @0%                           | +0.160                  | +0.161 [+0.121, +0.202] | MATCH     | /root/wtss/results/synthetic/isic2018/dermlip224_ruler_fixed_corr_main/bootstrap_vs_erm.csv        |
+| E2    | dermlip224 mask − ERM @25%                          | -0.291                  | -0.289 [-0.343, -0.239] | MATCH     | /root/wtss/results/synthetic/isic2018/dermlip224_ruler_fixed_corr_main/bootstrap_vs_erm.csv        |
+| E2    | dermlip224 mask − ERM @50%                          | -0.300                  | -0.282 [-0.343, -0.227] | MATCH     | /root/wtss/results/synthetic/isic2018/dermlip224_ruler_fixed_corr_main/bootstrap_vs_erm.csv        |
+| E2    | dermlip224 mask − ERM @75%                          | -0.313                  | -0.309 [-0.356, -0.261] | MATCH     | /root/wtss/results/synthetic/isic2018/dermlip224_ruler_fixed_corr_main/bootstrap_vs_erm.csv        |
+| E2    | dermlip224 mask − ERM @100%                         | -0.268                  | -0.263 [-0.328, -0.195] | MATCH     | /root/wtss/results/synthetic/isic2018/dermlip224_ruler_fixed_corr_main/bootstrap_vs_erm.csv        |
 | E3    | variable ruler mask − ERM @0%                       | 0.147                   | PENDING                 | PENDING   | /root/wtss/results/synthetic/isic2018/dino518_ruler_variable_corr_stress/bootstrap_vs_erm.csv      |
 | E3    | variable ruler mask − ERM @50%                      | -0.094                  | PENDING                 | PENDING   | /root/wtss/results/synthetic/isic2018/dino518_ruler_variable_corr_stress/bootstrap_vs_erm.csv      |
 | E3    | variable ruler mask − ERM @100%                     | -0.155                  | PENDING                 | PENDING   | /root/wtss/results/synthetic/isic2018/dino518_ruler_variable_corr_stress/bootstrap_vs_erm.csv      |
