@@ -170,3 +170,16 @@ candidates). Cohorts: thyroid, capsule, ISIC hair (DINOv2), chest drains (RAD-DI
 Claims **U13a** auto − mask > 0 (Trap A, reversed) in all four; **U13b** auto is within 0.02 (reversed and
 min(rev,corr)) of the best fixed candidate in each cohort; **U13c** auto ≥ DFR − 0.02 in each cohort.
 Reported either way. (`scripts/analysis/adaptive_select.py`)
+
+### U12 results — SPLICE (Trap A; rev / corr (clean); min(rev, corr))
+| cohort | mask_splice | splice | U-MtE_balanced | U-MtE_protect |
+|---|---|---|---|---|
+| thyroid (DINOv2) | 0.878 / 0.646 (0.777) †; 0.646 | 0.808 / 0.622 (0.724) †; 0.622 | 0.788 / 0.818 (0.807); **0.788** | 0.617 / 0.780; 0.617 |
+| capsule (DINOv2) | 0.951 / 0.734 (0.854) †; 0.734 | 0.901 / 0.640 (0.784) †; 0.640 | 0.857 / 0.928 (0.893); **0.857** | 0.673 / 0.973; 0.673 |
+| ISIC hair (DINOv2) | 0.831 / 0.601 (0.720) †; 0.601 | 0.841 / 0.600 (0.724) †; 0.600 | 0.704 / 0.852 (0.779); **0.704** | 0.495 / 0.895; 0.495 |
+| drains (RAD-DINO) | 0.516 / 0.623 (0.682); 0.516 | 0.536 / 0.639 (0.726); 0.536 | 0.460 / 0.857 (0.826); 0.460 | 0.269 / 0.946; 0.269 |
+† gaming flag (correlated < reversed − 0.02). In the three cohorts where artifact and label are strongly correlated
+in training, SPLICE flips the shortcut (reversed ≫ correlated) — the same failure as unpaired LEACE — because
+Cov(X, A) and Cov(X, Y) are nearly collinear. **U12a supported by min(rev, corr)** in thyroid, capsule and hair;
+not on drains (SPLICE 0.516 vs 0.460, at a clean cost of −0.19). U12b not supported on raw reversed AUROC (SPLICE's
+reversed values are inflated by flipping).
