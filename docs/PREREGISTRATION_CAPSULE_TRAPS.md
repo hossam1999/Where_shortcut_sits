@@ -54,3 +54,9 @@ Reversed AUROC vs ERM [95 % CI]:
 - **CS4 supported**: U-MtE − mask at r=1 = +0.081 [+0.050, +0.112]; U-MtE_balanced − mask = +0.193
   [+0.150, +0.235]; U-MtE_balanced − balanced = +0.047 [+0.004, +0.091]. U-MtE_balanced shows no location
   interaction (−0.000 [−0.023, +0.023]): its benefit does not depend on where the artifact sits.
+
+## Replication — MedSigLIP-448 (results/capsule/medsiglip448_main, medsiglip448_universal)
+Trap A reversed (clean): ERM 0.593, mask 0.702, template MtE 0.222, U-MtE 0.465, U-MtE_protect 0.667,
+U-MtE_protect_balanced 0.871 (0.904), U-MtE_balanced 0.854, balanced 0.810, DFR 0.801, mask+DFR 0.901 (0.908).
+Same pattern as DINOv2: masking helps less in Trap A than B; erasure fails on real debris unless protected; with
+artifact labels, masking + DFR is the most robust arm.
