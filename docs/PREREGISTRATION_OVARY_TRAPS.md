@@ -16,3 +16,7 @@ Committed before any model is fitted on this cohort. Protocol = thyroid traps (d
 - Claims: O1 mask − ERM > 0 (Trap B); O2 mask − ERM < 0 (Trap A); O3 crossover > 0; O4 U-MtE − mask > 0 (Trap A);
   O5 U-MtE − mte_aug > 0 (Trap A); O6 U-MtE_balanced best by min(rev, corr) among label-using arms (Trap A).
 Reported whichever way they go.
+
+## Controlled synthetic-caliper sweep (registered with the real traps, before fitting)
+Marker-free MMOTU images (343 after common support; test split 64 images — underpowered, wide CIs expected);
+draw_caliper, 65x19 box, r ∈ {0,0.25,0.5,0.75,1}; seeds 42/123/456; DINOv2@518; claims as TS1–TS4.

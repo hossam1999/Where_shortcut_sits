@@ -33,6 +33,10 @@ def cohort_and_placements(name: str, size: int):
         from wtss.data.thyroid import load_thyroid_synthetic_cohort
 
         return load_thyroid_synthetic_cohort(size)
+    if name == "ovary":
+        from wtss.data.thyroid import load_ovary_synthetic_cohort
+
+        return load_ovary_synthetic_cohort(size)
     if name == "capsule":
         from wtss.data.capsule import load_capsule_synthetic_cohort
 
