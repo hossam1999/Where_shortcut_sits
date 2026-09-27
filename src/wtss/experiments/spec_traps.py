@@ -140,12 +140,12 @@ def _fold_job(job):
 
 def run_spec(envs: Dict, cache, backend_name: str, out_dir: Path, feat_dir: Path, donors: Sequence[str],
              arms=ARMS, traps=("trapA", "trapB"), device=None, batch_size=64, workers=5, extra_meta=None,
-             n_jobs: int = 4, insert_fn=None, insert_tag: str = ""):
+             n_jobs: int = 4, insert_fn=None, insert_tag: str = "", folds=range(5)):
     device = device or torch.device("cuda")
     out_dir.mkdir(parents=True, exist_ok=True)
     pool = sorted(set().union(*[set(d.image_id) for k, d in envs.items() if k[0] in traps]))
     pos = {k: j for j, k in enumerate(pool)}
-    need = {"erm", "mask", "inpaint"} | ({"insert"} if any(a.startswith(("i2e", "insert", "umte", "pbal")) for a in arms) else set()) | \
+    need = {"erm", "mask"} | ({"inpaint"} if {"inpaint", "leace_paired"} & set(arms) else set()) | ({"insert"} if any(a.startswith(("i2e", "insert", "umte", "pbal")) for a in arms) else set()) | \
         ({"mask_insert"} if any(a.startswith(("mte", "umte", "pbal")) for a in arms) else set())
     from ..backbones import Backend  # noqa: F401
     cached = all((feat_dir / (f"{v}{insert_tag}.npz" if v in ("insert", "mask_insert") else f"{v}.npz")).exists() for v in need)
@@ -158,7 +158,7 @@ def run_spec(envs: Dict, cache, backend_name: str, out_dir: Path, feat_dir: Path
     global _CTX
     _CTX = dict(V=V, pos=pos, envs=envs, arms=arms, backend_name=backend_name, extra_meta=extra_meta or {})
     seeds = sorted({k[1] for k in envs})
-    jobs = [(trap, seed, k) for trap in traps for seed in seeds for k in range(5)]
+    jobs = [(trap, seed, k) for trap in traps for seed in seeds for k in folds]
     import multiprocessing as mp
     frames = []
     # (seed, fold) fits are independent: fork-based pool shares the cached features copy-on-write
@@ -169,12 +169,12 @@ def run_spec(envs: Dict, cache, backend_name: str, out_dir: Path, feat_dir: Path
             results = pool.imap(_fold_job, jobs)
             for (trap, seed, k), fr in zip(jobs, results):
                 frames.extend(fr)
-                if k == 4:
+                if k == max(folds):
                     print(f"[spec] {backend_name} {trap} seed {seed} done", flush=True)
     else:
         for trap, seed, k in jobs:
             frames.extend(_fold_job((trap, seed, k)))
-            if k == 4:
+            if k == max(folds):
                 print(f"[spec] {backend_name} {trap} seed {seed} done", flush=True)
     preds = pd.concat(frames, ignore_index=True)
     preds.to_csv(out_dir / "predictions.csv.gz", index=False, compression="gzip")
