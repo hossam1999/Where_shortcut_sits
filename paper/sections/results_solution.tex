@@ -1,0 +1,29 @@
+\section{Results: artifact-agnostic mask-then-erase}\label{sec:solution}
+
+\subsection{U-MtE repairs what masking leaves behind}
+Without any artifact example, mask or label, U-MtE improves reversed AUROC over masking in the in-ROI regime of
+every modality: thyroid calipers $+0.222$ [$+0.197, +0.251$] (DINOv2) and $+0.204$ [$+0.174, +0.237$] (MedSigLIP);
+dermoscopic hair $+0.052$ [$+0.044, +0.062$]; synthetic capsule debris $+0.081$ [$+0.050, +0.112$]; synthetic
+calipers $+0.278$ [$+0.232, +0.325$]; synthetic chest tubes $+0.134$ [$+0.120, +0.151$].
+
+\subsection{Erasure, not augmentation}
+Using the same generic overlays as training augmentation (overlaid copies of a random half of the training images,
+in the masked view) gains at most $+0.015$ over masking; erasing their subspace instead gains $+0.207$
+[$+0.182, +0.235$] (thyroid, DINOv2), $+0.177$ [$+0.148, +0.211$] (thyroid, MedSigLIP) and $+0.045$
+[$+0.037, +0.054$] (hair) more than augmentation.
+
+\subsection{When the artifact resembles the disease}
+On real capsule debris U-MtE is worse than masking ($-0.115$): erosions carry yellow-white fibrin that resembles
+debris, and a subspace estimated from real-debris templates is worse still ($-0.395$). Disease protection removes
+the failure ($-0.010$ [$-0.020, -0.001$] generic, $-0.012$ [$-0.028, +0.003$] template) at a cost of at most
+$0.012$ where erasure already works (thyroid $-0.005$ [$-0.036, +0.024$], hair $-0.012$ [$-0.020, -0.003$]).
+
+\subsection{With image-level artifact labels}
+Adding group balancing, U-MtE$_{\text{bal}}$ is the most robust model in thyroid ultrasound by the minimum of
+correlated and reversed AUROC (0.788 DINOv2, 0.792 MedSigLIP; DFR 0.659 and 0.719); in real capsule endoscopy
+masking plus last-layer retraining is higher (0.885 versus 0.857); on dermoscopic hair DFR alone is best (0.741)
+because most of the hair shortcut is not in the hair pixels (removing every hair patch with the oracle mask gains
+only $+0.015$). In both controlled sweeps the benefit of U-MtE$_{\text{bal}}$ no longer depends on location
+(interaction $-0.000$ [$-0.023, +0.023$] capsule; $-0.054$ [$-0.098, -0.004$] thyroid), whereas that of masking
+does ($+0.205$, $+0.432$).
+% TODO(auto): MedSigLIP capsule and ConvNeXt replications — fill from results/CROSS_COHORT.md when finished.
