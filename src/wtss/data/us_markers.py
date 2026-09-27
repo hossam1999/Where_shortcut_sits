@@ -62,25 +62,38 @@ def _collinear_runs(pts: np.ndarray, min_n: int = 7, tol: float = 1.2, max_gap: 
     return lines
 
 
-def _crosses(g: np.ndarray) -> np.ndarray:
-    """Thin bright '+' shapes (caliper ends) by template matching on the top-hat image."""
+def _crosses(g: np.ndarray, shapes=("plus",)) -> np.ndarray:
+    """Thin bright '+' shapes (caliper ends) by template matching on the top-hat image; optionally thick 'x' /
+    asterisk calipers (GE Logiq style, ~11 px, 2-px arms) with their own thresholds."""
     th = cv2.morphologyEx(g, cv2.MORPH_TOPHAT, cv2.getStructuringElement(cv2.MORPH_RECT, (9, 9)))
     out = np.zeros(g.shape, np.uint8)
-    for s in (7, 9, 11):
-        t = np.zeros((s, s), np.float32)
-        t[s // 2, :] = 1
-        t[:, s // 2] = 1
-        t = (t - t.mean()) / (t.std() + 1e-6)
-        r = cv2.matchTemplate(th.astype(np.float32), t, cv2.TM_CCOEFF_NORMED)
-        ys, xs = np.nonzero(r > 0.66)
-        for y, x in zip(ys, xs):
-            if th[y + s // 2, x + s // 2] > 60:
-                out[y:y + s, x:x + s] |= (t > 0).astype(np.uint8)
+    for shape in shapes:
+        for s in ((7, 9, 11) if shape == "plus" else (9, 11, 13)):
+            t = np.zeros((s, s), np.float32)
+            if shape == "plus":
+                t[s // 2, :] = 1
+                t[:, s // 2] = 1
+                thr, tmin = 0.66, 60
+            else:
+                np.fill_diagonal(t, 1)
+                np.fill_diagonal(np.fliplr(t), 1)
+                t = cv2.dilate(t, np.ones((2, 2), np.uint8))
+                thr, tmin = X_THR, X_TMIN
+            tz = (t - t.mean()) / (t.std() + 1e-6)
+            r = cv2.matchTemplate(th.astype(np.float32), tz, cv2.TM_CCOEFF_NORMED)
+            ys, xs = np.nonzero(r > thr)
+            for y, x in zip(ys, xs):
+                if th[y + s // 2, x + s // 2] > tmin:
+                    out[y:y + s, x:x + s] |= (t > 0).astype(np.uint8)
     return out
 
 
-def marker_mask(gray: np.ndarray) -> np.ndarray:
-    """Binary marker mask (dotted measurement lines + caliper crosses)."""
+X_THR, X_TMIN = 0.55, 40  # 'x' calipers: tuned on the BUS-BRA audit sample (seed 11), frozen before trap fitting
+
+
+def marker_mask(gray: np.ndarray, shapes=("plus",)) -> np.ndarray:
+    """Binary marker mask (dotted measurement lines + caliper crosses). shapes=("plus",) is the frozen thyroid
+    detector (docs/THYROID_MARKER_AUDIT.md); breast ultrasound uses ("plus", "x") (docs/BREAST_MARKER_AUDIT.md)."""
     dots, lab = _dots(gray)
     m = np.zeros(gray.shape, np.uint8)
     if dots:
@@ -92,7 +105,7 @@ def marker_mask(gray: np.ndarray) -> np.ndarray:
             line = np.zeros_like(m)
             cv2.line(line, tuple(a), tuple(b), 1, 1)
             m |= line & (cv2.dilate((lab > 0).astype(np.uint8), np.ones((3, 3))) > 0)
-    m |= _crosses(gray)
+    m |= _crosses(gray, shapes)
     m[: max(6, int(0.08 * m.shape[0])), :] = 0  # skin / fascia bands at the crop's top edge give dash-like echoes
     m[-6:, :] = 0
     return cv2.dilate(m, np.ones((3, 3), np.uint8))
