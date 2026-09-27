@@ -1,0 +1,417 @@
+\documentclass[10pt,a4paper]{article}
+% Complete standalone research record. Build: python scripts/make_full_report.py; tectonic -X compile full_report.tex
+\usepackage{fontspec}
+\setmainfont{DejaVu Serif}[Scale=0.92]
+\setsansfont{DejaVu Sans}[Scale=0.92]
+\setmonofont{DejaVu Sans Mono}[Scale=0.85]
+\usepackage[margin=2cm]{geometry}
+\usepackage{amsmath,amssymb,booktabs,longtable,array,calc,multirow,graphicx,float,xcolor,enumitem,fancyvrb}
+\usepackage[hidelinks]{hyperref}
+\providecommand{\tightlist}{\setlength{\itemsep}{0pt}\setlength{\parskip}{0pt}}
+\providecommand{\real}[1]{#1}
+\providecommand{\passthrough}[1]{#1}
+\newcommand{\ok}{\textcolor{green!50!black}{\textbf{[supported]}}}
+\newcommand{\no}{\textcolor{red!70!black}{\textbf{[not supported]}}}
+\newcommand{\mixed}{\textcolor{orange!80!black}{\textbf{[partial]}}}
+\newcommand{\rev}{\textsc{rev}}
+\newif\ifdupfloats\dupfloatstrue
+\setlength{\parindent}{0pt}\setlength{\parskip}{4pt}
+\title{\textbf{Where the Shortcut Sits}\\[4pt]\large Complete research record, from the pilot to the submission-ready state\\
+(standalone input for writing the paper)}
+\author{Repository: github.com/hossam1999/Where\_shortcut\_sits \quad Record date: 2026-09-27}
+\date{}
+\begin{document}
+\maketitle
+\begin{abstract}
+\noindent This document records \emph{everything} done in the project, stage by stage: the question, every dataset and how
+artifact and ROI labels were obtained, every experiment's design (traps, environments, seeds, splits, leakage groups,
+heads, statistics), every result with 95\% confidence intervals, the figures (including real images of every dataset),
+the observations and conclusions drawn at each stage, what failed and why, the external review and the responses, and a
+plan for the paper. Part~I is the narrative; the appendices reproduce every pre-registration and audit document
+verbatim (converted from the repository), every generated result table, and the pilot-replication ledger. All numbers
+are produced by scripts in the repository; none are typed from memory. Two paper drafts exist in the repository:
+\texttt{paper/main.tex} (Medical Image Analysis format) and \texttt{paper\_neurips/main.tex} (NeurIPS 2025 format).
+\end{abstract}
+\setcounter{tocdepth}{2}\tableofcontents
+\clearpage
+
+\part{Narrative record}
+
+\section{How to use this record}
+\begin{itemize}[leftmargin=*]
+\item \textbf{Scope.} The project asks whether the value of region-of-interest (ROI) masking as a shortcut defence depends on
+\emph{where} the shortcut-carrying artifact sits, explains the answer, and develops remedies for artifacts inside the ROI.
+\item \textbf{Conventions.} Trap~A = artifact mostly inside the ROI (overlap $r\ge0.5$); Trap~B = mostly outside ($r<0.1$);
+$r=|\text{artifact}\cap\text{ROI}|/|\text{artifact}|$. Training $P(A{=}1\mid Y{=}1)=0.9$, $P(A{=}1\mid Y{=}0)=0.1$;
+test environments: \emph{correlated} (same rates), \emph{reversed} (0.1/0.9; primary metric = reversed-test AUROC, ``hard
+test''), \emph{clean} (artifact independent of label: present in half of each class in real traps, absent in controlled
+sweeps). Crossover $=[\text{mask}-\text{ERM}]_{\text{Trap B}}-[\text{mask}-\text{ERM}]_{\text{Trap A}}$ (reversed AUROC).
+Robustness summary: $\min(\text{reversed},\text{correlated})$; an arm is flagged as \emph{shortcut-flipping} when
+correlated $<$ reversed $-0.02$.
+\item \textbf{Uncertainty.} Hierarchical paired bootstrap, 10{,}000 replicates, clusters = training seeds (or folds),
+paired test images resampled within clusters; AUROC differences computed within clusters. 95\% percentile CIs.
+\item \textbf{Status labels:} \ok, \mixed, \no\ are used for every claim.
+\end{itemize}
+
+\section{Executive summary}
+\begin{enumerate}[leftmargin=*]
+\item \ok\ \textbf{Location law.} In pre-registered traps built from real artifacts in four diseases and three modalities
+(dermoscopic hair; thyroid and ovarian sonographer calipers; capsule-endoscopy debris), masking helps far more when the
+artifact is outside the ROI than inside: crossover $+0.145$ [$+0.105,+0.181$] (hair), $+0.230$ [$+0.204,+0.255$]
+(thyroid), $+0.368$ [$+0.340,+0.397$] (capsule), $+0.170$ [$+0.116,+0.224$] (ovary); all four survive Holm correction.
+Replicated with MedSigLIP, ConvNeXt, DINOv2 ViT-S/L (9/9 cohort$\times$size), fine-tuned ResNet-50 and ViT-S, and the
+zero-shot scores of MedSigLIP and DermLIP (4/4).
+\item \ok\ \textbf{Masking can harm.} In-ROI masking \emph{lowers} reversed AUROC when it also removes disease context:
+real dermoscopic hair ($-0.037$), controlled sweeps (ovary $-0.197$, capsule $-0.102$, dermoscopy rulers $-0.129$ at full
+overlap), fine-tuned capsule ($-0.284$), and on unaltered data (official thyroid split $-0.102$ on shortcut-conflicting
+pairs; held-out ISIC hospitals BCN $-0.016$, MSK $-0.056$). At a validation-fixed operating point masking halves thyroid
+sensitivity (0.734$\to$0.347).
+\item \ok\ \textbf{Mechanism: retention.} Masking keeps an in-ROI artifact and removes competing evidence, so the masked
+model's counterfactual reliance on the artifact grows with overlap (dermoscopy $|\Delta p|$ 0.235$\to$0.491).
+\item \mixed\ \textbf{Theory.} A linear-Gaussian closed form reproduces every sign; fitted per model on clean and
+correlated AUROC only, it matches held-out reversed AUROC (MAE 0.039, 148 models) and the location crossover (r = 0.997,
+MAE 0.014, 13/14 signs). Pre-registered verdict: ``qualitative account'' (one near-zero sign miss). Fails for chest drains.
+\item \mixed\ \textbf{Remedy for frozen features (U-MtE).} Mask-then-erase with a generic overlay library, no artifact
+annotation: thyroid $+0.13$ to $+0.22$ over masking (three backbone families, three model sizes), ovary (MedSigLIP)
+$+0.215$; erasure beats augmentation (thyroid, hair); disease protection prevents failure when the artifact resembles
+the pathology (capsule); text-prompted erasure is a near no-op. Does not help when the shortcut is carried by correlates of
+the artifact (hair, drains) --- label-based reweighting wins there.
+\item \ok\ \textbf{Remedy for fine-tuned networks.} Post-hoc U-MtE on a fine-tuned ResNet-50 is null ($+0.004$): the
+shortcut feature forms during fine-tuning. Erasing \emph{during} fine-tuning (running overlay subspace projected out,
+plus feature invariance and prediction consistency; \texttt{umte\_cons\_ft}) improves on masking for ResNet-50
+($+0.157$ [$+0.114,+0.205$]) and ViT-S ($+0.143$ [$+0.103,+0.187$]) on thyroid; each component alone works for only one
+architecture.
+\item \ok\ \textbf{Rigour.} Pilot replicated (73/88 numbers MATCH, 12 same sign and significance, 3 mismatch);
+pre-registration before every experiment; Holm-corrected primary family 12/16 supported; stricter leakage grouping
+leaves 11/12 unchanged; every CI in the papers traced to a result file (109/109).
+\end{enumerate}
+
+\begin{table}[H]\centering\small
+\caption{Timeline of the stages (all dates 2026; UTC). Details in the sections below and the registry (Appendix~\ref{app:registry}).}
+\begin{tabular}{p{0.7cm}p{3.6cm}p{11.2cm}}\toprule
+Stage & Topic & Outcome \\\midrule
+0 & Pilot + replication & Original thesis experiments E1--E15 re-implemented from the author's specification; 73/88 MATCH. \\
+1 & Controlled dermoscopy & Synthetic ruler swept from outside to inside the lesion: sign reversal; mechanism = retention. \\
+2 & Real dermoscopic hair & ISIC 2019 spec traps: harm in-ROI, crossover $+0.145$; shortcut largely carried by correlates. \\
+3 & Chest radiography & Controlled tubes and real drains: boundary case (encoder ignores extra-pulmonary tubes; drains correlate-carried). \\
+4 & New modalities & Thyroid (TN3K/TNCD), capsule (SEE-AI), ovary (MMOTU) traps with audited artifact detectors. \\
+5 & Confirmatory family & 16 primary tests, Holm: 12/16. \\
+6 & Replication breadth & MedSigLIP, ConvNeXt, DINOv2 S/B/L, fine-tuning, zero-shot VLMs. \\
+7 & Unaltered data & Official thyroid split, ISIC leave-one-hospital-out, capsule frame blocks; clinical metrics. \\
+8 & Theory & Closed form, simulation (0.009), real-encoder test (r = 0.997). \\
+9 & Remedies (frozen) & I2E $\to$ MtE $\to$ U-MtE; protection; balancing; U1--U14 ablations; JTT, SPLINCE, LEACE, LaMa, text, SLAS, selectors. \\
+10 & Remedies (fine-tuned) & mte\_ft invariance; post-hoc erase (null); erase-while-fine-tuning; prediction consistency. \\
+11 & Robustness & Label definitions, mask audit, random-vs-grouped leakage, embedding groups, rank ablation, integrity checks. \\
+12 & Rejected datasets & CANDID-PTX, CLiP devices, breast US, colonoscopy, pathology pen, ISIC ink, cardiomegaly lines. \\
+13 & External review & Seven points; six valid; all addressed (Sec.~\ref{sec:review}). \\\bottomrule
+\end{tabular}\end{table}
+
+\section{Data}\label{sec:data}
+\begin{table}[H]\centering\small
+\caption{Cohorts. ROI = region of interest. Leakage groups define every split. Full licences: registry \S\ref{doc:DATA}.}
+\begin{tabular}{p{2.2cm}p{1.8cm}p{1.2cm}p{3.6cm}p{2.2cm}p{4.3cm}}\toprule
+Cohort & Modality & Images & Artifact (label source) & ROI & Leakage groups \\\midrule
+ISIC 2018 (controlled) & dermoscopy & 2{,}437 & synthetic ruler (pasted) & lesion masks & lesion ID + pHash \\
+ISIC 2019 & dermoscopy & 25{,}331 & hair (published masks, Wegley et al.\ 2026) & U-Net lesion masks (manual for HAM) & lesion ID + pHash \\
+TN3K/TNCD & thyroid US & 3{,}493 & calipers (rule-based detector, 95\% precision) & nodule masks & pHash chains ($\le$8); no patient IDs \\
+MMOTU OTU\_2d & ovarian US & 1{,}202 & calipers/overlays (same detector) & tumour masks & pHash ($\le$8) \\
+SEE-AI & capsule endoscopy & 5{,}481 & debris/bubbles (patch-token probe, IoU 0.62 vs expert masks) & lesion boxes & frame blocks of 100 + pHash ($\le$2); no video IDs \\
+NIH ChestX-ray14 & radiography & 29{,}687 & chest drains (image-level; NEATX + detector) & lung masks & patient IDs \\
+NIH pneumothorax (controlled) & radiography & --- & synthetic tube & lung masks & patient IDs \\\bottomrule
+\end{tabular}\end{table}
+\textbf{Trap cell counts (A0 = artifact-free shared group; A1 per trap; Y0/Y1 = benign/malignant or class).}
+Thyroid: A0 1{,}052/749; Trap A A1 858/292; Trap B A1 227/99. Ovary: A0 170/178; Trap A 341/276; Trap B 91/103.
+Capsule: A0 166/338; Trap A 404/412; Trap B 232/1{,}009. ISIC 2019: 172 reversed-test melanomas per trap and seed.
+Real example images of every dataset with ROI (green) and artifact (red) are in Figs.~\ref{fig:isic}--\ref{fig:cxr}.
+
+\begin{figure}[H]\centering\includegraphics[width=\linewidth]{../figures/data_isic.png}
+\caption{ISIC 2019 dermoscopy: real hair inside (Trap A) and outside (Trap B) the lesion.}\label{fig:isic}\end{figure}
+\begin{figure}[H]\centering\includegraphics[width=\linewidth]{../figures/data_thyroid.png}
+\caption{Thyroid ultrasound (TN3K/TNCD): sonographer calipers on and off the nodule.}\label{fig:thy}\end{figure}
+\begin{figure}[H]\centering\includegraphics[width=\linewidth]{../figures/data_ovary.png}
+\caption{Ovarian ultrasound (MMOTU): calipers and overlays.}\end{figure}
+\begin{figure}[H]\centering\includegraphics[width=\linewidth]{../figures/data_capsule.png}
+\caption{Capsule endoscopy (SEE-AI): debris/bubbles on and off the lesion.}\end{figure}
+\begin{figure}[H]\centering\includegraphics[width=\linewidth]{../figures/data_cxr.png}
+\caption{Chest radiography (NIH ChestX-ray14): chest drains and lung masks.}\label{fig:cxr}\end{figure}
+
+\section{Stage 0 --- the pilot and its replication}
+\textbf{Question.} Does the original thesis (``Where the Shortcut Sits'') reproduce? \textbf{Design.} The author's
+protocol was written down as a specification (registry \S\ref{doc:REPLICATION_SPEC}) and re-implemented from scratch:
+E1--E7 controlled rulers on ISIC 2018 (DINOv2 ViT-B/14 @518 and @224, DermLIP), E10 hair decodability, E12 contrast trap,
+E13/E15 real hair traps on ISIC 2019, E14 area ratio. \textbf{Result.} 88 numbers compared: 73 MATCH (same sign, same CI
+verdict, $|\Delta|\le0.02$), 12 SIGN+CI (same sign and verdict, $|\Delta|>0.02$), 3 MISMATCH (E4 occlusion at 50\% has a CI
+that now excludes 0; E12 contrast trap not null; one HAM-only stratum). Full ledger: Appendix~\ref{app:resultsmd}.
+\textbf{Thesis-claims audit:} registry \S\ref{doc:THESIS_CLAIMS_AUDIT}. \textbf{Conclusion.} The pilot is reproducible; the
+three mismatches are documented and do not affect the central claims.
+
+\section{Stage 1 --- controlled dermoscopy and the mechanism}
+\textbf{Design.} 2{,}437 ISIC 2018 images; a synthetic ruler correlated with melanoma (0.9/0.1) pasted at overlap
+$r\in\{0,0.25,0.5,0.75,1\}$ with the lesion; DINOv2 ViT-B/14 @518 frozen, logistic heads; seeds 42, 123, 456.
+\textbf{Results.} Masking improves reversed AUROC by $+0.184$ [$+0.146,+0.224$] at $r=0$ and lowers it by $-0.097$,
+$-0.112$, $-0.129$ at 50/75/100\% (interaction $+0.313$ [$+0.272,+0.353$]); reproduced at 224\,px ($+0.361$ at 0\%,
+$-0.095$ at 100\%), with DermLIP (harm $\approx-0.29$ at every in-ROI overlap) and a randomised ruler. At $r=0$ the masked
+model's correlated and reversed AUROC coincide (0.849/0.849); at $r=1$ the masked model's correlated AUROC exceeds ERM's
+(0.961 vs 0.937) --- it uses the ruler more.
+\textbf{Mechanism (three explanations tested separately).} \emph{Occlusion} is not the cause: with the ruler present but
+uncorrelated (50/50) masking helps at every overlap ($+0.036$, $+0.040$, $+0.039$). \emph{Lost context} alone is not the
+cause: dilating the mask at 50\% overlap increases harm ($-0.097\to-0.138\to-0.154$) as it restores ruler pixels
+(retention 0.50$\to$0.73$\to$0.95), and at full overlap harm is flat although the ruler's share of visible pixels falls
+threefold. \emph{Retention with amplified reliance}: same-head counterfactual sensitivity to the ruler doubles
+(0.235$\to$0.491); harm is largest for small lesions ($-0.364$ vs $+0.064$ for large lesions at 100\%).
+Fig.~\ref{fig:mech} shows the same mechanism in all five controlled sweeps.
+\begin{figure}[H]\centering\includegraphics[width=\linewidth]{../../paper/figures/dose_response.pdf}
+\caption{Controlled overlap sweeps: $\Delta$ reversed AUROC vs ERM as a synthetic artifact moves into the ROI (95\% CIs).
+Masking (blue) declines with overlap except in chest radiography; U-MtE + balancing (green) is flat.}\label{fig:dose}\end{figure}
+\begin{figure}[H]\centering\includegraphics[width=\linewidth]{../../paper/figures/mechanism.pdf}
+\caption{Mechanism: counterfactual sensitivity $|p(x{+}\text{artifact})-p(x)|$ vs overlap. Masking increases reliance on an
+in-ROI artifact; U-MtE and balancing remove it. At full overlap: dermoscopy 0.491 (mask) vs 0.235 (ERM); ovary 0.218 vs
+0.032; capsule 0.302 vs 0.058; thyroid 0.393 vs 0.369; chest tube: ERM ignores extra-pulmonary tubes ($|\Delta p|=0.005$ at
+$r=0$).}\label{fig:mech}\end{figure}
+\textbf{Leakage assessment (controlled sweep).} Five random splits contained 67--124 near-duplicate pairs across the split;
+the grouped split has none. Random splits change the ERM shortcut gap and the size of the masking effect (Table~\ref{tab:leak}),
+so every analysis uses grouped splits.
+\input{gen/tab_leak.tex}
+
+\section{Stage 2 --- real dermoscopic hair (ISIC 2019)}
+\textbf{Design} (registry \S\ref{doc:PREREGISTRATION_ISIC2019_TRAPS}). Hair-free group A0 = at most 30 native hair pixels;
+Trap A: in-lesion hair ($r\ge0.5$); Trap B: $r<0.1$; cells matched to the A0 source mix; five seeds (42, 123, 456, 789,
+2026) $\times$ five group-safe folds (lesion ID + pHash); 172 reversed-test melanomas per trap and seed.
+\textbf{Results.} Masking helps in Trap B ($+0.107$ [$+0.078,+0.135$]) and harms in Trap A ($-0.037$ [$-0.057,-0.019$],
+negative in all five seeds); crossover $+0.145$ [$+0.105,+0.181$]. Harm holds in BCN ($-0.051$) but not HAM ($-0.009$, n.s.).
+Oracle hair inpainting helps both traps ($+0.103$/$+0.096$). Group-balanced training and DFR (image-level hair label) give
+the largest gains ($+0.225$/$+0.251$ Trap A; $+0.209$/$+0.215$ Trap B); paired LEACE recovers less than half.
+Hair is decodable from the embedding (AUROC 0.943) but removing every hair patch with the oracle mask gains only
+$+0.015$: the hair shortcut is mostly carried by correlates (body site, age, sex; registry \S\ref{doc:PREREGISTRATION_ISIC2019_TRAPS}).
+\textbf{Conclusion.} In-ROI masking harms on real data; hair is the \emph{correlate-carried} regime.
+
+\section{Stage 3 --- chest radiography, the boundary case}
+\textbf{Controlled tube sweep} (NIH pneumothorax, RAD-DINO): no sign reversal --- ERM does not use a tube outside the
+lungs ($|\Delta p|=0.005$ at $r=0$), so masking has nothing to remove there; inside the lungs masking reduces but does not
+remove reliance. \textbf{Real chest drains} (29{,}687 images, patient-grouped folds; registry \S\ref{doc:PREREGISTRATION_CXR_DRAIN}):
+an extreme shortcut (ERM reversed 0.19 RAD-DINO, 0.28 DINOv2); lung masking $+0.05$/$+0.01$; U-MtE $+0.03$ over masking
+(RAD-DINO only); DFR and mask+DFR best --- a drain comes with a treated lung (correlate-carried). \textbf{Pathology traps with
+real devices} (Atelectasis, Consolidation, Effusion, Infiltration; registry \S\ref{doc:PREREGISTRATION_CXR_DEVICE_TRAPS}):
+crossovers near zero ($+0.060$, $-0.002$, $-0.004$, $-0.032$). \textbf{Conclusion.} Chest radiography is reported as a boundary
+case, not as a fifth confirmation.
+
+\section{Stage 4 --- new modalities: thyroid, ovarian and capsule traps}
+\textbf{Artifact labels without annotation.} Calipers: a rule-based detector (colour/shape; visual audit: 95\% of thyroid
+detections on real calipers, 92--97\% of caliper-free images clean; registry \S\ref{doc:THYROID_MARKER_AUDIT},
+\S\ref{doc:ARTIFACT_MASK_AUDIT}). Capsule debris: a patch-token probe trained on the published expert contamination masks
+(IoU 0.62). \textbf{Traps} as in Stage 2 (five seeds $\times$ five folds). \textbf{Results (DINOv2).}
+\begin{table}[H]\centering\small\caption{Masking gain (reversed AUROC) by artifact location, DINOv2 ViT-B/14 @518.}
+\begin{tabular}{lccc}\toprule Cohort & mask$-$ERM, Trap A (in-ROI) & mask$-$ERM, Trap B (out) & Crossover \\\midrule
+ISIC hair & $-0.037$ [$-0.057,-0.019$] & $+0.107$ [$+0.078,+0.135$] & $+0.145$ [$+0.105,+0.181$] \\
+Thyroid calipers & $+0.111$ [$+0.097,+0.124$] & $+0.341$ [$+0.320,+0.363$] & $+0.230$ [$+0.204,+0.255$] \\
+Ovarian calipers & $+0.132$ [$+0.089,+0.174$] & $+0.302$ [$+0.261,+0.343$] & $+0.170$ [$+0.116,+0.224$] \\
+Capsule debris & $+0.096$ [$+0.081,+0.113$] & $+0.465$ [$+0.440,+0.490$] & $+0.368$ [$+0.340,+0.397$] \\\bottomrule
+\end{tabular}\end{table}
+\textbf{Controlled sweeps in the same cohorts} (synthetic caliper/debris pasted at controlled overlap): ovary at full
+overlap $-0.197$ [$-0.292,-0.100$], capsule $-0.102$ [$-0.162,-0.040$], thyroid $-0.030$ (n.s.); location interactions
+capsule $+0.205$, thyroid $+0.432$. \textbf{Observation.} On real thyroid/ovary/capsule, in-ROI masking still helps a
+little (it removes clutter) --- the universal claim is the \emph{gap} (crossover), and harm appears whenever masking also
+removes disease context (dermoscopy, sweeps, fine-tuned capsule, unaltered data).
+
+\section{Stage 5 --- the confirmatory primary family}
+Each test was pre-registered individually; the family of 16 (four hypotheses $\times$ four cohorts, DINOv2) was defined
+afterwards for multiplicity control and corrected with Holm (BH for reference; registry \S\ref{doc:STATISTICAL_PLAN}).
+\input{gen/tab_primary.tex}
+\begin{figure}[H]\centering\includegraphics[width=0.8\linewidth]{../../paper/figures/forest.pdf}
+\caption{Forest plot of the 16 primary tests (blue: supported after Holm).}\end{figure}
+
+\section{Stage 6 --- replication breadth: backbones, scale, foundation models}
+\textbf{Backbone families.} Thyroid crossover $+0.163$ (MedSigLIP), $+0.284$ (ConvNeXt); capsule $+0.332$ (MedSigLIP),
+$+0.292$ (ConvNeXt); ovary $+0.179$ (MedSigLIP). \textbf{Scale} (DINOv2 ViT-S/B/L; registry \S\ref{doc:PREREGISTRATION_SCALE}):
+\input{gen/tab_scale.tex}
+Larger models exploit the in-ROI caliper shortcut \emph{more} (ERM gap thyroid 0.547$\to$0.621, ovary 0.319$\to$0.570).
+\textbf{Zero-shot vision--language models} (no training; registry \S\ref{doc:PREREGISTRATION_TEXT_PROMPT}): zero-shot
+scores are already swayed by artifacts (capsule correlated$-$reversed gap 0.40) and masking changes them per the location
+law: crossovers thyroid $+0.103$ [$+0.079,+0.127$], capsule $+0.049$ [$+0.024,+0.076$], ovary $+0.181$ [$+0.135,+0.228$]
+(MedSigLIP), hair $+0.051$ [$+0.031,+0.071$] (DermLIP). Caveat: MedSigLIP zero-shot thyroid classification is at chance
+(clean 0.45). \textbf{Conclusion.} The effect is a property of the representation, not of the trained head.
+
+\section{Stage 7 --- unaltered test distributions and clinical metrics}
+\textbf{Design} (registry \S\ref{doc:PREREGISTRATION_NATURAL}). No resampling. Thyroid: official TN3K split; ISIC 2019:
+each hospital (BCN, HAM, MSK) held out in turn; capsule: held-out frame-block groups (per seed). Natural associations:
+thyroid calipers 37.6\% of benign vs 24.1\% of malignant; in-lesion hair 31\% of melanomas vs 20\% of benign; capsule debris
+on lesion 23\% of polyp-like vs 10\% of erosions. ``Hard'' pairs = shortcut-conflicting pairs.
+\input{gen/tab_natural.tex}
+\input{../../paper/tables/natural_clinical.tex}
+\textbf{Observations.} Masking lowers AUROC on shortcut-conflicting pairs for thyroid ($-0.102$) and two of three held-out
+hospitals; U-MtE$_{\text{bal}}$ improves on masking in every cohort ($+0.014$ to $+0.088$). Pre-registered N1/N2 (protected
+U-MtE on thyroid) were \emph{not} supported. Integrity note: the thyroid prediction archive failed a gzip CRC check and was
+regenerated deterministically; every number was identical.
+
+\section{Stage 8 --- theory}
+\textbf{Closed form} (registry \S\ref{doc:THEORY}): disease block SNR $S$, artifact SNR $A$, training rates $(p_1,p_0)$;
+effective artifact SNR $\tilde A=(p_1-p_0)^2A/(1+p_1(1-p_1)A)$ and $\mathrm{AUROC}_{\text{rev}}=\Phi\big((S-\tilde A)/\sqrt{2(S+\tilde A)}\big)$.
+Consequences: out-of-ROI masking sets $\tilde A\to0$; in-ROI masking keeps $\tilde A$ and harms iff it removes disease signal
+($S_m<S$); the crossover is positive for every $S_m$; erasure scales $S$ by $1-\rho^2$ (fails for pathology-like artifacts
+unless protected); group balancing is location-invariant; correlate-carried shortcuts survive masking and erasure.
+Simulation agreement $\le0.009$ AUROC over 29 settings (Fig.~\ref{fig:theory}).
+\textbf{Real-encoder test} (pre-registered; registry \S\ref{doc:PREREGISTRATION_THEORY_PREDICTION}): the general form for
+any test composition was fitted per model to clean and correlated AUROC only, and compared with held-out reversed AUROC.
+\input{gen/tab_theory_s.tex}
+\input{gen/tab_theory_x.tex}
+\begin{figure}[H]\centering\includegraphics[width=\linewidth]{../../paper/figures/theory_predict.pdf}
+\caption{Theory vs real encoders: (a) reversed AUROC; (b) location crossover; (c) sweep mask gains.}\end{figure}
+\begin{figure}[H]\centering\includegraphics[width=0.6\linewidth]{../../paper/figures/theory.pdf}
+\caption{Theory (lines) vs simulation (points).}\label{fig:theory}\end{figure}
+\textbf{Conclusion.} Quantitatively close agreement, but by the pre-registered rule a ``qualitative account'' (one of 14
+crossover signs disagrees at $-0.002$). The papers must not say the theory ``predicts'' magnitudes; they say it matches
+held-out results. Its failure on chest drains marks its boundary (correlate-carried shortcuts are invisible in the clean
+and correlated environments).
+
+\section{Stage 9 --- remedies for frozen foundation-model features}
+\textbf{Evolution of the method.} (1) \emph{Insert-then-erase (I2E)} in the pilot: insert artifact \emph{templates}
+(rulers) into images, estimate the subspace of feature changes, erase it --- works in controlled sweeps but needs an
+artifact model. (2) \emph{Mask-then-erase (MtE)}: estimate the subspace on \emph{masked} images so that erasure targets
+exactly what masking leaves. (3) \emph{U-MtE}: replace templates by one \emph{generic} procedural overlay library (strokes,
+bands, patches, blobs, dashed lines, glyphs; random colour/opacity/position, half centred in the ROI) used unchanged for
+every modality; rank $k$ = smallest with 90\% held-out difference energy (cap 64); logistic head on erased masked features.
+Needs no artifact example, artifact mask or artifact label --- only the ROI mask. (4) \emph{Disease protection}: erase
+$\mathrm{orth}((I-WW^\top)U_k)$ with $W$ = label directions on artifact-free images. (5) \emph{U-MtE$_{\text{bal}}$}:
+group-balanced head when image-level artifact labels exist. Registry \S\ref{doc:PREREGISTRATION_UNIVERSAL_I2E} (U1--U14).
+\textbf{Main results.} Thyroid $+0.222$ [$+0.197,+0.251$] (DINOv2), $+0.204$ [$+0.174,+0.237$] (MedSigLIP), $+0.128$
+[$+0.112,+0.145$] (ConvNeXt); ovary (MedSigLIP) $+0.215$ [$+0.182,+0.246$]; hair $+0.052$; controlled sweeps $+0.08$ to
+$+0.28$. Real capsule: unprotected $-0.115$ (debris $\approx$ erosion fibrin), protected $-0.010$ (safety net; costs $\le0.012$
+elsewhere). Erase vs augment with the same overlays (U7): thyroid $+0.207$, hair $+0.045$, ovary $+0.035$ (not robust to
+embedding groups), capsule $-0.130$. With artifact labels, U-MtE$_{\text{bal}}$ is the most robust thyroid model
+(min(rev,corr) 0.788 DINOv2, 0.792 MedSigLIP); mask+DFR best on capsule (0.885 vs 0.857); DFR best on hair (0.741).
+The full arm $\times$ cohort table is Appendix Table \texttt{main\_inroi}.
+\textbf{Rank ablation} (registry \S\ref{doc:PREREGISTRATION_UMTE_ABLATION}):
+\input{gen/tab_abl.tex}
+\textbf{Baselines and alternatives (each pre-registered).}
+\begin{itemize}[leftmargin=*]\itemsep0pt
+\item \textbf{JTT} (label-free): U-MtE beats it on thyroid ($+0.198$) and ovary ($+0.137$); JTT wins on hair.
+\item \textbf{SPLINCE} (Holstege, Ravfogel \& Wouters, NeurIPS 2025; faithful whitened implementation): with artifact labels
+it removes much disease signal (clean 0.56--0.78) and flips the shortcut on capsule; U-MtE$_{\text{bal}}$ more robust on
+thyroid, capsule and hair (0.788 vs 0.596; 0.857 vs 0.683; 0.704 vs 0.564); on drains SPLINCE 0.516 vs 0.460.
+\item \textbf{LEACE} (paired/unpaired): unpaired erasure with image-level labels flips the shortcut; paired recovers little.
+\item \textbf{LaMa inpainting} with oracle artifact masks: strong; protected U-MtE matches it on thyroid without masks
+($-0.009$ [$-0.045,+0.023$]), below it on ovary; U-MtE$_{\text{bal}}$ beats it.
+\item \textbf{Text-prompted erasure} (biased prompts; MedSigLIP, DermLIP): near no-op ($\le+0.008$ over masking).
+\item \textbf{SLAS} (few-shot patch-token suppression): localises hair from 5 annotated images (patch AUROC 0.93), small
+classification gains ($+0.02$ hair, $+0.08$ thyroid).
+\item \textbf{Pseudo-group balancing} (U8; overlay-detector pseudo labels): $+0.04$ on thyroid, none on hair.
+\item \textbf{Erasure + DFR} (U10): no gain over masking + DFR.
+\item \textbf{Validation-driven selectors} (U13, U14): beat masking in 5/5 cohorts ($+0.17$ to $+0.40$), within 0.02 of the
+best candidate in 5/5, beat DFR in 3/5; split-validation variant fixes drains (0.656); neither uniformly best.
+\end{itemize}
+
+\section{Stage 10 --- end-to-end fine-tuning and remedies for fine-tuned networks}
+\textbf{Design} (registry \S\ref{doc:PREREGISTRATION_FINETUNE}): ResNet-50 (ImageNet, 224\,px, 8 epochs, AdamW, lr
+$10^{-4}$, head lr $\times10$, OneCycle, fp16) and ViT-S/16 (lr $3\cdot10^{-5}$); seed 42, folds 0--4 as bootstrap
+clusters; thresholds on clean validation.
+\textbf{Location law.} Capsule (ResNet-50): masking harms in-ROI ($-0.284$ [$-0.347,-0.226$]), helps out ($+0.301$),
+crossover $+0.584$ [$+0.469,+0.691$]; thyroid ViT-S crossover $+0.168$ [$+0.074,+0.265$]; thyroid ResNet-50 $+0.057$
+[$-0.021,+0.130$].
+\textbf{Remedies tried for fine-tuned networks.}
+\begin{itemize}[leftmargin=*]\itemsep0pt
+\item \texttt{mte\_ft} (invariance penalty between masked images with and without a generic overlay): thyroid ResNet-50
+$+0.143$ [$+0.099,+0.188$] \ok; ViT-S $+0.009$ \no; capsule $-0.021$ \no.
+\item \texttt{mte\_post} (fine-tune like \texttt{mask}, then U-MtE on the penultimate features; registry
+\S\ref{doc:PREREGISTRATION_FT_ERASE}): $+0.004$ [$+0.000,+0.012$] over the same features without erasure \no. After
+unconstrained fine-tuning the caliper is encoded along task-specific directions that generic overlays do not move.
+\item \texttt{umte\_ft} (erase-while-fine-tuning: running overlay-shift subspace projected out before the head at every
+step, plus the invariance penalty; registry \S\ref{doc:PREREGISTRATION_FT_UMTE}): ResNet-50 $+0.160$ [$+0.114,+0.207$]
+over masking and $+0.016$ over \texttt{mte\_ft}; ViT-S $+0.061$ [$-0.005,+0.141$] over masking, $+0.052$ [$+0.007,+0.107$]
+over \texttt{mte\_ft} \mixed. Note: on ResNet-50 correlated AUROC (0.664) is slightly below reversed (0.695) --- mild
+over-correction.
+\item \texttt{cons\_ft} (prediction consistency between masked images with and without an overlay): ResNet-50 $+0.007$
+[$-0.014,+0.029$] \no; ViT-S $+0.062$ [$+0.031,+0.087$] \ok.
+\item \textbf{\texttt{umte\_cons\_ft} (all three combined; pre-registered amendment before running):} ResNet-50 $+0.157$
+[$+0.114,+0.205$], ViT-S $+0.143$ [$+0.103,+0.187$] \ok\ --- the first remedy that works for fully fine-tuned networks of
+both architecture families without artifact annotation. AUROC clean/corr/rev: ResNet-50 0.688/0.661/0.693 (mask
+0.691/0.827/0.536; mild over-correction); ViT-S 0.712/0.798/0.608 (mask 0.688/0.868/0.465).
+\item Other cohorts (ResNet-50): \texttt{umte\_ft} ovary $+0.107$ [$-0.003,+0.229$]; \texttt{umte\_cons\_ft} on ovary and capsule was pre-registered (Amendment 2) but could \emph{not} be run: the GPU became unavailable at 15:28 UTC (host driver I/O error). It is the first experiment to run next.
+\end{itemize}
+\input{gen/tab_ft.tex}
+\input{gen/tab_ft_auc.tex}
+
+\section{Stage 11 --- robustness, leakage and integrity}\label{sec:robust}
+\textbf{Artifact-label definitions} (registry \S\ref{doc:SENSITIVITY_ARTIFACT_LABELS}): large-marker ($\ge50$\,px) and
+strict-location ($r\ge0.7$ / $r<0.05$) variants keep the crossover (thyroid $+0.215$ to $+0.262$; ovary $+0.170$ to $+0.195$)
+and the protected-U-MtE gain (thyroid $+0.217$ to $+0.282$; ovary $+0.043$ to $+0.067$) significant; strict capsule Trap B
+$+0.259$. \textbf{Mask audit} (registry \S\ref{doc:ARTIFACT_MASK_AUDIT}): 40 images per cell inspected.
+\textbf{Leakage.} (i) Random vs grouped splits (Table~\ref{tab:leak}). (ii) Stricter embedding groups for the three cohorts
+without patient IDs (registry \S\ref{doc:PREREGISTRATION_EMBEDDING_GROUPS}; amendment: embeddings mean-centred because raw
+cosine was $\approx0.99$ for all ovary pairs):
+\input{gen/tab_embg.tex}
+\input{gen/tab_emb.tex}
+\textbf{Integrity.} Every CI in both papers is traced automatically to a result file (\texttt{scripts/verify/audit\_paper\_numbers.py};
+109/109). All 146 result archives pass a gzip check after one regeneration (identical numbers). Deterministic arms were
+verified identical across historical run folders. Deviations from pre-registrations are recorded in each document
+(e.g.\ grid trimming in the rank ablation, fp32 features in fine-tune-then-erase, one skipped sweep in the theory test).
+
+\section{Stage 12 --- datasets considered and not used}
+CANDID-PTX (no access); CXR CLiP real devices (masking helps at both locations --- no in-ROI regime); CXR cardiomegaly lines
+(too few labelled); TCGA/GrandQC pathology pen marks (unreliable masks); ISIC ink (70 in-lesion images); breast ultrasound
+BUSI/BUS-BRA (two attempts: caliper labels $\approx$70\% pure; only 19/2{,}522 overlay-free images --- registry
+\S\ref{doc:BREAST_MARKER_AUDIT}); EAD endoscopy (no disease labels); BKAI-IGH NeoPolyp colonoscopy (no specular-free images);
+DINOv3 (weights gated, access refused).
+
+\section{Cross-cutting methods}
+\begin{itemize}[leftmargin=*]\itemsep1pt
+\item \textbf{Backbones.} DINOv2 ViT-S/B/L-14 @518 (CLS), MedSigLIP-448 (image features, joint space), DermLIP/PanDerm (512-d
+joint space), RAD-DINO @518, ConvNeXt-Base @384; fine-tuned ResNet-50 and ViT-S/16. Views rendered at 518\,px; features
+cached per view (\texttt{erm}, \texttt{mask}, \texttt{mask\_insert\_generic}, \ldots).
+\item \textbf{Heads.} Logistic regression; $C$ and the decision threshold (balanced accuracy) chosen on clean validation only.
+\item \textbf{Seeds.} Real traps: 42, 123, 456, 789, 2026 $\times$ 5 folds; controlled sweeps: 42, 123, 456; fine-tuning:
+seed 42, folds 0--4; natural tests: 5 seeds; bootstrap seeds deterministic per comparison (string hash).
+\item \textbf{Statistics.} Hierarchical paired bootstrap (10{,}000); two-sided bootstrap $p$; Holm over the 16 primary tests.
+\item \textbf{Compute.} One RTX 3090 (24 GB), 8 CPU cores, 31 GB RAM; about two days end to end.
+\item \textbf{Reproduction.} \texttt{make data data\_extra verify synthetic isic2019 thyroid ovary capsule cxr drain natural
+finetune sensitivity scale lama baselines analysis paper}; tool: \texttt{python -m wtss.umte}, \texttt{python -m wtss.slas}.
+\end{itemize}
+
+\section{External review and responses}\label{sec:review}
+\begin{enumerate}[leftmargin=*]\itemsep1pt
+\item ``U-MtE needs no mask'' is misleading (it uses the ROI mask) --- \emph{valid}; wording fixed everywhere.
+\item Table 1 calls the method I2E --- \emph{valid}; renamed ``insert-then-erase (artifact templates)'' and explained.
+\item GroupDRO claimed as benchmarked --- \emph{partly valid}; now scoped to the controlled dermoscopy sweeps.
+\item Title omits X-ray --- \emph{valid, minor}; chest radiography named as a boundary case.
+\item Patient/video leakage in TN3K/SEE-AI --- \emph{valid}; embedding-group sensitivity added (11/12 robust).
+\item Theory only checked against its own simulation --- \emph{valid}; real-encoder test added (r = 0.997).
+\item End-to-end evidence weaker --- \emph{valid}; U-MtE framed for frozen features; post-hoc and erase-while-fine-tuning tested.
+\item Clinical metrics missing --- \emph{valid}; AUPRC, Brier, ECE, sensitivity/specificity added.
+\item Related work thin --- \emph{valid}; six verified references added (Pewton 2024, Wang 2024, Germani 2026 MedIA, Lin
+2024 MICCAI, Zech 2018, Brown 2023).
+\end{enumerate}
+
+\section{Conclusions and guidance for writing the paper}
+\textbf{Claims the evidence supports (safe to make).}
+\begin{enumerate}[leftmargin=*]\itemsep1pt
+\item ROI masking helps much less for in-ROI than out-of-ROI artifacts (4/4 real cohorts, Holm; all replications).
+\item In-ROI masking can be harmful, including on unaltered data and in clinical metrics (thyroid sensitivity).
+\item The mechanism is retention with amplified reliance (counterfactual sensitivity, dilation, lesion-size strata).
+\item A two-parameter linear-Gaussian account reproduces all signs and closely matches held-out results of real encoders;
+call it a qualitative account.
+\item For frozen foundation-model features, U-MtE removes in-ROI shortcuts carried by distinct overlays (thyroid across
+3 families $\times$ 3 sizes; ovary with MedSigLIP) without artifact annotation; erasure beats augmentation (thyroid, hair);
+protection makes it safe for pathology-like artifacts; text-prompted erasure does not work.
+\item What carries the shortcut decides the method: pixels (U-MtE), pathology-like appearance (protected U-MtE or
+mask+DFR), correlates (DFR/balancing).
+\end{enumerate}
+\textbf{Claims to avoid.} ``Masking always harms in-ROI'' (it helps a little on real thyroid/ovary/capsule); ``the
+theory predicts magnitudes''; ``U-MtE works post hoc on fine-tuned networks'' (null); ``erase-while-fine-tuning works for any architecture and
+disease'' (shown for ResNet-50 and ViT-S on thyroid; see Stage 10 for other cohorts); ``erase beats augment in ovary'' (not robust); ``four diseases and four
+modalities'' (chest radiography is a boundary case); any claim of patient-level independence for TN3K, MMOTU, SEE-AI.
+\textbf{Limitations.} Detector-based artifact labels (audited); no patient IDs for three cohorts; reversed environments are
+constructed by subsampling; disease protection needs diagnosis labels of artifact-free images; balanced variants need
+image-level artifact labels; the theory is fitted per model and blind to correlate-carried shortcuts.
+\textbf{Suggested paper structure} (as in \texttt{paper\_neurips/main.tex}): teaser with real images; location-law table;
+theory with the real-encoder figure; natural-data table; compact remedies table; forest plot; mechanism and dose-response
+figures in the appendix; scale, leakage, clinical metrics and fine-tuning in the robustness appendix.
+
+\appendix
+\part{Appendices}
+\section{All generated paper tables}\label{app:tables}
+{\small\input{gen/paper_tables.tex}}
+\section{Result ledgers}\label{app:resultsmd}
+\input{gen/results_md.tex}
+\part{Experiment registry (every design, pre-registration, audit and result document, verbatim)}\label{app:registry}
+\setcounter{section}{0}\renewcommand{\thesection}{R\arabic{section}}\renewcommand{\theHsection}{R\arabic{section}}
+\input{gen/registry.tex}
+\end{document}

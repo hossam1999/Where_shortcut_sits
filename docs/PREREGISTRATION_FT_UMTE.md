@@ -34,3 +34,28 @@ Also running: umte_ft on ovary (ResNet-50), reported with CI.
 ## Amendment 2 (before running) — other cohorts
 umte_cons_ft on ovary and capsule (ResNet-50, Trap A, 5 folds), reported with CIs. Capsule debris resembles erosion
 fibrin; without disease protection the frozen U-MtE failed there, so failure is the expected outcome.
+
+## Results (thyroid, Trap A, 5 folds; results/finetune/thyroid/*/paired_deltas.csv)
+| arm − mask (reversed AUROC) | ResNet-50 | ViT-S/16 |
+|---|---|---|
+| mte_ft (invariance only; earlier) | +0.143 [+0.099, +0.188] | +0.009 [−0.021, +0.040] |
+| umte_ft (projection + invariance) | **+0.160 [+0.114, +0.207]** | +0.061 [−0.005, +0.141] |
+| cons_ft (prediction consistency) | +0.007 [−0.014, +0.029] | **+0.062 [+0.031, +0.087]** |
+| **umte_cons_ft (all three)** | **+0.157 [+0.114, +0.205]** | **+0.143 [+0.103, +0.187]** |
+
+AUROC (clean / correlated / reversed): ResNet-50 mask 0.691 / 0.827 / 0.536; umte_cons_ft 0.688 / 0.661 / 0.693.
+ViT-S mask 0.688 / 0.868 / 0.465; umte_cons_ft 0.712 / 0.798 / 0.608.
+- **G1 partial** (ResNet-50 yes, ViT-S not significant). **G3 supported**: the combined arm improves on masking for
+  both architectures with no artifact annotation, and each component alone works for only one architecture.
+- On ResNet-50 the correlated AUROC falls below the reversed one (0.661 vs 0.693): mild over-correction (flag), its
+  min(rev, corr) 0.661 is close to the label-using mask_balanced (0.677). On ViT-S there is no flip (0.798 vs 0.608)
+  and clean AUROC improves (0.712 vs 0.688), but the shortcut is only partly removed.
+- Interpretation: post-hoc erasure fails because unconstrained fine-tuning builds a task-specific shortcut feature;
+  estimating the overlay subspace *during* training on the network's own features, and requiring overlay-invariant
+  features and predictions, stops that feature from forming.
+
+## Status of Amendment 2
+Not run: at 15:28 UTC the GPU became unavailable inside the container (`nvidia-smi: Input/output error`, host-side
+driver problem; both jobs failed at CUDA initialisation before training). Commands to run when a GPU is available:
+`python scripts/run_finetune_spec.py --cohort ovary --arms umte_cons_ft --traps trapA` and the same with
+`--cohort capsule`. umte_ft on ovary (ResNet-50, run before the failure): +0.107 [−0.003, +0.229].

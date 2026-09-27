@@ -32,7 +32,15 @@ A fine-tuned ViT-S reproduces the crossover on thyroid ($+0.168$ [$+0.074, +0.26
 analogue does not improve on masking with this architecture ($+0.009$ [$-0.021, +0.040$]). Applying U-MtE post hoc to
 the penultimate features of the masked, fine-tuned ResNet-50 does not help either (pre-registered; $+0.004$
 [$+0.000, +0.012$] over the same features without erasure): after task training the shortcut is encoded along
-task-specific directions that generic overlays do not move. U-MtE is therefore a method for frozen representations.
+task-specific directions that generic overlays do not move. For fully fine-tuned networks the subspace must be
+estimated and removed \emph{during} training. \emph{Erase-while-fine-tuning} (pre-registered; no artifact annotation)
+projects a running estimate of the overlay-shift subspace of the network's own penultimate features out before the
+head at every step and at test time, and adds feature invariance and prediction consistency between masked images with
+and without a generic overlay. On thyroid it improves on masking by $+0.157$ [$+0.114, +0.205$] with ResNet-50 and
+$+0.143$ [$+0.103, +0.187$] with ViT-S (reversed AUROC 0.693 and 0.608 vs 0.536 and 0.465), whereas each component
+alone works for only one architecture (projection + invariance: ResNet-50 $+0.160$ [$+0.114, +0.207$], ViT-S $+0.061$
+[$-0.005, +0.141$]; prediction consistency: ResNet-50 $+0.007$ [$-0.014, +0.029$], ViT-S $+0.062$ [$+0.031, +0.087$]).
+With ResNet-50 the correlated AUROC falls slightly below the reversed one (0.661 vs 0.693), a mild over-correction.
 
 \subsection{Zero-shot vision--language models}
 Without any task training, the foundation models' own zero-shot scores (similarity to ``benign'' versus ``malignant''

@@ -1,0 +1,1987 @@
+**
+(full_report.tex
+LaTeX2e <2021-11-15> patch level 1
+L3 programming layer <2022-02-24> (article.cls
+Document Class: article 2021/10/04 v1.4n Standard LaTeX document class
+(size10.clo
+File: size10.clo 2021/10/04 v1.4n Standard LaTeX file (size option)
+)
+\c@part=\count181
+\c@section=\count182
+\c@subsection=\count183
+\c@subsubsection=\count184
+\c@paragraph=\count185
+\c@subparagraph=\count186
+\c@figure=\count187
+\c@table=\count188
+\abovecaptionskip=\skip47
+\belowcaptionskip=\skip48
+\bibindent=\dimen138
+) (fontspec.sty (xparse.sty (expl3.sty
+Package: expl3 2022-02-24 L3 programming layer (loader) 
+ (l3backend-xetex.def
+File: l3backend-xetex.def 2022-02-07 L3 backend support: XeTeX
+\c__kernel_sys_dvipdfmx_version_int=\count189
+\l__color_backend_stack_int=\count190
+\g__color_backend_stack_int=\count191
+\g__graphics_track_int=\count192
+\l__pdf_internal_box=\box50
+\g__pdf_backend_object_int=\count193
+\g__pdf_backend_annotation_int=\count194
+\g__pdf_backend_link_int=\count195
+))
+Package: xparse 2022-01-12 L3 Experimental document command parser
+)
+Package: fontspec 2022/01/15 v2.8a Font selection for XeLaTeX and LuaLaTeX
+
+(fontspec-xetex.sty
+Package: fontspec-xetex 2022/01/15 v2.8a Font selection for XeLaTeX and LuaLaTe
+X
+\l__fontspec_script_int=\count196
+\l__fontspec_language_int=\count197
+\l__fontspec_strnum_int=\count198
+\l__fontspec_tmp_int=\count199
+\l__fontspec_tmpa_int=\count266
+\l__fontspec_tmpb_int=\count267
+\l__fontspec_tmpc_int=\count268
+\l__fontspec_em_int=\count269
+\l__fontspec_emdef_int=\count270
+\l__fontspec_strong_int=\count271
+\l__fontspec_strongdef_int=\count272
+\l__fontspec_tmpa_dim=\dimen139
+\l__fontspec_tmpb_dim=\dimen140
+\l__fontspec_tmpc_dim=\dimen141
+ (fontenc.sty
+Package: fontenc 2021/04/29 v2.0v Standard LaTeX package
+) (fontspec.cfg)))
+
+Package fontspec Info: Font family 'DejaVuSerif(0)' created for font 'DejaVu
+(fontspec)             Serif' with options [Ligatures=TeX,Scale=0.92].
+(fontspec)              
+(fontspec)              This font family consists of the following NFSS
+(fontspec)             series/shapes:
+(fontspec)              
+(fontspec)             - 'normal' (m/n) with NFSS spec.: <->s*[0.92]"DejaVu
+(fontspec)             Serif/OT:script=latn;language=dflt;mapping=tex-text;"
+(fontspec)             - 'small caps'  (m/sc) with NFSS spec.: 
+(fontspec)             - 'bold' (b/n) with NFSS spec.: <->s*[0.92]"DejaVu
+(fontspec)             Serif/B/OT:script=latn;language=dflt;mapping=tex-text;"
+(fontspec)             - 'bold small caps'  (b/sc) with NFSS spec.: 
+(fontspec)             - 'italic' (m/it) with NFSS spec.: <->s*[0.92]"DejaVu
+(fontspec)             Serif/I/OT:script=latn;language=dflt;mapping=tex-text;"
+(fontspec)             - 'italic small caps'  (m/scit) with NFSS spec.: 
+(fontspec)             - 'bold italic' (b/it) with NFSS spec.:
+(fontspec)             <->s*[0.92]"DejaVu
+(fontspec)             Serif/BI/OT:script=latn;language=dflt;mapping=tex-text;"
+
+(fontspec)             - 'bold italic small caps'  (b/scit) with NFSS spec.: 
+
+LaTeX Font Info:    Font shape `TU/DejaVuSerif(0)/m/n' will be
+(Font)              scaled to size 9.19998pt on input line 4.
+
+Package fontspec Info: Font family 'DejaVuSans(0)' created for font 'DejaVu
+(fontspec)             Sans' with options [Ligatures=TeX,Scale=0.92].
+(fontspec)              
+(fontspec)              This font family consists of the following NFSS
+(fontspec)             series/shapes:
+(fontspec)              
+(fontspec)             - 'normal' (m/n) with NFSS spec.: <->s*[0.92]"DejaVu
+(fontspec)             Sans/OT:script=latn;language=dflt;mapping=tex-text;"
+(fontspec)             - 'small caps'  (m/sc) with NFSS spec.: 
+(fontspec)             - 'bold' (b/n) with NFSS spec.: <->s*[0.92]"DejaVu
+(fontspec)             Sans/B/OT:script=latn;language=dflt;mapping=tex-text;"
+(fontspec)             - 'bold small caps'  (b/sc) with NFSS spec.: 
+(fontspec)             - 'italic' (m/it) with NFSS spec.: <->s*[0.92]"DejaVu
+(fontspec)             Sans/I/OT:script=latn;language=dflt;mapping=tex-text;"
+(fontspec)             - 'italic small caps'  (m/scit) with NFSS spec.: 
+(fontspec)             - 'bold italic' (b/it) with NFSS spec.:
+(fontspec)             <->s*[0.92]"DejaVu
+(fontspec)             Sans/BI/OT:script=latn;language=dflt;mapping=tex-text;"
+(fontspec)             - 'bold italic small caps'  (b/scit) with NFSS spec.: 
+
+
+Package fontspec Info: Font family 'DejaVuSansMono(0)' created for font
+(fontspec)             'DejaVu Sans Mono' with options
+(fontspec)             [WordSpace={1,0,0},HyphenChar=None,PunctuationSpace=Word
+Space,Scale=0.85].
+(fontspec)              
+(fontspec)              This font family consists of the following NFSS
+(fontspec)             series/shapes:
+(fontspec)              
+(fontspec)             - 'normal' (m/n) with NFSS spec.: <->s*[0.85]"DejaVu
+(fontspec)             Sans Mono/OT:script=latn;language=dflt;"
+(fontspec)             - 'small caps'  (m/sc) with NFSS spec.: 
+(fontspec)             and font adjustment code:
+(fontspec)             \fontdimen 2\font =1\fontdimen 2\font \fontdimen 3\font
+(fontspec)             =0\fontdimen 3\font \fontdimen 4\font =0\fontdimen
+(fontspec)             4\font \fontdimen 7\font =0\fontdimen 2\font
+(fontspec)             \tex_hyphenchar:D \font =-1\scan_stop: 
+(fontspec)             - 'bold' (b/n) with NFSS spec.: <->s*[0.85]"DejaVu Sans
+(fontspec)             Mono/B/OT:script=latn;language=dflt;"
+(fontspec)             - 'bold small caps'  (b/sc) with NFSS spec.: 
+(fontspec)             and font adjustment code:
+(fontspec)             \fontdimen 2\font =1\fontdimen 2\font \fontdimen 3\font
+(fontspec)             =0\fontdimen 3\font \fontdimen 4\font =0\fontdimen
+(fontspec)             4\font \fontdimen 7\font =0\fontdimen 2\font
+(fontspec)             \tex_hyphenchar:D \font =-1\scan_stop: 
+(fontspec)             - 'italic' (m/it) with NFSS spec.: <->s*[0.85]"DejaVu
+(fontspec)             Sans Mono/I/OT:script=latn;language=dflt;"
+(fontspec)             - 'italic small caps'  (m/scit) with NFSS spec.: 
+(fontspec)             and font adjustment code:
+(fontspec)             \fontdimen 2\font =1\fontdimen 2\font \fontdimen 3\font
+(fontspec)             =0\fontdimen 3\font \fontdimen 4\font =0\fontdimen
+(fontspec)             4\font \fontdimen 7\font =0\fontdimen 2\font
+(fontspec)             \tex_hyphenchar:D \font =-1\scan_stop: 
+(fontspec)             - 'bold italic' (b/it) with NFSS spec.:
+(fontspec)             <->s*[0.85]"DejaVu Sans
+(fontspec)             Mono/BI/OT:script=latn;language=dflt;"
+(fontspec)             - 'bold italic small caps'  (b/scit) with NFSS spec.: 
+(fontspec)             and font adjustment code:
+(fontspec)             \fontdimen 2\font =1\fontdimen 2\font \fontdimen 3\font
+(fontspec)             =0\fontdimen 3\font \fontdimen 4\font =0\fontdimen
+(fontspec)             4\font \fontdimen 7\font =0\fontdimen 2\font
+(fontspec)             \tex_hyphenchar:D \font =-1\scan_stop: 
+
+ (geometry.sty
+Package: geometry 2020/01/02 v5.9 Page Geometry
+ (keyval.sty
+Package: keyval 2014/10/28 v1.15 key=value parser (DPC)
+\KV@toks@=\toks16
+)
+(ifvtex.sty
+Package: ifvtex 2019/10/25 v1.7 ifvtex legacy package. Use iftex instead.
+ (iftex.sty
+Package: iftex 2022/02/03 v1.0f TeX engine tests
+))
+\Gm@cnth=\count273
+\Gm@cntv=\count274
+\c@Gm@tempcnt=\count275
+\Gm@bindingoffset=\dimen142
+\Gm@wd@mp=\dimen143
+\Gm@odd@mp=\dimen144
+\Gm@even@mp=\dimen145
+\Gm@layoutwidth=\dimen146
+\Gm@layoutheight=\dimen147
+\Gm@layouthoffset=\dimen148
+\Gm@layoutvoffset=\dimen149
+\Gm@dimlist=\toks17
+) (amsmath.sty
+Package: amsmath 2021/10/15 v2.17l AMS math features
+\@mathmargin=\skip49
+
+For additional information on amsmath, use the `?' option.
+(amstext.sty
+Package: amstext 2021/08/26 v2.01 AMS text
+ (amsgen.sty
+File: amsgen.sty 1999/11/30 v2.0 generic functions
+\@emptytoks=\toks18
+\ex@=\dimen150
+)) (amsbsy.sty
+Package: amsbsy 1999/11/29 v1.2d Bold Symbols
+\pmbraise@=\dimen151
+) (amsopn.sty
+Package: amsopn 2021/08/26 v2.02 operator names
+)
+\inf@bad=\count276
+LaTeX Info: Redefining \frac on input line 234.
+\uproot@=\count277
+\leftroot@=\count278
+LaTeX Info: Redefining \overline on input line 399.
+\classnum@=\count279
+\DOTSCASE@=\count280
+LaTeX Info: Redefining \ldots on input line 496.
+LaTeX Info: Redefining \dots on input line 499.
+LaTeX Info: Redefining \cdots on input line 620.
+\Mathstrutbox@=\box51
+\strutbox@=\box52
+\big@size=\dimen152
+LaTeX Font Info:    Redeclaring font encoding OML on input line 743.
+LaTeX Font Info:    Redeclaring font encoding OMS on input line 744.
+\macc@depth=\count281
+\c@MaxMatrixCols=\count282
+\dotsspace@=\muskip16
+\c@parentequation=\count283
+\dspbrk@lvl=\count284
+\tag@help=\toks19
+\row@=\count285
+\column@=\count286
+\maxfields@=\count287
+\andhelp@=\toks20
+\eqnshift@=\dimen153
+\alignsep@=\dimen154
+\tagshift@=\dimen155
+\tagwidth@=\dimen156
+\totwidth@=\dimen157
+\lineht@=\dimen158
+\@envbody=\toks21
+\multlinegap=\skip50
+\multlinetaggap=\skip51
+\mathdisplay@stack=\toks22
+LaTeX Info: Redefining \[ on input line 2938.
+LaTeX Info: Redefining \] on input line 2939.
+) (amssymb.sty
+Package: amssymb 2013/01/14 v3.01 AMS font symbols
+
+(amsfonts.sty
+Package: amsfonts 2013/01/14 v3.01 Basic AMSFonts support
+\symAMSa=\mathgroup4
+\symAMSb=\mathgroup5
+LaTeX Font Info:    Redeclaring math symbol \hbar on input line 98.
+LaTeX Font Info:    Overwriting math alphabet `\mathfrak' in version `bold'
+(Font)                  U/euf/m/n --> U/euf/b/n on input line 106.
+)) (booktabs.sty
+Package: booktabs 2020/01/12 v1.61803398 Publication quality tables
+\heavyrulewidth=\dimen159
+\lightrulewidth=\dimen160
+\cmidrulewidth=\dimen161
+\belowrulesep=\dimen162
+\belowbottomsep=\dimen163
+\aboverulesep=\dimen164
+\abovetopsep=\dimen165
+\cmidrulesep=\dimen166
+\cmidrulekern=\dimen167
+\defaultaddspace=\dimen168
+\@cmidla=\count288
+\@cmidlb=\count289
+\@aboverulesep=\dimen169
+\@belowrulesep=\dimen170
+\@thisruleclass=\count290
+\@lastruleclass=\count291
+\@thisrulewidth=\dimen171
+) (longtable.sty
+Package: longtable 2021-09-01 v4.17 Multi-page Table package (DPC)
+\LTleft=\skip52
+\LTright=\skip53
+\LTpre=\skip54
+\LTpost=\skip55
+\LTchunksize=\count292
+\LTcapwidth=\dimen172
+\LT@head=\box53
+\LT@firsthead=\box54
+\LT@foot=\box55
+\LT@lastfoot=\box56
+\LT@gbox=\box57
+\LT@cols=\count293
+\LT@rows=\count294
+\c@LT@tables=\count295
+\c@LT@chunks=\count296
+\LT@p@ftn=\toks23
+) (array.sty
+Package: array 2021/10/04 v2.5f Tabular extension package (FMi)
+\col@sep=\dimen173
+\ar@mcellbox=\box58
+\extrarowheight=\dimen174
+\NC@list=\toks24
+\extratabsurround=\skip56
+\backup@length=\skip57
+\ar@cellbox=\box59
+) (calc.sty
+Package: calc 2017/05/25 v4.3 Infix arithmetic (KKT,FJ)
+\calc@Acount=\count297
+\calc@Bcount=\count298
+\calc@Adimen=\dimen175
+\calc@Bdimen=\dimen176
+\calc@Askip=\skip58
+\calc@Bskip=\skip59
+LaTeX Info: Redefining \setlength on input line 80.
+LaTeX Info: Redefining \addtolength on input line 81.
+\calc@Ccount=\count299
+\calc@Cskip=\skip60
+)
+(multirow.sty
+Package: multirow 2021/03/15 v2.8 Span multiple rows of a table
+\multirow@colwidth=\skip61
+\multirow@cntb=\count300
+\multirow@dima=\skip62
+\bigstrutjot=\dimen177
+) (graphicx.sty
+Package: graphicx 2021/09/16 v1.2d Enhanced LaTeX Graphics (DPC,SPQR)
+ (graphics.sty
+Package: graphics 2021/03/04 v1.4d Standard LaTeX Graphics (DPC,SPQR)
+ (trig.sty
+Package: trig 2021/08/11 v1.11 sin cos tan (DPC)
+) (graphics.cfg
+File: graphics.cfg 2016/06/04 v1.11 sample graphics configuration
+)
+Package graphics Info: Driver file: xetex.def on input line 107.
+ (xetex.def
+File: xetex.def 2021/03/18 v5.0k Graphics/color driver for xetex
+))
+\Gin@req@height=\dimen178
+\Gin@req@width=\dimen179
+) (float.sty
+Package: float 2001/11/08 v1.3d Float enhancements (AL)
+\c@float@type=\count301
+\float@exts=\toks25
+\float@box=\box60
+\@float@everytoks=\toks26
+\@floatcapt=\box61
+) (xcolor.sty
+Package: xcolor 2021/10/31 v2.13 LaTeX color extensions (UK)
+ (color.cfg
+File: color.cfg 2016/01/02 v1.6 sample color configuration
+)
+Package xcolor Info: Driver file: xetex.def on input line 227.
+Package xcolor Info: Model `cmy' substituted by `cmy0' on input line 1352.
+Package xcolor Info: Model `RGB' extended on input line 1368.
+Package xcolor Info: Model `HTML' substituted by `rgb' on input line 1370.
+Package xcolor Info: Model `Hsb' substituted by `hsb' on input line 1371.
+Package xcolor Info: Model `tHsb' substituted by `hsb' on input line 1372.
+Package xcolor Info: Model `HSB' substituted by `hsb' on input line 1373.
+Package xcolor Info: Model `Gray' substituted by `gray' on input line 1374.
+Package xcolor Info: Model `wave' substituted by `hsb' on input line 1375.
+) (enumitem.sty
+Package: enumitem 2019/06/20 v3.9 Customized lists
+\labelindent=\skip63
+\enit@outerparindent=\dimen180
+\enit@toks=\toks27
+\enit@inbox=\box62
+\enit@count@id=\count302
+\enitdp@description=\count303
+) (fancyvrb.sty
+Package: fancyvrb 2021/12/21 4.1b verbatim text (tvz,hv)
+\FV@CodeLineNo=\count304
+\FV@InFile=\read2
+\FV@TabBox=\box63
+\c@FancyVerbLine=\count305
+\FV@StepNumber=\count306
+\FV@OutFile=\write3
+)
+(hyperref.sty
+Package: hyperref 2022-02-21 v7.00n Hypertext links for LaTeX
+ (ltxcmds.sty
+Package: ltxcmds 2020-05-10 v1.25 LaTeX kernel commands for general use (HO)
+) (pdftexcmds.sty
+Package: pdftexcmds 2020-06-27 v0.33 Utility functions of pdfTeX for LuaTeX (HO
+)
+ (infwarerr.sty
+Package: infwarerr 2019/12/03 v1.5 Providing info/warning/error messages (HO)
+)
+Package pdftexcmds Info: \pdf@primitive is available.
+Package pdftexcmds Info: \pdf@ifprimitive is available.
+Package pdftexcmds Info: \pdfdraftmode not found.
+) (kvsetkeys.sty
+Package: kvsetkeys 2019/12/15 v1.18 Key value parser (HO)
+)
+(kvdefinekeys.sty
+Package: kvdefinekeys 2019-12-19 v1.6 Define keys (HO)
+) (pdfescape.sty
+Package: pdfescape 2019/12/09 v1.15 Implements pdfTeX's escape features (HO)
+) (hycolor.sty
+Package: hycolor 2020-01-27 v1.10 Color options for hyperref/bookmark (HO)
+) (letltxmacro.sty
+Package: letltxmacro 2019/12/03 v1.6 Let assignment for LaTeX macros (HO)
+) (auxhook.sty
+Package: auxhook 2019-12-17 v1.6 Hooks for auxiliary files (HO)
+) (kvoptions.sty
+Package: kvoptions 2020-10-07 v3.14 Key value format for package options (HO)
+)
+\@linkdim=\dimen181
+\Hy@linkcounter=\count307
+\Hy@pagecounter=\count308
+ (pd1enc.def
+File: pd1enc.def 2022-02-21 v7.00n Hyperref: PDFDocEncoding definition (HO)
+) (intcalc.sty
+Package: intcalc 2019/12/15 v1.3 Expandable calculations with integers (HO)
+) (etexcmds.sty
+Package: etexcmds 2019/12/15 v1.7 Avoid name clashes with e-TeX commands (HO)
+)
+\Hy@SavedSpaceFactor=\count309
+ (puenc.def
+File: puenc.def 2022-02-21 v7.00n Hyperref: PDF Unicode definition (HO)
+)
+Package hyperref Info: Hyper figures OFF on input line 4137.
+Package hyperref Info: Link nesting OFF on input line 4142.
+Package hyperref Info: Hyper index ON on input line 4145.
+Package hyperref Info: Plain pages OFF on input line 4152.
+Package hyperref Info: Backreferencing OFF on input line 4157.
+Package hyperref Info: Implicit mode ON; LaTeX internals redefined.
+Package hyperref Info: Bookmarks ON on input line 4390.
+\c@Hy@tempcnt=\count310
+
+(url.sty
+\Urlmuskip=\muskip17
+Package: url 2013/09/16  ver 3.4  Verb mode for urls, etc.
+)
+LaTeX Info: Redefining \url on input line 4749.
+\XeTeXLinkMargin=\dimen182
+ (bitset.sty
+Package: bitset 2019/12/09 v1.3 Handle bit-vector datatype (HO)
+ (bigintcalc.sty
+Package: bigintcalc 2019/12/15 v1.5 Expandable calculations on big integers (HO
+)
+))
+\Fld@menulength=\count311
+\Field@Width=\dimen183
+\Fld@charsize=\dimen184
+Package hyperref Info: Hyper figures OFF on input line 6027.
+Package hyperref Info: Link nesting OFF on input line 6032.
+Package hyperref Info: Hyper index ON on input line 6035.
+Package hyperref Info: backreferencing OFF on input line 6042.
+Package hyperref Info: Link coloring OFF on input line 6047.
+Package hyperref Info: Link coloring with OCG OFF on input line 6052.
+Package hyperref Info: PDF/A mode OFF on input line 6057.
+LaTeX Info: Redefining \ref on input line 6097.
+LaTeX Info: Redefining \pageref on input line 6101.
+ (atbegshi-ltx.sty
+Package: atbegshi-ltx 2021/01/10 v1.0c Emulation of the original atbegshi
+package with kernel methods
+)
+\Hy@abspage=\count312
+\c@Item=\count313
+\c@Hfootnote=\count314
+)
+Package hyperref Info: Driver (autodetected): hxetex.
+ (hxetex.def
+File: hxetex.def 2022-02-21 v7.00n Hyperref driver for XeTeX
+
+(stringenc.sty
+Package: stringenc 2019/11/29 v1.12 Convert strings between diff. encodings (HO
+)
+)
+\pdfm@box=\box64
+\c@Hy@AnnotLevel=\count315
+\HyField@AnnotCount=\count316
+\Fld@listcount=\count317
+\c@bookmark@seq@number=\count318
+ (rerunfilecheck.sty
+Package: rerunfilecheck 2019/12/05 v1.9 Rerun checks for auxiliary files (HO)
+ (atveryend-ltx.sty
+Package: atveryend-ltx 2020/08/19 v1.0a Emulation of the original atveryend pac
+kage
+with kernel methods
+) (uniquecounter.sty
+Package: uniquecounter 2019/12/15 v1.4 Provide unlimited unique counter (HO)
+)
+Package uniquecounter Info: New unique counter `rerunfilecheck' on input line 2
+86.
+)
+\Hy@SectionHShift=\skip64
+)
+(full_report.aux
+
+LaTeX Warning: Label `tab:natural_clinical' multiply defined.
+
+
+LaTeX Warning: Label `cohort' multiply defined.
+
+
+LaTeX Warning: Label `arms' multiply defined.
+
+
+LaTeX Warning: Label `design' multiply defined.
+
+)
+\openout1 = `full_report.aux'.
+
+LaTeX Font Info:    Checking defaults for OML/cmm/m/it on input line 23.
+LaTeX Font Info:    ... okay on input line 23.
+LaTeX Font Info:    Checking defaults for OMS/cmsy/m/n on input line 23.
+LaTeX Font Info:    ... okay on input line 23.
+LaTeX Font Info:    Checking defaults for OT1/cmr/m/n on input line 23.
+LaTeX Font Info:    ... okay on input line 23.
+LaTeX Font Info:    Checking defaults for T1/cmr/m/n on input line 23.
+LaTeX Font Info:    ... okay on input line 23.
+LaTeX Font Info:    Checking defaults for TS1/cmr/m/n on input line 23.
+LaTeX Font Info:    Trying to load font information for TS1+cmr on input line 2
+3.
+ (ts1cmr.fd
+File: ts1cmr.fd 2019/12/16 v2.5j Standard LaTeX font definitions
+)
+LaTeX Font Info:    ... okay on input line 23.
+LaTeX Font Info:    Checking defaults for TU/lmr/m/n on input line 23.
+LaTeX Font Info:    ... okay on input line 23.
+LaTeX Font Info:    Checking defaults for OMX/cmex/m/n on input line 23.
+LaTeX Font Info:    ... okay on input line 23.
+LaTeX Font Info:    Checking defaults for U/cmr/m/n on input line 23.
+LaTeX Font Info:    ... okay on input line 23.
+LaTeX Font Info:    Checking defaults for PD1/pdf/m/n on input line 23.
+LaTeX Font Info:    ... okay on input line 23.
+LaTeX Font Info:    Checking defaults for PU/pdf/m/n on input line 23.
+LaTeX Font Info:    ... okay on input line 23.
+
+Package fontspec Info: Adjusting the maths setup (use [no-math] to avoid
+(fontspec)             this).
+
+\symlegacymaths=\mathgroup6
+LaTeX Font Info:    Overwriting symbol font `legacymaths' in version `bold'
+(Font)                  OT1/cmr/m/n --> OT1/cmr/bx/n on input line 23.
+LaTeX Font Info:    Redeclaring math accent \acute on input line 23.
+LaTeX Font Info:    Redeclaring math accent \grave on input line 23.
+LaTeX Font Info:    Redeclaring math accent \ddot on input line 23.
+LaTeX Font Info:    Redeclaring math accent \tilde on input line 23.
+LaTeX Font Info:    Redeclaring math accent \bar on input line 23.
+LaTeX Font Info:    Redeclaring math accent \breve on input line 23.
+LaTeX Font Info:    Redeclaring math accent \check on input line 23.
+LaTeX Font Info:    Redeclaring math accent \hat on input line 23.
+LaTeX Font Info:    Redeclaring math accent \dot on input line 23.
+LaTeX Font Info:    Redeclaring math accent \mathring on input line 23.
+LaTeX Font Info:    Redeclaring math symbol \Gamma on input line 23.
+LaTeX Font Info:    Redeclaring math symbol \Delta on input line 23.
+LaTeX Font Info:    Redeclaring math symbol \Theta on input line 23.
+LaTeX Font Info:    Redeclaring math symbol \Lambda on input line 23.
+LaTeX Font Info:    Redeclaring math symbol \Xi on input line 23.
+LaTeX Font Info:    Redeclaring math symbol \Pi on input line 23.
+LaTeX Font Info:    Redeclaring math symbol \Sigma on input line 23.
+LaTeX Font Info:    Redeclaring math symbol \Upsilon on input line 23.
+LaTeX Font Info:    Redeclaring math symbol \Phi on input line 23.
+LaTeX Font Info:    Redeclaring math symbol \Psi on input line 23.
+LaTeX Font Info:    Redeclaring math symbol \Omega on input line 23.
+LaTeX Font Info:    Redeclaring math symbol \mathdollar on input line 23.
+LaTeX Font Info:    Redeclaring symbol font `operators' on input line 23.
+LaTeX Font Info:    Encoding `OT1' has changed to `TU' for symbol font
+(Font)              `operators' in the math version `normal' on input line 23.
+LaTeX Font Info:    Overwriting symbol font `operators' in version `normal'
+(Font)                  OT1/cmr/m/n --> TU/DejaVuSerif(0)/m/n on input line 23.
+
+LaTeX Font Info:    Encoding `OT1' has changed to `TU' for symbol font
+(Font)              `operators' in the math version `bold' on input line 23.
+LaTeX Font Info:    Overwriting symbol font `operators' in version `bold'
+(Font)                  OT1/cmr/bx/n --> TU/DejaVuSerif(0)/m/n on input line 23
+.
+LaTeX Font Info:    Overwriting symbol font `operators' in version `normal'
+(Font)                  TU/DejaVuSerif(0)/m/n --> TU/DejaVuSerif(0)/m/n on inpu
+t line 23.
+LaTeX Font Info:    Overwriting math alphabet `\mathit' in version `normal'
+(Font)                  OT1/cmr/m/it --> TU/DejaVuSerif(0)/m/it on input line 2
+3.
+LaTeX Font Info:    Overwriting math alphabet `\mathbf' in version `normal'
+(Font)                  OT1/cmr/bx/n --> TU/DejaVuSerif(0)/b/n on input line 23
+.
+LaTeX Font Info:    Overwriting math alphabet `\mathsf' in version `normal'
+(Font)                  OT1/cmss/m/n --> TU/DejaVuSans(0)/m/n on input line 23.
+
+LaTeX Font Info:    Overwriting math alphabet `\mathtt' in version `normal'
+(Font)                  OT1/cmtt/m/n --> TU/DejaVuSansMono(0)/m/n on input line
+ 23.
+LaTeX Font Info:    Overwriting symbol font `operators' in version `bold'
+(Font)                  TU/DejaVuSerif(0)/m/n --> TU/DejaVuSerif(0)/b/n on inpu
+t line 23.
+LaTeX Font Info:    Overwriting math alphabet `\mathit' in version `bold'
+(Font)                  OT1/cmr/bx/it --> TU/DejaVuSerif(0)/b/it on input line 
+23.
+LaTeX Font Info:    Overwriting math alphabet `\mathsf' in version `bold'
+(Font)                  OT1/cmss/bx/n --> TU/DejaVuSans(0)/b/n on input line 23
+.
+LaTeX Font Info:    Overwriting math alphabet `\mathtt' in version `bold'
+(Font)                  OT1/cmtt/m/n --> TU/DejaVuSansMono(0)/b/n on input line
+ 23.
+
+*geometry* driver: auto-detecting
+*geometry* detected driver: xetex
+*geometry* verbose mode - [ preamble ] result:
+* driver: xetex
+* paper: a4paper
+* layout: <same size as paper>
+* layoutoffset:(h,v)=(0.0pt,0.0pt)
+* modes: 
+* h-part:(L,W,R)=(56.9055pt, 483.69687pt, 56.9055pt)
+* v-part:(T,H,B)=(56.9055pt, 731.23584pt, 56.9055pt)
+* \paperwidth=597.50787pt
+* \paperheight=845.04684pt
+* \textwidth=483.69687pt
+* \textheight=731.23584pt
+* \oddsidemargin=-15.36449pt
+* \evensidemargin=-15.36449pt
+* \topmargin=-52.36449pt
+* \headheight=12.0pt
+* \headsep=25.0pt
+* \topskip=10.0pt
+* \footskip=30.0pt
+* \marginparwidth=57.0pt
+* \marginparsep=11.0pt
+* \columnsep=10.0pt
+* \skip\footins=9.0pt plus 4.0pt minus 2.0pt
+* \hoffset=0.0pt
+* \voffset=0.0pt
+* \mag=1000
+* \@twocolumnfalse
+* \@twosidefalse
+* \@mparswitchfalse
+* \@reversemarginfalse
+* (1in=72.27pt=25.4mm, 1cm=28.453pt)
+
+Package hyperref Info: Link coloring OFF on input line 23.
+(nameref.sty
+Package: nameref 2021-04-02 v2.47 Cross-referencing by name of section
+ (refcount.sty
+Package: refcount 2019/12/15 v3.6 Data extraction from label references (HO)
+) (gettitlestring.sty
+Package: gettitlestring 2019/12/15 v1.6 Cleanup title references (HO)
+)
+\c@section@level=\count319
+)
+LaTeX Info: Redefining \ref on input line 23.
+LaTeX Info: Redefining \pageref on input line 23.
+LaTeX Info: Redefining \nameref on input line 23.
+ (full_report.out)
+(full_report.out)
+\@outlinefile=\write4
+\openout4 = `full_report.out'.
+
+LaTeX Font Info:    Font shape `TU/DejaVuSerif(0)/m/n' will be
+(Font)              scaled to size 15.89755pt on input line 25.
+LaTeX Font Info:    Font shape `TU/DejaVuSerif(0)/b/n' will be
+(Font)              scaled to size 15.89755pt on input line 25.
+LaTeX Font Info:    Font shape `TU/DejaVuSerif(0)/m/n' will be
+(Font)              scaled to size 11.03998pt on input line 25.
+LaTeX Font Info:    Font shape `TU/DejaVuSerif(0)/m/n' will be
+(Font)              scaled to size 7.35999pt on input line 25.
+LaTeX Font Info:    Font shape `TU/DejaVuSerif(0)/m/n' will be
+(Font)              scaled to size 5.51999pt on input line 25.
+LaTeX Font Info:    Trying to load font information for U+msa on input line 25.
+
+ (umsa.fd
+File: umsa.fd 2013/01/14 v3.01 AMS symbols A
+)
+LaTeX Font Info:    Trying to load font information for U+msb on input line 25.
+
+ (umsb.fd
+File: umsb.fd 2013/01/14 v3.01 AMS symbols B
+)
+Overfull \hbox (6.61235pt too wide) in paragraph at lines 25--25
+ [][] 
+ []
+
+LaTeX Font Info:    Font shape `TU/DejaVuSerif(0)/m/n' will be
+(Font)              scaled to size 8.27998pt on input line 25.
+LaTeX Font Info:    Font shape `TU/DejaVuSerif(0)/b/n' will be
+(Font)              scaled to size 8.27998pt on input line 25.
+LaTeX Font Info:    Font shape `TU/DejaVuSerif(0)/m/it' will be
+(Font)              scaled to size 8.27998pt on input line 26.
+LaTeX Font Info:    Font shape `TU/DejaVuSansMono(0)/m/n' will be
+(Font)              scaled to size 7.65005pt on input line 33.
+LaTeX Font Info:    Font shape `TU/DejaVuSerif(0)/m/n' will be
+(Font)              scaled to size 13.24796pt on input line 35.
+LaTeX Font Info:    Font shape `TU/DejaVuSerif(0)/b/n' will be
+(Font)              scaled to size 13.24796pt on input line 35.
+(full_report.toc
+LaTeX Font Info:    Font shape `TU/DejaVuSerif(0)/b/n' will be
+(Font)              scaled to size 11.03998pt on input line 1.
+LaTeX Font Info:    Font shape `TU/DejaVuSerif(0)/b/n' will be
+(Font)              scaled to size 9.19998pt on input line 2.
+ [1
+
+]
+Overfull \hbox (1.21095pt too wide) in paragraph at lines 39--39
+[][]\TU/DejaVuSerif(0)/b/n/12 III Experiment registry (every design, pre-regist
+ration, audit and result doc- 
+ []
+
+
+Overfull \hbox (0.24707pt too wide) detected at line 40
+\TU/DejaVuSerif(0)/b/n/10 R1 
+ []
+
+
+Overfull \hbox (0.24707pt too wide) detected at line 54
+\TU/DejaVuSerif(0)/b/n/10 R2 
+ []
+
+
+Overfull \hbox (0.24707pt too wide) detected at line 60
+\TU/DejaVuSerif(0)/b/n/10 R3 
+ []
+
+
+Overfull \hbox (0.24707pt too wide) detected at line 62
+\TU/DejaVuSerif(0)/b/n/10 R4 
+ []
+
+
+Overfull \hbox (0.24707pt too wide) detected at line 69
+\TU/DejaVuSerif(0)/b/n/10 R5 
+ []
+
+
+Overfull \hbox (0.24707pt too wide) detected at line 73
+\TU/DejaVuSerif(0)/b/n/10 R6 
+ []
+
+
+Overfull \hbox (0.24707pt too wide) detected at line 83
+\TU/DejaVuSerif(0)/b/n/10 R7 
+ []
+
+
+Overfull \hbox (0.24707pt too wide) detected at line 87
+\TU/DejaVuSerif(0)/b/n/10 R8 
+ []
+
+
+Overfull \hbox (0.24707pt too wide) detected at line 98
+\TU/DejaVuSerif(0)/b/n/10 R9 
+ []
+
+
+Overfull \hbox (6.64842pt too wide) detected at line 99
+\TU/DejaVuSerif(0)/b/n/10 R10 
+ []
+
+
+Overfull \hbox (6.64842pt too wide) detected at line 110
+\TU/DejaVuSerif(0)/b/n/10 R11 
+ []
+
+
+Overfull \hbox (6.64842pt too wide) detected at line 115
+\TU/DejaVuSerif(0)/b/n/10 R12 
+ []
+
+
+Overfull \hbox (6.64842pt too wide) detected at line 117
+\TU/DejaVuSerif(0)/b/n/10 R13 
+ []
+
+
+Overfull \hbox (6.64842pt too wide) detected at line 145
+\TU/DejaVuSerif(0)/b/n/10 R14 
+ []
+
+
+Overfull \hbox (6.64842pt too wide) detected at line 151
+\TU/DejaVuSerif(0)/b/n/10 R15 
+ []
+
+
+Overfull \hbox (6.64842pt too wide) detected at line 158
+\TU/DejaVuSerif(0)/b/n/10 R16 
+ []
+
+
+Overfull \hbox (6.64842pt too wide) detected at line 163
+\TU/DejaVuSerif(0)/b/n/10 R17 
+ []
+
+
+Overfull \hbox (6.64842pt too wide) detected at line 166
+\TU/DejaVuSerif(0)/b/n/10 R18 
+ []
+
+[2]
+Overfull \hbox (6.64842pt too wide) detected at line 167
+\TU/DejaVuSerif(0)/b/n/10 R19 
+ []
+
+
+Overfull \hbox (6.64842pt too wide) detected at line 170
+\TU/DejaVuSerif(0)/b/n/10 R20 
+ []
+
+
+Overfull \hbox (6.64842pt too wide) detected at line 177
+\TU/DejaVuSerif(0)/b/n/10 R21 
+ []
+
+
+Overfull \hbox (6.64842pt too wide) detected at line 182
+\TU/DejaVuSerif(0)/b/n/10 R22 
+ []
+
+
+Overfull \hbox (6.64842pt too wide) detected at line 187
+\TU/DejaVuSerif(0)/b/n/10 R23 
+ []
+
+
+Overfull \hbox (6.64842pt too wide) detected at line 193
+\TU/DejaVuSerif(0)/b/n/10 R24 
+ []
+
+
+Overfull \hbox (6.64842pt too wide) detected at line 197
+\TU/DejaVuSerif(0)/b/n/10 R25 
+ []
+
+
+Overfull \hbox (6.64842pt too wide) detected at line 201
+\TU/DejaVuSerif(0)/b/n/10 R26 
+ []
+
+
+Overfull \hbox (6.64842pt too wide) detected at line 205
+\TU/DejaVuSerif(0)/b/n/10 R27 
+ []
+
+
+Overfull \hbox (6.64842pt too wide) detected at line 209
+\TU/DejaVuSerif(0)/b/n/10 R28 
+ []
+
+
+Overfull \hbox (6.64842pt too wide) detected at line 217
+\TU/DejaVuSerif(0)/b/n/10 R29 
+ []
+
+
+Overfull \hbox (6.64842pt too wide) detected at line 219
+\TU/DejaVuSerif(0)/b/n/10 R30 
+ []
+
+)
+\tf@toc=\write5
+\openout5 = `full_report.toc'.
+
+ [3]
+LaTeX Font Info:    Font shape `TU/DejaVuSerif(0)/b/n' will be
+(Font)              scaled to size 19.08076pt on input line 38.
+LaTeX Font Info:    Font shape `TU/DejaVuSerif(0)/m/it' will be
+(Font)              scaled to size 9.19998pt on input line 43.
+LaTeX Font Info:    Font shape `TU/DejaVuSerif(0)/m/n' will be
+(Font)              scaled to size 6.43999pt on input line 44.
+LaTeX Font Info:    Font shape `TU/DejaVuSerif(0)/m/n' will be
+(Font)              scaled to size 4.59999pt on input line 44.
+
+Overfull \hbox (49.02322pt too wide) in paragraph at lines 58--64
+\TU/DejaVuSerif(0)/m/n/10 [$\OT1/cmr/m/n/10 +0\OML/cmm/m/it/10 :\OT1/cmr/m/n/10
+ 105\OML/cmm/m/it/10 ; \OT1/cmr/m/n/10 +0\OML/cmm/m/it/10 :\OT1/cmr/m/n/10 181$
+\TU/DejaVuSerif(0)/m/n/10 ] (hair), $\OT1/cmr/m/n/10 +0\OML/cmm/m/it/10 :\OT1/c
+mr/m/n/10 230$ \TU/DejaVuSerif(0)/m/n/10 [$\OT1/cmr/m/n/10 +0\OML/cmm/m/it/10 :
+\OT1/cmr/m/n/10 204\OML/cmm/m/it/10 ; \OT1/cmr/m/n/10 +0\OML/cmm/m/it/10 :\OT1/
+cmr/m/n/10 255$\TU/DejaVuSerif(0)/m/n/10 ] (thyroid), $\OT1/cmr/m/n/10 +0\OML/c
+mm/m/it/10 :\OT1/cmr/m/n/10 368$ \TU/DejaVuSerif(0)/m/n/10 [$\OT1/cmr/m/n/10 +0
+\OML/cmm/m/it/10 :\OT1/cmr/m/n/10 340\OML/cmm/m/it/10 ; \OT1/cmr/m/n/10 +0\OML/
+cmm/m/it/10 :\OT1/cmr/m/n/10 397$\TU/DejaVuSerif(0)/m/n/10 ] (capsule), $\OT1/c
+mr/m/n/10 +0\OML/cmm/m/it/10 :\OT1/cmr/m/n/10 170$ \TU/DejaVuSerif(0)/m/n/10 [$
+\OT1/cmr/m/n/10 +0\OML/cmm/m/it/10 :\OT1/cmr/m/n/10 116\OML/cmm/m/it/10 ; \OT1/
+cmr/m/n/10 +0\OML/cmm/m/it/10 :\OT1/cmr/m/n/10 224$\TU/DejaVuSerif(0)/m/n/10 ]
+ []
+
+LaTeX Font Info:    Font shape `TU/DejaVuSansMono(0)/m/n' will be
+(Font)              scaled to size 8.50006pt on input line 81.
+[4
+
+]
+Overfull \hbox (4.21964pt too wide) in paragraph at lines 92--92
+[]|\TU/DejaVuSerif(0)/m/n/9 Stage| 
+ []
+
+
+Underfull \hbox (badness 1325) in paragraph at lines 102--103
+[]|\TU/DejaVuSerif(0)/m/n/9 I2E $\OMS/cmsy/m/n/9 !$ \TU/DejaVuSerif(0)/m/n/9 Mt
+E $\OMS/cmsy/m/n/9 !$ \TU/DejaVuSerif(0)/m/n/9 U-MtE; protection; balancing; U1
+–U14 ablations; JTT,
+ []
+
+
+Underfull \hbox (badness 1603) in paragraph at lines 104--105
+[]|\TU/DejaVuSerif(0)/m/n/9 Label definitions, mask audit, random-vs-grouped le
+akage, embedding
+ []
+
+
+Underfull \hbox (badness 10000) in paragraph at lines 114--114
+[]|\TU/DejaVuSerif(0)/m/n/9 ISIC 2018
+ []
+
+
+Underfull \hbox (badness 1968) in paragraph at lines 115--115
+[]|\TU/DejaVuSerif(0)/m/n/9 hair (published masks,
+ []
+
+
+Underfull \hbox (badness 10000) in paragraph at lines 115--115
+[]|\TU/DejaVuSerif(0)/m/n/9 U-Net lesion
+ []
+
+
+Underfull \hbox (badness 10000) in paragraph at lines 117--117
+[]|\TU/DejaVuSerif(0)/m/n/9 MMOTU
+ []
+
+
+Underfull \hbox (badness 1924) in paragraph at lines 117--117
+[]|\TU/DejaVuSerif(0)/m/n/9 calipers/overlays (same
+ []
+
+
+Underfull \hbox (badness 1953) in paragraph at lines 118--118
+[]|\TU/DejaVuSerif(0)/m/n/9 capsule en-
+ []
+
+
+Underfull \hbox (badness 10000) in paragraph at lines 118--118
+[]|\TU/DejaVuSerif(0)/m/n/9 debris/bubbles (patch-
+ []
+
+
+Underfull \hbox (badness 1365) in paragraph at lines 118--118
+\TU/DejaVuSerif(0)/m/n/9 token probe, IoU 0.62
+ []
+
+
+Underfull \hbox (badness 10000) in paragraph at lines 119--119
+[]|\TU/DejaVuSerif(0)/m/n/9 NIH ChestX-
+ []
+
+
+Underfull \hbox (badness 10000) in paragraph at lines 119--119
+[]|\TU/DejaVuSerif(0)/m/n/9 chest drains (image-
+ []
+
+
+Underfull \hbox (badness 10000) in paragraph at lines 120--120
+[]|\TU/DejaVuSerif(0)/m/n/9 NIH pneu-
+ []
+
+
+Underfull \hbox (badness 10000) in paragraph at lines 120--120
+\TU/DejaVuSerif(0)/m/n/9 mothorax
+ []
+
+
+Overfull \hbox (23.63033pt too wide) in paragraph at lines 112--121
+ [][] 
+ []
+
+[5]
+File: ../figures/data_isic.png Graphic file (type bmp)
+<../figures/data_isic.png>
+File: ../figures/data_thyroid.png Graphic file (type bmp)
+<../figures/data_thyroid.png>
+File: ../figures/data_ovary.png Graphic file (type bmp)
+<../figures/data_ovary.png>
+ [6]
+File: ../figures/data_capsule.png Graphic file (type bmp)
+<../figures/data_capsule.png>
+ [7]
+File: ../figures/data_cxr.png Graphic file (type bmp)
+<../figures/data_cxr.png>
+ [8] [9]
+File: ../../paper/figures/dose_response.pdf Graphic file (type pdf)
+<use ../../paper/figures/dose_response.pdf>
+File: ../../paper/figures/mechanism.pdf Graphic file (type pdf)
+<use ../../paper/figures/mechanism.pdf>
+ [10] (gen/tab_leak.tex) [11] (gen/tab_primary.tex)
+File: ../../paper/figures/forest.pdf Graphic file (type pdf)
+<use ../../paper/figures/forest.pdf>
+ [12]
+(gen/tab_scale.tex)
+Overfull \hbox (17.13702pt too wide) in paragraph at lines 227--233
+[]\TU/DejaVuSerif(0)/m/n/10 Larger models exploit the in-ROI caliper shortcut \
+TU/DejaVuSerif(0)/m/it/10 more \TU/DejaVuSerif(0)/m/n/10 (ERM gap thyroid 0.547
+$\OMS/cmsy/m/n/10 !$\TU/DejaVuSerif(0)/m/n/10 0.621, ovary 0.319$\OMS/cmsy/m/n/
+10 !$\TU/DejaVuSerif(0)/m/n/10 0.570).
+ []
+
+(gen/tab_natural.tex [13]) (../../paper/tables/natural_clinical.tex
+Overfull \hbox (27.33098pt too wide) in paragraph at lines 3--35
+ [][] 
+ []
+
+[14]) (gen/tab_theory_s.tex
+Overfull \hbox (33.44838pt too wide) in paragraph at lines 1--10
+ [][] 
+ []
+
+[15]) (gen/tab_theory_x.tex)
+File: ../../paper/figures/theory_predict.pdf Graphic file (type pdf)
+<use ../../paper/figures/theory_predict.pdf>
+ [16]
+File: ../../paper/figures/theory.pdf Graphic file (type pdf)
+<use ../../paper/figures/theory.pdf>
+ [17]
+LaTeX Font Info:    Font shape `TU/DejaVuSerif(0)/m/it' will be
+(Font)              scaled to size 6.43999pt on input line 274.
+LaTeX Font Info:    Font shape `TU/DejaVuSerif(0)/m/it' will be
+(Font)              scaled to size 4.59999pt on input line 274.
+ (gen/tab_abl.tex) [18]
+Overfull \hbox (2.6329pt too wide) in paragraph at lines 303--303
+[]\TU/DejaVuSerif(0)/b/n/14.4 Stage 10 — end-to-end fine-tuning and remedies fo
+r fine-tuned
+ []
+
+
+Overfull \hbox (26.18207pt too wide) in paragraph at lines 314--317
+[]\TU/DejaVuSansMono(0)/m/n/10 mte_post \TU/DejaVuSerif(0)/m/n/10 (fine-tune li
+ke \TU/DejaVuSansMono(0)/m/n/10 mask\TU/DejaVuSerif(0)/m/n/10 , then U-MtE on t
+he penultimate features; registry §[]R27[]): $\OT1/cmr/m/n/10 +0\OML/cmm/m/it/1
+0 :\OT1/cmr/m/n/10 004$ \TU/DejaVuSerif(0)/m/n/10 [$\OT1/cmr/m/n/10 +0\OML/cmm/
+m/it/10 :\OT1/cmr/m/n/10 000\OML/cmm/m/it/10 ; \OT1/cmr/m/n/10 +0\OML/cmm/m/it/
+10 :\OT1/cmr/m/n/10 012$\TU/DejaVuSerif(0)/m/n/10 ]
+ []
+
+[19]
+LaTeX Font Info:    Font shape `TU/DejaVuSansMono(0)/b/n' will be
+(Font)              scaled to size 8.50006pt on input line 324.
+
+Overfull \hbox (4.57787pt too wide) in paragraph at lines 324--328
+[]\TU/DejaVuSansMono(0)/b/n/10 umte_cons_ft \TU/DejaVuSerif(0)/b/n/10 (all thre
+e combined; pre-registered amendment before running): \TU/DejaVuSerif(0)/m/n/10
+ ResNet-50 $\OT1/cmr/m/n/10 +0\OML/cmm/m/it/10 :\OT1/cmr/m/n/10 157$
+ []
+
+(gen/tab_ft.tex) (gen/tab_ft_auc.tex) [20] (gen/tab_embg.tex) (gen/tab_emb.tex
+LaTeX Font Info:    Font shape `TU/DejaVuSerif(0)/b/n' will be
+(Font)              scaled to size 6.43999pt on input line 11.
+) [21]
+Overfull \hbox (43.60721pt too wide) in paragraph at lines 343--347
+[]\TU/DejaVuSerif(0)/b/n/10 Integrity. \TU/DejaVuSerif(0)/m/n/10 Every CI in bo
+th papers is traced automatically to a result file (\TU/DejaVuSansMono(0)/m/n/1
+0 scripts/verify/audit_paper_numbers.py\TU/DejaVuSerif(0)/m/n/10 ;
+ []
+
+
+Overfull \hbox (46.8588pt too wide) in paragraph at lines 357--360
+[]\TU/DejaVuSerif(0)/b/n/10 Backbones. \TU/DejaVuSerif(0)/m/n/10 DINOv2 ViT-S/B
+/L-14 @518 (CLS), MedSigLIP-448 (image features, joint space), DermLIP/PanDerm
+ []
+
+
+Overfull \hbox (1.03464pt too wide) in paragraph at lines 357--360
+\TU/DejaVuSerif(0)/m/n/10 (512-d joint space), RAD-DINO @518, ConvNeXt-Base @38
+4; fine-tuned ResNet-50 and ViT-S/16. Views
+ []
+
+
+Overfull \hbox (2.87764pt too wide) in paragraph at lines 365--367
+[]\TU/DejaVuSerif(0)/b/n/10 Reproduction. \TU/DejaVuSansMono(0)/m/n/10 make dat
+a data_extra verify synthetic isic2019 thyroid ovary capsule cxr drain
+ []
+
+
+Overfull \hbox (16.85606pt too wide) in paragraph at lines 365--367
+\TU/DejaVuSansMono(0)/m/n/10 natural finetune sensitivity scale lama baselines 
+analysis paper\TU/DejaVuSerif(0)/m/n/10 ; tool: \TU/DejaVuSansMono(0)/m/n/10 py
+thon -m wtss.umte\TU/DejaVuSerif(0)/m/n/10 , \TU/DejaVuSansMono(0)/m/n/10 pytho
+n
+ []
+
+[22] (gen/paper_tables.tex (../../paper/tables/main_inroi.tex
+Underfull \hbox (badness 2726) in paragraph at lines 2--2
+\TU/DejaVuSerif(0)/m/n/10 theses (penalises shortcut flipping). Best robust val
+ue per column in bold. Generated by
+ []
+
+) [23] [24] (../../paper/tables/main_inroi_compact.tex) [25
+
+]
+(../../paper/tables/natural_clinical.tex
+Overfull \hbox (27.33098pt too wide) in paragraph at lines 3--35
+ [][] 
+ []
+
+) [26
+
+] (../../paper/tables/synthetic_cxr_raddino518.tex) [27
+
+]
+(../../paper/tables/synthetic_interaction.tex) [28
+
+]
+(../../paper/tables/synthetic_isic_dermlip224.tex) [29
+
+]
+(../../paper/tables/synthetic_isic_dino224.tex) [30
+
+]
+(../../paper/tables/synthetic_isic_dino518.tex) [31
+
+]
+(../../paper/tables/traps_isic2019_dino518.tex) [32
+
+]
+(../../paper/tables/traps_isic2019_dino518_crossover.tex) [33
+
+])
+(gen/results_md.tex
+Overfull \hbox (503.77467pt too wide) in alignment at lines 10--14
+ [] [] [] [] [] [] 
+ []
+
+
+Overfull \hbox (503.77467pt too wide) in alignment at lines 14--16
+ [] [] [] [] [] [] 
+ []
+
+
+Overfull \hbox (503.77467pt too wide) in alignment at lines 16--105
+ [] [] [] [] [] [] 
+ []
+
+[34
+
+]
+Overfull \hbox (79.3689pt too wide) in alignment at lines 117--121
+ [] [] [] [] [] [] 
+ []
+
+
+Overfull \hbox (79.3689pt too wide) in alignment at lines 121--123
+ [] [] [] [] [] [] 
+ []
+
+Missing character: There is no ✓ (U+2713) in font DejaVu Serif/OT:script=latn;l
+anguage=dflt;mapping=tex-text;!
+Missing character: There is no ✓ (U+2713) in font DejaVu Serif/OT:script=latn;l
+anguage=dflt;mapping=tex-text;!
+Missing character: There is no ✓ (U+2713) in font DejaVu Serif/OT:script=latn;l
+anguage=dflt;mapping=tex-text;!
+Missing character: There is no ✓ (U+2713) in font DejaVu Serif/OT:script=latn;l
+anguage=dflt;mapping=tex-text;!
+Missing character: There is no ✓ (U+2713) in font DejaVu Serif/OT:script=latn;l
+anguage=dflt;mapping=tex-text;!
+Missing character: There is no ✓ (U+2713) in font DejaVu Serif/OT:script=latn;l
+anguage=dflt;mapping=tex-text;!
+Missing character: There is no ✓ (U+2713) in font DejaVu Serif/OT:script=latn;l
+anguage=dflt;mapping=tex-text;!
+Missing character: There is no ✓ (U+2713) in font DejaVu Serif/OT:script=latn;l
+anguage=dflt;mapping=tex-text;!
+Missing character: There is no ✓ (U+2713) in font DejaVu Serif/OT:script=latn;l
+anguage=dflt;mapping=tex-text;!
+Missing character: There is no ✗ (U+2717) in font DejaVu Serif/OT:script=latn;l
+anguage=dflt;mapping=tex-text;!
+Missing character: There is no ✓ (U+2713) in font DejaVu Serif/OT:script=latn;l
+anguage=dflt;mapping=tex-text;!
+Missing character: There is no ✓ (U+2713) in font DejaVu Serif/OT:script=latn;l
+anguage=dflt;mapping=tex-text;!
+Missing character: There is no ✓ (U+2713) in font DejaVu Serif/OT:script=latn;l
+anguage=dflt;mapping=tex-text;!
+
+Overfull \hbox (79.3689pt too wide) in alignment at lines 123--140
+ [] [] [] [] [] [] 
+ []
+
+[35]
+Overfull \hbox (42.15697pt too wide) in alignment at lines 158--162
+ [] [] [] [] [] 
+ []
+
+
+Overfull \hbox (42.15697pt too wide) in alignment at lines 162--164
+ [] [] [] [] [] 
+ []
+
+
+Overfull \hbox (42.15697pt too wide) in alignment at lines 164--180
+ [] [] [] [] [] 
+ []
+
+
+Overfull \hbox (42.15697pt too wide) in alignment at lines 186--190
+ [] [] [] [] [] 
+ []
+
+
+Overfull \hbox (42.15697pt too wide) in alignment at lines 190--192
+ [] [] [] [] [] 
+ []
+
+
+Overfull \hbox (42.15697pt too wide) in alignment at lines 192--206
+ [] [] [] [] [] 
+ []
+
+
+Overfull \hbox (42.15697pt too wide) in alignment at lines 212--216
+ [] [] [] [] [] 
+ []
+
+
+Overfull \hbox (42.15697pt too wide) in alignment at lines 216--218
+ [] [] [] [] [] 
+ []
+
+
+Overfull \hbox (42.15697pt too wide) in alignment at lines 218--236
+ [] [] [] [] [] 
+ []
+
+[36]
+Overfull \hbox (42.15697pt too wide) in alignment at lines 242--246
+ [] [] [] [] [] 
+ []
+
+
+Overfull \hbox (42.15697pt too wide) in alignment at lines 246--248
+ [] [] [] [] [] 
+ []
+
+
+Overfull \hbox (42.15697pt too wide) in alignment at lines 248--265
+ [] [] [] [] [] 
+ []
+
+
+Overfull \hbox (42.15697pt too wide) in alignment at lines 271--275
+ [] [] [] [] [] 
+ []
+
+
+Overfull \hbox (42.15697pt too wide) in alignment at lines 275--277
+ [] [] [] [] [] 
+ []
+
+
+Overfull \hbox (42.15697pt too wide) in alignment at lines 277--289
+ [] [] [] [] [] 
+ []
+
+
+Overfull \hbox (42.15697pt too wide) in alignment at lines 295--299
+ [] [] [] [] [] 
+ []
+
+
+Overfull \hbox (42.15697pt too wide) in alignment at lines 299--301
+ [] [] [] [] [] 
+ []
+
+
+Overfull \hbox (42.15697pt too wide) in alignment at lines 301--313
+ [] [] [] [] [] 
+ []
+
+[37]
+Overfull \hbox (42.15697pt too wide) in alignment at lines 319--323
+ [] [] [] [] [] 
+ []
+
+
+Overfull \hbox (42.15697pt too wide) in alignment at lines 323--325
+ [] [] [] [] [] 
+ []
+
+
+Overfull \hbox (42.15697pt too wide) in alignment at lines 325--336
+ [] [] [] [] [] 
+ []
+
+
+Overfull \hbox (42.15697pt too wide) in alignment at lines 342--346
+ [] [] [] [] [] 
+ []
+
+
+Overfull \hbox (42.15697pt too wide) in alignment at lines 346--348
+ [] [] [] [] [] 
+ []
+
+
+Overfull \hbox (42.15697pt too wide) in alignment at lines 348--359
+ [] [] [] [] [] 
+ []
+
+
+Overfull \hbox (42.15697pt too wide) in alignment at lines 365--369
+ [] [] [] [] [] 
+ []
+
+
+Overfull \hbox (42.15697pt too wide) in alignment at lines 369--371
+ [] [] [] [] [] 
+ []
+
+
+Overfull \hbox (42.15697pt too wide) in alignment at lines 371--387
+ [] [] [] [] [] 
+ []
+
+
+Overfull \hbox (7.58156pt too wide) in alignment at lines 393--397
+ [] [] [] [] [] 
+ []
+
+
+Overfull \hbox (7.58156pt too wide) in alignment at lines 397--399
+ [] [] [] [] [] 
+ []
+
+
+Overfull \hbox (7.58156pt too wide) in alignment at lines 399--406
+ [] [] [] [] [] 
+ []
+
+[38]
+Overfull \hbox (42.15697pt too wide) in alignment at lines 412--416
+ [] [] [] [] [] 
+ []
+
+
+Overfull \hbox (42.15697pt too wide) in alignment at lines 416--418
+ [] [] [] [] [] 
+ []
+
+
+Overfull \hbox (42.15697pt too wide) in alignment at lines 418--435
+ [] [] [] [] [] 
+ []
+
+
+Overfull \hbox (42.15697pt too wide) in alignment at lines 441--445
+ [] [] [] [] [] 
+ []
+
+
+Overfull \hbox (42.15697pt too wide) in alignment at lines 445--447
+ [] [] [] [] [] 
+ []
+
+
+Overfull \hbox (42.15697pt too wide) in alignment at lines 447--464
+ [] [] [] [] [] 
+ []
+
+) (gen/registry.tex [39]
+Overfull \hbox (286.59346pt too wide) in alignment at lines 44--48
+ [] [] [] 
+ []
+
+
+Overfull \hbox (286.59346pt too wide) in alignment at lines 48--50
+ [] [] [] 
+ []
+
+
+Overfull \hbox (286.59346pt too wide) in alignment at lines 50--58
+ [] [] [] 
+ []
+
+
+Overfull \hbox (210.4696pt too wide) in paragraph at lines 71--74
+ []\TU/DejaVuSerif(0)/b/n/10 3.2 Backbones and heads[] \TU/DejaVuSerif(0)/m/n/9
+ Frozen DINOv2 ViT-B/14 CLS @518 (primary) and @224; DermLIP/PanDerm (\TU/DejaV
+uSansMono(0)/m/n/9 hf-hub:redlessone/DermLIP_PanDerm-base-w-PubMed-256\TU/DejaV
+uSerif(0)/m/n/9 ,
+ []
+
+
+Overfull \hbox (60.64737pt too wide) in paragraph at lines 71--74
+\TU/DejaVuSansMono(0)/m/n/9 encode_image\TU/DejaVuSerif(0)/m/n/9 , native prepr
+ocessing @224). L2-normalised features. Head: LogisticRegression(liblinear, cla
+ss_weight=”balanced”,
+ []
+
+[40]
+Overfull \hbox (309.61002pt too wide) in alignment at lines 99--103
+ [] [] [] 
+ []
+
+
+Overfull \hbox (309.61002pt too wide) in alignment at lines 103--105
+ [] [] [] 
+ []
+
+
+Overfull \hbox (309.61002pt too wide) in alignment at lines 105--116
+ [] [] [] 
+ []
+
+
+Overfull \hbox (37.36432pt too wide) in paragraph at lines 127--132
+\TU/DejaVuSerif(0)/m/n/9 melanoma 4.5 % vs 20.9 %). Mask − ERM: +0.184 [+0.146,
++0.224], −0.058 [−0.100,−0.018], −0.097 [−0.138,−0.056],
+ []
+
+
+Overfull \hbox (4.10529pt too wide) in paragraph at lines 127--132
+\TU/DejaVuSerif(0)/m/n/9 −0.111 [−0.153,−0.068], −0.128 [−0.170,−0.086]; intera
+ction +0.312 [+0.272,+0.354]; mask corr=rev=0.849
+ []
+
+
+Overfull \hbox (11.08711pt too wide) in paragraph at lines 132--136
+\TU/DejaVuSerif(0)/m/n/9 NOv2@224 +0.364/−0.040/−0.076/−0.102/−0.092; DermLIP@2
+24 +0.160/−0.291/−0.300/−0.313/−0.268. One
+ []
+
+
+Overfull \hbox (4.09467pt too wide) in paragraph at lines 150--153
+[]\TU/DejaVuSerif(0)/b/n/9 E8 \TU/DejaVuSerif(0)/m/n/9 inpaint rev 0.806/0.783/
+0.779/0.759; Δ +0.211/+0.209/+0.244; consistency +0.038/+0.046/+0.031/+0.043,
+ []
+
+[41]
+Overfull \hbox (25.32458pt too wide) in paragraph at lines 183--186
+[]\TU/DejaVuSerif(0)/b/n/9 E14 \TU/DejaVuSerif(0)/m/n/9 area ratio: in-lesion h
+air median 0.033, ruler 0.030; Trap A tertiles (0.005/0.032/0.116): −0.064/−0.0
+57/−0.059;
+ []
+
+
+Overfull \hbox (1905.71678pt too wide) in alignment at lines 211--215
+ [] [] [] [] 
+ []
+
+
+Overfull \hbox (1905.71678pt too wide) in alignment at lines 215--217
+ [] [] [] [] 
+ []
+
+
+Overfull \hbox (1905.71678pt too wide) in alignment at lines 217--235
+ [] [] [] [] 
+ []
+
+[42]
+Overfull \hbox (173.8762pt too wide) in alignment at lines 252--256
+ [] [] [] [] 
+ []
+
+
+Overfull \hbox (173.8762pt too wide) in alignment at lines 256--258
+ [] [] [] [] 
+ []
+
+
+Overfull \hbox (173.8762pt too wide) in alignment at lines 258--268
+ [] [] [] [] 
+ []
+
+
+Overfull \hbox (413.37717pt too wide) in alignment at lines 301--305
+ [] [] [] [] 
+ []
+
+
+Overfull \hbox (413.37717pt too wide) in alignment at lines 305--307
+ [] [] [] [] 
+ []
+
+
+Overfull \hbox (413.37717pt too wide) in alignment at lines 307--316
+ [] [] [] [] 
+ []
+
+[43]
+Overfull \hbox (12.22775pt too wide) in paragraph at lines 341--345
+\TU/DejaVuSansMono(0)/m/n/9 results/real/\TU/DejaVuSerif(0)/m/n/9 ). The code t
+hat produced thesis §9 was not present in the archived repository (\TU/DejaVuSa
+nsMono(0)/m/n/9 isic_pcam_code_results/\TU/DejaVuSerif(0)/m/n/9 ),
+ []
+
+[44]
+Overfull \hbox (118.50546pt too wide) in paragraph at lines 470--473
+[]\TU/DejaVuSerif(0)/m/n/9 Committed \TU/DejaVuSerif(0)/b/n/9 after \TU/DejaVuS
+erif(0)/m/n/9 the pre-registered ISIC 2019 trap results (DINOv2) and the post-h
+oc diagnostics (\TU/DejaVuSansMono(0)/m/n/9 scripts/analysis/real_trap_diagnost
+ics.py\TU/DejaVuSerif(0)/m/n/9 ),
+ []
+
+[45] [46]
+Overfull \hbox (106.96619pt too wide) in alignment at lines 605--609
+ [] [] [] [] [] [] 
+ []
+
+
+Overfull \hbox (106.96619pt too wide) in alignment at lines 609--611
+ [] [] [] [] [] [] 
+ []
+
+
+Overfull \hbox (106.96619pt too wide) in alignment at lines 611--616
+ [] [] [] [] [] [] 
+ []
+
+
+Overfull \hbox (166.60814pt too wide) in paragraph at lines 623--623
+[]\TU/DejaVuSerif(0)/b/n/10 Controlled synthetic tube, RAD-DINO@518, NIH pneumo
+thorax (results/synthetic/nih_ptx/raddino518_tube_corr_main) 
+ []
+
+[47]
+Overfull \hbox (17.73822pt too wide) in paragraph at lines 705--707
+[]\TU/DejaVuSerif(0)/m/n/9 Committed before any model is fitted on this cohort.
+ Protocol = the author[]s E13 protocol (docs/REPLICATION_SPEC.md)
+ []
+
+
+Overfull \hbox (31.79012pt too wide) in paragraph at lines 715--718
+[]\TU/DejaVuSerif(0)/m/n/9 Marker masks: audited rule-based detector \TU/DejaVu
+SansMono(0)/m/n/9 wtss.data.us_markers.marker_mask \TU/DejaVuSerif(0)/m/n/9 (do
+cs/THYROID_MARKER_AUDIT.md;
+ []
+
+[48]
+Overfull \hbox (12.36575pt too wide) in paragraph at lines 782--782
+[]\TU/DejaVuSerif(0)/b/n/10 Results — DINOv2@518, real markers (results/thyroid
+/dino518_main, dino518_universal) 
+ []
+
+
+Overfull \hbox (186.5305pt too wide) in paragraph at lines 813--813
+[]\TU/DejaVuSerif(0)/b/n/10 Results — Amendment 1, controlled synthetic caliper
+s, DINOv2@518 (results/synthetic/thyroid/dino518_caliper_corr_main) 
+ []
+
+[49]
+Overfull \hbox (1.65237pt too wide) in paragraph at lines 832--832
+[]\TU/DejaVuSerif(0)/b/n/10 Amendment 2 (before fitting): controlled synthetic-
+caliper replication with MedSigLIP-
+ []
+
+
+Overfull \hbox (106.84329pt too wide) in paragraph at lines 837--837
+ []\TU/DejaVuSerif(0)/b/n/10 Results — Amendment 2, MedSigLIP controlled calipe
+rs (results/synthetic/thyroid/medsiglip448_caliper_corr_main)[] 
+ []
+
+
+Overfull \hbox (47.56055pt too wide) in paragraph at lines 883--883
+[]\TU/DejaVuSerif(0)/b/n/10 Cohort (outcome-free; /root/data/capsule/capsule_co
+hort.csv, scripts/data/prepare_capsule.py) 
+ []
+
+
+Overfull \hbox (25.2928pt too wide) in paragraph at lines 906--909
+\TU/DejaVuSerif(0)/m/n/9 As thyroid: erm, mask, inpaint (Telea of the probe mas
+k; mask-quality-limited), balanced, dfr, leace_paired, leace_unpaired,
+ []
+
+[50]
+Overfull \hbox (6.8354pt too wide) in paragraph at lines 922--924
+[]\TU/DejaVuSerif(0)/m/n/9 Frames with contamination < 5 % (796 after common su
+pport); split 60/20/20 by leakage group (seed 20260927). 
+ []
+
+
+Overfull \hbox (32.64943pt too wide) in paragraph at lines 932--932
+[]\TU/DejaVuSerif(0)/b/n/10 Results — DINOv2@518, real contamination, template 
+arms (results/capsule/dino518_main) 
+ []
+
+
+Overfull \hbox (106.4161pt too wide) in paragraph at lines 954--954
+[]\TU/DejaVuSerif(0)/b/n/10 Results — controlled synthetic debris, DINOv2@518 (
+results/synthetic/capsule/dino518_debris_corr_main) 
+ []
+
+
+Overfull \hbox (36.89665pt too wide) in paragraph at lines 972--972
+[]\TU/DejaVuSerif(0)/b/n/10 Replication — MedSigLIP-448 (results/capsule/medsig
+lip448_main, medsiglip448_universal) 
+ []
+
+
+Overfull \hbox (42.74155pt too wide) in paragraph at lines 979--979
+[]\TU/DejaVuSerif(0)/b/n/10 Replication — ConvNeXt-Base (CNN), generic library 
+(results/capsule/convnext384_universal) 
+ []
+
+
+Overfull \hbox (19.19333pt too wide) in paragraph at lines 981--983
+\TU/DejaVuSerif(0)/m/n/9 mte_aug 0.655, U-MtE_balanced 0.803, mask+DFR 0.864 (c
+orr 0.878; most robust). Same pattern as DINOv2/MedSigLIP. 
+ []
+
+
+Overfull \hbox (143.24854pt too wide) in paragraph at lines 989--989
+ []\TU/DejaVuSerif(0)/b/n/10 Results — MedSigLIP replication of the controlled 
+debris sweep (results/synthetic/capsule/medsiglip448_debris_corr_main)[] 
+ []
+
+[51]
+Overfull \hbox (44.6239pt too wide) in paragraph at lines 1007--1008
+[]\TU/DejaVuSerif(0)/m/n/9 Committed before any model is fitted on this cohort.
+ Protocol = thyroid traps (docs/PREREGISTRATION_THYROID_TRAPS.md). 
+ []
+
+
+Overfull \hbox (105.9534pt too wide) in paragraph at lines 1070--1070
+[]\TU/DejaVuSerif(0)/b/n/10 Results — controlled synthetic calipers, DINOv2@518
+ (results/synthetic/ovary/dino518_caliper_corr_main;
+ []
+
+[52] [53]
+Missing character: There is no ✅ (U+2705) in font DejaVu Serif/OT:script=latn;l
+anguage=dflt;mapping=tex-text;!
+Missing character: There is no ❌ (U+274C) in font DejaVu Serif/OT:script=latn;l
+anguage=dflt;mapping=tex-text;!
+Missing character: There is no ✅ (U+2705) in font DejaVu Serif/OT:script=latn;l
+anguage=dflt;mapping=tex-text;!
+Missing character: There is no ✅ (U+2705) in font DejaVu Serif/OT:script=latn;l
+anguage=dflt;mapping=tex-text;!
+Missing character: There is no ✅ (U+2705) in font DejaVu Serif/OT:script=latn;l
+anguage=dflt;mapping=tex-text;!
+Missing character: There is no ✅ (U+2705) in font DejaVu Serif/OT:script=latn;l
+anguage=dflt;mapping=tex-text;!
+[54]
+Overfull \hbox (1.6794pt too wide) in paragraph at lines 1254--1256
+[]\TU/DejaVuSerif(0)/b/n/9 U9a supported \TU/DejaVuSerif(0)/m/n/9 (capsule): mt
+e_protect − mte = +0.383 [+0.357, +0.414] (template), +0.105 [+0.092, +0.117]
+ []
+
+
+Overfull \hbox (3.86655pt too wide) in paragraph at lines 1296--1299
+ []\TU/DejaVuSerif(0)/b/n/10 Replication — MedSigLIP-448, thyroid, generic libr
+ary (results/thyroid/medsiglip448_universal)[]
+ []
+
+[55]
+Overfull \hbox (23.32262pt too wide) in paragraph at lines 1330--1334
+ []\TU/DejaVuSerif(0)/b/n/10 CNN replication — ConvNeXt-Base, thyroid, generic 
+library (results/thyroid/convnext384_universal)[]
+ []
+
+
+Overfull \hbox (9.2134pt too wide) in paragraph at lines 1337--1340
+ []\TU/DejaVuSerif(0)/b/n/10 U9 extension — DermLIP, ISIC hair (results/spec_e1
+3/dermlip224_spec_protect; post-registration
+ []
+
+
+Overfull \hbox (140.18913pt too wide) in paragraph at lines 1349--1351
+ []\TU/DejaVuSerif(0)/b/n/10 Protected U-MtE in controlled sweeps — capsule, Me
+dSigLIP (results/synthetic/capsule/medsiglip448_debris_corr_protect)[]
+ []
+
+
+Overfull \hbox (98.07112pt too wide) in alignment at lines 1386--1390
+ [] [] [] [] [] 
+ []
+
+
+Overfull \hbox (98.07112pt too wide) in alignment at lines 1390--1392
+ [] [] [] [] [] 
+ []
+
+
+Overfull \hbox (98.07112pt too wide) in alignment at lines 1392--1397
+ [] [] [] [] [] 
+ []
+
+[56]
+Missing character: There is no ≫ (U+226B) in font DejaVu Serif/OT:script=latn;l
+anguage=dflt;mapping=tex-text;!
+
+Overfull \hbox (135.5782pt too wide) in alignment at lines 1409--1413
+ [] [] [] [] [] [] 
+ []
+
+
+Overfull \hbox (135.5782pt too wide) in alignment at lines 1413--1415
+ [] [] [] [] [] [] 
+ []
+
+
+Overfull \hbox (135.5782pt too wide) in alignment at lines 1415--1421
+ [] [] [] [] [] [] 
+ []
+
+
+Overfull \hbox (0.5233pt too wide) in paragraph at lines 1430--1435
+\TU/DejaVuSerif(0)/m/n/9 val_groups is split per image (stable hash ”val_half”)
+ into two halves. DFR-type candidates dfr_half and mask_dfr_half
+ []
+
+
+Overfull \hbox (54.9478pt too wide) in paragraph at lines 1438--1446
+ []\TU/DejaVuSerif(0)/b/n/10 U14 results — split-validation selection (logs/aut
+o2_select.log; results/adaptive_select_split_summary.csv)[]
+ []
+
+[57]
+Overfull \hbox (14.65144pt too wide) in paragraph at lines 1478--1480
+\TU/DejaVuSerif(0)/m/n/9 changed from docs/REPLICATION_SPEC.md (E13, ISIC 2019 
+hair) and docs/PREREGISTRATION_THYROID_TRAPS.md. 
+ []
+
+Missing character: There is no ≫ (U+226B) in font DejaVu Serif/OT:script=latn;l
+anguage=dflt;mapping=tex-text;!
+[58]
+Overfull \hbox (7.62352pt too wide) in paragraph at lines 1561--1561
+[]\TU/DejaVuSerif(0)/b/n/10 Results — thyroid ultrasound markers, DINOv2@518, k
+ = 50 detector-annotated donors
+ []
+
+
+Overfull \hbox (35.7068pt too wide) in paragraph at lines 1592--1595
+[]\TU/DejaVuSerif(0)/m/n/9 Traps: the thyroid (and capsule) spec traps of docs/
+PREREGISTRATION_THYROID_TRAPS.md / _CAPSULE_TRAPS.md;
+ []
+
+
+Overfull \hbox (7.52528pt too wide) in paragraph at lines 1606--1606
+[]\TU/DejaVuSerif(0)/b/n/10 Results — thyroid, ResNet-50 fine-tuned end-to-end 
+(results/finetune/thyroid/resnet50;
+ []
+
+
+Overfull \hbox (2.43726pt too wide) in paragraph at lines 1608--1610
+\TU/DejaVuSerif(0)/m/n/9 Trap A reversed / corr (clean): ERM 0.431 / 0.744 (0.5
+87); mask 0.536 / 0.827 (0.691); balanced 0.599; mask_balanced
+ []
+
+
+Overfull \hbox (4.71748pt too wide) in paragraph at lines 1627--1629
+\TU/DejaVuSerif(0)/m/n/9 Trap A reversed / corr (clean): ERM 0.495 / 0.900 (0.7
+19); mask \TU/DejaVuSerif(0)/b/n/9 0.211 \TU/DejaVuSerif(0)/m/n/9 / 0.915 (0.59
+6); balanced 0.670; mask_balanced
+ []
+
+
+Overfull \hbox (2.43726pt too wide) in paragraph at lines 1646--1650
+\TU/DejaVuSerif(0)/m/n/9 Trap A reversed / corr (clean): ERM 0.457 / 0.671 (0.5
+76); mask 0.556 / 0.570 (0.578); balanced 0.602; mask_balanced
+ []
+
+[59]
+Overfull \hbox (37.83685pt too wide) in paragraph at lines 1651--1651
+[]\TU/DejaVuSerif(0)/b/n/10 Amendment (before training): ViT-S/16 (timm vit_sma
+ll_patch16_224.augreg_in21k_ft_in1k),
+ []
+
+
+Overfull \hbox (122.95032pt too wide) in paragraph at lines 1655--1655
+[]\TU/DejaVuSerif(0)/b/n/10 Results — thyroid, ViT-S/16 fine-tuned (results/fin
+etune/thyroid/vit_small_patch16_224.augreg_in21k_ft_in1k) 
+ []
+
+
+Overfull \hbox (2.43726pt too wide) in paragraph at lines 1657--1659
+\TU/DejaVuSerif(0)/m/n/9 Trap A reversed / corr (clean): ERM 0.377 / 0.860 (0.6
+40); mask 0.465 / 0.868 (0.688); balanced 0.693; mask_balanced
+ []
+
+
+Overfull \hbox (7.86862pt too wide) in paragraph at lines 1691--1694
+[]\TU/DejaVuSerif(0)/m/n/9 Arms: erm, mask, balanced, mask_balanced, U-MtE, U-M
+tE_protect, U-MtE_balanced, U-MtE_protect_balanced,
+ []
+
+[60]
+Overfull \hbox (72.08037pt too wide) in paragraph at lines 1756--1756
+[]\TU/DejaVuSerif(0)/b/n/10 Results — amendment cohorts (DINOv2@518, 5 seeds; r
+esults/natural/*_dino518/natural_boot.json) 
+ []
+
+
+Overfull \hbox (35.80078pt too wide) in paragraph at lines 1779--1785
+\TU/DejaVuSerif(0)/m/n/9 point; \TU/DejaVuSansMono(0)/m/n/9 scripts/analysis/cl
+inical_metrics.py \TU/DejaVuSerif(0)/m/n/9 → results/natural/clinical_metrics.c
+sv, paper/tables/natural_clinical.tex).
+ []
+
+[61]
+Overfull \hbox (21.36002pt too wide) in alignment at lines 1820--1824
+ [] [] [] [] [] 
+ []
+
+
+Overfull \hbox (21.36002pt too wide) in alignment at lines 1824--1826
+ [] [] [] [] [] 
+ []
+
+
+Overfull \hbox (21.36002pt too wide) in alignment at lines 1826--1833
+ [] [] [] [] [] 
+ []
+
+
+Overfull \hbox (329.88196pt too wide) in alignment at lines 1857--1861
+ [] [] [] [] 
+ []
+
+
+Overfull \hbox (329.88196pt too wide) in alignment at lines 1861--1863
+ [] [] [] [] 
+ []
+
+
+Overfull \hbox (329.88196pt too wide) in alignment at lines 1863--1871
+ [] [] [] [] 
+ []
+
+[62]
+Overfull \hbox (14.31682pt too wide) in paragraph at lines 1902--1902
+[]\TU/DejaVuSerif(0)/b/n/10 Results — DINOv2@518, Trap A reversed AUROC (result
+s/{thyroid,ovary}/dino518_lama;
+ []
+
+[63]
+Overfull \hbox (134.32388pt too wide) in paragraph at lines 1984--1984
+[]\TU/DejaVuSerif(0)/b/n/10 Results (Trap A reversed AUROC [95 % CI]; results/*
+/medsiglip448_text, results/spec_e13/dermlip224_spec_text) 
+ []
+
+
+Overfull \hbox (114.10147pt too wide) in alignment at lines 1987--1991
+ [] [] [] [] [] 
+ []
+
+
+Overfull \hbox (114.10147pt too wide) in alignment at lines 1991--1993
+ [] [] [] [] [] 
+ []
+
+
+Overfull \hbox (114.10147pt too wide) in alignment at lines 1993--1998
+ [] [] [] [] [] 
+ []
+
+[64] [65]
+Missing character: There is no ≫ (U+226B) in font DejaVu Serif/OT:script=latn;l
+anguage=dflt;mapping=tex-text;!
+
+Overfull \hbox (5.40106pt too wide) in paragraph at lines 2131--2131
+[]\TU/DejaVuSerif(0)/b/n/10 Empirical test on real encoders (docs/PREREGISTRATI
+ON_THEORY_PREDICTION.md) 
+ []
+
+
+Overfull \hbox (3.04097pt too wide) in paragraph at lines 2133--2140
+\TU/DejaVuSerif(0)/m/n/9 miss is a near-zero chest-radiograph cell), better tha
+n simple reference predictors (scripts/analysis/theory_predict.py;
+ []
+
+
+Overfull \hbox (15.45573pt too wide) in paragraph at lines 2187--2192
+\TU/DejaVuSerif(0)/m/n/9 thyroid (dino518_main, medsiglip448_main, convnext384_
+universal); capsule (dino518_main, medsiglip448_main,
+ []
+
+
+Overfull \hbox (13.34343pt too wide) in paragraph at lines 2187--2192
+\TU/DejaVuSerif(0)/m/n/9 convnext384_universal); ovary (dino518_main, medsiglip
+448_text); chest-radiograph traps (cxr_traps/raddino518
+ []
+
+
+Overfull \hbox (42.92671pt too wide) in paragraph at lines 2194--2198
+[]\TU/DejaVuSerif(0)/m/n/9 Controlled overlap sweeps (5 overlaps each): synthet
+ic/isic2018 {dino518, dermlip224, dino224}_ruler_fixed_corr_main;
+ []
+
+[66]
+Overfull \hbox (54.05766pt too wide) in paragraph at lines 2233--2233
+[]\TU/DejaVuSerif(0)/b/n/10 Results (results/theory/prediction_summary.json, pr
+ediction_cells.csv, prediction_crossover.csv;
+ []
+
+
+Overfull \hbox (212.40967pt too wide) in alignment at lines 2239--2243
+ [] [] [] [] 
+ []
+
+
+Overfull \hbox (212.40967pt too wide) in alignment at lines 2243--2245
+ [] [] [] [] 
+ []
+
+
+Overfull \hbox (212.40967pt too wide) in alignment at lines 2245--2252
+ [] [] [] [] 
+ []
+
+[67]
+Overfull \hbox (3.52464pt too wide) in paragraph at lines 2362--2365
+\TU/DejaVuSerif(0)/m/n/9 (mte_aug); generic overlays. \TU/DejaVuSansMono(0)/m/n
+/9 run_thyroid_traps.py --backbone {dinos518,dinol518} --cohort ... --generic
+ []
+
+[68]
+Overfull \hbox (48.4726pt too wide) in alignment at lines 2384--2388
+ [] [] [] [] [] [] 
+ []
+
+
+Overfull \hbox (48.4726pt too wide) in alignment at lines 2388--2390
+ [] [] [] [] [] [] 
+ []
+
+
+Overfull \hbox (48.4726pt too wide) in alignment at lines 2390--2400
+ [] [] [] [] [] [] 
+ []
+
+
+Overfull \hbox (9.38557pt too wide) in paragraph at lines 2439--2439
+[]\TU/DejaVuSerif(0)/b/n/10 Results (results/ablation_umte/summary.csv; Trap A 
+reversed AUROC, mean over seeds) 
+ []
+
+
+Overfull \hbox (124.75923pt too wide) in alignment at lines 2442--2446
+ [] [] [] [] [] [] 
+ []
+
+
+Overfull \hbox (124.75923pt too wide) in alignment at lines 2446--2448
+ [] [] [] [] [] [] 
+ []
+
+
+Overfull \hbox (124.75923pt too wide) in alignment at lines 2448--2456
+ [] [] [] [] [] [] 
+ []
+
+[69] [70]
+Overfull \hbox (55.17264pt too wide) in paragraph at lines 2560--2562
+\TU/DejaVuSansMono(0)/m/n/9 run_finetune_spec.py --cohort thyroid --arms umte_f
+t --traps trapA [--arch vit_small_patch16_224.augreg_in21k_ft_in1k
+ []
+
+
+Overfull \hbox (18.2641pt too wide) in paragraph at lines 2625--2629
+\TU/DejaVuSansMono(0)/m/n/9 python scripts/run_finetune_spec.py --cohort ovary 
+--arms umte_cons_ft --traps trapA \TU/DejaVuSerif(0)/m/n/9 and the same with \T
+U/DejaVuSansMono(0)/m/n/9 --cohort
+ []
+
+[71]
+Overfull \hbox (2318.15791pt too wide) in alignment at lines 2639--2643
+ [] [] [] [] 
+ []
+
+
+Overfull \hbox (2318.15791pt too wide) in alignment at lines 2643--2645
+ [] [] [] [] 
+ []
+
+
+Overfull \hbox (2318.15791pt too wide) in alignment at lines 2645--2653
+ [] [] [] [] 
+ []
+
+
+Overfull \hbox (132.06844pt too wide) in alignment at lines 2689--2693
+ [] [] [] [] [] 
+ []
+
+
+Overfull \hbox (132.06844pt too wide) in alignment at lines 2693--2695
+ [] [] [] [] [] 
+ []
+
+
+Overfull \hbox (132.06844pt too wide) in alignment at lines 2695--2707
+ [] [] [] [] [] 
+ []
+
+[72]
+Overfull \hbox (2.61594pt too wide) in paragraph at lines 2771--2774
+[]\TU/DejaVuSerif(0)/m/n/9 Disease protection in sweeps: fixes MedSigLIP capsul
+e (+0.061 over masking), helps DINOv2 capsule (+0.118),
+ []
+
+[73]
+Missing character: There is no ≫ (U+226B) in font DejaVu Serif/OT:script=latn;l
+anguage=dflt;mapping=tex-text;!
+
+Overfull \hbox (50.9457pt too wide) in paragraph at lines 2820--2823
+\TU/DejaVuSerif(0)/m/n/9 mask 3/4; erase > augment 3/4; U-MtE+bal > balanced 2/
+4). docs/STATISTICAL_PLAN.md, results/PRIMARY_CLAIMS.md. 
+ []
+
+
+Overfull \hbox (8.76791pt too wide) in paragraph at lines 2823--2827
+[]\TU/DejaVuSerif(0)/b/n/9 Natural distribution (thyroid, official split, no re
+sampling)\TU/DejaVuSerif(0)/m/n/9 : masking lowers AUROC on shortcut-conflictin
+g
+ []
+
+
+Overfull \hbox (22.84573pt too wide) in paragraph at lines 2830--2832
+[]\TU/DejaVuSerif(0)/b/n/9 Theory\TU/DejaVuSerif(0)/m/n/9 : AUROC_rev = Φ((S − 
+Ã)/√(2(S + Ã))); simulation agreement 0.009; explains all regimes (docs/THEORY.
+md). 
+ []
+
+) [74] (full_report.aux)
+
+LaTeX Warning: There were multiply-defined labels.
+
+Package rerunfilecheck Info: File `full_report.out' has not changed.
+(rerunfilecheck)             Checksum: 011D8100CCBEAC7D2E5BB2393AE8C631;15026.
+ )
+Output written on full_report.xdv (74 pages, 2407996 bytes).

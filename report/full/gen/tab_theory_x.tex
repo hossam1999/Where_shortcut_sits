@@ -1,0 +1,23 @@
+\begin{table}[H]\centering\small
+\caption{Theory versus real encoders: location crossover implied by $(S,A)$ fitted to clean and correlated AUROC only.}\label{tab:theoryx}
+\begin{tabular}{lllcc}\toprule
+Cohort & Backbone & Regime & Observed crossover & Theory (fit on clean+corr) \\\midrule
+CXR Atelectasis & RAD-DINO & frozen & +0.060 & +0.062 \\
+CXR Consolidation & RAD-DINO & frozen & -0.002 & +0.010 \\
+CXR Effusion & RAD-DINO & frozen & -0.004 & -0.013 \\
+CXR Infiltration & RAD-DINO & frozen & -0.032 & -0.040 \\
+Capsule & ConvNeXt & frozen & +0.292 & +0.288 \\
+Capsule & DINOv2 & frozen & +0.368 & +0.335 \\
+Capsule & MedSigLIP & frozen & +0.332 & +0.300 \\
+Capsule & ResNet-50 FT & end-to-end & +0.584 & +0.542 \\
+ISIC hair & DINOv2 & frozen & +0.145 & +0.147 \\
+ISIC hair & DermLIP & frozen & -0.002 & -0.003 \\
+Ovary & DINOv2 & frozen & +0.170 & +0.157 \\
+Ovary & MedSigLIP & frozen & +0.179 & +0.177 \\
+Ovary & ResNet-50 FT & end-to-end & +0.136 & +0.096 \\
+Thyroid & ConvNeXt & frozen & +0.284 & +0.250 \\
+Thyroid & DINOv2 & frozen & +0.230 & +0.204 \\
+Thyroid & MedSigLIP & frozen & +0.163 & +0.146 \\
+Thyroid & ResNet-50 FT & end-to-end & +0.057 & +0.054 \\
+Thyroid & ViT-S FT & end-to-end & +0.168 & +0.114 \\
+\bottomrule\end{tabular}\end{table}

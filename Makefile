@@ -137,5 +137,9 @@ paper:
 	cd paper && (tectonic -X compile main.tex && tectonic -X compile supplement.tex || echo "install tectonic or latexmk to build the PDF")
 	cd paper_neurips && (tectonic -X compile main.tex || true)   # NeurIPS 2025 format (same style as SPLINCE)
 
+report_full:   # complete standalone research record (report/full/full_report.pdf)
+	$(PY) scripts/make_full_report.py
+	cd report/full && (tectonic -X compile full_report.tex || echo "install tectonic to build the PDF")
+
 test:
 	$(PY) -m pytest -q tests

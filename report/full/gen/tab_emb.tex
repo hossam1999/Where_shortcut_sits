@@ -1,0 +1,17 @@
+\begin{table}[H]\centering\scriptsize
+\caption{Primary contrasts under stricter embedding-based leakage groups.}\label{tab:emb}
+\begin{tabular}{llccc}\toprule
+Cohort & Test & Main groups & Embedding groups & Robust \\\midrule
+Thyroid & P1 location crossover & +0.230 [+0.204, +0.255] & +0.235 [+0.211, +0.259] & yes \\
+Thyroid & P2 U-MtE (protected) > mask & +0.217 [+0.174, +0.257] & +0.251 [+0.219, +0.279] & yes \\
+Thyroid & P3 erase > augment & +0.207 [+0.182, +0.235] & +0.192 [+0.162, +0.218] & yes \\
+Thyroid & P4 U-MtE+balanced > balanced & +0.112 [+0.090, +0.134] & +0.152 [+0.138, +0.167] & yes \\
+Ovary & P1 location crossover & +0.170 [+0.116, +0.224] & +0.157 [+0.080, +0.235] & yes \\
+Ovary & P2 U-MtE (protected) > mask & +0.043 [+0.026, +0.061] & +0.047 [+0.020, +0.072] & yes \\
+Ovary & P3 erase > augment & +0.035 [+0.010, +0.059] & +0.020 [-0.011, +0.053] & \textbf{no} \\
+Ovary & P4 U-MtE+balanced > balanced & +0.028 [+0.000, +0.057] & +0.039 [+0.015, +0.064] & yes \\
+Capsule & P1 location crossover & +0.368 [+0.340, +0.397] & +0.394 [+0.359, +0.430] & yes \\
+Capsule & P2 U-MtE (protected) > mask & -0.010 [-0.021, -0.001] & -0.007 [-0.013, -0.001] & yes \\
+Capsule & P3 erase > augment & -0.130 [-0.147, -0.110] & -0.136 [-0.153, -0.122] & yes \\
+Capsule & P4 U-MtE+balanced > balanced & +0.082 [+0.064, +0.100] & +0.068 [+0.050, +0.085] & yes \\
+\bottomrule\end{tabular}\end{table}

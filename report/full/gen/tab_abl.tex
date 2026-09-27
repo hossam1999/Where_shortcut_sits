@@ -1,0 +1,26 @@
+\begin{table}[H]\centering\scriptsize
+\caption{U-MtE erasure-rank ablation (Trap A reversed AUROC, mean over seeds; e = held-out energy, k = fixed rank).}\label{tab:abl}
+\begin{tabular}{llccccc}\toprule
+Cohort & Rank rule & mask & U-MtE & U-MtE$_{\text{prot}}$ & U-MtE$-$mask & prot$-$mask \\\midrule
+capsule & e0.50 & 0.684 & 0.630 & 0.676 & -0.054 & -0.008 \\
+capsule & e0.90 & 0.684 & 0.569 & 0.673 & -0.115 & -0.010 \\
+capsule & e0.99 & 0.684 & 0.569 & 0.673 & -0.115 & -0.010 \\
+capsule & k1 & 0.684 & 0.685 & 0.685 & +0.001 & +0.001 \\
+capsule & k16 & 0.684 & 0.634 & 0.675 & -0.050 & -0.009 \\
+capsule & k4 & 0.684 & 0.676 & 0.681 & -0.008 & -0.002 \\
+capsule & k64 & 0.684 & 0.569 & 0.673 & -0.115 & -0.010 \\
+ovary & e0.50 & 0.545 & 0.543 & 0.578 & -0.002 & +0.033 \\
+ovary & e0.90 & 0.545 & 0.564 & 0.588 & +0.019 & +0.043 \\
+ovary & e0.99 & 0.545 & 0.564 & 0.588 & +0.019 & +0.043 \\
+ovary & k1 & 0.545 & 0.558 & 0.552 & +0.012 & +0.007 \\
+ovary & k16 & 0.545 & 0.535 & 0.565 & -0.010 & +0.020 \\
+ovary & k4 & 0.545 & 0.504 & 0.560 & -0.041 & +0.015 \\
+ovary & k64 & 0.545 & 0.564 & 0.588 & +0.019 & +0.043 \\
+thyroid & e0.50 & 0.400 & 0.611 & 0.611 & +0.211 & +0.211 \\
+thyroid & e0.90 & 0.400 & 0.622 & 0.617 & +0.222 & +0.217 \\
+thyroid & e0.99 & 0.400 & 0.622 & 0.617 & +0.222 & +0.217 \\
+thyroid & k1 & 0.400 & 0.471 & 0.451 & +0.071 & +0.051 \\
+thyroid & k16 & 0.400 & 0.580 & 0.576 & +0.180 & +0.176 \\
+thyroid & k4 & 0.400 & 0.463 & 0.451 & +0.063 & +0.051 \\
+thyroid & k64 & 0.400 & 0.622 & 0.617 & +0.222 & +0.217 \\
+\bottomrule\end{tabular}\end{table}

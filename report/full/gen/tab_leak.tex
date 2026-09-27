@@ -1,0 +1,17 @@
+\begin{table}[H]\centering\scriptsize
+\caption{Leakage assessment (controlled dermoscopy sweep): grouped (lesion ID + pHash) versus five random splits.}\label{tab:leak}
+\begin{tabular}{lccccccc}\toprule
+Split & Overlap & Near-dup pairs across split & ERM clean & ERM corr & ERM rev & ERM gap & mask$-$ERM rev \\\midrule
+grouped & 0.0 & 0 & 0.797 & 0.906 & 0.665 & 0.241 & 0.184 \\
+grouped & 1.0 & 0 & 0.792 & 0.937 & 0.515 & 0.422 & -0.129 \\
+random\_0 & 0.0 & 98 & 0.812 & 0.909 & 0.649 & 0.260 & 0.188 \\
+random\_0 & 1.0 & 98 & 0.810 & 0.944 & 0.495 & 0.450 & -0.119 \\
+random\_1 & 0.0 & 101 & 0.809 & 0.906 & 0.658 & 0.248 & 0.180 \\
+random\_1 & 1.0 & 101 & 0.807 & 0.945 & 0.523 & 0.422 & -0.109 \\
+random\_2 & 0.0 & 75 & 0.828 & 0.924 & 0.555 & 0.369 & 0.297 \\
+random\_2 & 1.0 & 75 & 0.827 & 0.945 & 0.404 & 0.541 & -0.007 \\
+random\_3 & 0.0 & 124 & 0.837 & 0.913 & 0.707 & 0.206 & 0.180 \\
+random\_3 & 1.0 & 124 & 0.821 & 0.949 & 0.520 & 0.429 & -0.147 \\
+random\_4 & 0.0 & 67 & 0.818 & 0.926 & 0.591 & 0.335 & 0.269 \\
+random\_4 & 1.0 & 67 & 0.824 & 0.946 & 0.463 & 0.482 & -0.059 \\
+\bottomrule\end{tabular}\end{table}

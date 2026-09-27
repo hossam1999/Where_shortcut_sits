@@ -71,6 +71,9 @@ analysis scripts fall back to it when a historical per-ablation folder is absent
 - `results/natural/clinical_metrics.csv`, `paper/tables/natural_clinical.tex` — AUPRC, Brier, ECE, sensitivity /
   specificity on the unaltered test sets.
 - `paper_neurips/main.pdf` — the same paper in NeurIPS 2025 format (9-page main text, appendix, filled checklist).
+- `report/full/full_report.pdf` — **complete standalone research record** (pilot → submission): every stage's design,
+  data, seeds, leakage assessment, results, figures, real images, conclusions, the external review, and every
+  pre-registration/audit document verbatim (`make report_full`).
 - `report/report.pdf` — full plain-language project report with real example images of every dataset and all plots.
 
 ## Use the methods on your own data (any backbone, any artifact)

@@ -1,0 +1,49 @@
+\begin{table}[H]\centering\scriptsize
+\caption{Every end-to-end fine-tuning contrast (5 folds of seed 42 as clusters).}\label{tab:ft}
+\begin{tabular}{lllll}\toprule
+Cohort & Architecture & Trap & Contrast & $\Delta$ reversed AUROC [95\% CI] \\\midrule
+capsule & ResNet-50 & trapA & mask $-$ erm & -0.284 [-0.347, -0.226] \\
+capsule & ResNet-50 & trapA & mte\_ft $-$ mask & -0.021 [-0.039, -0.003] \\
+capsule & ResNet-50 & trapA & mask\_balanced $-$ balanced & +0.017 [-0.070, +0.105] \\
+capsule & ResNet-50 & trapA & mte\_ft $-$ erm & -0.305 [-0.367, -0.246] \\
+capsule & ResNet-50 & trapB & mask $-$ erm & +0.301 [+0.225, +0.380] \\
+capsule & ResNet-50 & trapB & mte\_ft $-$ mask & -0.205 [-0.286, -0.111] \\
+capsule & ResNet-50 & trapB & mask\_balanced $-$ balanced & -0.024 [-0.117, +0.065] \\
+capsule & ResNet-50 & trapB & mte\_ft $-$ erm & +0.096 [-0.003, +0.194] \\
+ovary & ResNet-50 & trapA & mask $-$ erm & +0.098 [-0.001, +0.212] \\
+ovary & ResNet-50 & trapA & mte\_ft $-$ mask & +0.094 [-0.025, +0.217] \\
+ovary & ResNet-50 & trapA & mask\_balanced $-$ balanced & -0.009 [-0.128, +0.109] \\
+ovary & ResNet-50 & trapA & mte\_ft $-$ erm & +0.192 [+0.103, +0.278] \\
+ovary & ResNet-50 & trapA & umte\_ft $-$ mask & +0.107 [-0.003, +0.229] \\
+ovary & ResNet-50 & trapA & umte\_ft $-$ mte\_ft & +0.013 [-0.049, +0.074] \\
+ovary & ResNet-50 & trapB & mask $-$ erm & +0.234 [+0.084, +0.376] \\
+ovary & ResNet-50 & trapB & mte\_ft $-$ mask & +0.014 [-0.067, +0.104] \\
+ovary & ResNet-50 & trapB & mask\_balanced $-$ balanced & -0.007 [-0.128, +0.120] \\
+ovary & ResNet-50 & trapB & mte\_ft $-$ erm & +0.248 [+0.123, +0.366] \\
+thyroid & ResNet-50 & trapA & mask $-$ erm & +0.105 [+0.067, +0.141] \\
+thyroid & ResNet-50 & trapA & mte\_ft $-$ mask & +0.143 [+0.099, +0.188] \\
+thyroid & ResNet-50 & trapA & mask\_balanced $-$ balanced & +0.147 [+0.104, +0.192] \\
+thyroid & ResNet-50 & trapA & mte\_ft $-$ erm & +0.248 [+0.209, +0.288] \\
+thyroid & ResNet-50 & trapA & mte\_post $-$ mask & -0.027 [-0.053, -0.001] \\
+thyroid & ResNet-50 & trapA & mte\_post $-$ mask\_post & +0.004 [+0.000, +0.012] \\
+thyroid & ResNet-50 & trapA & umte\_ft $-$ mask & +0.160 [+0.114, +0.207] \\
+thyroid & ResNet-50 & trapA & umte\_ft $-$ mte\_ft & +0.016 [+0.002, +0.030] \\
+thyroid & ResNet-50 & trapA & cons\_ft $-$ mask & +0.007 [-0.014, +0.029] \\
+thyroid & ResNet-50 & trapA & umte\_cons\_ft $-$ mask & +0.157 [+0.114, +0.205] \\
+thyroid & ResNet-50 & trapB & mask $-$ erm & +0.161 [+0.096, +0.226] \\
+thyroid & ResNet-50 & trapB & mte\_ft $-$ mask & -0.034 [-0.062, -0.008] \\
+thyroid & ResNet-50 & trapB & mask\_balanced $-$ balanced & +0.123 [+0.061, +0.185] \\
+thyroid & ResNet-50 & trapB & mte\_ft $-$ erm & +0.128 [+0.066, +0.192] \\
+thyroid & ViT-S/16 & trapA & mask $-$ erm & +0.088 [+0.051, +0.126] \\
+thyroid & ViT-S/16 & trapA & mte\_ft $-$ mask & +0.009 [-0.021, +0.040] \\
+thyroid & ViT-S/16 & trapA & mask\_balanced $-$ balanced & +0.017 [-0.023, +0.055] \\
+thyroid & ViT-S/16 & trapA & mte\_ft $-$ erm & +0.098 [+0.066, +0.129] \\
+thyroid & ViT-S/16 & trapA & umte\_ft $-$ mask & +0.061 [-0.005, +0.141] \\
+thyroid & ViT-S/16 & trapA & umte\_ft $-$ mte\_ft & +0.052 [+0.007, +0.107] \\
+thyroid & ViT-S/16 & trapA & cons\_ft $-$ mask & +0.062 [+0.031, +0.087] \\
+thyroid & ViT-S/16 & trapA & umte\_cons\_ft $-$ mask & +0.143 [+0.103, +0.187] \\
+thyroid & ViT-S/16 & trapB & mask $-$ erm & +0.256 [+0.164, +0.354] \\
+thyroid & ViT-S/16 & trapB & mte\_ft $-$ mask & -0.000 [-0.020, +0.019] \\
+thyroid & ViT-S/16 & trapB & mask\_balanced $-$ balanced & +0.069 [+0.009, +0.141] \\
+thyroid & ViT-S/16 & trapB & mte\_ft $-$ erm & +0.256 [+0.161, +0.358] \\
+\bottomrule\end{tabular}\end{table}

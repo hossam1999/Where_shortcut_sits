@@ -1,0 +1,10 @@
+\begin{table}[H]\centering\small\caption{Theory-vs-real summary (prediction\_summary.json).}\label{tab:theorys}\begin{tabular}{lccc}\toprule Endpoint & Theory & Ref.\ rev$=$clean & Ref.\ rev$=2\cdot$clean$-$corr\\
+\midrule
+T1 reversed AUROC, ERM+mask (148 models): MAE & 0.039 & 0.234 & 0.108\\
+T1 Pearson $r$ & 0.917 & 0.592 & 0.763\\
+T1 all ERM-head arms (570): MAE & 0.031 & 0.163 & 0.069\\
+T2 crossover (14 pairs): $r$ / MAE / signs & 0.997 / 0.014 / 13 & 0.930 / 0.108 / 12 & 0.989 / 0.036 / 13\\
+T3 sweeps (45 points): $r$ / MAE / signs & 0.965 / 0.043 / 42 & 0.670 / 0.122 / 31 & 0.869 / 0.081 / 36\\
+T4 in-ROI sign from $S_m-S$ & 11/14 & & \\
+Fine-tuned (outside model): rev MAE & 0.018 & & \\
+\bottomrule\end{tabular}\par\smallskip Pre-registered verdict: \textbf{qualitative account}.\end{table}
