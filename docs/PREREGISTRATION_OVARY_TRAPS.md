@@ -34,3 +34,10 @@ JTT 0.428; balanced 0.707 / 0.732; mask_balanced 0.687; U-MtE_balanced 0.736 / 0
 - **O4 not supported**: U-MtE − mask +0.019 [−0.007, +0.043]; protected U-MtE − mask **+0.043 [+0.025, +0.061]**.
 - **O5 supported**: U-MtE − mte_aug +0.035 [+0.010, +0.059]. U-MtE − JTT +0.137 [+0.098, +0.179].
 - **O6 not supported**: by min(rev, corr) mask+DFR (0.752) > U-MtE_balanced (0.736) > balanced (0.707).
+
+## Results — controlled synthetic calipers, DINOv2@518 (results/synthetic/ovary/dino518_caliper_corr_main; 343 images)
+- TS3 not supported: mask − ERM at r=0 = +0.042 [−0.034, +0.119].
+- **TS2 supported**: mask − ERM at r=1 = **−0.197 [−0.292, −0.100]** (masking harms when the caliper is inside).
+- **TS1 supported**: location interaction +0.239 [+0.175, +0.306].
+- **TS4 supported**: U-MtE − mask at r=1 = +0.141 [+0.091, +0.195]; protected +0.115 [+0.067, +0.165];
+  U-MtE_balanced − mask +0.253 [+0.187, +0.325]; U-MtE_balanced − balanced −0.031 [−0.116, +0.054].
