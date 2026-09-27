@@ -29,7 +29,7 @@ COMP = [("mask", "erm"), ("mte_ft", "mask"), ("mask_balanced", "balanced"), ("mt
 
 def main():
     ap = argparse.ArgumentParser()
-    ap.add_argument("--cohort", default="thyroid", choices=("thyroid", "capsule"))
+    ap.add_argument("--cohort", default="thyroid", choices=("thyroid", "capsule", "ovary"))
     ap.add_argument("--arch", default="resnet50")
     ap.add_argument("--arms", nargs="+", default=["erm", "mask", "balanced", "mask_balanced", "mte_ft"])
     ap.add_argument("--folds", nargs="+", type=int, default=[0, 1, 2, 3, 4])
@@ -37,6 +37,8 @@ def main():
     a = ap.parse_args()
     if a.cohort == "thyroid":
         c = rt.cohort(); cache = RealCache(rt.T / "cache_518", roi_file="roi.npy", art_file="marker.npy")
+    elif a.cohort == "ovary":
+        c = rt.ovary_cohort(); cache = RealCache(rt.OV / "cache_518", roi_file="roi.npy", art_file="marker.npy")
     else:
         c = rt.capsule_cohort(); cache = RealCache(rt.CAP / "cache_518", roi_file="roi.npy", art_file="contam.npy")
     envs = build_spec_envs(c, seeds=(42,), group_col="group")

@@ -31,3 +31,5 @@ mask_balanced 0.687 / 0.780 (0.754); mte_ft 0.190 / 0.904 (0.567).
 - **F2 not supported**: mte_ft − mask (A) −0.021 [−0.039, −0.003]; mte_ft also lowers clean AUROC (debris ≈ fibrin
   regime, as in the frozen analysis).
 - F3 not supported: mask_balanced − balanced (A) +0.017 [−0.070, +0.105].
+
+## Amendment (before training): ovarian ultrasound (MMOTU) fine-tuning with the same design and claims F1–F3.
