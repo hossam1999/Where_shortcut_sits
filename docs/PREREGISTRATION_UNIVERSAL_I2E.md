@@ -154,7 +154,7 @@ umte_protect − umte = +0.175 [+0.137, +0.217]; umte_protect_balanced − balan
 Summary: protection turned 1 of 2 MedSigLIP controlled failures into a win and never cost > 0.012 anywhere; the
 balanced (protected or not) variant is the only one that beats masking in every controlled sweep.
 
-## Amendment (2026-09-27, before fitting) — SPLICE baseline (U12)
+## Amendment (2026-09-27, before fitting) — SPLINCE baseline (U12)
 `wtss.heads.SpliceProjection`: task-preserving oblique projection (Cov(PX, A) = 0, Cov(PX, Y) preserved), fitted
 on the training environment with image-level artifact labels; arms splice (ERM view) and mask_splice (masked
 view). Compared with U-MtE_protect (label-free w.r.t. A) and U-MtE_balanced (uses A) on thyroid, capsule, ISIC hair
@@ -171,7 +171,7 @@ Claims **U13a** auto − mask > 0 (Trap A, reversed) in all four; **U13b** auto 
 min(rev,corr)) of the best fixed candidate in each cohort; **U13c** auto ≥ DFR − 0.02 in each cohort.
 Reported either way. (`scripts/analysis/adaptive_select.py`)
 
-### U12 results — SPLICE (Trap A; rev / corr (clean); min(rev, corr))
+### U12 results — SPLINCE (Trap A; rev / corr (clean); min(rev, corr))
 | cohort | mask_splice | splice | U-MtE_balanced | U-MtE_protect |
 |---|---|---|---|---|
 | thyroid (DINOv2) | 0.878 / 0.646 (0.777) †; 0.646 | 0.808 / 0.622 (0.724) †; 0.622 | 0.788 / 0.818 (0.807); **0.788** | 0.617 / 0.780; 0.617 |
@@ -179,9 +179,9 @@ Reported either way. (`scripts/analysis/adaptive_select.py`)
 | ISIC hair (DINOv2) | 0.831 / 0.601 (0.720) †; 0.601 | 0.841 / 0.600 (0.724) †; 0.600 | 0.704 / 0.852 (0.779); **0.704** | 0.495 / 0.895; 0.495 |
 | drains (RAD-DINO) | 0.516 / 0.623 (0.682); 0.516 | 0.536 / 0.639 (0.726); 0.536 | 0.460 / 0.857 (0.826); 0.460 | 0.269 / 0.946; 0.269 |
 † gaming flag (correlated < reversed − 0.02). In the three cohorts where artifact and label are strongly correlated
-in training, SPLICE flips the shortcut (reversed ≫ correlated) — the same failure as unpaired LEACE — because
+in training, SPLINCE flips the shortcut (reversed ≫ correlated) — the same failure as unpaired LEACE — because
 Cov(X, A) and Cov(X, Y) are nearly collinear. **U12a supported by min(rev, corr)** in thyroid, capsule and hair;
-not on drains (SPLICE 0.516 vs 0.460, at a clean cost of −0.19). U12b not supported on raw reversed AUROC (SPLICE's
+not on drains (SPLINCE 0.516 vs 0.460, at a clean cost of −0.19). U12b not supported on raw reversed AUROC (SPLINCE's
 reversed values are inflated by flipping).
 
 ### U13 results — location-adaptive selection (results/adaptive_select_summary.csv; Trap A)
@@ -213,15 +213,15 @@ auto_split − DFR (reversed): thyroid +0.060 [+0.037, +0.082], capsule +0.066 [
 Admitting DFR fixes the drain regime (+0.118 over U13) but halving the selection set makes choices noisier
 (ovary, hair worse). Neither selector is uniformly best; both beat masking everywhere (+0.17 to +0.42).
 
-### Correction (2026-09-27) — SPLICE implementation
-The U12 results above used a simplified SPLICE (oblique projection with both constraints but in the un-whitened
+### Correction (2026-09-27) — SPLINCE implementation
+The U12 results above used a simplified SPLINCE (oblique projection with both constraints but in the un-whitened
 metric). Checked against the paper (Holstege, Ravfogel & Wouters, NeurIPS 2025, arXiv 2506.10703, Theorem 1), the
 method minimises distortion in the whitened metric. `SpliceProjection` now implements that (verified: both
 constraints hold exactly, P is idempotent, and a numerical search over all admissible ranges finds no lower
 distortion). The simplified variant remains available (`euclidean=True`). U12 is re-run as tag *_splice_v2 with the
 same arms and claims; both versions are reported.
 
-### U12 re-run with the faithful SPLICE (tag *_splice_v2) — supersedes the simplified-variant numbers above
+### U12 re-run with the faithful SPLINCE (tag *_splice_v2) — supersedes the simplified-variant numbers above
 Trap A reversed / correlated (clean); min(rev, corr):
 | cohort | splice | mask_splice | U-MtE_bal | best |
 |---|---|---|---|---|
@@ -229,7 +229,9 @@ Trap A reversed / correlated (clean); min(rev, corr):
 | capsule | 0.795 / 0.613 (0.706) | 0.868 / 0.683 (0.784); 0.683 | 0.857 / 0.928 (0.893); **0.857** | U-MtE_bal |
 | ISIC hair | 0.639 / 0.564 (0.606); 0.564 | 0.628 / 0.562 (0.592) | 0.704 / 0.852 (0.779); 0.704 | balanced 0.716 |
 | drains | 0.609 / 0.609 (0.717); **0.609** | 0.577 / 0.588 (0.700) | 0.460 / 0.857 (0.826) | DFR 0.683 |
-The faithful (whitened, minimal-distortion) SPLICE no longer flips the shortcut in thyroid or on drains but removes much
+The faithful (whitened, minimal-distortion) SPLINCE no longer flips the shortcut in thyroid or on drains but removes much
 disease signal (clean AUROC 0.56–0.78 vs 0.69–0.87 for masking) and still flips it on capsule. **U12a (U-MtE_bal >
-SPLICE by min(rev, corr)) supported in 3/4** (thyroid, capsule, hair); on drains SPLICE is higher (0.609 vs 0.460),
+SPLINCE by min(rev, corr)) supported in 3/4** (thyroid, capsule, hair); on drains SPLINCE is higher (0.609 vs 0.460),
 below DFR (0.683).
+Name correction: the method is **SPLINCE** (Simultaneous Projection for LINear concept removal and Covariance
+prEservation; arXiv 2506.10703 abstract). Arms keep the internal names `splice` / `mask_splice`.

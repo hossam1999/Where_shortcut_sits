@@ -283,7 +283,7 @@ def fit_jtt(Xtr, ytr, Xval, yval, seed, ups=(5.0, 20.0, 50.0)):
 
 
 class SpliceProjection:
-    """SPLICE (Holstege, Ravfogel & Wouters, NeurIPS 2025; arXiv 2506.10703), Theorem 1: the oblique projection that
+    """SPLINCE (Holstege, Ravfogel & Wouters, NeurIPS 2025; arXiv 2506.10703), Theorem 1: the oblique projection that
     (i) removes all linear covariance with the concept z (P Σxz = 0), (ii) preserves the covariance with the target y
     (P Σxy = Σxy), and (iii) minimises E||Px − x||² in the whitened metric (W = Σxx^{-1/2}). In whitened coordinates
     the kernel is span(WΣxz) and the range is span(WΣxy) ⊕ (span(WΣxz, WΣxy))^⊥; P = W⁺ P̃ W.
@@ -317,3 +317,6 @@ class SpliceProjection:
     def __call__(self, X):
         Xc = np.asarray(X, np.float64) - self.mu
         return (Xc @ self.P.T + self.mu).astype(np.float32)
+
+
+SplinceProjection = SpliceProjection  # the method's published name is SPLINCE; arm names "splice" kept for result files

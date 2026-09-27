@@ -81,7 +81,7 @@ classifier on top, which lets us test many fixes cleanly. We then confirm the ke
 \item \textbf{Backbones:} DINOv2 ViT-B/14, DermLIP (dermatology), MedSigLIP (medical), RAD-DINO (chest X-ray),
 ConvNeXt-Base (CNN); fine-tuning with ResNet-50 and ViT-S.
 \item \textbf{Mitigations compared:} ROI masking; inpainting (classical Telea and modern LaMa); group balancing;
-DFR; GroupDRO; JTT; LEACE; SPLICE; prevalence calibration; SLAS (patch-token suppression); U-MtE and its variants.
+DFR; GroupDRO; JTT; LEACE; SPLINCE; prevalence calibration; SLAS (patch-token suppression); U-MtE and its variants.
 \item \textbf{U-MtE:} mask, insert generic overlays into masked training images, estimate the feature subspace the
 overlays move, erase it, train the classifier. \emph{Protected} U-MtE first removes from that subspace the directions
 that separate diseases on artifact-free images.
@@ -125,7 +125,7 @@ summary that also penalises ``flipping''). Bold = best in the column.}
 \input{../paper/tables/main_inroi.tex}
 \begin{itemize}[leftmargin=*]
 \item \ok\ Erase beats augment with the same overlays: thyroid $+0.21$, hair $+0.05$, ovary $+0.04$; \no\ capsule $-0.13$.
-\item \ok\ SPLICE (closest published erasure, NeurIPS 2025) removes much disease signal and flips the shortcut on
+\item \ok\ SPLINCE (closest published erasure, NeurIPS 2025) removes much disease signal and flips the shortcut on
 capsule; U-MtE + balancing is more robust in 3 of 4 cohorts (not on chest drains, where DFR is best).
 \item \mixed\ LaMa inpainting with artifact masks is strong; protected U-MtE matches it on thyroid without masks.
 \item \mixed\ JTT (label-free): U-MtE wins on thyroid ($+0.20$) and ovary ($+0.14$); JTT wins on hair.

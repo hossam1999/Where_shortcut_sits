@@ -80,8 +80,8 @@ labels ≈ 70 % pure), EAD endoscopy (no disease labels), BKAI-IGH NeoPolyp colo
 - **4th disease — ovarian tumour ultrasound (MMOTU, calipers)**: real crossover +0.170 [+0.116, +0.224]; controlled
   sweep: masking HARMS at full overlap (−0.197 [−0.292, −0.100]), U-MtE +0.141 over masking. Generic real U-MtE
   +0.019 (n.s.), protected +0.043 [+0.025, +0.061].
-- **SPLICE baseline** (closest published erasure): flips the shortcut in thyroid, capsule and hair (reversed ≫
-  correlated); by min(rev, corr) U-MtE_balanced wins in all three; on drains SPLICE 0.516 vs 0.460 at −0.19 clean.
+- **SPLINCE baseline** (closest published erasure): flips the shortcut in thyroid, capsule and hair (reversed ≫
+  correlated); by min(rev, corr) U-MtE_balanced wins in all three; on drains SPLINCE 0.516 vs 0.460 at −0.19 clean.
 - **Location-adaptive selection (auto)**: beats masking in 5/5 cohorts (+0.17 to +0.40), within 0.02 of the best
   candidate in 5/5, beats DFR in 3/5 (fails on hair and drains = correlate-carried regime). Split-validation
   variant that admits DFR as a candidate: running (U14).

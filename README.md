@@ -81,7 +81,7 @@ python -m wtss.slas embed --probe probe.pt --images "test/*.jpg" --rois test_roi
 src/wtss/
   stats.py            hierarchical paired bootstrap (+ p-values), crossover test
   synthetic.py        controlled artifacts (ruler, tube, caliper, debris), generic overlay library, placements
-  heads.py            ERM, balanced, DFR, GroupDRO, JTT, LEACE, SPLICE, prevalence calibration, pseudo-groups
+  heads.py            ERM, balanced, DFR, GroupDRO, JTT, LEACE, SPLINCE, prevalence calibration, pseudo-groups
   methods/insertion.py  insertion-pair subspace erasure (I2E / U-MtE), disease protection
   umte.py, slas.py    public tools
   backbones.py        DINOv2, DermLIP, RAD-DINO, MedSigLIP, ConvNeXt

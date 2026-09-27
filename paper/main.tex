@@ -63,7 +63,7 @@ fails for pathology-like artifacts, and why group reweighting is location-invari
 \item \textbf{An annotation-free remedy (U-MtE)} and a disease-protected variant, with the evidence that erasure,
 not augmentation, is what works, and a delineation of the regimes in which it does not.
 \item \textbf{A practical decision procedure}: a validation-driven selector and a decision rule based on where the
-artifact sits and what carries the shortcut, benchmarked against DFR, GroupDRO, JTT, LEACE and SPLICE with
+artifact sits and what carries the shortcut, benchmarked against DFR, GroupDRO, JTT, LEACE and SPLINCE with
 gaming-aware reporting.
 \item \textbf{Reproducibility}: pre-registration before every experiment, Holm-corrected primary claims, replication
 of the original pilot (73/88 numbers matched), public code and a two-command tool.
@@ -83,7 +83,7 @@ which requires the artifact label at test time.
 retraining \citep{kirichenko2023dfr} and linear concept erasure \citep{ravfogel2020inlp,belrose2023leace}
 require artifact labels or paired data; erasure from unpaired labels removes label-correlated signal when the
 concept is correlated with the label, which is why we build pairs by insertion. Task-preserving linear erasure
-(SPLICE; \citealp{splice2025}) and projection of biased directions in vision--language models \citep{chuang2023debiasing}
+(SPLINCE; \citealp{splice2025}) and projection of biased directions in vision--language models \citep{chuang2023debiasing}
 are the closest erasure methods; both require concept labels or prompts, whereas our concept subspace is estimated
 from synthetic insertions. Random erasing and occlusion augmentation \citep{zhong2020random,fong2019occlusions}
 use similar overlays as training noise; we show that this does not remove the shortcut. Test-time selection

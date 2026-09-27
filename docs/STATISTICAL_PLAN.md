@@ -18,7 +18,7 @@ apply the conservative Holm correction over the whole family and report BH for r
 All on DINOv2 ViT-B/14 @518 (the backbone with every cohort); other backbones are replications.
 
 ## Secondary / exploratory
-Everything else (other backbones, controlled sweeps, JTT, SPLICE, DFR combinations, adaptive selection, SLAS,
+Everything else (other backbones, controlled sweeps, JTT, SPLINCE, DFR combinations, adaptive selection, SLAS,
 fine-tuning, chest drains) is secondary: reported with unadjusted 95 % CIs and interpreted as replication or
 exploration, not as confirmatory evidence.
 
