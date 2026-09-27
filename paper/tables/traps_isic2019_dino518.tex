@@ -1,0 +1,22 @@
+\begin{table*}\scriptsize
+\caption{ISIC 2019 real hair, DINOv2 @518: Trap A (in-lesion) and Trap B (extra-lesional)}
+\label{tab:traps_isic2019_dino518}
+\resizebox{\textwidth}{!}{\begin{tabular}{llllllllllll}
+\toprule
+Method & Needs & A clean & A corr & A rev & B clean & B corr & B rev & A Δrev & A Δclean & B Δrev & B Δclean \\
+\midrule
+ERM & — & 0.753 & 0.925 & 0.389 & 0.760 & 0.925 & 0.359 &  &  &  &  \\
+ROI masking & ROI mask (train+test) & 0.755 & 0.925 & 0.401 & 0.746 & 0.846 & 0.537 & +0.012 [-0.042, +0.062] & +0.002 & +0.178 [+0.142, +0.214] & -0.014 \\
+Inpainting (oracle) & artifact pixels (train+test) & 0.753 & 0.896 & 0.559 & 0.750 & 0.882 & 0.478 & +0.171 [+0.132, +0.210] & -0.000 & +0.119 [+0.094, +0.141] & -0.010 \\
+Group-balanced & image-level A (train) & 0.771 & 0.850 & 0.723 & 0.768 & 0.781 & 0.734 & +0.335 [+0.269, +0.400] & +0.018 & +0.375 [+0.332, +0.423] & +0.008 \\
+DFR & image-level A (val) & 0.777 & 0.782 & 0.794 & 0.782 & 0.719 & 0.815 & +0.405 [+0.322, +0.484] & +0.024 & +0.456 [+0.396, +0.513] & +0.022 \\
+LEACE (paired, removal) & artifact pixels (train) & 0.754 & 0.918 & 0.504 & 0.751 & 0.907 & 0.453 & +0.116 [+0.079, +0.156] & +0.001 & +0.094 [+0.074, +0.113] & -0.009 \\
+LEACE (unpaired labels) & image-level A (train) & 0.761 & 0.639 & 0.869 & 0.754 & 0.615 & 0.833 & +0.480 [+0.414, +0.534] & +0.007 & +0.474 [+0.430, +0.516] & -0.006 \\
+I2E (ours) & template library & 0.745 & 0.926 & 0.456 & 0.751 & 0.919 & 0.406 & +0.067 [+0.035, +0.100] & -0.008 & +0.047 [+0.027, +0.068] & -0.009 \\
+I2E + balanced (ours) & templates + A (train) & 0.755 & 0.855 & 0.703 & 0.788 & 0.832 & 0.706 & +0.314 [+0.257, +0.366] & +0.002 & +0.347 [+0.308, +0.391] & +0.028 \\
+I2E rank-1 (ablation) & template library & 0.753 & 0.926 & 0.389 & 0.757 & 0.925 & 0.358 & +0.001 [-0.002, +0.003] & -0.000 & -0.001 [-0.005, +0.002] & -0.003 \\
+Insertion augmentation & template library & 0.754 & 0.926 & 0.415 & 0.760 & 0.924 & 0.373 & +0.026 [+0.016, +0.037] & +0.001 & +0.014 [+0.005, +0.022] & +0.000 \\
+Prevalence calibration & image-level A (train+test) & 0.753 & 0.468 & 0.900 & 0.760 & 0.488 & 0.887 & +0.511 [+0.456, +0.572] & +0.000 & +0.528 [+0.495, +0.560] & +0.000 \\
+\bottomrule
+\end{tabular}}
+\end{table*}

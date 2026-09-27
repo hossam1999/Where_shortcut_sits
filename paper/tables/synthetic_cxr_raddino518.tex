@@ -1,0 +1,20 @@
+\begin{table*}\scriptsize
+\caption{Synthetic tube, NIH ChestX-ray14 pneumothorax, RAD-DINO @518}
+\label{tab:synthetic_cxr_raddino518}
+\resizebox{\textwidth}{!}{\begin{tabular}{lllllllllll}
+\toprule
+Method & Needs & clean@0 & rev@0 & clean@50 & rev@50 & clean@100 & rev@100 & Δrev@0 & Δrev@50 & Δrev@100 \\
+\midrule
+ERM & — & 0.915 & 0.913 & 0.911 & 0.772 & 0.907 & 0.614 &  &  &  \\
+ROI masking & ROI mask (train+test) & 0.910 & 0.910 & 0.908 & 0.843 & 0.905 & 0.725 & -0.002 [-0.007, +0.002] & +0.070 [+0.062, +0.078] & +0.110 [+0.101, +0.120] \\
+Inpainting (oracle) & artifact pixels (train+test) & 0.915 & 0.915 & 0.916 & 0.913 & 0.916 & 0.914 & +0.003 [+0.002, +0.003] & +0.140 [+0.127, +0.153] & +0.299 [+0.280, +0.321] \\
+Group-balanced & image-level A (train) & 0.914 & 0.913 & 0.913 & 0.920 & 0.912 & 0.924 & +0.000 [-0.003, +0.003] & +0.147 [+0.134, +0.161] & +0.309 [+0.289, +0.330] \\
+DFR & image-level A (val) & 0.900 & 0.898 & 0.899 & 0.889 & 0.897 & 0.894 & -0.014 [-0.019, -0.010] & +0.116 [+0.105, +0.128] & +0.280 [+0.256, +0.306] \\
+LEACE (paired, oracle renders) & paired renders (train) & 0.916 & 0.915 & 0.914 & 0.912 & 0.908 & 0.901 & +0.003 [+0.002, +0.003] & +0.139 [+0.127, +0.153] & +0.287 [+0.266, +0.309] \\
+I2E (ours) & template library & 0.911 & 0.910 & 0.908 & 0.907 & 0.906 & 0.905 & -0.002 [-0.006, +0.001] & +0.135 [+0.122, +0.149] & +0.291 [+0.271, +0.312] \\
+I2E + balanced (ours) & templates + A (train) & 0.907 & 0.907 & 0.907 & 0.907 & 0.907 & 0.907 & -0.006 [-0.010, -0.001] & +0.134 [+0.120, +0.150] & +0.292 [+0.270, +0.316] \\
+I2E rank-1 (ablation) & template library & 0.915 & 0.915 & 0.914 & 0.910 & 0.910 & 0.867 & +0.002 [+0.001, +0.003] & +0.138 [+0.125, +0.151] & +0.253 [+0.235, +0.271] \\
+Insertion augmentation & template library & 0.915 & 0.915 & 0.913 & 0.856 & 0.911 & 0.726 & +0.002 [+0.001, +0.003] & +0.084 [+0.074, +0.093] & +0.112 [+0.098, +0.125] \\
+\bottomrule
+\end{tabular}}
+\end{table*}

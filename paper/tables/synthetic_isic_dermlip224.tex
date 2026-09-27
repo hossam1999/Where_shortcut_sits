@@ -1,0 +1,17 @@
+\begin{table*}\scriptsize
+\caption{Synthetic ruler, ISIC 2018, DermLIP/PanDerm @224}
+\label{tab:synthetic_isic_dermlip224}
+\resizebox{\textwidth}{!}{\begin{tabular}{lllllllllll}
+\toprule
+Method & Needs & clean@0 & rev@0 & clean@50 & rev@50 & clean@100 & rev@100 & Δrev@0 & Δrev@50 & Δrev@100 \\
+\midrule
+ERM & — & 0.932 & 0.697 & 0.930 & 0.624 & 0.932 & 0.574 &  &  &  \\
+ROI masking & ROI mask (train+test) & 0.858 & 0.858 & 0.818 & 0.342 & 0.823 & 0.311 & +0.161 [+0.121, +0.202] & -0.282 [-0.343, -0.227] & -0.263 [-0.328, -0.195] \\
+Group-balanced & image-level A (train) & 0.948 & 0.920 & 0.947 & 0.915 & 0.948 & 0.914 & +0.223 [+0.193, +0.252] & +0.291 [+0.243, +0.342] & +0.339 [+0.294, +0.391] \\
+DFR & image-level A (val) & 0.946 & 0.934 & 0.944 & 0.922 & 0.943 & 0.923 & +0.237 [+0.200, +0.278] & +0.298 [+0.247, +0.362] & +0.348 [+0.310, +0.386] \\
+LEACE (paired, oracle renders) & paired renders (train) & 0.951 & 0.946 & 0.950 & 0.942 & 0.954 & 0.938 & +0.249 [+0.214, +0.288] & +0.318 [+0.262, +0.378] & +0.364 [+0.318, +0.415] \\
+I2E (ours) & template library & 0.915 & 0.879 & 0.917 & 0.847 & 0.921 & 0.826 & +0.183 [+0.147, +0.220] & +0.223 [+0.171, +0.282] & +0.251 [+0.205, +0.300] \\
+I2E + balanced (ours) & templates + A (train) & 0.918 & 0.911 & 0.918 & 0.905 & 0.922 & 0.900 & +0.214 [+0.181, +0.248] & +0.281 [+0.233, +0.332] & +0.325 [+0.269, +0.384] \\
+\bottomrule
+\end{tabular}}
+\end{table*}

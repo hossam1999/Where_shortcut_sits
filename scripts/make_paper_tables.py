@@ -35,7 +35,12 @@ def ci(p, lo, hi):
 
 
 def emit(name: str, df: pd.DataFrame, caption: str):
-    (T / f"{name}.tex").write_text(df.to_latex(index=False, escape=True, caption=caption, label=f"tab:{name}"))
+    tex = df.to_latex(index=False, escape=True, caption=caption.replace("%", r"\%").replace("_", r"\_"),
+                      label=f"tab:{name}")
+    # wide tables: full width, small font, scaled to the text width
+    tex = (tex.replace("\\begin{table}", "\\begin{table*}\\scriptsize").replace("\\end{table}", "\\end{table*}")
+              .replace("\\begin{tabular}", "\\resizebox{\\textwidth}{!}{\\begin{tabular}").replace("\\end{tabular}", "\\end{tabular}}"))
+    (T / f"{name}.tex").write_text(tex)
     MD.append(f"### {caption}\n\n{df.to_markdown(index=False)}\n")
 
 

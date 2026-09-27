@@ -37,7 +37,7 @@ All thyroid and capsule findings replicate with a CNN (ConvNeXt-Base): crossover
 
 \subsection{Label-free and erasure baselines}
 Among methods that need no artifact labels, U-MtE beats JTT \citep{liu2021jtt} by $+0.198$ [$+0.167, +0.231$]
-(thyroid), $+0.137$ [$+0.098, +0.179$] (ovary) and $+0.094$ [$+0.077, +0.109$] (chest drains); JTT on the unmasked
+(thyroid), $+0.137$ [$+0.098, +0.179$] (ovary) and $+0.094$ [$+0.077, +0.109$] (chest drains, RAD-DINO; not with DINOv2, $-0.010$); JTT on the unmasked
 view is best on hair. Task-preserving concept removal (SPLICE; \citealp{splice2025}) fitted with artifact labels
 \emph{flips} the shortcut in thyroid, capsule and hair (reversed 0.83--0.95 but correlated 0.60--0.73): when artifact
 and label are strongly associated in training their covariance directions are nearly collinear. By

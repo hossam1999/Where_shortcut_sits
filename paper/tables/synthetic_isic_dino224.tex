@@ -1,0 +1,17 @@
+\begin{table*}\scriptsize
+\caption{Synthetic ruler, ISIC 2018, DINOv2 @224}
+\label{tab:synthetic_isic_dino224}
+\resizebox{\textwidth}{!}{\begin{tabular}{lllllllllll}
+\toprule
+Method & Needs & clean@0 & rev@0 & clean@50 & rev@50 & clean@100 & rev@100 & Δrev@0 & Δrev@50 & Δrev@100 \\
+\midrule
+ERM & — & 0.794 & 0.438 & 0.797 & 0.410 & 0.800 & 0.391 &  &  &  \\
+ROI masking & ROI mask (train+test) & 0.798 & 0.798 & 0.771 & 0.329 & 0.762 & 0.295 & +0.361 [+0.308, +0.413] & -0.081 [-0.119, -0.043] & -0.095 [-0.131, -0.059] \\
+Group-balanced & image-level A (train) & 0.803 & 0.732 & 0.805 & 0.709 & 0.808 & 0.708 & +0.294 [+0.264, +0.328] & +0.299 [+0.271, +0.327] & +0.318 [+0.288, +0.347] \\
+DFR & image-level A (val) & 0.737 & 0.729 & 0.741 & 0.734 & 0.740 & 0.726 & +0.291 [+0.229, +0.357] & +0.324 [+0.258, +0.396] & +0.335 [+0.269, +0.405] \\
+LEACE (paired, oracle renders) & paired renders (train) & 0.830 & 0.830 & 0.829 & 0.824 & 0.826 & 0.816 & +0.392 [+0.351, +0.434] & +0.415 [+0.373, +0.456] & +0.426 [+0.383, +0.469] \\
+I2E (ours) & template library & 0.813 & 0.795 & 0.810 & 0.785 & 0.805 & 0.769 & +0.357 [+0.315, +0.400] & +0.375 [+0.334, +0.418] & +0.378 [+0.336, +0.419] \\
+I2E + balanced (ours) & templates + A (train) & 0.811 & 0.811 & 0.809 & 0.808 & 0.807 & 0.805 & +0.373 [+0.337, +0.410] & +0.398 [+0.360, +0.437] & +0.414 [+0.376, +0.452] \\
+\bottomrule
+\end{tabular}}
+\end{table*}
