@@ -183,3 +183,15 @@ in training, SPLICE flips the shortcut (reversed ≫ correlated) — the same fa
 Cov(X, A) and Cov(X, Y) are nearly collinear. **U12a supported by min(rev, corr)** in thyroid, capsule and hair;
 not on drains (SPLICE 0.516 vs 0.460, at a clean cost of −0.19). U12b not supported on raw reversed AUROC (SPLICE's
 reversed values are inflated by flipping).
+
+### U13 results — location-adaptive selection (results/adaptive_select_summary.csv; Trap A)
+| cohort | auto min(rev,corr) | main choice | auto − mask | auto − DFR | best candidate (min) |
+|---|---|---|---|---|---|
+| thyroid (DINOv2) | **0.795** | U-MtE_balanced (14/25) | +0.395 [+0.379, +0.411] | +0.057 [+0.033, +0.083] | U-MtE_bal 0.788 |
+| capsule (DINOv2) | 0.852 | U-MtE_balanced (11/25) | +0.168 [+0.152, +0.183] | +0.047 [+0.016, +0.077] | U-MtE_bal 0.857 |
+| ovary (DINOv2) | 0.733 | U-MtE_balanced (19/25) | +0.188 [+0.151, +0.226] | +0.010 [−0.022, +0.044] | U-MtE_bal 0.736 |
+| ISIC hair (DINOv2) | 0.705 | balanced (17/25) | +0.251 [+0.227, +0.274] | −0.038 [−0.056, −0.019] | balanced 0.716 |
+| drains (RAD-DINO) | 0.538 | balanced (5/5) | +0.299 [+0.280, +0.320] | −0.144 [−0.180, −0.109] | balanced 0.538 |
+**U13a supported (5/5); U13b supported (5/5: within 0.02 of the best candidate); U13c supported 3/5** — fails on
+hair and drains, the correlate-carried regime, where DFR (not a candidate: it trains on the validation set) is best.
+Follow-up registered below: split-validation selection that admits DFR as a candidate.
