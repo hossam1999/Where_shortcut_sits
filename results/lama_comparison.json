@@ -1,0 +1,52 @@
+{
+ "thyroid|lama-mask": [
+  0.025,
+  0.009,
+  0.04
+ ],
+ "thyroid|mask_lama-mask": [
+  0.226,
+  0.213,
+  0.238
+ ],
+ "thyroid|mte_protect-mask_lama": [
+  -0.009,
+  -0.045,
+  0.023
+ ],
+ "thyroid|mte_balanced-mask_lama": [
+  0.162,
+  0.152,
+  0.173
+ ],
+ "thyroid|lama-erm": [
+  0.136,
+  0.13,
+  0.142
+ ],
+ "ovary|lama-mask": [
+  0.027,
+  -0.017,
+  0.069
+ ],
+ "ovary|mask_lama-mask": [
+  0.123,
+  0.089,
+  0.155
+ ],
+ "ovary|mte_protect-mask_lama": [
+  -0.08,
+  -0.108,
+  -0.053
+ ],
+ "ovary|mte_balanced-mask_lama": [
+  0.067,
+  0.037,
+  0.095
+ ],
+ "ovary|lama-erm": [
+  0.158,
+  0.141,
+  0.176
+ ]
+}
