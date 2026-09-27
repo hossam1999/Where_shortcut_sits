@@ -33,3 +33,15 @@ Then (user rule): controlled synthetic-artifact test on the same cohort's low-co
   dfr, leace + proposed (I2E, MtE, U-I2E, U-MtE).
 - Claims: CS1 mask − ERM decreases with overlap (r=1 vs r=0 interaction < 0); CS2 mask − ERM < 0 at r=1;
   CS3 mask − ERM > 0 at r=0; CS4 U-MtE − mask > 0 at r=1. Small test split (137 frames): wide CIs expected.
+
+## Results — DINOv2@518, real contamination, template arms (results/capsule/dino518_main)
+Reversed AUROC deltas vs ERM [95 % CI]:
+- **C1 supported**: mask − ERM (Trap B) = +0.465 [+0.440, +0.490].
+- **C2 not supported**: mask − ERM (Trap A) = +0.097 (0.684 vs 0.587): masking helps, but a large residual
+  shortcut remains (test_corr 0.975 vs test_rev 0.684).
+- **C3 supported**: crossover = +0.368 [+0.340, +0.397].
+- **C4 supported**: balanced +0.19, DFR +0.217 [+0.200, +0.235] (Trap A); DFR is the best arm (0.805).
+- **Template MtE fails**: MtE − mask (Trap A) = −0.395 [−0.420, ...]; inpaint also hurts (−0.17 vs ERM).
+  Interpretation (post hoc): erosions carry yellow-white fibrin that resembles debris; a subspace estimated from
+  real-debris templates / debris-guided inpainting removes disease evidence. Boundary condition for
+  erasure-based repair: the artifact subspace must be separable from the disease signal.
