@@ -19,8 +19,7 @@ from wtss.experiments.real_traps import RealCache  # noqa: E402
 from wtss.experiments.spec_traps import run_spec  # noqa: E402
 from wtss.data.isic2019_spec import build_spec_envs  # noqa: E402
 
-SETTINGS = [("e0.50", {"mte_energy": 0.50}), ("e0.70", {"mte_energy": 0.70}), ("e0.80", {"mte_energy": 0.80}),
-            ("e0.90", {"mte_energy": 0.90}), ("e0.95", {"mte_energy": 0.95}), ("e0.99", {"mte_energy": 0.99}),
+SETTINGS = [("e0.50", {"mte_energy": 0.50}), ("e0.90", {"mte_energy": 0.90}), ("e0.99", {"mte_energy": 0.99}),
             ("k1", {"mte_k": 1}), ("k4", {"mte_k": 4}), ("k16", {"mte_k": 16}), ("k64", {"mte_k": 64})]
 COH = {"thyroid": (cohort, T, "marker.npy"), "ovary": (ovary_cohort, OV, "marker.npy"), "capsule": (capsule_cohort, CAP, "contam.npy")}
 

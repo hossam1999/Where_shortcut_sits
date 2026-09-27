@@ -12,29 +12,22 @@
 
 \begin{abstract}
 Medical image classifiers exploit acquisition artifacts---hair, sonographer calipers, intestinal debris---that
-correlate with the diagnosis. The standard defence restricts the model to the region of interest (ROI). We show
-that this defence fails for artifacts that lie \emph{inside} the ROI, give a closed-form account of when and why,
-and evaluate what to do instead. In pre-registered, leakage-controlled traps built from real artifacts in four diseases
-(dermoscopic hair, thyroid and ovarian calipers, capsule-endoscopy debris), the benefit of ROI masking is always
-larger for out-of-ROI than for in-ROI artifacts (crossover $+0.15$ to $+0.37$ reversed-test AUROC; all four survive
-Holm correction). The loss becomes harm when masking also removes disease context: in dermoscopy, in controlled
-overlap sweeps (ovary $-0.20$, capsule $-0.10$), with end-to-end fine-tuning (capsule $-0.28$), and on the
-unaltered test distributions---the official thyroid test split ($-0.10$ [$-0.14$, $-0.07$] on
-shortcut-conflicting cases) and two of three held-out dermoscopy hospitals---and it is already present in the
-zero-shot scores of vision--language foundation models (MedSigLIP, DermLIP), before any task training. A
-linear-Gaussian analysis reproduces these signs and orderings in closed form; fitted only to each model's clean and
-correlated performance, it matches the held-out reversed-test AUROC (mean absolute error 0.039) and the location
-crossover across 14 cohort--backbone pairs ($r=0.997$). Among remedies for frozen foundation-model features, a
-mask-then-erase procedure driven by generic synthetic overlays (U-MtE) needs no artifact examples, artifact masks or
-artifact labels---only the ROI mask that masking already uses---
-removes in-ROI shortcuts where the artifact is a distinct overlay (thyroid $+0.13$ to $+0.22$ over masking on three
-backbones; $+0.14$ end-to-end), and beats using the same overlays as augmentation in three of four cohorts (two under stricter leakage grouping); it fails when the artifact
-resembles the pathology unless disease-protected, and cannot help when the shortcut is carried by correlates of the
-artifact (hair, chest drains), where label-based reweighting is required. Describing the artifact in text and erasing
-that direction, the obvious vision--language alternative, is a near no-op. A validation-driven selector over these
-options, using image-level artifact labels on validation data only, beats masking in all five settings and matches
-the best candidate in each. Chest radiography serves as a boundary case. Code, splits, pre-registrations and a
-backbone-agnostic tool are public.
+correlate with the diagnosis; the standard defence restricts the model to the region of interest (ROI). We show that
+this defence fails for artifacts inside the ROI, give a closed-form account of when and why, and evaluate
+alternatives. In pre-registered, leakage-controlled traps built from real artifacts in four diseases, masking always
+helps more for out-of-ROI than for in-ROI artifacts (crossover $+0.15$ to $+0.37$ reversed-test AUROC, all
+Holm-significant), with frozen and fine-tuned backbones and in the zero-shot scores of vision--language foundation
+models. Masking becomes harmful when it also removes disease context: in dermoscopy, controlled overlap sweeps,
+fine-tuning (capsule $-0.28$) and unaltered test data (official thyroid split $-0.10$ on shortcut-conflicting cases;
+two of three held-out dermoscopy hospitals). A linear-Gaussian model fitted only to each classifier's clean and
+correlated performance matches its held-out reversed-test AUROC (mean absolute error 0.039) and the location crossover
+across 14 cohort--backbone pairs ($r=0.997$). For frozen foundation-model features we propose mask-then-erase with
+generic synthetic overlays (U-MtE), which needs no artifact examples, artifact masks or artifact labels---only the ROI
+mask. It removes in-ROI shortcuts carried by distinct overlays (thyroid $+0.13$ to $+0.22$ over masking on three
+backbones); erasure beats augmentation with the same overlays (thyroid, dermoscopy); a disease-protected variant prevents failure on
+pathology-like artifacts; text-prompted erasure is a near no-op. Shortcuts carried by correlates of the artifact
+(hair, chest drains; chest radiography is a boundary case) require label-based reweighting. Code, pre-registrations
+and a backbone-agnostic tool are public.
 \end{abstract}
 
 \begin{keyword}
