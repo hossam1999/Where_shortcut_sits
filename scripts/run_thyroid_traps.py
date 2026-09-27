@@ -78,8 +78,15 @@ def main():
     ap.add_argument("--counts_only", action="store_true")
     ap.add_argument("--arms", nargs="*", default=None)
     ap.add_argument("--save_val", action="store_true", help="also save val_groups predictions (adaptive selection)")
+    ap.add_argument("--min_px", type=int, default=15, help="sensitivity: minimum detected marker pixels for A=1")
+    ap.add_argument("--rA", type=float, default=0.5, help="sensitivity: Trap A overlap threshold (r >=)")
+    ap.add_argument("--rB", type=float, default=0.1, help="sensitivity: Trap B overlap threshold (r <)")
     a = ap.parse_args()
     c = {"thyroid": cohort, "capsule": capsule_cohort, "ovary": ovary_cohort}[a.cohort]()
+    if a.cohort in ("thyroid", "ovary") and (a.min_px, a.rA, a.rB) != (15, 0.5, 0.1):  # sensitivity analysis
+        pres = c.marker_px >= a.min_px
+        c["trapA_A1"] = pres & (c.r >= a.rA)
+        c["trapB_A1"] = pres & (c.r < a.rB)
     envs = build_spec_envs(c, group_col="group")
     rows = []
     for trap in ("trapA", "trapB"):
