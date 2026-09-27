@@ -143,3 +143,7 @@ capsule; on DermLIP hair masking itself harms and label-based balancing is best.
 Arms umte_protect / umte_protect_balanced added to the synthetic driver (same protection as U9, using the
 artifact-free training images of the correlated training environment). Run on capsule (DINOv2, MedSigLIP) and
 thyroid (DINOv2, MedSigLIP) sweeps, tag "protect". Claim: umte_protect − mask > 0 at r = 1 where U-MtE − mask ≤ 0.
+
+### Protected U-MtE in controlled sweeps — capsule, MedSigLIP (results/synthetic/capsule/medsiglip448_debris_corr_protect)
+At r = 1: umte_protect − mask = **+0.061 [+0.032, +0.092]** (claim supported; unprotected U-MtE − mask was −0.114);
+umte_protect − umte = +0.175 [+0.137, +0.217]; umte_protect_balanced − balanced = −0.002 [−0.048, +0.046].
