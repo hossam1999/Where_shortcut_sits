@@ -1,0 +1,73 @@
+\documentclass[review,3p]{elsarticle}
+\usepackage{amsmath,amssymb,booktabs,graphicx,xcolor,hyperref}
+\begin{document}
+\begin{frontmatter}
+\title{Supplementary material: Masking cannot remove what is inside the region of interest}
+\end{frontmatter}
+
+\section*{S1. Pre-registration index}
+Every experiment was specified in a dated document committed to the public repository before any model was fitted
+on the corresponding data; amendments were committed before the amended analysis. Git history provides the time
+stamps.
+\begin{center}\small
+\begin{tabular}{ll}
+\toprule
+Document & Scope \\
+\midrule
+\texttt{PREREGISTRATION\_ISIC2019\_TRAPS} & dermoscopy hair traps (and the author's E13 specification) \\
+\texttt{PREREGISTRATION\_THYROID\_TRAPS} & thyroid calipers: real traps, controlled sweeps (DINOv2, MedSigLIP) \\
+\texttt{PREREGISTRATION\_OVARY\_TRAPS} & ovarian calipers: real traps, controlled sweep \\
+\texttt{PREREGISTRATION\_CAPSULE\_TRAPS} & capsule debris: real traps, controlled sweeps \\
+\texttt{PREREGISTRATION\_CXR\_DEVICE\_TRAPS} & chest-radiograph devices (CLiP) and controlled tube sweep \\
+\texttt{PREREGISTRATION\_CXR\_DRAIN} & real chest drains (in-ROI only) \\
+\texttt{PREREGISTRATION\_UNIVERSAL\_I2E} & U-MtE, ablations U7--U14 (erase vs augment, protection, JTT, SPLICE, selectors) \\
+\texttt{PREREGISTRATION\_SLAS} & patch-token artifact localisation and suppression \\
+\texttt{PREREGISTRATION\_FINETUNE} & end-to-end fine-tuning (ResNet-50, ViT-S) \\
+\texttt{PREREGISTRATION\_INPAINT\_LAMA} & LaMa inpainting baseline \\
+\texttt{PREREGISTRATION\_NATURAL} & unaltered-distribution and leave-one-hospital-out tests \\
+\bottomrule
+\end{tabular}
+\end{center}
+The primary family used for multiplicity control (\texttt{STATISTICAL\_PLAN}) was assembled after the individual
+results were available; each member test was individually pre-registered, and the Holm correction is applied to the
+whole family.
+
+\section*{S2. Replication of the original pilot}
+Of 88 numbers reported in the thesis proposal, 73 are reproduced exactly (same sign, same confidence-interval
+verdict, $|\Delta|\le0.02$), 12 agree in sign and significance with a larger difference, and 3 differ (a borderline
+occlusion interval, a contrast trap that was reported as null and is not, and one source stratum). Details:
+\texttt{results/SUMMARY.md}.
+
+\section*{S3. Datasets considered and not used}
+CANDID-PTX (not accessible outside Health New Zealand); RANZCR-CLiP devices linked to NIH (masking helped at both
+locations; device placement confounded with other devices); chest-radiograph cardiomegaly with lines over the heart
+(210 labelled images); TCGA/GrandQC pathology (pen-mark masks unreliable); ISIC ink (70 in-lesion images);
+breast ultrasound BUSI/BUS-BRA (caliper-free group only $\approx70\%$ pure after a two-detector design); DDTI
+thyroid (TI-RADS instead of pathology); BKAI-IGH colonoscopy specular highlights (no highlight-free images).
+
+\section*{S4. Artifact-mask audit and sensitivity}
+Visual audit of 40 random images per cell (thyroid detections: 95\% on real calipers; caliper-free thyroid images:
+95--97\% without visible calipers; ovary: 40/40 detections are overlays, 31/40 calipers; caliper-free ovary images:
+92\% without calipers but $\approx$28\% with other overlays). Capsule debris probe: pixel accuracy 0.92, IoU 0.62
+against expert masks. Re-running with large-marker ($\ge50$ px) and strict-location ($r\ge0.7$ / $r<0.05$)
+definitions (thyroid, ovary) and a strict capsule Trap~B leaves every primary conclusion unchanged
+(\texttt{SENSITIVITY\_ARTIFACT\_LABELS}).
+
+\section*{S5. Secondary method analyses}
+\begin{itemize}
+\item \emph{Patch-token suppression (SLAS).} A linear probe on DINOv2 patch tokens localises real hair from 5
+annotated images (patch AUROC 0.93; 0.97 with 50), but dropping flagged tokens improves reversed AUROC only
+modestly ($+0.02$ hair, $+0.08$ thyroid over ROI pooling).
+\item \emph{Annotation-free pseudo-groups.} An overlay detector trained on synthetic insertion pairs recognises real
+calipers (AUROC 0.84) but not hair (0.57); pseudo-group balancing adds $+0.04$ on thyroid only.
+\item \emph{Erasure combined with DFR.} Adds $\le0.014$ over masking plus DFR.
+\item \emph{Split-validation selector.} Admitting DFR as a candidate (trained and scored on disjoint validation
+halves) fixes the chest-drain case (0.656 vs 0.538) but makes choices noisier elsewhere; neither selector is
+uniformly best.
+\end{itemize}
+
+\section*{S6. Reproducibility}
+All numbers in the main paper and this supplement are produced by scripts in the repository
+(\texttt{scripts/}); tables and figures are generated, never typed. A two-command tool applies U-MtE and SLAS to new
+data with any frozen backbone; it reproduces the experimental features exactly (cosine similarity 1.0).
+\end{document}
