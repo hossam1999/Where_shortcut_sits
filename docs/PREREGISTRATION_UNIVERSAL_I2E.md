@@ -147,3 +147,9 @@ thyroid (DINOv2, MedSigLIP) sweeps, tag "protect". Claim: umte_protect − mask 
 ### Protected U-MtE in controlled sweeps — capsule, MedSigLIP (results/synthetic/capsule/medsiglip448_debris_corr_protect)
 At r = 1: umte_protect − mask = **+0.061 [+0.032, +0.092]** (claim supported; unprotected U-MtE − mask was −0.114);
 umte_protect − umte = +0.175 [+0.137, +0.217]; umte_protect_balanced − balanced = −0.002 [−0.048, +0.046].
+- Capsule, DINOv2 (…/dino518_debris_corr_protect): umte_protect − mask = +0.118 [+0.077, +0.167]; − umte = +0.037
+  [+0.007, +0.072].
+- Thyroid, MedSigLIP (…/medsiglip448_caliper_corr_protect): umte_protect − mask = −0.041 [−0.089, −0.005]
+  (claim **not supported**); − umte = +0.035 [−0.013, +0.085]; umte_protect_balanced at r=1: +0.486 vs ERM.
+Summary: protection turned 1 of 2 MedSigLIP controlled failures into a win and never cost > 0.012 anywhere; the
+balanced (protected or not) variant is the only one that beats masking in every controlled sweep.
