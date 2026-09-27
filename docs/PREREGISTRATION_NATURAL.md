@@ -27,3 +27,9 @@ Committed before any model is fitted for this analysis.
 - **N1 not supported** (U-MtE_protect 0.518 < mask 0.576); unprotected U-MtE recovers half the loss (0.627).
 - **N2 not supported** (U-MtE_protect AUROC − mask = −0.017 [−0.027, −0.007]); unprotected U-MtE has the best overall
   AUROC (0.742). Group balancing gives the best cross-group AUROC (0.713).
+Subset bootstraps (results/natural/thyroid_dino518/subset_boot.json; post hoc, secondary):
+- Hard pairs (malignant WITH in-ROI caliper vs benign WITHOUT): mask − ERM = **−0.102 [−0.139, −0.066]**;
+  U-MtE − mask = +0.051 [+0.033, +0.072]; balanced − mask = +0.142 [+0.107, +0.178].
+- Easy pairs (malignant without vs benign with): mask − ERM = +0.048 [+0.019, +0.079].
+Masking helps where the natural shortcut agrees with the label and harms where it disagrees — the in-ROI
+shortcut is amplified by masking in unaltered data.
