@@ -30,3 +30,7 @@ Observed so far: umte_ft works for ResNet-50 (+0.160 [+0.114, +0.207]) but is no
 [+0.031, +0.087]). Pre-registered combined arm **umte_cons_ft** = projection + feature invariance + prediction
 consistency (λ = 1 each; no tuning). **G3**: umte_cons_ft − mask > 0 for both ResNet-50 and ViT-S (thyroid, Trap A).
 Also running: umte_ft on ovary (ResNet-50), reported with CI.
+
+## Amendment 2 (before running) — other cohorts
+umte_cons_ft on ovary and capsule (ResNet-50, Trap A, 5 folds), reported with CIs. Capsule debris resembles erosion
+fibrin; without disease protection the frozen U-MtE failed there, so failure is the expected outcome.
