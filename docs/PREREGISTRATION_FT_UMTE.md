@@ -55,7 +55,12 @@ ViT-S mask 0.688 / 0.868 / 0.465; umte_cons_ft 0.712 / 0.798 / 0.608.
   features and predictions, stops that feature from forming.
 
 ## Status of Amendment 2
-Not run: at 15:28 UTC the GPU became unavailable inside the container (`nvidia-smi: Input/output error`, host-side
+First attempt not run: at 15:28 UTC the GPU became unavailable inside the container (`nvidia-smi: Input/output error`, host-side
 driver problem; both jobs failed at CUDA initialisation before training). Commands to run when a GPU is available:
 `python scripts/run_finetune_spec.py --cohort ovary --arms umte_cons_ft --traps trapA` and the same with
 `--cohort capsule`. umte_ft on ovary (ResNet-50, run before the failure): +0.107 [−0.003, +0.229].
+
+Recovery (15:37 UTC): the kernel module and /dev/nvidia* were intact; only the host-mounted `libcuda.so.610.43.02`
+was unreadable. The identical userspace libraries were extracted from NVIDIA's official 610.43.02 package into
+/root/data/cache/nvidia_driver/lib and the runs were relaunched with `LD_LIBRARY_PATH` pointing there (same driver
+version, same GPU; no other change). Results below.
