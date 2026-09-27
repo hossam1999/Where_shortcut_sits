@@ -23,3 +23,5 @@ Reversed (clean) AUROC: ERM 0.191 (0.886) — an extreme shortcut; mask 0.239; U
 - With artifact labels, DFR is best (0.683); U-MtE_balanced is worse than balanced (−0.079).
 Interpretation: a real drain co-occurs with a treated (re-expanded) pneumothorax, so the shortcut is not only the
 tube's pixels; pixel/insertion-based repair recovers little (+0.03), label-based group methods much more.
+
+## Amendment (before fitting): DINOv2@518 replication of the drain trap — same arms and claims D1–D5.
