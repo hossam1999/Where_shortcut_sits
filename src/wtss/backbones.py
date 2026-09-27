@@ -36,12 +36,13 @@ class Backend:
     encode: Callable[[torch.Tensor], torch.Tensor]
 
 
-def load_dino(size: int, device) -> Backend:
+def load_dino(size: int, device, arch: str = "b") -> Backend:
+    """DINOv2 ViT-{s,b,l}/14 (scale ablation: docs/PREREGISTRATION_SCALE.md); the default ViT-B is the main backbone."""
     torch.hub.set_dir(str(CACHE / "torch_hub"))
-    model = torch.hub.load("facebookresearch/dinov2", "dinov2_vitb14", pretrained=True).eval().to(device)
+    model = torch.hub.load("facebookresearch/dinov2", f"dinov2_vit{arch}14", pretrained=True).eval().to(device)
     for p in model.parameters():
         p.requires_grad_(False)
-    return Backend(f"dinov2_b14_{size}", size, model, dino_preprocess, lambda x: model(x))
+    return Backend(f"dinov2_{arch}14_{size}", size, model, dino_preprocess, lambda x: model(x))
 
 
 def _derm1m_src() -> Path:
@@ -141,6 +142,8 @@ def load_backend(name: str, device) -> Backend:
         return load_dino(224, device)
     if name == "dino518":
         return load_dino(518, device)
+    if name in ("dinos518", "dinol518"):
+        return load_dino(518, device, name[4])
     if name == "dermlip224":
         return load_dermlip(device)
     if name == "raddino518":
@@ -150,6 +153,6 @@ def load_backend(name: str, device) -> Backend:
     raise ValueError(name)
 
 
-BACKEND_SIZE = {"dino224": 224, "dino518": 518, "dermlip224": 224, "raddino518": 518, "medsiglip448": 518,
+BACKEND_SIZE = {"dino224": 224, "dino518": 518, "dinos518": 518, "dinol518": 518, "dermlip224": 224, "raddino518": 518, "medsiglip448": 518,
                 "convnext384": 518}
 # medsiglip448 renders views at 518 (shared caches) and resizes to its native 448 in preprocessing
