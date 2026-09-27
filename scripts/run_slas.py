@@ -85,7 +85,7 @@ def main():
         del bk; torch.cuda.empty_cache()
     z = np.load(fdir / "views.npz")
     assert list(z["ids"]) == pool
-    spec_traps._CTX = dict(V={k: z[k] for k in VIEWS}, pos={k: j for j, k in enumerate(pool)}, envs=envs, arms=(),
+    spec_traps._CTX = dict(V={**{k: z[k] for k in VIEWS}, "erm": z["tok_all"]}, pos={k: j for j, k in enumerate(pool)}, envs=envs, arms=(),
                            backend_name="dinov2_b14_518_tok", extra_meta={"k": a.k}, view_arms=ARMS)
     seeds = sorted({k[1] for k in envs})
     jobs = [(t, s, f) for t in ("trapA", "trapB") for s in seeds for f in range(5)]

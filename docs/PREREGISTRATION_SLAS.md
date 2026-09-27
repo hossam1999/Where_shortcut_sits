@@ -34,3 +34,20 @@ masks); DermLIP / MedSigLIP token versions if the primary is positive.
 - **S6**: mts reaches >= 50 % of the oracle gain (mts_oracle − tok_mask) in Trap A.
 All outcomes are reported whichever way they go. If S0 fails (token pooling does not reproduce the in-ROI
 harm), SLAS results are reported as exploratory only.
+
+## Results — ISIC 2019 hair, DINOv2@518, k = 50 (results/slas/isic_k50/bootstrap.csv)
+Reversed-test AUROC deltas [95 % CI]:
+- S0 **not supported**: tok_mask − tok_erm = +0.030 [+0.019, +0.040] in Trap A (vs +0.138 [+0.124, +0.151] in
+  Trap B). Token-level ROI pooling does not *harm* in Trap A; the location gap (B ≫ A) persists.
+  Per the registration, SLAS results on this cohort are therefore **exploratory**.
+- S1 supported: mts − tok_mask = +0.022 [+0.012, +0.031] (Trap A).
+- S2 not supported: slas − tok_erm = +0.008 [−0.002, +0.017].
+- S3 supported: mts − tok_mask = +0.006 [+0.002, +0.011] in Trap B. S4 supported (clean +0.003).
+- S5 supported: mts_balanced − tok_balanced = +0.051 [+0.028, +0.072]; mts_balanced has the best reversed
+  (0.749) and clean (0.812) AUROC of all token arms.
+- S6 supported, but the ceiling is tiny: removing EVERY real-hair patch (oracle) gains only
+  +0.015 [+0.002, +0.024] over tok_mask.
+**Interpretation.** On real ISIC hair the residual shortcut after masking is mostly *not* carried by the hair
+patches themselves (oracle removal ≈ +0.015), consistent with the earlier diagnostic that ~55 % of the hair
+shortcut is carried by metadata correlates (site / age / sex). No artifact-removal method can exceed that
+ceiling here; group re-weighting (+0.21) is what moves this trap.
