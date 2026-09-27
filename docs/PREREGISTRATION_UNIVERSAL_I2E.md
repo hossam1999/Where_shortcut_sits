@@ -110,3 +110,10 @@ U-MtE − mte_aug > 0 in Trap A). Purpose: show the methods are not specific to 
 Trap A reversed AUROC: U-MtE − mask = +0.204 [+0.174, +0.237]; U-MtE − mte_aug = +0.177 [+0.148, +0.211] (U7);
 U-MtE_protect − mask = +0.262 [+0.241, +0.282]; U-MtE_balanced − balanced = +0.096 [+0.083, +0.110].
 U-MtE_balanced: rev 0.792 / corr 0.800 / clean 0.798 — most robust arm (min(rev,corr)).
+
+## Amendment (2026-09-27, before fitting) — label-free group robustness baseline: JTT (U11)
+JTT (Liu et al. 2021): ERM → training errors at the clean-validation threshold → retrain with errors upweighted by
+λ ∈ {5, 20, 50} (λ, C by clean-validation AUROC). Needs no artifact/group labels. Arms: jtt (ERM view), mask_jtt,
+umte_jtt (masked + generic-erased view). Claims **U11a** umte_jtt − jtt > 0 and **U11b** umte_jtt − U-MtE ≥ 0
+(reversed AUROC, Trap A) on ISIC hair, thyroid and capsule (DINOv2@518). Among label-free arms, the most robust
+(min(rev, corr)) is reported per cohort. Reported either way.

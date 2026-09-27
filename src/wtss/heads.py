@@ -264,3 +264,19 @@ def pseudo_artifact_labels(X_orig, X_ins, X_train, a_true=None, seed=0):
         from sklearn.metrics import roc_auc_score
         auc = float(roc_auc_score(a_true, s))
     return pa, auc
+
+
+def fit_jtt(Xtr, ytr, Xval, yval, seed, ups=(5.0, 20.0, 50.0)):
+    """Just Train Twice (Liu et al. 2021), group-label-free: ERM -> training errors (threshold selected on clean
+    validation) -> retrain with errors upweighted by λ; λ and C chosen by clean-validation AUROC."""
+    from .evaluation import select_threshold_clean_val
+    first, _, _ = fit_erm(Xtr, ytr, Xval, yval, seed)
+    thr, _ = select_threshold_clean_val(yval, first.predict_proba(Xval)[:, 1])
+    err = (first.predict_proba(Xtr)[:, 1] >= thr).astype(int) != ytr
+    best = None
+    for lam in ups:
+        w = np.where(err, lam, 1.0)
+        clf, C, s = select_C(lambda C: _logreg(C, seed, "balanced").fit(Xtr, ytr, sample_weight=w), Xval, yval)
+        if best is None or s > best[2]:
+            best = (clf, C, s)
+    return best

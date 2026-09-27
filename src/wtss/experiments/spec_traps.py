@@ -69,6 +69,10 @@ def _fold_job(job):
         else:
             fin(H.fit_erm(X(view, tr), ytr, X(view, cv), yv, seed)[0], m, view)
     Xtr, Xv = X("erm", tr), X("erm", cv)
+    if "jtt" in arms:
+        fin(H.fit_jtt(Xtr, ytr, Xv, yv, seed)[0], "jtt", "erm")
+    if "mask_jtt" in arms:
+        fin(H.fit_jtt(X("mask", tr), ytr, X("mask", cv), yv, seed)[0], "mask_jtt", "mask")
     if "balanced" in arms:
         fin(H.fit_balanced(Xtr, ytr, atr, Xv, yv, seed)[0], "balanced", "erm")
     if "dfr" in arms:
@@ -116,6 +120,8 @@ def _fold_job(job):
                 fin(H.TransformHead(er_m, H.fit_dfr(er_m(gm), ya, aa, er_m(mv), yv, seed)[0]), "mte_dfr", "mask")
             if "mask_dfr" in arms:
                 fin(H.fit_dfr(gm, ya, aa, mv, yv, seed)[0], "mask_dfr", "mask")
+        if "umte_jtt" in arms:  # label-free group robustness on the masked + erased view
+            fin(H.TransformHead(er_m, H.fit_jtt(er_m(mtr), ytr, er_m(mv), yv, seed)[0]), "umte_jtt", "mask")
         if "mte_aug" in arms:  # ablation: same overlays used as training augmentation instead of erasure
             fin(insert_aug_head(mtr, ytr, X("mask_insert", tr), mv, yv, seed)[0], "mte_aug", "mask")
     if "insert" in V:
