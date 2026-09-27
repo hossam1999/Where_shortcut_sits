@@ -79,3 +79,14 @@ shortcut is mostly carried by non-pixel correlates (hair: site/age/sex), label-b
 Arms: mask_dfr (DFR head on the masked view) and mte_dfr (DFR head on the masked, generic-erased view; eraser
 unchanged). Claim **U10**: mte_dfr − dfr > 0 and mte_dfr − mask_dfr > 0 (reversed AUROC, Trap A) on thyroid,
 capsule and ISIC hair (DINOv2@518, generic library). Reported either way.
+
+### U9 results (paired_deltas.csv in each results dir; reversed AUROC, Trap A)
+- **U9a supported** (capsule): mte_protect − mte = +0.383 [+0.357, +0.414] (template), +0.105 [+0.092, +0.117] (generic).
+- **U9b**: capsule not supported (−0.012 [−0.028, +0.003] template; −0.010 [−0.020, −0.001] generic);
+  thyroid supported +0.217 [+0.174, +0.254]; ISIC hair supported +0.041 [+0.030, +0.054].
+- **U9c supported**: protection cost vs mte −0.005 [−0.036, +0.024] (thyroid), −0.012 [−0.020, −0.003] (ISIC).
+- Balanced: protect_balanced − mte_balanced +0.125 (capsule template), −0.009 (capsule generic), +0.016 (thyroid),
+  −0.020 (ISIC).
+Interpretation: protection is a safety net — it removes the catastrophic failure when the artifact resembles the
+disease (capsule template −0.395 → −0.012 vs mask) at ≤ 0.012 cost elsewhere; it does not by itself beat masking
+when the artifact subspace overlaps the disease subspace.
