@@ -158,6 +158,13 @@ def _cluster_bootstrap(arrays: Dict[int, tuple], stat_fn, n_boot: int, seed: int
     return out
 
 
+def boot_p(arr: np.ndarray) -> float:
+    """Two-sided bootstrap p-value for H0: delta = 0 (percentile method), floored at 1/n_boot."""
+    arr = np.asarray(arr, float)
+    p = 2 * min((arr <= 0).mean(), (arr >= 0).mean())
+    return float(min(1.0, max(p, 1.0 / len(arr))))
+
+
 def hierarchical_paired_bootstrap(predictions: pd.DataFrame, method_a: str, method_b: str, env: str,
                                   n_boot: int = 10000, seed: int = 20260918,
                                   cluster_col: str = "seed", fast: bool = False) -> Dict:
@@ -179,6 +186,7 @@ def hierarchical_paired_bootstrap(predictions: pd.DataFrame, method_a: str, meth
         "seed_delta_sd": float(np.std(deltas, ddof=1)) if len(deltas) > 1 else float("nan"),
         "seed_deltas_json": json.dumps([float(x) for x in deltas]),
         "ci_excludes_zero": bool(lo > 0 or hi < 0),
+        "p_boot_two_sided": boot_p(arr),
     }
 
 
@@ -276,6 +284,7 @@ def difference_of_deltas(pred_1: pd.DataFrame, pred_2: pd.DataFrame, method: str
     pts = [point[i] - point[i + 1] for i in range(0, len(point), 2)]
     lo, hi = _ci(arr)
     return {"method": method, "baseline": baseline, "env": env, "estimand": "crossover_set1_minus_set2",
+            "p_boot_two_sided": boot_p(arr),
             "delta_mean_bootstrap": float(arr.mean()), "ci95_lo": lo, "ci95_hi": hi,
             "seed_delta_mean": float(np.mean(pts)), "seed_deltas_json": json.dumps([float(x) for x in pts]),
             "ci_excludes_zero": bool(lo > 0 or hi < 0)}
