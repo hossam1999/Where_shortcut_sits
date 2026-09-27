@@ -20,3 +20,10 @@ Reported whichever way they go.
 ## Controlled synthetic-caliper sweep (registered with the real traps, before fitting)
 Marker-free MMOTU images (343 after common support; test split 64 images — underpowered, wide CIs expected);
 draw_caliper, 65x19 box, r ∈ {0,0.25,0.5,0.75,1}; seeds 42/123/456; DINOv2@518; claims as TS1–TS4.
+
+## Results — DINOv2@518, template arms (results/ovary/dino518_main)
+- **O1 supported**: mask − ERM (Trap B) +0.30 (0.725 vs 0.423).
+- **O2 not supported**: mask − ERM (Trap A) +0.13 (0.545 vs 0.414): masking helps less in-ROI, no harm.
+- **O3 supported**: crossover +0.170 [+0.116, +0.224].
+- Template MtE − mask (Trap A) +0.070 [+0.030, +0.106]; MtE_balanced reversed 0.729 / corr 0.790 (min 0.729) —
+  best robust arm (balanced 0.707, DFR 0.689).
