@@ -34,7 +34,13 @@ def main():
         res = list(ex.map(_b, jobs))
     out = pd.DataFrame([{"trap": t, "arm": a1, "ref": a0, "env": e, **{k: r[k] for k in ("seed_delta_mean", "ci95_lo", "ci95_hi")}}
                         for (t, a1, a0, e), r in zip(keys, res)])
-    out.to_csv(d / "paired_deltas.csv", index=False)
+    f = d / "paired_deltas.csv"
+    if f.exists():  # merge with rows already computed for other comparisons (never drop earlier results)
+        old = pd.read_csv(f)
+        key = ["trap", "arm", "ref", "env"]
+        old = old[~old.set_index(key).index.isin(out.set_index(key).index)]
+        out = pd.concat([old, out], ignore_index=True)
+    out.to_csv(f, index=False)
     print(out.round(3).to_string())
 
 

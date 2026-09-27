@@ -87,6 +87,8 @@ def main():
     ap.add_argument("--max_cover_B", type=float, default=None,
                     help="capsule sensitivity: Trap B also requires lesion coverage (roi_cover) below this")
     a = ap.parse_args()
+    if ((a.min_px, a.rA, a.rB) != (15, 0.5, 0.1) or a.max_cover_B is not None or a.lama) and a.tag == "main":
+        raise SystemExit("sensitivity variants must use their own --tag (they would overwrite the main results)")
     c = {"thyroid": cohort, "capsule": capsule_cohort, "ovary": ovary_cohort}[a.cohort]()
     if a.max_cover_B is not None and a.cohort == "capsule":  # large debris can cover the lesion while r is small
         c["trapB_A1"] = c.trapB_A1 & (c.roi_cover < a.max_cover_B)
