@@ -47,6 +47,7 @@ def main():
     ap.add_argument("--generic", action="store_true")
     ap.add_argument("--tag", default="main")
     ap.add_argument("--counts_only", action="store_true")
+    ap.add_argument("--arms", nargs="*", default=None)
     a = ap.parse_args()
     c = cohort()
     envs = build_spec_envs(c, group_col="group")
@@ -69,6 +70,8 @@ def main():
         from wtss.synthetic import draw_generic_artifact
         kw = dict(insert_fn=lambda i, rgb, roi: np.asarray(draw_generic_artifact(_I.fromarray(rgb), roi, f"u|{i}")),
                   insert_tag="_generic", arms=("erm", "mask", "balanced", "dfr", "i2e", "i2e_balanced", "mte", "mte_balanced"))
+    if a.arms:
+        kw["arms"] = tuple(a.arms)
     if not (out / "predictions.csv.gz").exists():
         run_spec(envs, cache, a.backbone, out, paths.CACHE / "features" / "thyroid" / BDIR[a.backbone], donors,
                  device=torch.device("cuda"), **kw)

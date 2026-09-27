@@ -29,3 +29,9 @@ Real hair, author protocol, DINOv2 @518: U-I2E +0.046 [+0.025, +0.067] (A), +0.0
 U-MtE − mask +0.052 [+0.044, +0.062] (A), +0.025 [+0.009, +0.040] (B); U-MtE − ERM +0.015 [−0.004, +0.033] (A),
 +0.132 [+0.105, +0.160] (B) (U3 ✅); U-I2E_balanced +0.238 (A) vs balanced +0.225 with clean 0.791 vs 0.775 (U5 ✅ A),
 +0.207 vs +0.209 (B); U-MtE_balanced +0.254 (B, best). No arm inverts correlated/reversed except none (U4 ✅).
+
+## Amendment (2026-09-27, before fitting) — erase vs augment ablation (reviewer baseline)
+Closest generic baseline to U-MtE: the SAME generic overlays used as training augmentation (random-erasing /
+occlusion-augmentation style) instead of subspace erasure. Arms: insert_aug (ERM view + overlaid copies of a
+random 50 % of training images) and mte_aug (masked view + masked overlaid copies). Claim **U7**: U-MtE − mte_aug
+> 0 (reversed AUROC, Trap A) on ISIC 2019 hair and thyroid markers (DINOv2@518). Reported either way.

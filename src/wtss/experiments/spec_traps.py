@@ -89,6 +89,8 @@ def _fold_job(job):
             fin(H.fit_on_transformed(er_m, mtr, ytr, mv, yv, seed)[0], "mte", "mask")
         if "mte_balanced" in arms:
             fin(H.fit_on_transformed(er_m, mtr, ytr, mv, yv, seed, atr=atr, balanced=True)[0], "mte_balanced", "mask")
+        if "mte_aug" in arms:  # ablation: same overlays used as training augmentation instead of erasure
+            fin(insert_aug_head(mtr, ytr, X("mask_insert", tr), mv, yv, seed)[0], "mte_aug", "mask")
     if "insert" in V:
         X0, X1 = X("erm", ta), X("insert", ta)
         er = fit_difference_subspace(X0, X1, energy=0.9, seed=seed)
