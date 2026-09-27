@@ -45,3 +45,17 @@ To test the location effect under control, the thesis Result-1 design is transfe
 - Seeds 42/123/456; arms erm, mask, inpaint, balanced, dfr, leace + proposed arms (I2E, MtE, U-I2E, U-MtE).
 - Claims: **TS1** mask − ERM (reversed AUROC) decreases with overlap (r=1 minus r=0 interaction < 0);
   **TS2** mask − ERM < 0 at r = 1; **TS3** mask − ERM > 0 at r = 0; **TS4** U-MtE − mask > 0 at r = 1.
+
+## Results — DINOv2@518, real markers (results/thyroid/dino518_main, dino518_universal)
+Reversed-test AUROC, delta vs ERM [95 % CI]:
+- **T1 supported**: mask − ERM, Trap B = +0.341 [+0.320, +0.363].
+- **T2 not supported**: mask − ERM, Trap A = +0.111 [+0.097, +0.124] (helps, does not harm). After masking the
+  model remains marker-driven in Trap A (test_corr 0.902 vs test_rev 0.400).
+- **T3 supported**: crossover [mask − ERM]_B − [mask − ERM]_A = +0.230 [+0.204, +0.255].
+- **T4 supported**: balanced +0.387 / +0.269, DFR +0.449 / +0.317 (A / B).
+- **T5 supported**: paired LEACE +0.050 (A) vs best label-only +0.449 (DFR; prevcal excluded — it needs A at
+  test time and collapses test_corr to 0.258).
+- **T6 supported**: MtE − mask (Trap A) = +0.303 [+0.284, ...] with real-marker templates and
+  **U-MtE − mask = +0.222 [+0.197, +0.251] with the generic library (no marker example used)**.
+  U-MtE_balanced: reversed 0.788, clean 0.807 (template MtE_balanced 0.818 / 0.812); Trap B U-MtE 0.740 vs
+  mask 0.747. No gaming: U-MtE corr 0.822 ≥ rev 0.622.
