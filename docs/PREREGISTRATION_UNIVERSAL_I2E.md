@@ -138,3 +138,8 @@ mask+DFR 0.722, DFR 0.669). The methods are not ViT-specific.
 Trap A reversed: ERM 0.670, mask 0.585, U-MtE 0.509, U-MtE_protect 0.589, U-MtE_protect_balanced 0.693,
 U-MtE_balanced 0.648, JTT 0.670 (balanced alone 0.813). Protection removes the erasure failure (≈ mask), as on
 capsule; on DermLIP hair masking itself harms and label-based balancing is best.
+
+## Amendment (2026-09-27, before fitting) — protected U-MtE in the controlled sweeps
+Arms umte_protect / umte_protect_balanced added to the synthetic driver (same protection as U9, using the
+artifact-free training images of the correlated training environment). Run on capsule (DINOv2, MedSigLIP) and
+thyroid (DINOv2, MedSigLIP) sweeps, tag "protect". Claim: umte_protect − mask > 0 at r = 1 where U-MtE − mask ≤ 0.

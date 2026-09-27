@@ -226,7 +226,22 @@ def synthetic_extra_arms(cfg) -> Dict[str, Callable]:
                                             ctx["seed"], atr=ctx["a_tr"], balanced=balanced)
         return clf, C, vauc, {"k": er.k, "_view": "mask"}
 
-    return {"i2e": arm_i2e, "i2e_balanced": arm_i2e_bal, "i2e_rank1": arm_rank1, "insert_aug": arm_aug,
+    def _umte_protect(ctx, balanced):
+        """U-MtE with disease protection: erased subspace orthogonalised to label directions of the
+        artifact-free training images (masked view)."""
+        tr, va = ctx["sp"]["train"], ctx["sp"]["val"]
+        Xm_c, Em = ctx["env_X"]("mask")
+        er = fit_difference_subspace(Xm_c[tr], generic_view(ctx, True)[tr], energy=0.9, seed=ctx["seed"])
+        Xtr = Em[ctx["train_env"]][0][tr]
+        a0 = np.asarray(ctx["a_tr"]) == 0
+        er = protect(er, disease_directions(Xtr[a0], np.asarray(ctx["ytr"])[a0], seed=ctx["seed"]))
+        clf, C, vauc = H.fit_on_transformed(er, Xtr, ctx["ytr"], Xm_c[va], ctx["y"][va], ctx["seed"],
+                                            atr=ctx["a_tr"], balanced=balanced)
+        return clf, C, vauc, {"k": er.k, "_view": "mask"}
+
+    return {"umte_protect": lambda ctx: _umte_protect(ctx, False),
+            "umte_protect_balanced": lambda ctx: _umte_protect(ctx, True),
+            "i2e": arm_i2e, "i2e_balanced": arm_i2e_bal, "i2e_rank1": arm_rank1, "insert_aug": arm_aug,
             "mte": lambda ctx: _mte(ctx, False), "mte_balanced": lambda ctx: _mte(ctx, True),
             "ui2e": lambda ctx: _ui2e(ctx, False), "ui2e_balanced": lambda ctx: _ui2e(ctx, True),
             "umte": lambda ctx: _umte(ctx, False), "umte_balanced": lambda ctx: _umte(ctx, True)}
