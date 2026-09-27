@@ -220,3 +220,16 @@ method minimises distortion in the whitened metric. `SpliceProjection` now imple
 constraints hold exactly, P is idempotent, and a numerical search over all admissible ranges finds no lower
 distortion). The simplified variant remains available (`euclidean=True`). U12 is re-run as tag *_splice_v2 with the
 same arms and claims; both versions are reported.
+
+### U12 re-run with the faithful SPLICE (tag *_splice_v2) — supersedes the simplified-variant numbers above
+Trap A reversed / correlated (clean); min(rev, corr):
+| cohort | splice | mask_splice | U-MtE_bal | best |
+|---|---|---|---|---|
+| thyroid | 0.563 / 0.545 (0.562) | 0.628 / 0.596 (0.616); 0.596 | 0.788 / 0.818 (0.807); **0.788** | U-MtE_bal |
+| capsule | 0.795 / 0.613 (0.706) | 0.868 / 0.683 (0.784); 0.683 | 0.857 / 0.928 (0.893); **0.857** | U-MtE_bal |
+| ISIC hair | 0.639 / 0.564 (0.606); 0.564 | 0.628 / 0.562 (0.592) | 0.704 / 0.852 (0.779); 0.704 | balanced 0.716 |
+| drains | 0.609 / 0.609 (0.717); **0.609** | 0.577 / 0.588 (0.700) | 0.460 / 0.857 (0.826) | DFR 0.683 |
+The faithful (whitened, minimal-distortion) SPLICE no longer flips the shortcut in thyroid or on drains but removes much
+disease signal (clean AUROC 0.56–0.78 vs 0.69–0.87 for masking) and still flips it on capsule. **U12a (U-MtE_bal >
+SPLICE by min(rev, corr)) supported in 3/4** (thyroid, capsule, hair); on drains SPLICE is higher (0.609 vs 0.460),
+below DFR (0.683).

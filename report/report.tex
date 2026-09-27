@@ -125,7 +125,8 @@ summary that also penalises ``flipping''). Bold = best in the column.}
 \input{../paper/tables/main_inroi.tex}
 \begin{itemize}[leftmargin=*]
 \item \ok\ Erase beats augment with the same overlays: thyroid $+0.21$, hair $+0.05$, ovary $+0.04$; \no\ capsule $-0.13$.
-\item \ok\ SPLICE (closest published erasure) flips the shortcut in three cohorts; U-MtE + balancing is more robust.
+\item \ok\ SPLICE (closest published erasure, NeurIPS 2025) removes much disease signal and flips the shortcut on
+capsule; U-MtE + balancing is more robust in 3 of 4 cohorts (not on chest drains, where DFR is best).
 \item \mixed\ LaMa inpainting with artifact masks is strong; protected U-MtE matches it on thyroid without masks.
 \item \mixed\ JTT (label-free): U-MtE wins on thyroid ($+0.20$) and ovary ($+0.14$); JTT wins on hair.
 \item \mixed\ Selector: beats masking in all 5 cohorts, within 0.02 of the best candidate, beats DFR in 3/5.
