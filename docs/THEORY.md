@@ -44,6 +44,16 @@ increasing in S and decreasing in Ã. (Without the artifact, Ã = 0 and AUROC = 
    subspace spanned by overlay-induced feature changes, which contains u_a whenever overlays and the real artifact move
    the representation along shared "foreign-overlay" directions. → erase ≫ augment (P3).
 
+## Empirical test on real encoders (docs/PREREGISTRATION_THEORY_PREDICTION.md)
+Generalised to any test composition q_y = P(A=1|Y=y): Δ = S + (p1−p0)(q1−q0)A/(1+vA), σ_y² = S + w_a²(1 + A q_y(1−q_y)),
+AUROC = Φ(Δ/√(σ1²+σ0²)). Fitting (S, A) per cell to the observed clean and correlated AUROC and predicting the held-out
+reversed AUROC gives MAE 0.039 (r = 0.92, 148 ERM/mask cells); the resulting location crossovers agree with the
+observed ones across 14 cohort × backbone pairs (r = 0.997, MAE 0.014 (13/14 signs; the miss is a near-zero chest-radiograph cell), better
+than simple reference predictors (scripts/analysis/theory_predict.py; paper/figures/theory_predict.pdf). By the
+pre-registered rule it remains a *qualitative account* (one sign miss). It fails for chest drains, whose shortcut is
+carried by correlates that the clean/correlated environments do not reveal (§6).
+
 ## Limits of the model
 Linear heads on fixed features; Gaussian class-conditional features; the mask is modelled only through (S_m, Ã_m).
-It predicts signs and orderings, not the empirical magnitudes of real encoders.
+Per-cell parameters must be estimated from the clean and correlated environments; it cannot see correlate-carried
+shortcuts that those environments do not expose.

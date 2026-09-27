@@ -57,3 +57,14 @@ Hard = shortcut-conflicting pairs (direction from the test-set association). Δ 
 **N3 supported in 3/5** (thyroid, BCN, MSK): on unaltered data masking harms the shortcut-conflicting cases whenever
 it does. **N4 supported in 2/5** (thyroid, HAM). U-MtE_balanced improves on masking for hard pairs in every cohort
 where measured (4/4) and gives the best or tied-best cross-group AUROC in 3/5; plain balancing is best in 2/5.
+
+## Integrity note and clinical metrics (2026-09-27, afternoon)
+- `results/natural/thyroid_dino518/predictions.csv.gz` failed a gzip CRC check (the only one of 146 result archives;
+  probably two writers at once). It was regenerated with the same deterministic run: every per-seed AUROC and every
+  bootstrap CI above is identical. New from the regenerated run: hard pairs U-MtE_bal − mask = +0.088 [+0.071, +0.108].
+- Clinical secondary metrics (AUROC, AUPRC, Brier, ECE, sensitivity/specificity at the validation-fixed operating point;
+  `scripts/analysis/clinical_metrics.py` → results/natural/clinical_metrics.csv, paper/tables/natural_clinical.tex).
+  Thyroid (official split): masking lowers sensitivity from 0.734 to 0.347 while specificity rises from 0.619 to 0.888
+  (balanced accuracy 0.677 → 0.618); U-MtE recovers part of it (0.425 / 0.854) with the best AUPRC (0.638) and Brier
+  score (0.203). ISIC BCN: masking worsens Brier (0.239 → 0.286) and ECE (0.279 → 0.332). HAM, MSK and capsule: masking
+  improves every metric, matching the AUROC results.

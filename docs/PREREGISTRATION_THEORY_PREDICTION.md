@@ -52,3 +52,28 @@ We call the theory **quantitatively predictive** if T2 signs agree in all cells 
 and T2, and the theory's T1 MAE is smaller than reference (a). Otherwise the paper describes it as a **qualitative
 account** ("reproduces signs and orderings") and does not use the word "predicts" for magnitudes. Reported whichever
 way it goes.
+
+## Results (results/theory/prediction_summary.json, prediction_cells.csv, prediction_crossover.csv; Fig. theory_predict)
+Deviation: the DINOv2 chest-tube sweep (synthetic/nih_ptx/dino518_tube_corr_main) has no saved predictions and was
+skipped; everything else as listed.
+
+| endpoint | theory | ref. (a) rev = clean | ref. (b) rev = 2·clean − corr |
+|---|---|---|---|
+| T1 reversed AUROC, ERM & mask (148 cells) | MAE **0.039**, r = 0.917, 76 % within ±0.05 | MAE 0.234, r = 0.592 | MAE 0.108, r = 0.763 |
+| T1 all ERM-head arms (570 cells) | MAE 0.031, r = 0.945 | MAE 0.163 | MAE 0.069 |
+| T2 crossover (14 cohort × backbone) | **r = 0.997, MAE 0.014, signs 13/14** | r = 0.930, MAE 0.108, 12/14 | r = 0.989, MAE 0.036, 13/14 |
+| T3 sweeps, mask gain (45 overlap points) | r = 0.965, MAE 0.043, signs 42/45 | r = 0.670, 31/45 | r = 0.869, 36/45 |
+| T4 in-ROI sign from S_mask − S_ERM | 11/14 | | |
+| End-to-end fine-tuning (outside the model) | crossover signs 4/4; rev AUROC MAE 0.018 (16 cells) | | |
+
+- **Verdict by the pre-registered rule: "qualitative account"**, because one of 14 crossover signs disagrees:
+  chest-radiograph Consolidation, observed −0.002 vs predicted +0.010 (both ≈ 0). All other criteria are met with
+  wide margins (T1 r = 0.92 ≥ 0.7; T2 r = 0.997 ≥ 0.7; T1 MAE 0.039 < 0.234).
+- Fitted only to clean and correlated performance, the closed form's out-of-sample estimates agree with the held-out
+  reversed-test AUROC to within 0.04 on average and with the location crossover to within 0.014, better than both
+  reference predictors on every endpoint; they also agree for end-to-end fine-tuned networks (4/4 crossover signs),
+  which violate its assumptions. Per the decision rule, the paper does not say the theory "predicts" magnitudes; it
+  reports these agreements and calls the theory a qualitative account.
+- The clear failure is the chest-drain cohort (predicted 0.70–0.76, observed 0.19–0.24): the clean and correlated
+  environments do not reveal a shortcut carried by correlates of the drain (the treated lung), which is consistent
+  with the correlate-carried account (THEORY.md §6) and marks the model's boundary.

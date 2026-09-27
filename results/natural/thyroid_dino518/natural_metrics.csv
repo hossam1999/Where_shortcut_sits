@@ -1,4 +1,4 @@
-method,auc,cross_group,auc_in_roi_caliper
+method,auc,cross_group,auc_in_roi_artifact
 balanced,0.716,0.713,0.768
 dfr,0.697,0.625,0.749
 erm,0.736,0.679,0.781
