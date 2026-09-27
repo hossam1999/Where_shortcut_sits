@@ -66,3 +66,10 @@ Crossover +0.292 [+0.248, +0.337]; Trap A reversed: ERM 0.545, mask 0.639, U-MtE
 mte_aug 0.655, U-MtE_balanced 0.803, mask+DFR 0.864 (corr 0.878; most robust). Same pattern as DINOv2/MedSigLIP.
 
 ## Amendment (before fitting): controlled synthetic-debris replication with MedSigLIP-448 — same design and claims CS1–CS4.
+
+### Results — MedSigLIP replication of the controlled debris sweep (results/synthetic/capsule/medsiglip448_debris_corr_main)
+- CS3 supported: mask − ERM at r=0 = +0.335 [+0.257, +0.409].
+- CS2 **not supported**: mask − ERM at r=1 = +0.140 [+0.095, +0.186] (benefit shrinks, no harm).
+- CS1 supported: location interaction = +0.194 [+0.125, +0.264].
+- CS4 **not supported**: U-MtE − mask at r=1 = −0.114 [−0.147, −0.082] (erasure removes lesion signal with this
+  backbone); U-MtE_balanced − mask = +0.309 [+0.253, +0.369]; U-MtE_balanced − balanced = −0.026 [−0.080, +0.031].
