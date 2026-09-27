@@ -11,6 +11,7 @@ The probe is fitted on k annotated DONOR images (0.1 <= r < 0.5; never in either
 from __future__ import annotations
 
 import argparse
+from pathlib import Path
 import json
 from concurrent.futures import ProcessPoolExecutor
 
@@ -42,7 +43,7 @@ def cohort(name):
         donors = c[~c.A0 & (c.r_spec >= 0.1) & (c.r_spec < 0.5) & (c.has_hair_mask == True) & (c.hair_frac >= 0.02)]
         return c, build_spec_envs(c), cache, donors.image_id.to_numpy()
     import importlib.util
-    spec = importlib.util.spec_from_file_location("rt", paths.ROOT / "scripts" / "run_thyroid_traps.py")
+    spec = importlib.util.spec_from_file_location("rt", Path(__file__).resolve().parent / "run_thyroid_traps.py")
     rt = importlib.util.module_from_spec(spec); spec.loader.exec_module(rt)
     c = rt.cohort()
     cache = RealCache(rt.T / "cache_518", roi_file="roi.npy", art_file="marker.npy")

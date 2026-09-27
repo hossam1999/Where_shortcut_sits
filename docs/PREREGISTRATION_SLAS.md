@@ -51,3 +51,13 @@ Reversed-test AUROC deltas [95 % CI]:
 patches themselves (oracle removal ≈ +0.015), consistent with the earlier diagnostic that ~55 % of the hair
 shortcut is carried by metadata correlates (site / age / sex). No artifact-removal method can exceed that
 ceiling here; group re-weighting (+0.21) is what moves this trap.
+
+## Results — thyroid ultrasound markers, DINOv2@518, k = 50 detector-annotated donors (results/slas/thyroid_k50)
+- S0 **not supported**: tok_mask − tok_erm = +0.059 [+0.050, +0.069] in Trap A vs +0.232 [+0.212, +0.252] in
+  Trap B (location gap persists; no harm) → exploratory, as registered.
+- S1 supported: mts − tok_mask = +0.081 [+0.076, +0.087] (Trap A); larger than the detector-mask "oracle"
+  (+0.047 [+0.045, +0.050]) — the probe also removes marker patches the rule-based detector misses.
+- S2 not supported in size terms: slas − tok_erm = +0.007 [+0.006, +0.008].
+- S3 supported (+0.014 [+0.007, +0.021] in Trap B); S4 supported (clean +0.025).
+- S5 supported: mts_balanced − tok_balanced = +0.070 [+0.053, +0.089]; mts_balanced: reversed 0.758, clean 0.796
+  (best token arm). For reference the CLS-feature MtE_balanced (real-marker templates) reached 0.818 / 0.812.
