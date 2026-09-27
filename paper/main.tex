@@ -23,11 +23,11 @@ reproduce the sign reversal (dermoscopy rulers, two foundation models; capsule d
 $-0.10$ at full overlap). We then propose \emph{mask-then-erase with a generic insertion library} (U-MtE): after
 masking, procedurally generated overlays that resemble no particular artifact are inserted into training images,
 and the subspace spanned by the resulting feature differences is erased, so no artifact example, mask or label is
-needed. U-MtE improves on masking in the in-ROI regime of all three modalities (thyroid +0.22, capsule synthetic
-+0.08, dermoscopy +0.05), the same overlays used as augmentation do not (erase-versus-augment +0.21 and +0.05),
-and combined with group balancing it gives the most robust model in ultrasound and is competitive with masking
-plus last-layer retraining in capsule endoscopy; in the controlled capsule sweep its benefit no longer depends on
-artifact location. A disease-protected variant prevents the failure mode in which the
+needed. On real in-ROI artifacts U-MtE improves on masking with three backbones in thyroid ultrasound
+(+0.13 to +0.22) and in dermoscopy (+0.05), while the same overlays used as augmentation do not (erase-versus-augment
++0.12 to +0.21); in controlled sweeps the unbalanced method is backbone-dependent. Combined with group balancing,
+U-MtE beats masking in all four controlled sweeps with a benefit that no longer depends on artifact location, and
+is the most robust model on real thyroid artifacts with all three backbones. A disease-protected variant prevents the failure mode in which the
 artifact resembles the pathology. Where the shortcut is carried by non-pixel correlates of the artifact
 (dermoscopic hair), label-based group methods remain preferable. Code, frozen splits, pre-registrations and a
 backbone-agnostic tool are public.
