@@ -89,3 +89,16 @@ labels ≈ 70 % pure), EAD endoscopy (no disease labels), BKAI-IGH NeoPolyp colo
   joint-best robust model without labels; capsule — masking HARMS in-ROI (−0.284) with a crossover of +0.584
   [+0.469, +0.691], end-to-end U-MtE fails there (debris ≈ disease).
 - Git: 76 commits had silently failed to push (branch name mismatch); fixed and verified.
+
+## 10. Session 3 additions (2026-09-27, 09:30–11:30 UTC) — reviewer-proofing
+- **Statistics**: Holm-corrected primary family — 12/16 supported (P1 location crossover 4/4; protected U-MtE >
+  mask 3/4; erase > augment 3/4; U-MtE+bal > balanced 2/4). docs/STATISTICAL_PLAN.md, results/PRIMARY_CLAIMS.md.
+- **Natural distribution (thyroid, official split, no resampling)**: masking lowers AUROC on shortcut-conflicting
+  cases by −0.102 [−0.139, −0.066]; U-MtE recovers +0.051; balancing +0.142. Protected U-MtE did not help (N1/N2 not
+  supported).
+- **Artifact-label robustness**: crossover and protected-U-MtE gain hold under large-marker and strict-location
+  definitions (thyroid, ovary) and a strict capsule Trap B (+0.259). Visual audit: thyroid detections 95 % real.
+- **Theory**: AUROC_rev = Φ((S − Ã)/√(2(S + Ã))); simulation agreement 0.009; explains all regimes (docs/THEORY.md).
+- **LaMa inpainting** (oracle masks): strong; protected U-MtE matches it on thyroid, below on ovary; U-MtE+bal beats it.
+- **Split-validation selector**: fixes drains (0.656), mixed elsewhere; neither selector uniformly best.
+- **Paper**: compiles cleanly (14 pages), new figures (dose-response, forest, examples, theory), two review passes.
