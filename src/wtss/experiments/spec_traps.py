@@ -121,7 +121,10 @@ def _fold_job(job):
         fin(H.fit_on_transformed(H.eraser_fn(er), Xtr, ytr, Xv, yv, seed)[0], "leace_unpaired", "erm")
     if "mask_insert" in V:  # Mask-then-Erase: erase the insertion subspace *in the masked view*
         mtr, mv = X("mask", tr), X("mask", cv)
-        er_m = fit_difference_subspace(X("mask", ta), X("mask_insert", ta), energy=0.9, seed=seed)
+        # rank rule: 90 % held-out energy (main); _CTX overrides only in the U-MtE ablation (docs/PREREGISTRATION_UMTE_ABLATION.md)
+        fk = _CTX.get("mte_k")
+        er_m = fit_difference_subspace(X("mask", ta), X("mask_insert", ta), energy=1.0 if fk else _CTX.get("mte_energy", 0.9),
+                                       max_k=fk or 64, seed=seed)
         if "mte" in arms:
             fin(H.fit_on_transformed(er_m, mtr, ytr, mv, yv, seed)[0], "mte", "mask")
         if "mte_balanced" in arms:
