@@ -106,7 +106,7 @@ def synthetic_extra_arms(cfg) -> Dict[str, Callable]:
         key = f"insert_random_{cfg.artifact.split('_')[0]}"
         if key in state:
             return state[key]
-        size = views.backend.size
+        size = getattr(views.cache, "size", views.backend.size)  # render size
         w, h = cfg.geometry[size]
 
         def render(i):
@@ -159,7 +159,7 @@ def synthetic_extra_arms(cfg) -> Dict[str, Callable]:
         if key in state:
             return state[key]
         from ..ops import apply_roi_mask
-        size = views.backend.size
+        size = getattr(views.cache, "size", views.backend.size)  # render size
         w, h = cfg.geometry[size]
 
         def render(i):
