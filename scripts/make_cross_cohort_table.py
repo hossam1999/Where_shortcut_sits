@@ -20,12 +20,14 @@ RUNS = {  # (cohort label, backbone): result dirs merged (first occurrence of an
     ("Capsule debris", "ConvNeXt"): ["capsule/convnext384_universal"],
     ("NIH chest drains (in-ROI only)", "RAD-DINO"): ["cxr_drain/raddino518_universal"],
     ("NIH chest drains (in-ROI only)", "DINOv2"): ["cxr_drain/dino518_universal"],
+    ("Ovary US markers", "DINOv2"): ["ovary/dino518_main", "ovary/dino518_universal"],
+    ("Ovary US markers", "MedSigLIP"): ["ovary/medsiglip448_text"],
     ("Capsule debris", "DINOv2"): ["capsule/dino518_main", "capsule/dino518_universal", "capsule/dino518_protect_generic",
                                    "capsule/dino518_u10"],
     ("Capsule debris", "MedSigLIP"): ["capsule/medsiglip448_main", "capsule/medsiglip448_universal"],
 }
 # arms fitted with the generic library in *_universal / later runs get a "U-" prefix where the name is shared
-GENERIC_DIRS = ("universal", "ablation", "protect_generic", "pbal", "u10", "spec_protect", "jtt")
+GENERIC_DIRS = ("text", "universal", "ablation", "protect_generic", "pbal", "u10", "spec_protect", "jtt")
 ORDER = ["erm", "mask", "inpaint", "balanced", "dfr", "leace_paired", "leace_unpaired", "mte", "mte_balanced",
          "U-mte", "U-mte_balanced", "U-mte_aug", "U-mte_protect", "U-mte_protect_balanced", "U-mte_dfr", "U-mask_dfr",
          "U-umte_pbal"]

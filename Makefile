@@ -123,6 +123,7 @@ cxr:
 paper:
 	$(PY) scripts/make_paper_tables.py
 	cd paper && (tectonic -X compile main.tex && tectonic -X compile supplement.tex || echo "install tectonic or latexmk to build the PDF")
+	cd paper_neurips && (tectonic -X compile main.tex || true)   # NeurIPS 2025 format (same style as SPLINCE)
 
 test:
 	$(PY) -m pytest -q tests

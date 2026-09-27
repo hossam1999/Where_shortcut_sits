@@ -60,7 +60,7 @@ def main():
     lines = result_lines()
     near = lambda v, ns: any(round(v + d, 3) in ns for d in (0, 0.001, -0.001))
     has_pair = lambda lo, hi: any(near(lo, ns) and near(hi, ns) for ns, _ in lines)
-    tex = sorted(set(Path(paths.REPO_ROOT / "paper").glob("*.tex")) | set(Path(paths.REPO_ROOT / "paper" / "sections").glob("*.tex")))
+    tex = sorted(set(Path(paths.REPO_ROOT / "paper").glob("*.tex")) | set(Path(paths.REPO_ROOT / "paper" / "sections").glob("*.tex")) | set(Path(paths.REPO_ROOT / "paper_neurips").glob("*.tex")))
     n = bad = 0
     for f in tex:
         s = f.read_text().replace("$", "")

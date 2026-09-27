@@ -17,10 +17,11 @@ ROWS = [("erm", "ERM", "—"), ("mask", "ROI masking", "ROI"), ("U-mte_aug", "Ma
         ("balanced", "Group-balanced", "$A$"), ("dfr", "DFR", "$A$"), ("U-mask_dfr", "Mask + DFR", "ROI + $A$"),
         ("U-mte_balanced", "\\textbf{U-MtE + balanced (ours)}", "ROI + $A$")]
 COLS = [("ISIC 2019 hair", "DINOv2"), ("ISIC 2019 hair", "DermLIP"), ("Thyroid US markers", "DINOv2"),
-        ("Thyroid US markers", "MedSigLIP"), ("Thyroid US markers", "ConvNeXt"), ("Capsule debris", "DINOv2"),
+        ("Thyroid US markers", "MedSigLIP"), ("Thyroid US markers", "ConvNeXt"), ("Ovary US markers", "DINOv2"),
+        ("Ovary US markers", "MedSigLIP"), ("Capsule debris", "DINOv2"),
         ("Capsule debris", "MedSigLIP"), ("Capsule debris", "ConvNeXt"), ("NIH chest drains (in-ROI only)", "RAD-DINO"),
         ("NIH chest drains (in-ROI only)", "DINOv2")]
-SHORT = {"ISIC 2019 hair": "Hair", "Thyroid US markers": "Thyroid", "Capsule debris": "Capsule",
+SHORT = {"ISIC 2019 hair": "Hair", "Thyroid US markers": "Thyroid", "Capsule debris": "Capsule", "Ovary US markers": "Ovary",
          "NIH chest drains (in-ROI only)": "Drain"}
 
 
@@ -55,5 +56,38 @@ def main():
     print("\n".join(lines))
 
 
+COMPACT = [("ISIC 2019 hair", "DINOv2"), ("Thyroid US markers", "DINOv2"), ("Thyroid US markers", "MedSigLIP"),
+           ("Ovary US markers", "DINOv2"), ("Capsule debris", "DINOv2"), ("NIH chest drains (in-ROI only)", "RAD-DINO")]
+CROWS = [("mask", "ROI masking", "ROI"), ("U-mte_aug", "Mask + overlay augmentation", "ROI"), ("U-mte", "U-MtE (ours)", "ROI"),
+         ("U-mte_protect", "U-MtE, protected (ours)", "ROI"), ("balanced", "Group-balanced", "$A$"), ("dfr", "DFR", "$A$"),
+         ("U-mask_dfr", "Mask + DFR", "ROI + $A$"), ("U-mte_balanced", "U-MtE + balanced (ours)", "ROI + $A$")]
+
+
+def compact():
+    """Readable main-text table: min(reversed, correlated) AUROC only, six key cohort x backbone columns."""
+    data = {c: cc.load(c) for c in COMPACT}
+    cols = [c for c in COMPACT if data[c]]
+    val = lambda c, k: (min(data[c][("trapA", k, "test_rev")], data[c][("trapA", k, "test_corr")])
+                        if ("trapA", k, "test_rev") in data[c] else None)
+    best = {c: max(v for v in (val(c, k) for k, _, _ in CROWS) if v is not None) for c in cols}
+    head = " & ".join(f"{SHORT[c[0]]}" + "\\\\" + f"{{\\scriptsize {c[1]}}}" for c in cols)
+    head = " & ".join("\\shortstack{" + SHORT[c[0]] + "\\\\ \\scriptsize " + c[1] + "}" for c in cols)
+    L = ["\\begin{table}[t]\\centering\\small",
+         "\\caption{In-ROI artifacts (Trap~A): robustness $=\\min(\\text{reversed},\\text{correlated})$ AUROC, which "
+         "penalises both shortcut use and shortcut flipping. Bold: best per column. Full reversed/correlated/clean values "
+         "for all cohorts and backbones: Table~\\ref{tab:main}.}", "\\label{m:tab:remedies}",
+         "\\begin{tabular}{ll" + "c" * len(cols) + "}", "\\toprule", f"Method & Needs & {head} \\\\", "\\midrule"]
+    for k, name, needs in CROWS:
+        cells = []
+        for c in cols:
+            v = val(c, k)
+            cells.append("–" if v is None else (f"\\textbf{{{v:.2f}}}" if abs(v - best[c]) < 1e-9 else f"{v:.2f}"))
+        L.append(f"{name} & {needs} & " + " & ".join(cells) + " \\\\")
+    L += ["\\bottomrule", "\\end{tabular}", "\\end{table}"]
+    (paths.REPO_ROOT / "paper" / "tables" / "main_inroi_compact.tex").write_text("\n".join(L) + "\n")
+    print("\n".join(L))
+
+
 if __name__ == "__main__":
     main()
+    compact()

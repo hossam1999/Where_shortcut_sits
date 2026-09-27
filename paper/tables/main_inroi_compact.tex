@@ -1,0 +1,18 @@
+\begin{table}[t]\centering\small
+\caption{In-ROI artifacts (Trap~A): robustness $=\min(\text{reversed},\text{correlated})$ AUROC, which penalises both shortcut use and shortcut flipping. Bold: best per column. Full reversed/correlated/clean values for all cohorts and backbones: Table~\ref{tab:main}.}
+\label{m:tab:remedies}
+\begin{tabular}{llcccccc}
+\toprule
+Method & Needs & \shortstack{Hair\\ \scriptsize DINOv2} & \shortstack{Thyroid\\ \scriptsize DINOv2} & \shortstack{Thyroid\\ \scriptsize MedSigLIP} & \shortstack{Ovary\\ \scriptsize DINOv2} & \shortstack{Capsule\\ \scriptsize DINOv2} & \shortstack{Drain\\ \scriptsize RAD-DINO} \\
+\midrule
+ROI masking & ROI & 0.45 & 0.40 & 0.35 & 0.55 & 0.68 & 0.24 \\
+Mask + overlay augmentation & ROI & 0.46 & 0.42 & 0.38 & 0.53 & 0.70 & 0.24 \\
+U-MtE (ours) & ROI & 0.51 & 0.62 & 0.55 & 0.56 & 0.57 & 0.27 \\
+U-MtE, protected (ours) & ROI & 0.49 & 0.62 & 0.61 & 0.59 & 0.67 & 0.27 \\
+Group-balanced & $A$ & 0.72 & 0.68 & 0.70 & 0.71 & 0.78 & 0.54 \\
+DFR & $A$ & \textbf{0.74} & 0.66 & 0.72 & 0.69 & 0.80 & \textbf{0.68} \\
+Mask + DFR & ROI + $A$ & 0.69 & 0.74 & 0.76 & \textbf{0.75} & \textbf{0.88} & 0.65 \\
+U-MtE + balanced (ours) & ROI + $A$ & 0.70 & \textbf{0.79} & \textbf{0.79} & 0.74 & 0.86 & 0.46 \\
+\bottomrule
+\end{tabular}
+\end{table}

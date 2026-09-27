@@ -1,0 +1,253 @@
+\documentclass{article}
+% NeurIPS 2025 format (same style as Holstege et al., NeurIPS 2025). Default option = anonymous submission.
+% For an arXiv preprint use \usepackage[preprint]{neurips_2025}; camera-ready: [final].
+\usepackage{neurips_2025}
+\usepackage[utf8]{inputenc}
+\usepackage[T1]{fontenc}
+\usepackage{hyperref}
+\usepackage{url}
+\usepackage{booktabs}
+\usepackage{amsfonts,amsmath,amssymb}
+\usepackage{nicefrac}
+\usepackage{microtype}
+\usepackage{xcolor}
+\usepackage{graphicx}
+\usepackage{multirow}
+\newif\ifdupfloats\dupfloatstrue
+
+\title{Masking Cannot Remove What Is Inside the Region of Interest: Location-Dependent Shortcut Mitigation in Medical Imaging}
+
+\author{Anonymous Author(s)\\Affiliation\\Address\\\texttt{email}}
+
+\begin{document}
+\maketitle
+
+\begin{abstract}
+Medical image classifiers exploit acquisition artifacts---hair, sonographer calipers, intestinal debris---that
+correlate with the diagnosis. The standard defence restricts the model to the region of interest (ROI). We show that
+this defence fails for artifacts that lie \emph{inside} the ROI, explain why, and evaluate what to do instead. In
+pre-registered, leakage-safe traps built from real artifacts in four diseases and three imaging modalities, the benefit
+of ROI masking is always larger for out-of-ROI than for in-ROI artifacts (crossover $+0.15$ to $+0.37$ reversed-test
+AUROC, all Holm-significant), across frozen and fine-tuned backbones and even in the zero-shot scores of
+vision--language foundation models. Masking becomes harmful when it also removes disease context: in controlled overlap
+sweeps, with end-to-end fine-tuning ($-0.28$), and on unaltered test distributions (thyroid: $-0.10$ on
+shortcut-conflicting cases; two of three held-out dermoscopy hospitals). A linear-Gaussian analysis predicts these
+signs in closed form. As a remedy we propose mask-then-erase with a generic insertion library (U-MtE): synthetic
+overlays that resemble no particular artifact are inserted into masked images and the feature subspace they move is
+erased, requiring no artifact example, mask or label. U-MtE removes in-ROI shortcuts carried by distinct overlays
+($+0.13$ to $+0.22$ over masking on three backbones), erasure beats augmentation with the same overlays, a
+disease-protected variant prevents failure when the artifact resembles the pathology, and text-prompted erasure---the
+obvious vision--language alternative---is a near no-op. Where the shortcut is carried by correlates of the artifact,
+label-based reweighting is required. Code, pre-registrations and a backbone-agnostic tool are released.
+\end{abstract}
+
+\section{Introduction}\label{m:intro}
+\begin{figure}[t]\centering\includegraphics[width=\linewidth]{figures/examples.pdf}
+\caption{Real artifacts inside and outside the region of interest (green: ROI; red: artifact mask). Masking the
+background removes an out-of-ROI artifact (2nd, 4th) but keeps an in-ROI one (1st, 3rd) while deleting the context
+around it. Left: ovarian tumours (MMOTU); right: capsule endoscopy (SEE-AI).}\label{m:fig:teaser}\label{fig:examples}\end{figure}
+Deep classifiers for medical images rely on features that correlate with the label but are not evidence of disease
+\citep{geirhos2020shortcut,degrave2021ai}: surgical markings and rulers change melanoma predictions
+\citep{winkler2019markings,winkler2021scalebars}, and pneumothorax classifiers detect the chest drain that treats the
+condition \citep{oakden2020hidden,jimenez2023shortcuts}. The most common defence is to restrict the classifier to the
+region of interest (ROI) by masking the background. Its rationale assumes that shortcuts live outside the ROI. Hair,
+calipers and debris do not respect that assumption: when the artifact overlaps the ROI, masking cannot remove it---it
+removes everything \emph{else}.
+
+We ask whether the value of a mitigation depends on where the artifact sits, which quantity governs that dependence,
+and how in-ROI shortcuts can be removed without localising the artifact. Our contributions:
+\begin{enumerate}
+\item \textbf{A location law for ROI masking}, established with pre-registered real-artifact traps in four diseases
+(dermoscopic hair; thyroid and ovarian sonographer calipers; capsule-endoscopy debris), replicated with three frozen
+backbones, two fine-tuned architectures, the zero-shot scores of vision--language models and on unaltered test data.
+\item \textbf{A closed-form account} (Sec.~\ref{m:theory}) predicting when in-ROI masking harms, when erasure fails,
+and why group reweighting is location-invariant.
+\item \textbf{U-MtE}, an annotation-free remedy, with evidence that erasure (not augmentation) is what works, a
+disease-protected variant, and a delineation of the regimes in which it does not apply.
+\item \textbf{Rigour}: pre-registration before every experiment, Holm-corrected primary claims (12/16 supported),
+replication of an earlier pilot (73/88 numbers), and gaming-aware reporting.
+\end{enumerate}
+
+\section{Related work}\label{m:related}
+\citet{bissoto2020debiasing} showed that artifact debiasing in dermoscopy is harder than it appears and built trap sets;
+test-time selection \citep{bissoto2023tts} and generative repair \citep{maskmedpaint} address specific artifacts. None
+treats the artifact's location relative to the ROI as a variable. Group-robust training
+\citep{sagawa2020groupdro,kirichenko2023dfr,liu2021jtt} needs group labels or error sets; linear concept erasure
+\citep{ravfogel2020inlp,belrose2023leace} and its task-preserving form SPLINCE \citep{splice2025} need concept labels;
+biased-prompt projection \citep{chuang2023debiasing} derives directions from text. Random erasing and occlusion
+augmentation \citep{zhong2020random,fong2019occlusions} use overlays as training noise. We estimate an artifact subspace
+from synthetic \emph{insertion} pairs and remove it only after masking.
+
+\section{Setup}\label{m:setup}
+\paragraph{Traps} Let $Y$ be the diagnosis and $A$ the presence of an artifact. A trap trains with
+$P(A{=}1\mid Y{=}1)=0.9$, $P(A{=}1\mid Y{=}0)=0.1$ and tests on a correlated (same rates), a reversed (swapped) and a
+clean (artifact-free) environment. The overlap $r=|\text{artifact}\cap\text{ROI}|/|\text{artifact}|$ defines
+Trap~A (in-ROI, $r\ge0.5$) and Trap~B (out-of-ROI, $r<0.1$); both share one artifact-free group, cells are matched on
+source and label, and splits are grouped by lesion/patient identifiers and perceptual hashes (five seeds $\times$ five
+folds). The primary metric is reversed-test AUROC; we always report correlated and clean AUROC, and summarise robustness
+by $\min(\text{reversed},\text{correlated})$, which penalises methods that merely flip the shortcut. Uncertainty is a
+hierarchical paired bootstrap (10{,}000 replicates, clusters = seeds or folds).
+\paragraph{Cohorts} (Table~\ref{m:tab:data}; details in Appendix~\ref{sec:data}.) Heads are linear on frozen
+DINOv2 ViT-B/14, MedSigLIP, DermLIP, RAD-DINO or ConvNeXt features; regularisation and threshold are chosen on clean
+validation data only. Controlled sweeps paste a synthetic artifact (ruler, caliper, debris, tube) at overlap
+$r\in\{0,0.25,0.5,0.75,1\}$.
+\begin{table}[t]\centering\small
+\caption{Real-artifact cohorts. Artifact masks: published (Wegley et al.), audited detector (95\% precision on 40
+images), or expert-trained probe (pixel accuracy 0.92).}\label{m:tab:data}
+\begin{tabular}{llrll}\toprule
+Cohort & Modality & Images & Artifact (mask source) & ROI \\\midrule
+ISIC 2019 & dermoscopy & 25{,}331 & hair/ruler (published masks) & lesion \\
+TN3K/TNCD & thyroid ultrasound & 3{,}493 & calipers (rule-based detector) & nodule \\
+MMOTU & ovarian ultrasound & 1{,}202 & calipers/overlays (same detector) & tumour \\
+SEE-AI & capsule endoscopy & 5{,}481 & debris/bubbles (patch-token probe) & lesion boxes \\
+NIH ChestX-ray14 & radiography & 29{,}687 & chest drains (image-level) & lungs \\\bottomrule
+\end{tabular}\end{table}
+
+\section{Mask-then-erase with a generic insertion library}\label{m:method}
+Removing an in-ROI artifact requires its pixels; inserting one does not. A procedural generator $\mathcal{G}$
+(strokes, bands, patches, blobs, dashed lines, glyphs; random colour, opacity and position, half centred in the ROI)
+turns every masked training image $m(x_i)$ into a counterfactual $m(\mathcal{G}(x_i))$; the feature differences
+$\Delta_i=f(m(\mathcal{G}(x_i)))-f(m(x_i))$ are independent of $Y$. U-MtE erases their span,
+\begin{equation}
+U_k=\mathrm{top}\text{-}k\ \mathrm{eigvecs}\big(\tfrac1n\textstyle\sum_i\Delta_i\Delta_i^\top\big),\qquad P(z)=z-U_kU_k^\top(z-\mu),
+\end{equation}
+with $k$ chosen without labels (90\% held-out difference energy), and fits the head on $P(f(m(x)))$. The generator
+contains no ruler, hair, caliper or debris template. \emph{Disease protection} erases
+$U_k'=\mathrm{orth}((I-WW^\top)U_k)$, where $W$ spans logistic label directions fitted on artifact-free training
+images, guaranteeing $w^\top P(z)=w^\top z$ for $w\in\mathrm{span}(W)$. With image-level artifact labels the head is
+group-balanced (U-MtE$_{\text{bal}}$).
+
+\section{Why location matters}\label{m:theory}
+Let the disease block have class-separation SNR $S$ and the artifact block SNR $A$ per unit of presence. For the
+LDA-optimal linear head trained with $(p_1,p_0)$, the artifact's effective SNR is
+$\tilde A=(p_1-p_0)^2A/(1+p_1(1-p_1)A)$ and
+\begin{equation}
+\mathrm{AUROC}_{\mathrm{rev}}=\Phi\!\left(\frac{S-\tilde A}{\sqrt{2(S+\tilde A)}}\right),
+\end{equation}
+increasing in $S$ and decreasing in $\tilde A$ (simulation agreement $\le0.009$ AUROC; Appendix~\ref{sec:theory}).
+Masking maps $(S,\tilde A)\mapsto(S_m,\tilde A_m)$ with $\tilde A_m=0$ out of the ROI and $\tilde A_m\ge\tilde A$
+inside. Hence in-ROI masking harms exactly when it removes disease context ($S_m<S$); the crossover is positive for
+every $S_m$; erasure sets $\tilde A\to0$ but scales $S$ by $1-\rho^2$ ($\rho$: overlap of the erased subspace with the
+disease direction), so it fails for pathology-like artifacts unless protected; and group reweighting yields
+$\Phi(\sqrt{S/2})$ regardless of location (Fig.~\ref{m:fig:theory}).
+\begin{figure}[t]\centering\includegraphics[width=0.55\linewidth]{figures/theory.pdf}
+\caption{Theory (lines) versus simulation (points): reversed-test AUROC as masking removes a growing share of disease
+signal ($S=1$, $A=2$, 90/10 training). In-ROI masking falls below ERM; erasure and reweighting recover.}
+\label{m:fig:theory}\label{fig:theory}\end{figure}
+
+\section{Results}\label{m:results}
+\subsection{A location law for ROI masking}
+\begin{figure}[t]\centering\includegraphics[width=\linewidth]{figures/dose_response.pdf}
+\caption{Controlled overlap sweeps: $\Delta$ reversed-test AUROC versus ERM as a synthetic artifact moves into the ROI
+(95\% CIs). Masking (blue) declines with overlap except in chest radiography, where the encoder ignores extra-pulmonary
+tubes; U-MtE with group balancing (green) is flat.}\label{m:fig:dose}\label{fig:dose}\end{figure}
+\begin{table}[t]\centering\small
+\caption{Masking gain (mask $-$ ERM, reversed AUROC) is always larger for out-of-ROI than in-ROI artifacts.
+Crossover $=$ gain(out) $-$ gain(in), 95\% CI. Zero-shot: no task training. Natural: shortcut-conflicting pairs of
+untouched test data.}\label{m:tab:law}
+\begin{tabular}{llc}\toprule
+Setting & Cohort (backbone) & Crossover [95\% CI] \\\midrule
+\multirow{4}{*}{Real traps, frozen} & ISIC hair (DINOv2) & $+0.145$ [$+0.105$, $+0.181$] \\
+ & Thyroid (DINOv2 / MedSigLIP / ConvNeXt) & $+0.230$ / $+0.163$ / $+0.284$ \\
+ & Ovary (DINOv2) & $+0.170$ [$+0.116$, $+0.224$] \\
+ & Capsule (DINOv2 / MedSigLIP / ConvNeXt) & $+0.368$ / $+0.332$ / $+0.292$ \\\midrule
+\multirow{2}{*}{Fine-tuned} & Capsule (ResNet-50) & $+0.584$ [$+0.469$, $+0.691$] \\
+ & Thyroid (ViT-S) & $+0.168$ [$+0.074$, $+0.265$] \\\midrule
+\multirow{2}{*}{Zero-shot VLM} & Thyroid / Capsule (MedSigLIP) & $+0.103$ / $+0.049$ \\
+ & Ovary (MedSigLIP) / Hair (DermLIP) & $+0.181$ / $+0.051$ \\\midrule
+\multirow{2}{*}{Natural, mask $-$ ERM} & Thyroid (official split) & $-0.102$ [$-0.139$, $-0.066$] \\
+ & ISIC held-out BCN / MSK & $-0.016$ / $-0.056$ \\\bottomrule
+\end{tabular}\end{table}
+In all four real-artifact cohorts the crossover is positive and survives Holm correction (Table~\ref{m:tab:law}); it
+replicates with MedSigLIP and ConvNeXt, with end-to-end fine-tuning (ResNet-50 capsule; ViT-S thyroid), and in the
+zero-shot scores of MedSigLIP and DermLIP, i.e.\ before any task training. Masking becomes \emph{harmful} for in-ROI
+artifacts when it also removes disease context: real dermoscopic hair ($-0.037$ [$-0.057, -0.019$]), controlled sweeps
+at full overlap (ovary $-0.197$ [$-0.292, -0.100$]; capsule $-0.102$ [$-0.162, -0.040$]; Fig.~\ref{m:fig:dose}),
+fine-tuned capsule ($-0.284$ [$-0.347, -0.226$]) and on unaltered data, where masking lowers AUROC on
+shortcut-conflicting cases for thyroid and two of three held-out ISIC hospitals (Table~\ref{m:tab:natural}). The claims are robust to the
+artifact-label definition (large-marker and strict-location variants) and to a visual audit of the masks
+(Appendix~\ref{sec:robust}). Chest radiography is a boundary case: the encoder ignores extra-pulmonary tubes, so
+masking has nothing to remove outside the lungs.
+
+\paragraph{Mechanism.} Three explanations were tested separately in the controlled dermoscopy sweep
+(Appendix~\ref{sec:derm}). \emph{Occlusion} is not the cause: with the artifact present but uncorrelated with the
+label, masking helps at every overlap. \emph{Lost context} alone is not the cause: dilating the mask at 50\% overlap
+increases harm as it restores artifact pixels, and at full overlap harm is flat although the artifact's share of the
+visible pixels falls threefold. The governing quantity is artifact \emph{retention}: masking keeps an in-ROI artifact,
+and the masked model's counterfactual sensitivity to it roughly doubles.
+
+\begin{figure}[t]\centering\includegraphics[width=0.78\linewidth]{figures/forest.pdf}
+\caption{The 16 pre-registered primary tests with Holm correction (blue: supported, 12/16; red: not supported).}
+\label{m:fig:forest}\label{fig:forest}\end{figure}
+
+\begin{table}[t]\centering\small
+\caption{Unaltered data (no resampling): change in AUROC on shortcut-conflicting pairs. Thyroid: official TN3K split;
+ISIC: each hospital held out in turn; capsule: held-out frame blocks. 95\% CIs.}\label{m:tab:natural}
+\begin{tabular}{lccc}\toprule
+Test set & mask $-$ ERM & U-MtE $-$ mask & U-MtE$_{\text{bal}}$ $-$ mask \\\midrule
+Thyroid (official split) & $-0.102$ [$-0.139$, $-0.066$] & $+0.051$ [$+0.033$, $+0.072$] & -- \\
+ISIC, BCN held out & $-0.016$ [$-0.027$, $-0.005$] & $+0.003$ [$+0.000$, $+0.006$] & $+0.034$ [$+0.029$, $+0.039$] \\
+ISIC, MSK held out & $-0.056$ [$-0.084$, $-0.029$] & $-0.008$ [$-0.015$, $-0.002$] & $+0.041$ [$+0.029$, $+0.053$] \\
+ISIC, HAM held out & $+0.053$ [$+0.037$, $+0.068$] & $+0.023$ [$+0.017$, $+0.032$] & $+0.065$ [$+0.056$, $+0.075$] \\
+Capsule (held-out frames) & $+0.021$ [$+0.000$, $+0.044$] & $+0.000$ [$-0.010$, $+0.009$] & $+0.014$ [$+0.003$, $+0.025$] \\\bottomrule
+\end{tabular}\end{table}
+
+\subsection{Removing in-ROI shortcuts}
+\input{tables/main_inroi_compact}
+Without any artifact example, mask or label, U-MtE improves on masking where the artifact is a distinct overlay:
+thyroid $+0.222$ [$+0.197, +0.251$] (DINOv2), $+0.204$ [$+0.174, +0.237$] (MedSigLIP), $+0.128$ [$+0.112, +0.145$]
+(ConvNeXt); ovary $+0.215$ [$+0.182, +0.246$] (MedSigLIP); controlled sweeps $+0.08$ to $+0.28$; end-to-end
+(ResNet-50, thyroid) $+0.143$ [$+0.099, +0.188$]. The same overlays used as training augmentation gain at most
+$+0.03$; erasing their subspace gains $+0.207$ [$+0.182, +0.235$] more on thyroid. On capsule debris, which resembles
+erosion fibrin, unprotected erasure removes disease signal; disease protection removes the failure. With image-level
+artifact labels, U-MtE$_{\text{bal}}$ is the most robust model on thyroid with all three backbones
+(Table~\ref{m:tab:remedies}; full values in Table~\ref{tab:main}).
+Where the shortcut is carried by correlates of the artifact (hair co-varies with body site, age and sex; a drain comes
+with a treated lung) no pixel- or insertion-based method helps much and DFR \citep{kirichenko2023dfr} is best.
+
+\paragraph{Baselines} SPLINCE \citep{splice2025}, fitted with artifact labels, removes much disease signal when artifact
+and label are strongly associated (clean AUROC 0.56--0.78) and flips the shortcut on capsule; U-MtE$_{\text{bal}}$ is
+more robust on thyroid, capsule and hair (0.788 vs 0.596; 0.857 vs 0.683; 0.704 vs 0.564). Text-prompted erasure
+(biased prompts, \citealp{chuang2023debiasing}) is a near no-op ($\le+0.008$ over masking): the direction along which a
+\emph{described} artifact moves the text embedding is not the one along which the real artifact moves the image
+embedding. Oracle-mask LaMa inpainting \citep{suvorov2022lama} is strong when artifact masks exist; protected U-MtE
+matches it on thyroid without masks. Label-free, U-MtE beats JTT \citep{liu2021jtt} on thyroid ($+0.198$) and ovary
+($+0.137$). A validation-driven selector beats masking in all five cohorts but not DFR everywhere (Appendix~\ref{sec:solution}).
+
+\section{Discussion and limitations}\label{m:discussion}\label{sec:limits}
+\input{sections/discussion}
+\paragraph{Broader impact} Shortcut audits that report only overall accuracy can certify masked models that still
+exploit in-ROI artifacts, and a mitigation that flips a shortcut can look like a success on a reversed test. We
+recommend reporting artifact location relative to the ROI and performance on shortcut-conflicting cases together
+with clean and correlated performance.
+
+\section{Conclusion}
+ROI masking is not neutral: it removes shortcuts outside the ROI and leaves---or amplifies---those inside it. This
+holds across diseases, modalities, training regimes and foundation models, and follows from a two-parameter model.
+Erasing a subspace learned from generic synthetic overlays removes in-ROI shortcuts carried by distinct artifacts
+without any annotation of the artifact.
+
+\bibliographystyle{abbrvnat}
+\bibliography{refs}
+
+\appendix
+\dupfloatsfalse
+\input{sections/data}
+\input{sections/theory}
+\input{sections/results_derm}
+\input{sections/results_multimodal}
+\input{sections/results_robustness}
+\input{sections/results_solution}
+\section{Statistical plan and pre-registration}\label{app:stats}
+Every experiment was specified in a dated, publicly versioned document before any model was fitted on its data. The 16
+primary tests (location crossover, protected U-MtE vs masking, erase vs augment, U-MtE$_{\text{bal}}$ vs balanced; four
+cohorts each) are Holm-corrected; 12/16 are supported (Fig.~\ref{fig:forest}). Everything else is secondary. Datasets
+considered and not used (CANDID-PTX: no access; breast ultrasound: no artifact-free group; colonoscopy: no
+reflection-free images; ISIC ink, cardiomegaly lines: too few images; pathology pen marks: unreliable masks) and the
+leakage analysis are documented in the repository.
+\section{Compute}\label{app:compute}
+All experiments ran on one RTX 3090 (24 GB), 8 CPU cores and 31 GB RAM; the full pipeline takes about two days,
+dominated by feature extraction and fine-tuning.
+
+\input{checklist}
+\end{document}
