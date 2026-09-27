@@ -30,7 +30,9 @@ with fine-tuned ResNet-50 and ViT, and robust to the artifact-label definition.
 \item \ok\ \textbf{Masking can harm.} When masking also removes disease context it hurts: real dermoscopy hair,
 controlled sweeps (ovary $-0.20$, capsule $-0.10$, dermoscopy rulers), capsule fine-tuning ($-0.28$), and on the
 \emph{unaltered} thyroid test set ($-0.10$ on shortcut-conflicting cases).
-\item \ok\ \textbf{Theory.} One closed-form expression predicts all these signs (agreement with simulation 0.009 AUROC).
+\item \ok\ \textbf{Theory.} One closed-form expression explains all these signs (agreement with simulation 0.009 AUROC).
+Fitted only to each model's clean and correlated results, it matches the held-out hard-test results of real models
+(average error 0.039 AUROC) and the location gap in 14 dataset/model pairs (correlation 0.997; 13 of 14 signs).
 \item \mixed\ \textbf{The remedy (U-MtE).} Works where the artifact is a distinct overlay (thyroid +0.13 to +0.22
 over masking on three backbones; +0.14 end-to-end with ResNet-50); erasure beats augmentation (3/4 cohorts); fails when
 the artifact resembles the disease (capsule) unless disease-protected, and cannot help when the shortcut lives in
@@ -129,7 +131,14 @@ location law, built into the models themselves.}
 effective artifact strength $\tilde A$ (lines) versus simulation (points).}\end{figure}
 \plain{Masking an in-ROI artifact keeps the artifact and throws away other disease evidence, so the model leans on the
 artifact even more. Erasing works unless the artifact looks like the disease. Re-balancing works wherever the artifact
-sits. This single formula explains every pattern we observed.}
+sits.}
+\begin{figure}[H]\centering\includegraphics[width=\linewidth]{../paper/figures/theory_predict.png}
+\caption{Pre-registered test on real models: the formula is fitted to each model's clean and correlated results, and
+its hard-test (reversed) results are compared with the real ones, which it never saw.}\end{figure}
+\plain{\ok\ The formula matches real models closely (left: average error 0.039; middle: the location gap, correlation
+0.997). \no\ It misses the chest-drain models, where the shortcut lives in things that come with the drain (a treated
+lung), which the formula cannot see. Because one of 14 location-gap signs (a value of $-0.002$) disagreed, our
+pre-registered rule calls it a ``qualitative'' account.}
 
 \subsection{Remedies compared}
 \plain{Each column is a dataset/model; each row a method. Numbers are hard-test accuracy (in brackets: the fairer
@@ -147,6 +156,14 @@ capsule; U-MtE + balancing is more robust in 3 of 4 cohorts (not on chest drains
 \subsection{Robustness}
 \ok\ Visual audit (40 images per cell) and re-runs with large-marker and strict-location definitions: the location
 effect and the protected-U-MtE gain hold in every variant (\texttt{docs/SENSITIVITY\_ARTIFACT\_LABELS.md}).
+
+\ok\ \textbf{Stricter patient-leakage control.} Thyroid, ovary and capsule datasets have no patient IDs. We also
+grouped images whose foundation-model embeddings are near-identical (same patient or session) and re-ran everything:
+11 of 12 main results are unchanged; \no\ only the small ovary ``erase beats augment'' advantage loses significance.
+
+\mixed\ \textbf{Clinical metrics.} On the untouched thyroid test set, masking halves sensitivity at a fixed operating
+point (0.73 $\to$ 0.35) while raising specificity (0.62 $\to$ 0.89); U-MtE recovers part of it and has the best AUPRC and
+Brier score. On other hospitals and capsule, masking improves every metric.
 
 \section{What did not work (and why it is still useful)}
 \begin{itemize}[leftmargin=*]

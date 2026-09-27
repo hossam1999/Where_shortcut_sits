@@ -40,7 +40,7 @@ def main():
     print(out.round(3).to_string())
     cols = ["AUROC", "AUPRC", "Brier", "ECE", "Sens", "Spec"]
     L = ["\\begin{table}[t]\\centering\\scriptsize",
-         "\\caption{Clinical secondary metrics on the unaltered test sets (Table~\\ref{m:tab:natural}): mean (SD) over "
+         "\\caption{Clinical secondary metrics on the unaltered test sets (Sec.~\\ref{sec:robust}): mean (SD) over "
          "training seeds. Sensitivity and specificity at the operating point fixed on clean validation data; ECE with 10 "
          "equal-width bins; AUPRC baseline = prevalence.}\\label{tab:natural_clinical}",
          "\\begin{tabular}{ll" + "c" * len(cols) + "}\\toprule", "Test set & Arm & " + " & ".join(cols) + " \\\\\\midrule"]

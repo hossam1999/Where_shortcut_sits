@@ -96,6 +96,9 @@ sensitivity:
 	  $(PY) scripts/run_thyroid_traps.py --cohort $$c --generic --tag sens_px50 --min_px 50 --arms erm mask balanced mte mte_protect mte_balanced; \
 	  $(PY) scripts/run_thyroid_traps.py --cohort $$c --generic --tag sens_strictloc --rA 0.7 --rB 0.05 --arms erm mask balanced mte mte_protect mte_balanced; done
 	$(PY) scripts/run_thyroid_traps.py --cohort capsule --generic --tag sens_strictB --max_cover_B 0.05 --arms erm mask balanced mte mte_protect mte_balanced
+	$(PY) scripts/data/embedding_groups.py   # stricter leakage groups (docs/PREREGISTRATION_EMBEDDING_GROUPS.md)
+	$(PY) scripts/run_thyroid_traps.py --cohort thyroid --generic --groups_csv $${WTSS_DATA}/us/tncd/groups_emb.csv --tag emb_groups --arms erm mask balanced mte mte_balanced mte_protect mte_aug
+	for c in ovary capsule; do $(PY) scripts/run_thyroid_traps.py --cohort $$c --generic --groups_csv $${WTSS_DATA}/$$c/groups_emb.csv --tag emb_groups --arms erm mask balanced mte mte_balanced mte_protect mte_aug; done
 lama:
 	for c in thyroid ovary capsule isic; do $(PY) scripts/data/precompute_lama.py --cohort $$c; done
 	for c in thyroid ovary; do $(PY) scripts/run_thyroid_traps.py --cohort $$c --lama --tag lama --arms erm mask; done
@@ -109,6 +112,9 @@ analysis:
 	$(PY) scripts/make_cross_cohort_table.py
 	$(PY) scripts/make_main_table.py
 	$(PY) scripts/analysis/theory_sim.py
+	$(PY) scripts/analysis/theory_predict.py      # theory fitted on clean+corr vs held-out reversed results
+	$(PY) scripts/analysis/clinical_metrics.py    # AUPRC, Brier, ECE, sens/spec on the natural test sets
+	$(PY) scripts/analysis/leakage_emb_compare.py # primary contrasts under embedding-based leakage groups
 	$(PY) scripts/make_figures.py
 	$(PY) scripts/analysis/adhoc_bootstraps.py
 	$(PY) scripts/verify/audit_paper_numbers.py   # every CI in the paper must trace to a result file

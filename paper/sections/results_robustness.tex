@@ -8,10 +8,17 @@ and tested on untouched data: the official TN3K test split, each ISIC source hel
 hospital and device), and held-out capsule frame blocks. On the shortcut-conflicting pairs, masking \emph{lowers}
 AUROC for thyroid ($-0.102$ [$-0.139, -0.066$]) and for two of the three held-out hospitals (BCN $-0.016$
 [$-0.027, -0.005$], MSK $-0.056$ [$-0.084, -0.029$]); it helps for HAM ($+0.053$) and does not differ significantly
-from ERM on capsule. U-MtE with group balancing improves on masking for these pairs in every cohort in which it was
-evaluated ($+0.014$ to $+0.065$) and gives the best or tied-best cross-group AUROC in three of five settings (HAM
+from ERM on capsule. U-MtE with group balancing improves on masking for these pairs in every cohort ($+0.014$ to $+0.088$) and gives the best or tied-best cross-group AUROC in three of five settings (HAM
 0.786, BCN 0.734 vs 0.735, capsule 0.947); plain group balancing is best on thyroid and MSK. Without artifact labels,
 U-MtE improves on masking for thyroid ($+0.051$) and HAM ($+0.023$) only.
+
+\paragraph{Clinical secondary metrics} Table~\ref{tab:natural_clinical} reports AUPRC, Brier score, expected
+calibration error and sensitivity/specificity at the operating point fixed on validation data. On the official
+thyroid split masking lowers sensitivity from 0.734 to 0.347 while specificity rises from 0.619 to 0.888 (balanced
+accuracy 0.677 $\to$ 0.618); U-MtE recovers part of the sensitivity (0.425) and has the best AUPRC (0.638) and Brier
+score (0.203). For the held-out BCN hospital masking worsens both Brier score (0.239 $\to$ 0.286) and calibration
+(ECE 0.279 $\to$ 0.332); for HAM, MSK and capsule it improves every metric, in line with the AUROC results.
+\input{tables/natural_clinical}
 
 \subsection{End-to-end fine-tuning}\label{sec:ft}
 Fine-tuning ResNet-50 end-to-end (five folds) reproduces the frozen-backbone findings. Capsule: masking harms
@@ -40,3 +47,16 @@ large-marker-only ($\ge 50$ px) and strict-location ($r\ge0.7$ / $r<0.05$) defin
 (thyroid $+0.215$ to $+0.262$; ovary $+0.170$ to $+0.195$) and the U-MtE$_{\text{protect}}$ gain over masking
 (thyroid $+0.217$ to $+0.282$; ovary $+0.043$ to $+0.067$) significant in every variant; both grow under stricter
 definitions, as expected if detector errors dilute rather than create the effects.
+
+\subsection{Stricter leakage grouping}\label{sec:leak_emb}
+TN3K/TNCD, MMOTU and SEE-AI publish no patient or video identifiers, so the main analyses group near-duplicates by
+perceptual hash (and, for capsule, blocks of 100 consecutive frames). As a pre-registered sensitivity analysis we
+united these groups with connected components of mean-centred DINOv2 embeddings at the most aggressive cosine
+threshold that keeps every group below 5\% of the cohort (thyroid: 3,455 $\to$ 3,081 groups, $\tau=0.80$; ovary:
+1,059 $\to$ 969, $\tau=0.80$; capsule: 137 $\to$ 135, $\tau=0.93$) and re-ran all primary contrasts. Eleven of twelve
+keep their sign and significance: the location crossover is $+0.235$ [$+0.211, +0.259$] (thyroid), $+0.157$
+[$+0.080, +0.235$] (ovary) and $+0.394$ [$+0.359, +0.430$] (capsule), and protected U-MtE still beats masking on
+thyroid ($+0.251$ [$+0.219, +0.279$]) and ovary ($+0.047$ [$+0.020, +0.072$]). The exception is the small ovary
+advantage of erasure over augmentation, which loses significance ($+0.020$ [$-0.011, +0.053$]). Embedding grouping
+removes visually near-identical images of one patient or session; it cannot exclude differently looking images of
+the same patient.

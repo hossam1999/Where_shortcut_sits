@@ -8,7 +8,8 @@
 \fi
 
 \subsection{U-MtE repairs what masking leaves behind}
-Without any artifact example, mask or label, U-MtE improves reversed AUROC over masking in the in-ROI regime of
+Without any artifact example, artifact mask or artifact label---it uses only the ROI mask that masking already
+requires---U-MtE improves reversed AUROC over masking in the in-ROI regime of
 every modality: thyroid calipers $+0.222$ [$+0.197, +0.251$] (DINOv2) and $+0.204$ [$+0.174, +0.237$] (MedSigLIP);
 dermoscopic hair $+0.052$ [$+0.044, +0.062$]; synthetic capsule debris $+0.081$ [$+0.050, +0.112$]; synthetic
 calipers $+0.278$ [$+0.232, +0.325$]; synthetic chest tubes $+0.134$ [$+0.120, +0.151$] (DINOv2 / RAD-DINO).
@@ -22,7 +23,9 @@ interaction in any of them. Disease protection turns the MedSigLIP debris failur
 Using the same generic overlays as training augmentation (overlaid copies of a random half of the training images,
 in the masked view) gains at most $+0.03$ over masking; erasing their subspace instead gains $+0.207$
 [$+0.182, +0.235$] (thyroid, DINOv2), $+0.177$ [$+0.148, +0.211$] (thyroid, MedSigLIP) and $+0.045$
-[$+0.037, +0.054$] (hair) more than augmentation.
+[$+0.037, +0.054$] (hair) more than augmentation. Under the stricter near-duplicate grouping
+(Sec.~\ref{sec:leak_emb}) the thyroid advantage is unchanged ($+0.192$) but the small ovary advantage
+($+0.035$) loses significance, so we regard erase $>$ augment as established for thyroid and hair only.
 
 \subsection{When the artifact resembles the disease}
 On real capsule debris U-MtE is worse than masking ($-0.115$): erosions carry yellow-white fibrin that resembles

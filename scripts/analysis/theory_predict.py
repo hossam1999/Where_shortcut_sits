@@ -174,7 +174,7 @@ def main():
         q = prim[prim.kind == kind]
         ax[0].scatter(q.pred_rev, q.rev, s=12, marker=mk, alpha=.7, label={"trap": "real traps", "drain": "chest drain (correlate-carried)", "sweep": "controlled sweeps"}[kind])
     lo = min(prim.pred_rev.min(), prim.rev.min()) - .02
-    ax[0].plot([lo, 1], [lo, 1], "k--", lw=.8); ax[0].set_xlabel("predicted reversed AUROC"); ax[0].set_ylabel("observed reversed AUROC")
+    ax[0].plot([lo, 1], [lo, 1], "k--", lw=.8); ax[0].set_xlabel("theory: reversed AUROC (fit on clean, corr.)"); ax[0].set_ylabel("observed reversed AUROC")
     ax[0].set_title(f"(a) ERM & mask, r={t1['theory']['r']:.2f}, MAE={t1['theory']['mae']:.3f}", fontsize=8); ax[0].legend(fontsize=6)
     fam = lambda c: "Chest X-ray" if c.startswith("CXR") else c
     mk = {"ISIC hair": "o", "Thyroid": "s", "Capsule": "^", "Ovary": "D", "Chest X-ray": "v"}
@@ -183,13 +183,13 @@ def main():
             ax[1].scatter(q.pred, q.obs, s=20, c=c, marker=mk[f_], label=f"{f_}" + (" (end-to-end)" if ft else ""))
     m = [min(xo.pred.min(), xo.obs.min()) - .03, max(xo.pred.max(), xo.obs.max()) + .03]
     ax[1].plot(m, m, "k--", lw=.8); ax[1].axhline(0, c="grey", lw=.5); ax[1].axvline(0, c="grey", lw=.5)
-    ax[1].set_xlabel("predicted crossover"); ax[1].set_ylabel("observed crossover")
+    ax[1].set_xlabel("theory: crossover (fit on clean, corr.)"); ax[1].set_ylabel("observed crossover")
     ax[1].set_title(f"(b) location crossover, r={t2['r']:.3f}, signs {t2['sign_agree']}/{t2['n']}", fontsize=8); ax[1].legend(fontsize=5.5, loc="upper left")
     for (c, b), q in gs.groupby(["cohort", "backbone"]):
         ax[2].scatter(q.pred, q.obs, s=10, label=f"{c}/{b}")
     m = [min(gs.pred.min(), gs.obs.min()) - .02, max(gs.pred.max(), gs.obs.max()) + .02]
     ax[2].plot(m, m, "k--", lw=.8); ax[2].axhline(0, c="grey", lw=.5); ax[2].axvline(0, c="grey", lw=.5)
-    ax[2].set_xlabel("predicted mask gain"); ax[2].set_ylabel("observed mask gain")
+    ax[2].set_xlabel("theory: mask gain (fit on clean, corr.)"); ax[2].set_ylabel("observed mask gain")
     ax[2].set_title(f"(c) sweeps, r={S['T3_sweeps']['r']:.2f}, signs {S['T3_sweeps']['sign_agree']}/{S['T3_sweeps']['n']}", fontsize=8)
     ax[2].legend(fontsize=5, ncol=2, loc="upper center", bbox_to_anchor=(0.5, -0.2), frameon=False)
     fig.tight_layout()

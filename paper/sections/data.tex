@@ -16,7 +16,8 @@ cross-validation (leakage groups: lesion identifiers and pHash); 172 reversed-te
 \paragraph{Thyroid ultrasound} TN3K images with TNCD benign/malignant labels (3,493 images; 1,210 malignant) and
 manual nodule masks. Sonographer calipers were segmented by a frozen rule-based detector (dotted measurement lines
 and `+' ends; audit in Sec.~\ref{sec:limits}). Trap~A: calipers with $r\ge0.5$ (1,150 images); Trap~B: $r<0.1$ (326);
-caliper-free: 1,801. No patient identifiers are published; leakage groups are pHash chains.
+caliper-free: 1,801. No patient identifiers are published; leakage groups are pHash chains (stricter embedding-based groups in
+Sec.~\ref{sec:leak_emb}).
 
 \paragraph{Ovarian tumour ultrasound} MMOTU OTU\_2d \citep{zhao2022mmotu} (CC BY 4.0): 1,202 images with tumour
 masks, labelled benign cystic (chocolate cyst, serous cystadenoma, simple cyst) versus lesions with solid

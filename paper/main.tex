@@ -13,8 +13,8 @@
 \begin{abstract}
 Medical image classifiers exploit acquisition artifacts---hair, sonographer calipers, intestinal debris---that
 correlate with the diagnosis. The standard defence restricts the model to the region of interest (ROI). We show
-that this defence fails for artifacts that lie \emph{inside} the ROI, give a model that predicts when and why, and
-evaluate what to do instead. In pre-registered, leakage-safe traps built from real artifacts in four diseases
+that this defence fails for artifacts that lie \emph{inside} the ROI, give a closed-form account of when and why,
+and evaluate what to do instead. In pre-registered, leakage-controlled traps built from real artifacts in four diseases
 (dermoscopic hair, thyroid and ovarian calipers, capsule-endoscopy debris), the benefit of ROI masking is always
 larger for out-of-ROI than for in-ROI artifacts (crossover $+0.15$ to $+0.37$ reversed-test AUROC; all four survive
 Holm correction). The loss becomes harm when masking also removes disease context: in dermoscopy, in controlled
@@ -22,15 +22,19 @@ overlap sweeps (ovary $-0.20$, capsule $-0.10$), with end-to-end fine-tuning (ca
 unaltered test distributions---the official thyroid test split ($-0.10$ [$-0.14$, $-0.07$] on
 shortcut-conflicting cases) and two of three held-out dermoscopy hospitals---and it is already present in the
 zero-shot scores of vision--language foundation models (MedSigLIP, DermLIP), before any task training. A
-linear-Gaussian analysis reproduces these signs and orderings in closed form. Among remedies, a
-mask-then-erase procedure driven by generic synthetic overlays (U-MtE) needs no artifact example, mask or label,
+linear-Gaussian analysis reproduces these signs and orderings in closed form; fitted only to each model's clean and
+correlated performance, it matches the held-out reversed-test AUROC (mean absolute error 0.039) and the location
+crossover across 14 cohort--backbone pairs ($r=0.997$). Among remedies for frozen foundation-model features, a
+mask-then-erase procedure driven by generic synthetic overlays (U-MtE) needs no artifact examples, artifact masks or
+artifact labels---only the ROI mask that masking already uses---
 removes in-ROI shortcuts where the artifact is a distinct overlay (thyroid $+0.13$ to $+0.22$ over masking on three
-backbones; $+0.14$ end-to-end), and beats using the same overlays as augmentation in three of four cohorts; it fails when the artifact
+backbones; $+0.14$ end-to-end), and beats using the same overlays as augmentation in three of four cohorts (two under stricter leakage grouping); it fails when the artifact
 resembles the pathology unless disease-protected, and cannot help when the shortcut is carried by correlates of the
 artifact (hair, chest drains), where label-based reweighting is required. Describing the artifact in text and erasing
 that direction, the obvious vision--language alternative, is a near no-op. A validation-driven selector over these
 options, using image-level artifact labels on validation data only, beats masking in all five settings and matches
-the best candidate in each. Code, splits, pre-registrations and a backbone-agnostic tool are public.
+the best candidate in each. Chest radiography serves as a boundary case. Code, splits, pre-registrations and a
+backbone-agnostic tool are public.
 \end{abstract}
 
 \begin{keyword}
@@ -44,7 +48,7 @@ training distribution but are not evidence of disease \citep{geirhos2020shortcut
 surgical skin markings \citep{winkler2019markings} and ruler scale bars \citep{winkler2021scalebars} changed
 the melanoma predictions of a market-approved system; in chest radiography, pneumothorax classifiers detect the
 chest drain that treats the condition rather than the condition itself
-\citep{oakden2020hidden,jimenez2023shortcuts}. Such correlations are causal in origin---suspicious lesions are
+\citep{oakden2020hidden,jimenez2023shortcuts,zech2018variable}. Such correlations are causal in origin---suspicious lesions are
 measured and marked, collapsed lungs are drained---so they are present in every retrospectively collected dataset.
 
 The most widely recommended defence is to restrict the classifier to the region of interest (ROI): segment the
@@ -63,12 +67,15 @@ end-to-end fine-tuning (ResNet-50, ViT-S), confirmed on an
 unaltered test distribution, and robust to the artifact-label definition (Secs.~\ref{sec:derm}--\ref{sec:multi}).
 \item \textbf{Foundation models:} the location effect appears in the zero-shot scores of vision--language models,
 and text-prompted erasure of the artifact does not remove in-ROI shortcuts, whereas image-side synthetic insertion does.
-\item \textbf{A closed-form account} (Sec.~\ref{sec:theory}) that predicts when in-ROI masking harms, why erasure
-fails for pathology-like artifacts, and why group reweighting is location-invariant.
-\item \textbf{An annotation-free remedy (U-MtE)} and a disease-protected variant, with the evidence that erasure,
+\item \textbf{A closed-form account} (Sec.~\ref{sec:theory}) of when in-ROI masking harms, why erasure fails for
+pathology-like artifacts, and why group reweighting is location-invariant; fitted per model to clean and correlated
+performance, it matches the held-out reversed-test results and location crossovers of real encoders (pre-registered).
+\item \textbf{A remedy for frozen foundation-model features (U-MtE)} that needs no artifact annotation (only the
+ROI mask), and a disease-protected variant, with the evidence that erasure,
 not augmentation, is what works, and a delineation of the regimes in which it does not.
 \item \textbf{A practical decision procedure}: a validation-driven selector and a decision rule based on where the
-artifact sits and what carries the shortcut, benchmarked against DFR, GroupDRO, JTT, LEACE and SPLINCE with
+artifact sits and what carries the shortcut, benchmarked on the real-artifact cohorts against DFR, JTT, LEACE,
+SPLINCE, LaMa inpainting and text-prompted erasure (GroupDRO only in the controlled dermoscopy sweeps), with
 gaming-aware reporting.
 \item \textbf{Reproducibility}: pre-registration before every experiment, Holm-corrected primary claims, replication
 of the original pilot (73/88 numbers matched), public code and a two-command tool.
@@ -78,9 +85,16 @@ of the original pilot (73/88 numbers matched), public code and a two-command too
 \paragraph{Artifacts in dermoscopy} \citet{bissoto2020debiasing} annotated seven artifact types in ISIC images and
 showed that debiasing is harder than it looks; \citet{nauta2022uncovering} neutralised coloured calibration patches
 by inpainting and retraining---an artifact that a colour rule localises and that lies largely outside the lesion.
+Hair occlusion degrades classifiers trained on HAM10000 \citep{wang2024hair}, and removing dermoscopic dark-corner
+artifacts is not clearly beneficial, whereas adding synthetic ones to the training set improves classification
+\citep{pewton2024dca}; both treat an artifact's presence, not its position relative to the lesion.
 MaskMedPaint \citep{maskmedpaint} inpaints regions \emph{outside} the classification-relevant area. None of these
 treats artifact location relative to the ROI as a variable.
-\paragraph{Chest radiography} Drain-driven pneumothorax shortcuts are documented on NIH-CXR14 and CheXpert
+\paragraph{Ultrasound} In fetal ultrasound, calipers and on-screen text act as shortcuts even for segmentation
+\citep{lin2024segshortcut}; we study them for classification in thyroid and ovarian ultrasound, where they lie on
+the nodule or tumour.
+\paragraph{Chest radiography} Hospital-specific signals limit the generalisation of pneumonia classifiers
+\citep{zech2018variable}. Drain-driven pneumothorax shortcuts are documented on NIH-CXR14 and CheXpert
 \citep{oakden2020hidden,jimenez2023shortcuts}; recent work localises them to late layers of probed encoders
 \citep{pedersen2026probes} and mitigates them by prevalence-equalised recalibration \citep{kina2026prevalence},
 which requires the artifact label at test time.
@@ -93,13 +107,18 @@ are the closest erasure methods; both require concept labels or prompts, whereas
 from synthetic insertions. Random erasing and occlusion augmentation \citep{zhong2020random,fong2019occlusions}
 use similar overlays as training noise; we show that this does not remove the shortcut. Test-time selection
 \citep{bissoto2023tts} steers dermoscopy models with user keypoints.
+\paragraph{Foundation models} Classifiers trained on frozen foundation-model features inherit shortcut-like
+behaviour that pooled multi-institutional evaluation can hide \citep{germani2026aggregation}, and shortcut testing
+\citep{brown2023shortcut} probes whether a model's performance gaps stem from encoding a sensitive attribute. We ask where in
+the image the shortcut sits and remove it from the frozen representation.
 
 \input{sections/data}
 
 \section{Problem setup and protocol}\label{sec:setup}
 Let $Y\in\{0,1\}$ be the diagnosis and $A\in\{0,1\}$ the presence of an artifact. A \emph{trap} trains with
 $P(A{=}1\mid Y{=}1)=0.9$ and $P(A{=}1\mid Y{=}0)=0.1$ and tests on a correlated environment with the same rates,
-a \emph{reversed} environment with the rates swapped (0.1/0.9), and a clean environment without artifacts. A model
+a \emph{reversed} environment with the rates swapped (0.1/0.9), and a clean environment in which the artifact is
+independent of the label (real traps: present in half of each class; controlled sweeps: absent). A model
 that uses $A$ gains on the correlated test and collapses on the reversed one; the primary metric is reversed-test
 AUROC, and clean AUROC measures the cost of a mitigation. The overlap $r=|\mathrm{artifact}\cap\mathrm{ROI}|/|\mathrm{artifact}|$
 is the controlled variable. All backbones are frozen and only linear heads are fitted (an end-to-end fine-tuning
@@ -107,7 +126,8 @@ check is reported in Sec.~\ref{sec:ft}); regularisation strength and the decisio
 are selected on clean validation data only. Uncertainty is a hierarchical paired bootstrap that resamples training
 seeds (or cross-validation folds), then paired test images within each, computes the AUROC difference inside
 each cluster and averages; predictions of different models are never pooled into one ROC curve.
-Splits are grouped by lesion/patient identifier and perceptual hash.
+Splits are grouped by lesion/patient identifier where published and otherwise by perceptual hash (and frame
+blocks); a stricter embedding-based grouping is a sensitivity analysis (Sec.~\ref{sec:leak_emb}).
 
 \section{Mask-then-erase with a generic insertion library}\label{sec:i2e}
 \paragraph{Insertion pairs} Removing an in-ROI artifact requires its pixels; inserting one does not. Given a
@@ -135,6 +155,9 @@ exist, the head is group-balanced (U-MtE$_{\text{bal}}$).
 $U_k$ can contain disease evidence. Let $W$ be an orthonormal basis of logistic label directions fitted on
 artifact-free training images; we erase $U_k'=\mathrm{orth}((I-WW^\top)U_k)$ instead, which guarantees
 $w^\top P(z)=w^\top z$ for every $w\in\mathrm{span}(W)$ (cf.\ task-preserving erasure, \citealp{splice2025}).
+\paragraph{Scope} U-MtE is a representation-level intervention: it acts on the features of a frozen encoder, the
+dominant way in which foundation models are deployed on small medical datasets, and needs only the encoder, the ROI
+mask and the generator. An end-to-end analogue is evaluated as a secondary check (Sec.~\ref{sec:ft}).
 \paragraph{Tool} The released package exposes insertion, erasure and a patch-token artifact probe for any frozen
 backbone (ViTs and CNNs) through a two-call API.
 

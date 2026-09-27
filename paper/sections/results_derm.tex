@@ -12,6 +12,10 @@ scale. At 0\% overlap the masked model's correlated and reversed AUROC coincide 
 removed. At 100\% the masked model's correlated AUROC exceeds ERM's (0.961 vs 0.937): it uses the ruler \emph{more}.
 
 \input{tables/synthetic_isic_dino518}
+Insert-then-erase in this table is the artifact-specific precursor of U-MtE: its insertion pairs use templates of the
+artifact type (rulers) and it erases from unmasked features. U-MtE (Sec.~\ref{sec:i2e}) replaces the templates by
+one generic overlay library for every modality and erases after masking; its dermoscopy results are in
+Sec.~\ref{sec:solution}.
 
 \subsection{Mechanism: retention, not occlusion or context}
 Three explanations were tested separately. \emph{Occlusion}: with the ruler present but uncorrelated with the

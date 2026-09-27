@@ -19,14 +19,15 @@ ARM_NAMES = {"erm": "ERM", "mask": "ROI masking", "inpaint": "Inpainting (oracle
              "groupdro": "GroupDRO", "dfr": "DFR", "leace": "LEACE (paired, oracle renders)",
              "leace_paired": "LEACE (paired, removal)", "leace_unpaired": "LEACE (unpaired labels)",
              "inpaint_consistency": "Repair consistency", "inpaint_consistency_lam0": "Repair consistency, λ=0",
-             "i2e": "I2E (ours)", "i2e_balanced": "I2E + balanced (ours)", "i2e_rank1": "I2E rank-1 (ablation)",
+             "i2e": "Insert-then-erase (artifact templates)", "i2e_balanced": "Insert-then-erase + balanced (artifact templates)",
+             "i2e_rank1": "Insert-then-erase rank-1 (ablation)",
              "insert_aug": "Insertion augmentation", "prevcal": "Prevalence calibration",
              "dilate0": "Mask +0 px", "dilate10": "Mask +10 px", "dilate25": "Mask +25 px", "dilate50": "Mask +50 px"}
 SUPERVISION = {"erm": "—", "mask": "ROI mask (train+test)", "inpaint": "artifact pixels (train+test)",
                "balanced": "image-level A (train)", "groupdro": "image-level A (train)", "dfr": "image-level A (val)",
                "leace": "paired renders (train)", "leace_paired": "artifact pixels (train)",
-               "leace_unpaired": "image-level A (train)", "i2e": "template library", "i2e_balanced": "templates + A (train)",
-               "i2e_rank1": "template library", "insert_aug": "template library", "prevcal": "image-level A (train+test)",
+               "leace_unpaired": "image-level A (train)", "i2e": "artifact templates", "i2e_balanced": "artifact templates + A (train)",
+               "i2e_rank1": "artifact templates", "insert_aug": "artifact templates", "prevcal": "image-level A (train+test)",
                "inpaint_consistency": "artifact pixels (train)", "inpaint_consistency_lam0": "artifact pixels (train)"}
 
 

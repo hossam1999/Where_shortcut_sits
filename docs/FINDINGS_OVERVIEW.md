@@ -102,3 +102,23 @@ labels ≈ 70 % pure), EAD endoscopy (no disease labels), BKAI-IGH NeoPolyp colo
 - **LaMa inpainting** (oracle masks): strong; protected U-MtE matches it on thyroid, below on ovary; U-MtE+bal beats it.
 - **Split-validation selector**: fixes drains (0.656), mixed elsewhere; neither selector uniformly best.
 - **Paper**: compiles cleanly (14 pages), new figures (dose-response, forest, examples, theory), two review passes.
+
+## Additions after external review (2026-09-27)
+A colleague's review raised seven points; what changed:
+- **Wording.** U-MtE "needs no artifact example, artifact mask or artifact label" — it does use the ROI mask (now said
+  everywhere). Table 1's "I2E" rows renamed "Insert-then-erase (artifact templates)" and explained as U-MtE's
+  artifact-specific precursor. GroupDRO is stated to appear only in the controlled dermoscopy sweeps. Chest
+  radiography is named as a boundary case. U-MtE is framed as a representation-level intervention for frozen
+  foundation-model features; end-to-end results are secondary. The "clean" environment is now described correctly
+  (real traps: artifact in half of each class; sweeps: absent).
+- **Theory vs real data** (pre-registered, `PREREGISTRATION_THEORY_PREDICTION.md`): fitted per model to clean and
+  correlated AUROC only, the closed form matches held-out reversed AUROC (MAE 0.039, r = 0.92, 148 models) and the
+  location crossover (r = 0.997, MAE 0.014, 13/14 signs); verdict by the pre-registered rule: qualitative account
+  (one near-zero sign miss). Fails for chest drains (correlate-carried shortcut).
+- **Leakage** (`PREREGISTRATION_EMBEDDING_GROUPS.md`): stricter DINOv2 near-duplicate groups; 11/12 primary contrasts
+  unchanged; ovary erase > augment loses significance.
+- **Clinical metrics** (`PREREGISTRATION_NATURAL.md`): AUPRC, Brier, ECE, sensitivity/specificity; masking halves
+  thyroid sensitivity at the validation-fixed operating point.
+- **Related work**: six verified references added (Pewton 2024; Wang 2024; Germani 2026 MedIA; Lin 2024 MICCAI;
+  Zech 2018; Brown 2023).
+- **Integrity**: one archived prediction file (thyroid natural) failed a gzip CRC check; regenerated, identical numbers.

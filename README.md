@@ -10,8 +10,12 @@ Main findings (details: `docs/FINDINGS_OVERVIEW.md`; all numbers are 95 % hierar
   reversed-test AUROC, all Holm-significant; it becomes **harmful** when masking also removes disease context
   (dermoscopy, controlled sweeps, capsule fine-tuning, and on the unaltered thyroid test set: −0.10 on
   shortcut-conflicting cases).
-- A linear-Gaussian model predicts these signs in closed form (`docs/THEORY.md`).
-- **U-MtE** (mask-then-erase with generic synthetic overlays; no artifact example, mask or label) removes in-ROI
+- A linear-Gaussian model accounts for these signs in closed form (`docs/THEORY.md`). Fitted only to each model's
+  clean and correlated performance, it matches the held-out reversed-test AUROC (mean absolute error 0.039) and the
+  location crossover across 14 cohort × backbone pairs (r = 0.997; 13/14 signs) — pre-registered test,
+  `docs/PREREGISTRATION_THEORY_PREDICTION.md`.
+- **U-MtE** (mask-then-erase with generic synthetic overlays, for frozen foundation-model features; needs no artifact
+  example, artifact mask or artifact label — only the ROI mask that masking already uses) removes in-ROI
   shortcuts carried by distinct overlays; erasure beats augmentation; a disease-protected variant prevents failure when
   the artifact resembles the pathology; label-based reweighting is needed when the shortcut is carried by correlates.
 
@@ -57,7 +61,11 @@ analysis scripts fall back to it when a historical per-ablation folder is absent
 - `results/PRIMARY_CLAIMS.md` — Holm-corrected primary family (12/16 supported).
 - `results/CROSS_COHORT.md`, `paper/tables/main_inroi.tex` — every arm × cohort × backbone.
 - `docs/PREREGISTRATION_*.md` — each experiment's registration **and** its results section (supported / not).
-- `paper/figures/` — dose–response, forest plot, theory, examples.
+- `paper/figures/` — dose–response, forest plot, theory (simulation and real-encoder test), examples.
+- `results/leakage/embedding_groups_compare.csv` — primary contrasts under stricter embedding-based leakage groups
+  (11/12 unchanged).
+- `results/natural/clinical_metrics.csv`, `paper/tables/natural_clinical.tex` — AUPRC, Brier, ECE, sensitivity /
+  specificity on the unaltered test sets.
 - `paper_neurips/main.pdf` — the same paper in NeurIPS 2025 format (9-page main text, appendix, filled checklist).
 - `report/report.pdf` — full plain-language project report with real example images of every dataset and all plots.
 
