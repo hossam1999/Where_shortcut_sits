@@ -16,7 +16,11 @@ test set (reversed AUROC). Trap A = artifact inside the ROI, Trap B = outside.
 | Thyroid US (real, MedSigLIP) | calipers | +0.228 | +0.064 | +0.163 [+0.132, +0.194] |
 | Capsule endoscopy (real) | debris | +0.465 | +0.097 | +0.368 [+0.340, +0.397] |
 | ISIC 2018 (controlled, DINOv2 / DermLIP) | ruler | + (r=0) | harm (r ≥ 0.25) | sign reversal |
+| Thyroid US (real, ConvNeXt CNN) | calipers | +0.288 | +0.003 | +0.284 [+0.253, +0.315] |
+| Capsule endoscopy (real, MedSigLIP) | debris | +0.441 | +0.109 | +0.332 [+0.296, +0.365] |
+| Capsule endoscopy (real, ConvNeXt CNN) | debris | + | +0.094 | +0.292 [+0.248, +0.337] |
 | Capsule (controlled) | debris | +0.103 (r=0) | −0.102 (r=1) | +0.205 [+0.150, +0.259] |
+| Thyroid (controlled) | calipers | +0.402 (r=0) | −0.030 (r=1, n.s.) | +0.432 [+0.377, +0.492] |
 | Chest X-ray (controlled, RAD-DINO) | tube | −0.002 (not used by ERM) | +0.110 | −0.113 (no reversal) |
 Robust claim: masking leaves in-ROI shortcuts largely intact (it removes most of an out-of-ROI shortcut); it is
 actively harmful in dermoscopy and in the controlled capsule sweep, not in real thyroid/capsule or in CXR.
@@ -28,6 +32,8 @@ No artifact example, mask or label; procedural overlays → insertion pairs on m
 | Thyroid DINOv2 | +0.222 [+0.197, +0.251] | +0.207 [+0.182, +0.235] |
 | Thyroid MedSigLIP | +0.204 [+0.174, +0.237] | +0.177 [+0.148, +0.211] |
 | ISIC hair DINOv2 | +0.052 [+0.044, +0.062] | +0.045 [+0.037, +0.054] |
+| Thyroid ConvNeXt (CNN) | +0.128 [+0.112, +0.145] | +0.120 [+0.102, +0.139] |
+| Thyroid (controlled, r=1) | +0.278 [+0.232, +0.325] | – |
 | Capsule (controlled) | +0.081 [+0.050, +0.112] | – |
 | Chest X-ray (controlled) | +0.134 [+0.120, +0.151] | – |
 | Capsule (real) | −0.115 (fails: debris ≈ fibrin) → protected −0.010 | – |
@@ -42,6 +48,8 @@ removal of every hair patch gains only +0.015).
 - Disease-protected erasure (U9): safety net — removes the capsule failure, costs ≤ 0.012 elsewhere.
 - Annotation-free pseudo-group balancing (U8): +0.04 on thyroid, none on hair.
 - Erasure + DFR (U10): no gain over masking + DFR.
+- JTT label-free baseline (U11): U-MtE beats JTT on thyroid (+0.198); U-MtE+JTT best on capsule (0.771);
+  plain JTT best on hair (0.564). The winner follows what carries the shortcut.
 
 ## 5. Datasets evaluated and not used (with reasons)
 CANDID-PTX (no access), CXR CLiP real devices (masking helps both locations), CXR cardiomegaly (too few labelled),
