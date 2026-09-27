@@ -28,6 +28,13 @@ diagnosis-correlated signal together with the artifact: erasure fitted on unpair
 prevalence recalibration invert the correlated/reversed ordering. We report reversed, correlated and clean AUROC
 for every method and summarise robustness by the minimum of correlated and reversed AUROC.
 
+\paragraph{Decision rule for practitioners} (1) Measure where artifacts sit relative to the ROI; out-of-ROI
+artifacts are removed by masking. (2) For in-ROI artifacts without any artifact annotation, use protected U-MtE;
+it matches oracle-mask LaMa inpainting where the artifact is a distinct overlay. (3) With image-level artifact
+labels, combine masking or U-MtE with group balancing or last-layer retraining, choosing among them on a group-aware
+validation split; prefer label-based reweighting alone when the shortcut is carried by correlates of the artifact,
+which the oracle-removal ceiling (a handful of annotated masks) reveals.
+
 \paragraph{Limitations}
 (i) Backbones are frozen and heads linear; an end-to-end fine-tuning check is reported but not a full sweep.
 (ii) Artifact masks for thyroid calipers and capsule debris come from an audited rule-based detector

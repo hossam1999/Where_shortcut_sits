@@ -50,3 +50,10 @@ validation images only) beats masking in all five cohorts ($+0.17$ to $+0.40$), 
 candidate in each, and beats DFR in three (thyroid $+0.057$, capsule $+0.047$, ovary $+0.010$); it chooses
 U-MtE$_{\text{bal}}$ where the artifact is an overlay and plain balancing on hair and drains, where DFR remains
 better. A split-validation variant that admits DFR as a candidate is reported in the supplement.
+
+\subsection{Modern inpainting}
+Inpainting the detected caliper pixels with LaMa \citep{suvorov2022lama} and then masking is a strong baseline when
+artifact masks are available (thyroid $+0.226$ [$+0.213, +0.238$], ovary $+0.123$ [$+0.089, +0.155$] over masking).
+U-MtE$_{\text{protect}}$, which needs no artifact mask, matches it on thyroid ($-0.009$ [$-0.045, +0.023$]) and is
+below it on ovary ($-0.080$); with image-level artifact labels, U-MtE$_{\text{bal}}$ exceeds it on both ($+0.162$,
+$+0.067$).
