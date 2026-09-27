@@ -45,3 +45,12 @@ Reversed AUROC deltas vs ERM [95 % CI]:
   Interpretation (post hoc): erosions carry yellow-white fibrin that resembles debris; a subspace estimated from
   real-debris templates / debris-guided inpainting removes disease evidence. Boundary condition for
   erasure-based repair: the artifact subspace must be separable from the disease signal.
+
+## Results — controlled synthetic debris, DINOv2@518 (results/synthetic/capsule/dino518_debris_corr_main)
+Reversed AUROC vs ERM [95 % CI]:
+- **CS3 supported**: mask − ERM at r=0 = +0.103 [+0.060, +0.149].
+- **CS2 supported**: mask − ERM at r=1 = −0.102 [−0.162, −0.040].
+- **CS1 supported**: location interaction ([r=0] − [r=1]) = +0.205 [+0.150, +0.259].
+- **CS4 supported**: U-MtE − mask at r=1 = +0.081 [+0.050, +0.112]; U-MtE_balanced − mask = +0.193
+  [+0.150, +0.235]; U-MtE_balanced − balanced = +0.047 [+0.004, +0.091]. U-MtE_balanced shows no location
+  interaction (−0.000 [−0.023, +0.023]): its benefit does not depend on where the artifact sits.
