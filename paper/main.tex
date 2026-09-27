@@ -106,21 +106,34 @@ seeds (or cross-validation folds), then paired test images within each, computes
 each cluster and averages; predictions of different models are never pooled into one ROC curve.
 Splits are grouped by lesion/patient identifier and perceptual hash.
 
-\section{Insert-to-Erase}\label{sec:i2e}
-Removing an in-ROI artifact requires its pixels; inserting one does not. Given a template library $\mathcal{T}$
-(real artifact pixels transplanted from a disjoint donor pool, or a procedural generator) and a frozen encoder $f$,
-every training image $x_i$ yields a counterfactual $x_i^{+}=\mathrm{insert}(x_i,t_i)$, $t_i\sim\mathcal{T}$, at a
-random position that is not restricted to the background. Because insertion ignores the label, the differences
-$\Delta_i=f(x_i^{+})-f(x_i)$ are independent of $Y$. \ItoE{} erases their span:
+\section{Mask-then-erase with a generic insertion library}\label{sec:i2e}
+\paragraph{Insertion pairs} Removing an in-ROI artifact requires its pixels; inserting one does not. Given a
+frozen encoder $f$ and an overlay generator $\mathcal{G}$, every training image $x_i$ yields a counterfactual
+$x_i^{+}=\mathcal{G}(x_i;\xi_i)$ with random parameters $\xi_i$ and random position, half of the elements centred
+inside the ROI. Because insertion ignores the label, the differences $\Delta_i=f(x_i^{+})-f(x_i)$ are independent
+of $Y$.
+\paragraph{Generic library} $\mathcal{G}$ is one procedural family used unchanged for every modality and
+artifact: thin curvilinear strokes, thick bands, solid or translucent patches, blobs, dashed lines and small
+glyphs, with random colour (half greyscale), opacity and width. It contains no ruler, hair, caliper or debris
+template; it is a prior over ``foreign overlays'', not a model of any particular artifact.
+\paragraph{Erasure} \ItoE{} erases the span of the differences:
 \begin{equation}
 \Sigma_\Delta=\tfrac1n\textstyle\sum_i\Delta_i\Delta_i^\top,\qquad U_k=\mathrm{top}\text{-}k\ \mathrm{eigvecs}(\Sigma_\Delta),\qquad
 P(z)=z-U_kU_k^\top(z-\mu),
 \end{equation}
-and fits the linear head on $P(f(x))$. The rank $k$ is chosen \emph{without labels} as the smallest $k$ whose
-held-out paired-difference energy $\mathbb{E}\|P\Delta\|^2/\mathbb{E}\|\Delta\|^2$ falls below $0.10$ (fixed before
-any experiment). Rank-1 LEACE on insertion pairs is the special case that erases only the mean shift; \ItoE{} also
-erases how the shift varies with the image and the template, which is what a single direction leaves behind.
-When image-level artifact labels exist, \ItoE{} composes with group-balanced reweighting.
+with $k$ chosen \emph{without labels} as the smallest rank whose held-out paired-difference energy
+$\mathbb{E}\|P\Delta\|^2/\mathbb{E}\|\Delta\|^2$ falls below $0.10$ (fixed before any experiment).
+\paragraph{Mask-then-erase (U-MtE)} Masking and erasure have complementary reach: masking removes any artifact
+outside the ROI but none inside; erasure acts on the representation regardless of location. U-MtE therefore
+computes the pairs \emph{on masked images} ($\Delta_i=f(m(x_i^{+}))-f(m(x_i))$) so that the erased subspace
+targets exactly what masking leaves behind, and fits the head on $P(f(m(x)))$. When image-level artifact labels
+exist, the head is group-balanced (U-MtE$_{\text{bal}}$).
+\paragraph{Disease protection} If the artifact resembles the pathology (intestinal debris versus erosion fibrin),
+$U_k$ can contain disease evidence. Let $W$ be an orthonormal basis of logistic label directions fitted on
+artifact-free training images; we erase $U_k'=\mathrm{orth}((I-WW^\top)U_k)$ instead, which guarantees
+$w^\top P(z)=w^\top z$ for every $w\in\mathrm{span}(W)$ (cf.\ task-preserving erasure, \citealp{splice2025}).
+\paragraph{Tool} The released package exposes insertion, erasure and a patch-token artifact probe for any frozen
+backbone (ViTs and CNNs) through a two-call API.
 
 % Results sections are generated: \input{sections/results_generated}
 \input{sections/results}
