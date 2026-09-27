@@ -75,3 +75,17 @@ labels ≈ 70 % pure), EAD endoscopy (no disease labels), BKAI-IGH NeoPolyp colo
    correlates (check with the oracle-removal ceiling on a few annotated images, e.g. with SLAS).
 3. In-ROI, image-level artifact labels available → U-MtE + balanced (overlay-like artifacts), masking + DFR
    (artifacts resembling the disease), DFR / balancing (correlate-carried shortcuts).
+
+## 9. Session 2 additions (2026-09-27, 06:00–09:30 UTC)
+- **4th disease — ovarian tumour ultrasound (MMOTU, calipers)**: real crossover +0.170 [+0.116, +0.224]; controlled
+  sweep: masking HARMS at full overlap (−0.197 [−0.292, −0.100]), U-MtE +0.141 over masking. Generic real U-MtE
+  +0.019 (n.s.), protected +0.043 [+0.025, +0.061].
+- **SPLICE baseline** (closest published erasure): flips the shortcut in thyroid, capsule and hair (reversed ≫
+  correlated); by min(rev, corr) U-MtE_balanced wins in all three; on drains SPLICE 0.516 vs 0.460 at −0.19 clean.
+- **Location-adaptive selection (auto)**: beats masking in 5/5 cohorts (+0.17 to +0.40), within 0.02 of the best
+  candidate in 5/5, beats DFR in 3/5 (fails on hair and drains = correlate-carried regime). Split-validation
+  variant that admits DFR as a candidate: running (U14).
+- **Fine-tuning (ResNet-50, end-to-end)**: thyroid — end-to-end U-MtE +0.143 [+0.099, +0.188] over masking and
+  joint-best robust model without labels; capsule — masking HARMS in-ROI (−0.284) with a crossover of +0.584
+  [+0.469, +0.691], end-to-end U-MtE fails there (debris ≈ disease).
+- Git: 76 commits had silently failed to push (branch name mismatch); fixed and verified.
