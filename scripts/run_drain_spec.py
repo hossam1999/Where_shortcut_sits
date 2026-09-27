@@ -37,6 +37,7 @@ def main():
     ap.add_argument("--backbone", default="raddino518")
     ap.add_argument("--tag", default="universal")
     ap.add_argument("--arms", nargs="*", default=None)
+    ap.add_argument("--save_val", action="store_true", help="also save val_groups predictions (adaptive selection)")
     a = ap.parse_args()
     df = load_drain_cohort()
     envs0, counts = build_drain_envs(df)
@@ -54,7 +55,7 @@ def main():
     if not (out / "predictions.csv.gz").exists():
         run_spec(envs, cache, a.backbone, out, paths.CACHE / "features" / "cxr_drain" / BDIR[a.backbone], [],
                  arms=tuple(a.arms) if a.arms else ARMS, traps=("trapA",), device=torch.device("cuda"), insert_fn=ins, insert_tag="_generic",
-                 folds=[0])
+                 folds=[0], save_val=a.save_val)
     preds = pd.read_csv(out / "predictions.csv.gz")
     from concurrent.futures import ProcessPoolExecutor
     jobs, keys = [], []

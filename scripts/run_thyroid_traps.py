@@ -63,6 +63,7 @@ def main():
     ap.add_argument("--tag", default="main")
     ap.add_argument("--counts_only", action="store_true")
     ap.add_argument("--arms", nargs="*", default=None)
+    ap.add_argument("--save_val", action="store_true", help="also save val_groups predictions (adaptive selection)")
     a = ap.parse_args()
     c = cohort() if a.cohort == "thyroid" else capsule_cohort()
     envs = build_spec_envs(c, group_col="group")
@@ -93,7 +94,7 @@ def main():
         kw["arms"] = tuple(a.arms)
     if not (out / "predictions.csv.gz").exists():
         run_spec(envs, cache, a.backbone, out, paths.CACHE / "features" / a.cohort / BDIR[a.backbone], donors,
-                 device=torch.device("cuda"), **kw)
+                 device=torch.device("cuda"), save_val=a.save_val, **kw)
     preds = pd.read_csv(out / "predictions.csv.gz")
     arms = [m for m in preds.method.unique() if m != "erm"]
     jobs, keys = [], []

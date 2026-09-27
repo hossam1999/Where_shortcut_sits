@@ -44,7 +44,7 @@ def _fold_job(job):
         else:
             pv = clf.predict_proba(X(view, cv))[:, 1]
         thr, _ = select_threshold_clean_val(yv, pv)
-        for env in ("clean", "test_corr", "test_rev"):
+        for env in ("clean", "test_corr", "test_rev") + (("val_groups",) if _CTX.get("save_val") else ()):
             d = E[env]
             c = clf
             if test_a:
@@ -71,6 +71,8 @@ def _fold_job(job):
     Xtr, Xv = X("erm", tr), X("erm", cv)
     if "jtt" in arms:
         fin(H.fit_jtt(Xtr, ytr, Xv, yv, seed)[0], "jtt", "erm")
+    if "mask_balanced" in arms:
+        fin(H.fit_balanced(X("mask", tr), ytr, atr, X("mask", cv), yv, seed)[0], "mask_balanced", "mask")
     if "splice" in arms:  # task-preserving concept removal with artifact labels (baseline)
         sp = H.SpliceProjection(Xtr, atr, ytr)
         fin(H.fit_on_transformed(sp, Xtr, ytr, Xv, yv, seed)[0], "splice", "erm")
@@ -147,7 +149,7 @@ def _fold_job(job):
 
 def run_spec(envs: Dict, cache, backend_name: str, out_dir: Path, feat_dir: Path, donors: Sequence[str],
              arms=ARMS, traps=("trapA", "trapB"), device=None, batch_size=64, workers=5, extra_meta=None,
-             n_jobs: int = 4, insert_fn=None, insert_tag: str = "", folds=range(5)):
+             n_jobs: int = 4, insert_fn=None, insert_tag: str = "", folds=range(5), save_val: bool = False):
     device = device or torch.device("cuda")
     out_dir.mkdir(parents=True, exist_ok=True)
     pool = sorted(set().union(*[set(d.image_id) for k, d in envs.items() if k[0] in traps]))
@@ -163,7 +165,8 @@ def run_spec(envs: Dict, cache, backend_name: str, out_dir: Path, feat_dir: Path
          for v in sorted(need)}
     del backend; gc.collect(); torch.cuda.empty_cache()
     global _CTX
-    _CTX = dict(V=V, pos=pos, envs=envs, arms=arms, backend_name=backend_name, extra_meta=extra_meta or {})
+    _CTX = dict(V=V, pos=pos, envs=envs, arms=arms, backend_name=backend_name, extra_meta=extra_meta or {},
+                save_val=save_val)
     seeds = sorted({k[1] for k in envs})
     jobs = [(trap, seed, k) for trap in traps for seed in seeds for k in folds]
     import multiprocessing as mp

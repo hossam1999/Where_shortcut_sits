@@ -160,3 +160,13 @@ on the training environment with image-level artifact labels; arms splice (ERM v
 view). Compared with U-MtE_protect (label-free w.r.t. A) and U-MtE_balanced (uses A) on thyroid, capsule, ISIC hair
 (DINOv2) and chest drains (RAD-DINO). Claims **U12a** U-MtE_balanced − mask_splice > 0 and **U12b**
 U-MtE_protect − mask_splice ≥ 0 (reversed AUROC, Trap A), with gaming flags reported. Reported either way.
+
+## Amendment (2026-09-27, before fitting) — location-adaptive selection ("auto", U13)
+Per (trap, seed, fold) the candidate with the best validation score is chosen and its test predictions are used.
+Candidates (none trains on val_groups): erm, mask, balanced, mask_balanced, U-MtE, U-MtE_protect, U-MtE_balanced,
+U-MtE_protect_balanced, jtt, mask_jtt, umte_jtt. Score on val_groups (image-level A needed on validation only):
+min(AUROC(Y1A0 vs Y0A1), AUROC(Y1A1 vs Y0A0)). References: DFR and mask+DFR (trained on val_groups, so not
+candidates). Cohorts: thyroid, capsule, ISIC hair (DINOv2), chest drains (RAD-DINO).
+Claims **U13a** auto − mask > 0 (Trap A, reversed) in all four; **U13b** auto is within 0.02 (reversed and
+min(rev,corr)) of the best fixed candidate in each cohort; **U13c** auto ≥ DFR − 0.02 in each cohort.
+Reported either way. (`scripts/analysis/adaptive_select.py`)

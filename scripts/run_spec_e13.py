@@ -63,6 +63,7 @@ def main():
     ap.add_argument("--tag", default="spec")
     ap.add_argument("--generic", action="store_true", help="artifact-agnostic insertion library (U-I2E / U-MtE)")
     ap.add_argument("--arms", nargs="*", default=None)
+    ap.add_argument("--save_val", action="store_true", help="also save val_groups predictions (adaptive selection)")
     a = ap.parse_args()
     c = load_spec_cohort(r_col=a.r_col)
     envs = build_spec_envs(c)
@@ -87,7 +88,7 @@ def main():
         if a.arms:
             kw["arms"] = tuple(a.arms)
         run_spec(envs, cache, a.backbone, out, paths.CACHE / "features" / "spec_isic2019" / BACKBONE_DIR[a.backbone], donors,
-                 device=torch.device("cuda"), **kw)
+                 device=torch.device("cuda"), save_val=a.save_val, **kw)
     preds = pd.read_csv(out / "predictions.csv.gz")
     arms = [m for m in preds.method.unique() if m != "erm"]
     jobs, keys = [], []
