@@ -58,6 +58,7 @@ analysis scripts fall back to it when a historical per-ablation folder is absent
 - `results/CROSS_COHORT.md`, `paper/tables/main_inroi.tex` — every arm × cohort × backbone.
 - `docs/PREREGISTRATION_*.md` — each experiment's registration **and** its results section (supported / not).
 - `paper/figures/` — dose–response, forest plot, theory, examples.
+- `report/report.pdf` — full plain-language project report with real example images of every dataset and all plots.
 
 ## Use the methods on your own data (any backbone, any artifact)
 **U-MtE** (images + ROI masks only):

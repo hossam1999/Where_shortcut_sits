@@ -2,7 +2,7 @@
 hospital the model never saw. The question: on the naturally occurring ``hard'' cases (where the artifact points the
 wrong way), does masking hurt?}
 \begin{center}\small
-\begin{tabular}{lcccc}
+\resizebox{\linewidth}{!}{\begin{tabular}{lccc}
 \toprule
 Natural test & masking vs plain model (hard cases) & ours + balancing vs masking & best method (hard cases) \\
 \midrule
@@ -12,7 +12,7 @@ Melanoma, MSK held out & \textbf{$-0.056$} [$-0.084$, $-0.029$] & $+0.041$ & bal
 Melanoma, HAM held out & $+0.053$ [$+0.037$, $+0.068$] & $+0.065$ & \textbf{ours + balancing} \\
 Capsule, held-out videos & $+0.021$ [$+0.000$, $+0.044$] & $+0.014$ & \textbf{ours + balancing} \\
 \bottomrule
-\end{tabular}
+\end{tabular}}
 \end{center}
 \mixed\ Masking harms the naturally occurring hard cases in 3 of 5 tests (all three significant). Our method with
 balancing improves on masking for these cases in every test where it was measured, and is the best or tied-best in 3
