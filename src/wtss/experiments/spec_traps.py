@@ -165,7 +165,12 @@ def run_spec(envs: Dict, cache, backend_name: str, out_dir: Path, feat_dir: Path
     need = {"erm", "mask"} | ({"inpaint"} if {"inpaint", "leace_paired"} & set(arms) else set()) | ({"insert"} if any(a.startswith(("i2e", "insert", "umte", "pbal")) for a in arms) else set()) | \
         ({"mask_insert"} if any(a.startswith(("mte", "umte", "pbal")) for a in arms) else set())
     from ..backbones import Backend  # noqa: F401
-    cached = all((feat_dir / (f"{v}{insert_tag}.npz" if v in ("insert", "mask_insert") else f"{v}.npz")).exists() for v in need)
+    def _covered(f):  # a cached view is usable only if it contains every image of this pool
+        if not f.exists():
+            return False
+        ids_c = set(np.load(f, allow_pickle=False)["ids"].astype(str))
+        return all(str(i) in ids_c for i in pool)
+    cached = all(_covered(feat_dir / (f"{v}{insert_tag}.npz" if v in ("insert", "mask_insert") else f"{v}.npz")) for v in need)
     backend = None if cached else load_backend(backend_name, device)
     rend = make_renderers(cache, BACKEND_SIZE[backend_name], donors, insert_fn)
     fname = lambda v: f"{v}{insert_tag}.npz" if v in ("insert", "mask_insert") else f"{v}.npz"
