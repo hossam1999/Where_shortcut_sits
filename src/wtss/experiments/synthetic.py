@@ -71,7 +71,7 @@ class SynthViews:
     def __init__(self, cohort, cache: ImageCache, backend, placements, cfg: SynthConfig, feat_dir: Path, device):
         self.cohort, self.cache, self.backend, self.pl, self.cfg = cohort, cache, backend, placements, cfg
         self.dir, self.device = feat_dir, device
-        self.draw = _artifact_drawer(cfg, backend.size)
+        self.draw = _artifact_drawer(cfg, getattr(cache, "size", backend.size))  # render size (e.g. 518 for medsiglip448)
         self.ids = cohort.ids()
         self._mem: Dict[str, np.ndarray] = {}
 
