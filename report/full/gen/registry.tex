@@ -2622,10 +2622,45 @@ ViT-S mask 0.688 / 0.868 / 0.465; umte\_cons\_ft 0.712 / 0.798 / 0.608.
 
 \subsubsection{Status of Amendment 2}\label{status-of-amendment-2}
 
-Not run: at 15:28 UTC the GPU became unavailable inside the container (\texttt{nvidia-smi:\ Input/output\ error}, host-side
+First attempt not run: at 15:28 UTC the GPU became unavailable inside the container (\texttt{nvidia-smi:\ Input/output\ error}, host-side
 driver problem; both jobs failed at CUDA initialisation before training). Commands to run when a GPU is available:
 \texttt{python\ scripts/run\_finetune\_spec.py\ -\/-cohort\ ovary\ -\/-arms\ umte\_cons\_ft\ -\/-traps\ trapA} and the same with
 \texttt{-\/-cohort\ capsule}. umte\_ft on ovary (ResNet-50, run before the failure): +0.107 {[}−0.003, +0.229{]}.
+
+Recovery (15:37 UTC): the kernel module and /dev/nvidia* were intact; only the host-mounted \texttt{libcuda.so.610.43.02}
+was unreadable. The identical userspace libraries were extracted from NVIDIA\textquotesingle s official 610.43.02 package into
+/root/data/cache/nvidia\_driver/lib and the runs were relaunched with \texttt{LD\_LIBRARY\_PATH} pointing there (same driver
+version, same GPU; no other change). Results below.
+
+\subsubsection{Results of Amendment 2 (ResNet-50, Trap A, 5 folds)}\label{results-of-amendment-2-resnet-50-trap-a-5-folds}
+
+{ % do not increment counter
+\begin{longtable}[]{@{}llll@{}}
+\toprule\noalign{}
+cohort & umte\_cons\_ft − mask & AUROC clean / corr / rev (umte\_cons\_ft) & mask \\
+\midrule\noalign{}
+\endhead
+\bottomrule\noalign{}
+\endlastfoot
+ovary & +0.094 {[}−0.011, +0.210{]} & 0.687 / 0.726 / 0.650 & 0.578 / 0.570 / 0.556 \\
+capsule & −0.022 {[}−0.046, +0.001{]} & 0.555 / 0.879 / 0.190 & 0.596 / 0.915 / 0.211 \\
+\end{longtable}
+}
+
+\begin{itemize}
+
+\item
+  \textbf{Ovary: positive, not significant} (the 1,202-image cohort is underpowered for fine-tuning: every ovary contrast
+  has a CI of about ±0.11). It improves every environment over masking and has the best min(rev, corr) of the
+  annotation-free arms together with umte\_ft (0.650 / 0.663 vs mask 0.556 and the label-using mask\_balanced 0.551).
+\item
+  \textbf{Capsule: fails, as pre-registered.} Fine-tuned masking collapses on in-ROI debris (reversed 0.211 vs ERM 0.495);
+  debris resembles erosion fibrin, so an overlay-driven method cannot separate it from disease (theory: large ρ).
+  Only label-based balancing helps there (mask\_balanced reversed 0.687).
+\item
+  Overall: erase-while-fine-tuning works across architectures (ResNet-50, ViT-S) for distinct-overlay artifacts
+  (thyroid significant, ovary positive), and --- like frozen U-MtE without protection --- not for pathology-like artifacts.
+\end{itemize}
 
 }
 

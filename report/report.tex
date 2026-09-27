@@ -178,7 +178,8 @@ U-MtE is a tool for frozen foundation-model features.
 
 \ok\ \textbf{Erase while fine-tuning.} Doing the erasure \emph{during} fine-tuning (on the network's own features, plus
 making features and predictions ignore overlays) works for both a CNN and a transformer on thyroid: ResNet-50 +0.157,
-ViT-S +0.143 over masking, with no artifact annotation. Ovary and capsule runs are pending (the GPU failed).
+ViT-S +0.143 over masking, with no artifact annotation. \mixed\ Ovary: +0.094 (positive, not significant; small
+dataset). \no\ Capsule: fails (debris looks like the disease), as expected.
 
 \mixed\ \textbf{Clinical metrics.} On the untouched thyroid test set, masking halves sensitivity at a fixed operating
 point (0.73 $\to$ 0.35) while raising specificity (0.62 $\to$ 0.89); U-MtE recovers part of it and has the best AUPRC and

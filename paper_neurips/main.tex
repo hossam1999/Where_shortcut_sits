@@ -228,7 +228,8 @@ The gain is stable across model sizes (protected U-MtE on thyroid: $+0.181$, $+0
 erasure ranks $\ge16$ ($+0.18$ to $+0.22$). Applied post hoc to a fine-tuned ResNet-50 it does not help ($+0.004$),
 but estimated on the network's own features and removed \emph{during} fine-tuning, together with overlay consistency,
 it improves on masking for both ResNet-50 ($+0.157$ [$+0.114, +0.205$]) and ViT-S ($+0.143$ [$+0.103, +0.187$]) on
-thyroid (Appendix~\ref{sec:ft}).
+thyroid; it is positive but underpowered on ovary ($+0.094$) and fails on pathology-like capsule debris ($-0.022$;
+Appendix~\ref{sec:ft}).
 Where the shortcut is carried by correlates of the artifact (hair co-varies with body site, age and sex; a drain comes
 with a treated lung) no pixel- or insertion-based method helps much and DFR \citep{kirichenko2023dfr} is best.
 

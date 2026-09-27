@@ -45,11 +45,12 @@ warning: gen/tab_theory_s.tex:10: Overfull \hbox (33.44838pt too wide) in paragr
 warning: full_report.tex:303: Overfull \hbox (2.6329pt too wide) in paragraph at lines 303--303
 warning: full_report.tex:317: Overfull \hbox (18.32974pt too wide) in paragraph at lines 314--317
 warning: full_report.tex:328: Overfull \hbox (4.57787pt too wide) in paragraph at lines 324--328
-warning: full_report.tex:347: Overfull \hbox (43.60721pt too wide) in paragraph at lines 343--347
-warning: full_report.tex:360: Overfull \hbox (46.8588pt too wide) in paragraph at lines 357--360
-warning: full_report.tex:360: Overfull \hbox (1.03464pt too wide) in paragraph at lines 357--360
-warning: full_report.tex:367: Overfull \hbox (2.87764pt too wide) in paragraph at lines 365--367
-warning: full_report.tex:367: Overfull \hbox (16.85606pt too wide) in paragraph at lines 365--367
+warning: full_report.tex:332: Overfull \hbox (53.83038pt too wide) in paragraph at lines 328--332
+warning: full_report.tex:350: Overfull \hbox (43.60721pt too wide) in paragraph at lines 346--350
+warning: full_report.tex:363: Overfull \hbox (46.8588pt too wide) in paragraph at lines 360--363
+warning: full_report.tex:363: Overfull \hbox (1.03464pt too wide) in paragraph at lines 360--363
+warning: full_report.tex:370: Overfull \hbox (2.87764pt too wide) in paragraph at lines 368--370
+warning: full_report.tex:370: Overfull \hbox (16.85606pt too wide) in paragraph at lines 368--370
 warning: ../../paper/tables/main_inroi.tex:2: Underfull \hbox (badness 2726) in paragraph at lines 2--2
 warning: ../../paper/tables/natural_clinical.tex:35: Overfull \hbox (27.33098pt too wide) in paragraph at lines 3--35
 warning: gen/results_md.tex:105: Overfull \hbox (503.77467pt too wide) in alignment at lines 16--105
@@ -195,17 +196,15 @@ warning: gen/registry.tex:2446: Overfull \hbox (73.84622pt too wide) in alignmen
 warning: gen/registry.tex:2448: Overfull \hbox (73.84622pt too wide) in alignment at lines 2446--2448
 warning: gen/registry.tex:2456: Overfull \hbox (124.75923pt too wide) in alignment at lines 2448--2456
 warning: gen/registry.tex:2562: Overfull \hbox (55.17264pt too wide) in paragraph at lines 2560--2562
-warning: gen/registry.tex:2629: Overfull \hbox (18.2641pt too wide) in paragraph at lines 2625--2629
-warning: gen/registry.tex:2653: Overfull \hbox (2318.15791pt too wide) in alignment at lines 2645--2653
-warning: gen/registry.tex:2707: Overfull \hbox (132.06844pt too wide) in alignment at lines 2695--2707
-warning: gen/registry.tex:2774: Overfull \hbox (2.61594pt too wide) in paragraph at lines 2771--2774
-warning: gen/registry.tex:2801: 
-Missing character: There is no ��� (U+226B) in font DejaVu Serif/OT:script=latn;language=dflt;mapping=tex-text;!
+warning: gen/registry.tex:2688: Overfull \hbox (2318.15791pt too wide) in alignment at lines 2680--2688
+warning: gen/registry.tex:2742: Overfull \hbox (132.06844pt too wide) in alignment at lines 2730--2742
+warning: gen/registry.tex:2809: Overfull \hbox (2.61594pt too wide) in paragraph at lines 2806--2809
+warning: gen/registry.tex:2836: Missing character: There is no ��� (U+226B) in font DejaVu Serif/OT:script=latn;language=dflt;mapping=tex-text;!
 warning: could not represent character "≫" (0x226b) in font "DejaVu Serif/OT:script=latn;language=dflt;mapping=tex-text;"
-warning: gen/registry.tex:2823: Overfull \hbox (50.9457pt too wide) in paragraph at lines 2820--2823
-warning: gen/registry.tex:2827: Overfull \hbox (8.76791pt too wide) in paragraph at lines 2823--2827
-warning: gen/registry.tex:2832: Overfull \hbox (22.84573pt too wide) in paragraph at lines 2830--2832
-note: Rerunning TeX because "full_report.toc" changed ...
+warning: gen/registry.tex:2858: Overfull \hbox (50.9457pt too wide) in paragraph at lines 2855--2858
+warning: gen/registry.tex:2862: Overfull \hbox (8.76791pt too wide) in paragraph at lines 2858--2862
+warning: gen/registry.tex:2867: Overfull \hbox (22.84573pt too wide) in paragraph at lines 2865--2867
+note: Rerunning TeX because "full_report.aux" changed ...
 warning: full_report.tex:25: Overfull \hbox (6.61235pt too wide) in paragraph at lines 25--25
 warning: full_report.toc:39: Overfull \hbox (1.21095pt too wide) in paragraph at lines 39--39
 warning: full_report.toc:40: Overfull \hbox (0.24707pt too wide) detected at line 40
@@ -236,8 +235,8 @@ warning: full_report.toc:197: Overfull \hbox (6.64842pt too wide) detected at li
 warning: full_report.toc:201: Overfull \hbox (6.64842pt too wide) detected at line 201
 warning: full_report.toc:205: Overfull \hbox (6.64842pt too wide) detected at line 205
 warning: full_report.toc:209: Overfull \hbox (6.64842pt too wide) detected at line 209
-warning: full_report.toc:217: Overfull \hbox (6.64842pt too wide) detected at line 217
-warning: full_report.toc:219: Overfull \hbox (6.64842pt too wide) detected at line 219
+warning: full_report.toc:218: Overfull \hbox (6.64842pt too wide) detected at line 218
+warning: full_report.toc:220: Overfull \hbox (6.64842pt too wide) detected at line 220
 warning: full_report.tex:64: Overfull \hbox (49.02322pt too wide) in paragraph at lines 58--64
 warning: full_report.tex:92: Overfull \hbox (4.21964pt too wide) in paragraph at lines 92--92
 warning: full_report.tex:103: Underfull \hbox (badness 1325) in paragraph at lines 102--103
@@ -261,11 +260,12 @@ warning: gen/tab_theory_s.tex:10: Overfull \hbox (33.44838pt too wide) in paragr
 warning: full_report.tex:303: Overfull \hbox (2.6329pt too wide) in paragraph at lines 303--303
 warning: full_report.tex:317: Overfull \hbox (26.18207pt too wide) in paragraph at lines 314--317
 warning: full_report.tex:328: Overfull \hbox (4.57787pt too wide) in paragraph at lines 324--328
-warning: full_report.tex:347: Overfull \hbox (43.60721pt too wide) in paragraph at lines 343--347
-warning: full_report.tex:360: Overfull \hbox (46.8588pt too wide) in paragraph at lines 357--360
-warning: full_report.tex:360: Overfull \hbox (1.03464pt too wide) in paragraph at lines 357--360
-warning: full_report.tex:367: Overfull \hbox (2.87764pt too wide) in paragraph at lines 365--367
-warning: full_report.tex:367: Overfull \hbox (16.85606pt too wide) in paragraph at lines 365--367
+warning: full_report.tex:332: Overfull \hbox (53.83038pt too wide) in paragraph at lines 328--332
+warning: full_report.tex:350: Overfull \hbox (43.60721pt too wide) in paragraph at lines 346--350
+warning: full_report.tex:363: Overfull \hbox (46.8588pt too wide) in paragraph at lines 360--363
+warning: full_report.tex:363: Overfull \hbox (1.03464pt too wide) in paragraph at lines 360--363
+warning: full_report.tex:370: Overfull \hbox (2.87764pt too wide) in paragraph at lines 368--370
+warning: full_report.tex:370: Overfull \hbox (16.85606pt too wide) in paragraph at lines 368--370
 warning: ../../paper/tables/main_inroi.tex:2: Underfull \hbox (badness 2726) in paragraph at lines 2--2
 warning: ../../paper/tables/natural_clinical.tex:35: Overfull \hbox (27.33098pt too wide) in paragraph at lines 3--35
 warning: gen/results_md.tex:14: Overfull \hbox (503.77467pt too wide) in alignment at lines 10--14
@@ -459,21 +459,19 @@ warning: gen/registry.tex:2446: Overfull \hbox (124.75923pt too wide) in alignme
 warning: gen/registry.tex:2448: Overfull \hbox (124.75923pt too wide) in alignment at lines 2446--2448
 warning: gen/registry.tex:2456: Overfull \hbox (124.75923pt too wide) in alignment at lines 2448--2456
 warning: gen/registry.tex:2562: Overfull \hbox (55.17264pt too wide) in paragraph at lines 2560--2562
-warning: gen/registry.tex:2629: Overfull \hbox (18.2641pt too wide) in paragraph at lines 2625--2629
-warning: gen/registry.tex:2643: Overfull \hbox (2318.15791pt too wide) in alignment at lines 2639--2643
-warning: gen/registry.tex:2645: Overfull \hbox (2318.15791pt too wide) in alignment at lines 2643--2645
-warning: gen/registry.tex:2653: Overfull \hbox (2318.15791pt too wide) in alignment at lines 2645--2653
-warning: gen/registry.tex:2693: Overfull \hbox (132.06844pt too wide) in alignment at lines 2689--2693
-warning: gen/registry.tex:2695: Overfull \hbox (132.06844pt too wide) in alignment at lines 2693--2695
-warning: gen/registry.tex:2707: Overfull \hbox (132.06844pt too wide) in alignment at lines 2695--2707
-warning: gen/registry.tex:2774: Overfull \hbox (2.61594pt too wide) in paragraph at lines 2771--2774
-warning: gen/registry.tex:2801: 
-Missing character: There is no ��� (U+226B) in font DejaVu Serif/OT:script=latn;language=dflt;mapping=tex-text;!
+warning: gen/registry.tex:2678: Overfull \hbox (2318.15791pt too wide) in alignment at lines 2674--2678
+warning: gen/registry.tex:2680: Overfull \hbox (2318.15791pt too wide) in alignment at lines 2678--2680
+warning: gen/registry.tex:2688: Overfull \hbox (2318.15791pt too wide) in alignment at lines 2680--2688
+warning: gen/registry.tex:2728: Overfull \hbox (132.06844pt too wide) in alignment at lines 2724--2728
+warning: gen/registry.tex:2730: Overfull \hbox (132.06844pt too wide) in alignment at lines 2728--2730
+warning: gen/registry.tex:2742: Overfull \hbox (132.06844pt too wide) in alignment at lines 2730--2742
+warning: gen/registry.tex:2809: Overfull \hbox (2.61594pt too wide) in paragraph at lines 2806--2809
+warning: gen/registry.tex:2836: Missing character: There is no ��� (U+226B) in font DejaVu Serif/OT:script=latn;language=dflt;mapping=tex-text;!
 warning: could not represent character "≫" (0x226b) in font "DejaVu Serif/OT:script=latn;language=dflt;mapping=tex-text;"
-warning: gen/registry.tex:2823: Overfull \hbox (50.9457pt too wide) in paragraph at lines 2820--2823
-warning: gen/registry.tex:2827: Overfull \hbox (8.76791pt too wide) in paragraph at lines 2823--2827
-warning: gen/registry.tex:2832: Overfull \hbox (22.84573pt too wide) in paragraph at lines 2830--2832
-note: Rerunning TeX because "full_report.toc" changed ...
+warning: gen/registry.tex:2858: Overfull \hbox (50.9457pt too wide) in paragraph at lines 2855--2858
+warning: gen/registry.tex:2862: Overfull \hbox (8.76791pt too wide) in paragraph at lines 2858--2862
+warning: gen/registry.tex:2867: Overfull \hbox (22.84573pt too wide) in paragraph at lines 2865--2867
+note: Rerunning TeX because "full_report.aux" changed ...
 warning: full_report.tex:25: Overfull \hbox (6.61235pt too wide) in paragraph at lines 25--25
 warning: full_report.toc:39: Overfull \hbox (1.21095pt too wide) in paragraph at lines 39--39
 warning: full_report.toc:40: Overfull \hbox (0.24707pt too wide) detected at line 40
@@ -504,8 +502,8 @@ warning: full_report.toc:197: Overfull \hbox (6.64842pt too wide) detected at li
 warning: full_report.toc:201: Overfull \hbox (6.64842pt too wide) detected at line 201
 warning: full_report.toc:205: Overfull \hbox (6.64842pt too wide) detected at line 205
 warning: full_report.toc:209: Overfull \hbox (6.64842pt too wide) detected at line 209
-warning: full_report.toc:217: Overfull \hbox (6.64842pt too wide) detected at line 217
-warning: full_report.toc:219: Overfull \hbox (6.64842pt too wide) detected at line 219
+warning: full_report.toc:218: Overfull \hbox (6.64842pt too wide) detected at line 218
+warning: full_report.toc:220: Overfull \hbox (6.64842pt too wide) detected at line 220
 warning: full_report.tex:64: Overfull \hbox (49.02322pt too wide) in paragraph at lines 58--64
 warning: full_report.tex:92: Overfull \hbox (4.21964pt too wide) in paragraph at lines 92--92
 warning: full_report.tex:103: Underfull \hbox (badness 1325) in paragraph at lines 102--103
@@ -529,11 +527,12 @@ warning: gen/tab_theory_s.tex:10: Overfull \hbox (33.44838pt too wide) in paragr
 warning: full_report.tex:303: Overfull \hbox (2.6329pt too wide) in paragraph at lines 303--303
 warning: full_report.tex:317: Overfull \hbox (26.18207pt too wide) in paragraph at lines 314--317
 warning: full_report.tex:328: Overfull \hbox (4.57787pt too wide) in paragraph at lines 324--328
-warning: full_report.tex:347: Overfull \hbox (43.60721pt too wide) in paragraph at lines 343--347
-warning: full_report.tex:360: Overfull \hbox (46.8588pt too wide) in paragraph at lines 357--360
-warning: full_report.tex:360: Overfull \hbox (1.03464pt too wide) in paragraph at lines 357--360
-warning: full_report.tex:367: Overfull \hbox (2.87764pt too wide) in paragraph at lines 365--367
-warning: full_report.tex:367: Overfull \hbox (16.85606pt too wide) in paragraph at lines 365--367
+warning: full_report.tex:332: Overfull \hbox (53.83038pt too wide) in paragraph at lines 328--332
+warning: full_report.tex:350: Overfull \hbox (43.60721pt too wide) in paragraph at lines 346--350
+warning: full_report.tex:363: Overfull \hbox (46.8588pt too wide) in paragraph at lines 360--363
+warning: full_report.tex:363: Overfull \hbox (1.03464pt too wide) in paragraph at lines 360--363
+warning: full_report.tex:370: Overfull \hbox (2.87764pt too wide) in paragraph at lines 368--370
+warning: full_report.tex:370: Overfull \hbox (16.85606pt too wide) in paragraph at lines 368--370
 warning: ../../paper/tables/main_inroi.tex:2: Underfull \hbox (badness 2726) in paragraph at lines 2--2
 warning: ../../paper/tables/natural_clinical.tex:35: Overfull \hbox (27.33098pt too wide) in paragraph at lines 3--35
 warning: gen/results_md.tex:14: Overfull \hbox (503.77467pt too wide) in alignment at lines 10--14
@@ -727,22 +726,20 @@ warning: gen/registry.tex:2446: Overfull \hbox (124.75923pt too wide) in alignme
 warning: gen/registry.tex:2448: Overfull \hbox (124.75923pt too wide) in alignment at lines 2446--2448
 warning: gen/registry.tex:2456: Overfull \hbox (124.75923pt too wide) in alignment at lines 2448--2456
 warning: gen/registry.tex:2562: Overfull \hbox (55.17264pt too wide) in paragraph at lines 2560--2562
-warning: gen/registry.tex:2629: Overfull \hbox (18.2641pt too wide) in paragraph at lines 2625--2629
-warning: gen/registry.tex:2643: Overfull \hbox (2318.15791pt too wide) in alignment at lines 2639--2643
-warning: gen/registry.tex:2645: Overfull \hbox (2318.15791pt too wide) in alignment at lines 2643--2645
-warning: gen/registry.tex:2653: Overfull \hbox (2318.15791pt too wide) in alignment at lines 2645--2653
-warning: gen/registry.tex:2693: Overfull \hbox (132.06844pt too wide) in alignment at lines 2689--2693
-warning: gen/registry.tex:2695: Overfull \hbox (132.06844pt too wide) in alignment at lines 2693--2695
-warning: gen/registry.tex:2707: Overfull \hbox (132.06844pt too wide) in alignment at lines 2695--2707
-warning: gen/registry.tex:2774: Overfull \hbox (2.61594pt too wide) in paragraph at lines 2771--2774
-warning: gen/registry.tex:2801: 
-Missing character: There is no ��� (U+226B) in font DejaVu Serif/OT:script=latn;language=dflt;mapping=tex-text;!
+warning: gen/registry.tex:2678: Overfull \hbox (2318.15791pt too wide) in alignment at lines 2674--2678
+warning: gen/registry.tex:2680: Overfull \hbox (2318.15791pt too wide) in alignment at lines 2678--2680
+warning: gen/registry.tex:2688: Overfull \hbox (2318.15791pt too wide) in alignment at lines 2680--2688
+warning: gen/registry.tex:2728: Overfull \hbox (132.06844pt too wide) in alignment at lines 2724--2728
+warning: gen/registry.tex:2730: Overfull \hbox (132.06844pt too wide) in alignment at lines 2728--2730
+warning: gen/registry.tex:2742: Overfull \hbox (132.06844pt too wide) in alignment at lines 2730--2742
+warning: gen/registry.tex:2809: Overfull \hbox (2.61594pt too wide) in paragraph at lines 2806--2809
+warning: gen/registry.tex:2836: Missing character: There is no ��� (U+226B) in font DejaVu Serif/OT:script=latn;language=dflt;mapping=tex-text;!
 warning: could not represent character "≫" (0x226b) in font "DejaVu Serif/OT:script=latn;language=dflt;mapping=tex-text;"
-warning: gen/registry.tex:2823: Overfull \hbox (50.9457pt too wide) in paragraph at lines 2820--2823
-warning: gen/registry.tex:2827: Overfull \hbox (8.76791pt too wide) in paragraph at lines 2823--2827
-warning: gen/registry.tex:2832: Overfull \hbox (22.84573pt too wide) in paragraph at lines 2830--2832
+warning: gen/registry.tex:2858: Overfull \hbox (50.9457pt too wide) in paragraph at lines 2855--2858
+warning: gen/registry.tex:2862: Overfull \hbox (8.76791pt too wide) in paragraph at lines 2858--2862
+warning: gen/registry.tex:2867: Overfull \hbox (22.84573pt too wide) in paragraph at lines 2865--2867
 warning: warnings were issued by the TeX engine; use --print and/or --keep-logs for details.
 note: Running xdvipdfmx ...
-note: Writing `full_report.log` (61.97 KiB)
+note: Writing `full_report.log` (61.95 KiB)
 note: Writing `full_report.pdf` (3.84 MiB)
 note: Skipped writing 3 intermediate files (use --keep-intermediates to keep them)

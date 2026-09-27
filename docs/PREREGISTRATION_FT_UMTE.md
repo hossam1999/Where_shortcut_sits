@@ -64,3 +64,17 @@ Recovery (15:37 UTC): the kernel module and /dev/nvidia* were intact; only the h
 was unreadable. The identical userspace libraries were extracted from NVIDIA's official 610.43.02 package into
 /root/data/cache/nvidia_driver/lib and the runs were relaunched with `LD_LIBRARY_PATH` pointing there (same driver
 version, same GPU; no other change). Results below.
+
+## Results of Amendment 2 (ResNet-50, Trap A, 5 folds)
+| cohort | umte_cons_ft − mask | AUROC clean / corr / rev (umte_cons_ft) | mask |
+|---|---|---|---|
+| ovary | +0.094 [−0.011, +0.210] | 0.687 / 0.726 / 0.650 | 0.578 / 0.570 / 0.556 |
+| capsule | −0.022 [−0.046, +0.001] | 0.555 / 0.879 / 0.190 | 0.596 / 0.915 / 0.211 |
+- **Ovary: positive, not significant** (the 1,202-image cohort is underpowered for fine-tuning: every ovary contrast
+  has a CI of about ±0.11). It improves every environment over masking and has the best min(rev, corr) of the
+  annotation-free arms together with umte_ft (0.650 / 0.663 vs mask 0.556 and the label-using mask_balanced 0.551).
+- **Capsule: fails, as pre-registered.** Fine-tuned masking collapses on in-ROI debris (reversed 0.211 vs ERM 0.495);
+  debris resembles erosion fibrin, so an overlay-driven method cannot separate it from disease (theory: large ρ).
+  Only label-based balancing helps there (mask_balanced reversed 0.687).
+- Overall: erase-while-fine-tuning works across architectures (ResNet-50, ViT-S) for distinct-overlay artifacts
+  (thyroid significant, ovary positive), and — like frozen U-MtE without protection — not for pathology-like artifacts.

@@ -41,6 +41,9 @@ $+0.143$ [$+0.103, +0.187$] with ViT-S (reversed AUROC 0.693 and 0.608 vs 0.536 
 alone works for only one architecture (projection + invariance: ResNet-50 $+0.160$ [$+0.114, +0.207$], ViT-S $+0.061$
 [$-0.005, +0.141$]; prediction consistency: ResNet-50 $+0.007$ [$-0.014, +0.029$], ViT-S $+0.062$ [$+0.031, +0.087$]).
 With ResNet-50 the correlated AUROC falls slightly below the reversed one (0.661 vs 0.693), a mild over-correction.
+On ovary (ResNet-50) it is positive but not significant ($+0.094$ [$-0.011, +0.210$]; every fine-tuning contrast on this
+1,202-image cohort is underpowered), and on capsule, where debris resembles erosion fibrin, it fails ($-0.022$
+[$-0.046, +0.001$]), as does every annotation-free method.
 
 \subsection{Zero-shot vision--language models}
 Without any task training, the foundation models' own zero-shot scores (similarity to ``benign'' versus ``malignant''

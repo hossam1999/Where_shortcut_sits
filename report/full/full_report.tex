@@ -80,7 +80,7 @@ the artifact (hair, drains) --- label-based reweighting wins there.
 shortcut feature forms during fine-tuning. Erasing \emph{during} fine-tuning (running overlay subspace projected out,
 plus feature invariance and prediction consistency; \texttt{umte\_cons\_ft}) improves on masking for ResNet-50
 ($+0.157$ [$+0.114,+0.205$]) and ViT-S ($+0.143$ [$+0.103,+0.187$]) on thyroid; each component alone works for only one
-architecture.
+architecture. Ovary: positive, not significant ($+0.094$); capsule (pathology-like debris): fails ($-0.022$).
 \item \ok\ \textbf{Rigour.} Pilot replicated (73/88 numbers MATCH, 12 same sign and significance, 3 mismatch);
 pre-registration before every experiment; Holm-corrected primary family 12/16 supported; stricter leakage grouping
 leaves 11/12 unchanged; every CI in the papers traced to a result file (109/109).
@@ -325,7 +325,10 @@ over-correction.
 [$+0.114,+0.205$], ViT-S $+0.143$ [$+0.103,+0.187$] \ok\ --- the first remedy that works for fully fine-tuned networks of
 both architecture families without artifact annotation. AUROC clean/corr/rev: ResNet-50 0.688/0.661/0.693 (mask
 0.691/0.827/0.536; mild over-correction); ViT-S 0.712/0.798/0.608 (mask 0.688/0.868/0.465).
-\item Other cohorts (ResNet-50): \texttt{umte\_ft} ovary $+0.107$ [$-0.003,+0.229$]; \texttt{umte\_cons\_ft} on ovary and capsule was pre-registered (Amendment 2) but could \emph{not} be run: the GPU became unavailable at 15:28 UTC (host driver I/O error). It is the first experiment to run next.
+\item Other cohorts (ResNet-50): \texttt{umte\_ft} ovary $+0.107$ [$-0.003,+0.229$]; \texttt{umte\_cons\_ft} (Amendment 2; run after recovering the GPU with a private copy of the identical driver
+library): ovary $+0.094$ [$-0.011,+0.210$] \mixed\ (better than masking on clean, correlated and reversed AUROC,
+0.687/0.726/0.650 vs 0.578/0.570/0.556; underpowered cohort); capsule $-0.022$ [$-0.046,+0.001$] \no\ (pathology-like
+debris; fine-tuned masking collapses to 0.211 and only label-based balancing helps, mask+balanced 0.687).
 \end{itemize}
 \input{gen/tab_ft.tex}
 \input{gen/tab_ft_auc.tex}
