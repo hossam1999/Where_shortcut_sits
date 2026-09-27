@@ -58,3 +58,19 @@ wᵀP(x) = wᵀx for w ∈ span(W). Arms mte_protect / mte_protect_balanced, bot
 (where it exists) and the generic library. Claims **U9a** mte_protect − mte > 0 (Trap A) on capsule;
 **U9b** mte_protect − mask > 0 (Trap A) on capsule, thyroid and ISIC hair; **U9c** mte_protect − mte ≥ −0.02 on
 thyroid and ISIC hair (protection costs little where erasure already works). Reported either way.
+
+### U8 results (annotation-free pseudo-group balancing)
+- Thyroid: overlay-detector AUROC vs true marker presence 0.84 (A) / 0.79 (B); umte_pbal reversed 0.663 vs U-MtE
+  0.622 (Trap A); pbal 0.409 vs ERM 0.289.
+- ISIC hair: detector AUROC 0.57 / 0.63 only; umte_pbal 0.510 vs U-MtE 0.506 (no gain); pbal 0.498 vs ERM 0.491.
+U8 helps only where the generic overlays resemble the real artifact in feature space (markers, not hair).
+
+### Cross-cohort summary of the generic (artifact-agnostic) arms, DINOv2@518, Trap A reversed AUROC
+| cohort | ERM | mask | balanced | DFR | U-MtE | U-MtE + balanced |
+|---|---|---|---|---|---|---|
+| thyroid markers | 0.289 | 0.400 | 0.675 | 0.738 | 0.622 | **0.788** |
+| capsule debris | 0.587 | 0.684 | 0.775 | 0.805 | 0.569 | **0.857** |
+| ISIC hair | 0.491 | 0.454 | 0.716 | **0.743** | 0.506 | 0.704 |
+| ISIC hair, DermLIP | 0.670 | 0.585 | **0.813** | 0.780 | 0.509 | 0.648 |
+U-MtE + balanced is best where the shortcut is carried by the artifact pixels (markers, debris); where the
+shortcut is mostly carried by non-pixel correlates (hair: site/age/sex), label-based group methods win.
