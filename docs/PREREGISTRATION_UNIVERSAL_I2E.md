@@ -133,3 +133,8 @@ Crossover (mask) +0.284 [+0.253, +0.315]; Trap A mask − ERM +0.003 (masking us
 U-MtE − mask +0.128 [+0.112, +0.145]; U-MtE − mte_aug +0.120 [+0.102, +0.139] (U7); U-MtE_protect − mask +0.195
 [+0.153, +0.238]; U-MtE_balanced − balanced +0.084 [+0.051, +0.111]; U-MtE_balanced min(rev,corr) 0.745 (best;
 mask+DFR 0.722, DFR 0.669). The methods are not ViT-specific.
+
+### U9 extension — DermLIP, ISIC hair (results/spec_e13/dermlip224_spec_protect; post-registration arm set, same method)
+Trap A reversed: ERM 0.670, mask 0.585, U-MtE 0.509, U-MtE_protect 0.589, U-MtE_protect_balanced 0.693,
+U-MtE_balanced 0.648, JTT 0.670 (balanced alone 0.813). Protection removes the erasure failure (≈ mask), as on
+capsule; on DermLIP hair masking itself harms and label-based balancing is best.
