@@ -32,7 +32,9 @@ data_extra:
 	$(PY) scripts/data/link_clip_nih.py
 	$(PY) scripts/data/prepare_clip.py
 	$(PY) scripts/data/prepare_isic2019.py --stage artifact_stats
-	$(PY) scripts/data/train_unet_spec.py
+	$(PY) scripts/data/native_hair_stats.py
+	$(PY) scripts/data/train_unet_spec.py --stage train
+	$(PY) scripts/data/train_unet_spec.py --stage predict
 	$(PY) scripts/data/prepare_spec_cohort.py
 
 # ---------------------------------------------------------------- verification of the pilot
