@@ -58,3 +58,20 @@ labels ≈ 70 % pure), EAD endoscopy (no disease labels), BKAI-IGH NeoPolyp colo
 
 ## 6. Tools
 `python -m wtss.umte` (U-MtE) and `python -m wtss.slas` (SLAS): any backbone (ViT or CNN), two commands.
+
+## 7. Latest (2026-09-27, 03:00–05:30 UTC)
+- Real chest drains (NIH pneumothorax, RAD-DINO): extreme shortcut (ERM reversed 0.19); lung masking +0.05;
+  U-MtE +0.03 over masking (significant, small); DFR best (0.68). Drain = treated lung → correlate-carried regime.
+- MedSigLIP controlled sweeps (capsule, thyroid): location interaction replicates (+0.19, +0.47); masking does not
+  harm at full overlap; unbalanced U-MtE loses to masking (−0.11, −0.08); U-MtE_balanced beats masking (+0.31,
+  +0.46) and is location-invariant.
+- Disease protection in sweeps: fixes MedSigLIP capsule (+0.061 over masking), helps DINOv2 capsule (+0.118), does
+  not fix MedSigLIP calipers (−0.041).
+- Colonoscopy (BKAI NeoPolyp, specular): infeasible (no specular-free images).
+
+## 8. Recommendation for practitioners (paper's decision rule)
+1. Measure where artifacts sit relative to the ROI. Out-of-ROI → mask.
+2. In-ROI, no artifact labels → protected U-MtE (DINOv2/CNN backbones), or JTT when the shortcut is carried by
+   correlates (check with the oracle-removal ceiling on a few annotated images, e.g. with SLAS).
+3. In-ROI, image-level artifact labels available → U-MtE + balanced (overlay-like artifacts), masking + DFR
+   (artifacts resembling the disease), DFR / balancing (correlate-carried shortcuts).
