@@ -212,3 +212,11 @@ auto_split − DFR (reversed): thyroid +0.060 [+0.037, +0.082], capsule +0.066 [
 **U14a supported 3/5** (fails hair, drains by −0.055 / −0.026); **U14b supported 2/5** (thyroid, capsule).
 Admitting DFR fixes the drain regime (+0.118 over U13) but halving the selection set makes choices noisier
 (ovary, hair worse). Neither selector is uniformly best; both beat masking everywhere (+0.17 to +0.42).
+
+### Correction (2026-09-27) — SPLICE implementation
+The U12 results above used a simplified SPLICE (oblique projection with both constraints but in the un-whitened
+metric). Checked against the paper (Holstege, Ravfogel & Wouters, NeurIPS 2025, arXiv 2506.10703, Theorem 1), the
+method minimises distortion in the whitened metric. `SpliceProjection` now implements that (verified: both
+constraints hold exactly, P is idempotent, and a numerical search over all admissible ranges finds no lower
+distortion). The simplified variant remains available (`euclidean=True`). U12 is re-run as tag *_splice_v2 with the
+same arms and claims; both versions are reported.

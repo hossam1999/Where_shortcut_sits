@@ -283,20 +283,37 @@ def fit_jtt(Xtr, ytr, Xval, yval, seed, ups=(5.0, 20.0, 50.0)):
 
 
 class SpliceProjection:
-    """SPLICE-style task-preserving linear concept removal (oblique projection; 'Preserving task-relevant
-    information under linear concept removal', 2025). With a = Cov(X, z) (concept) and b = Cov(X, y) (task),
-    P = I − a wᵀ / (wᵀ a) with w = a − (aᵀb / bᵀb) b, so that P a = 0 (no linear covariance with z) and
-    P b = b (covariance with the task label preserved). Needs concept (artifact) labels."""
+    """SPLICE (Holstege, Ravfogel & Wouters, NeurIPS 2025; arXiv 2506.10703), Theorem 1: the oblique projection that
+    (i) removes all linear covariance with the concept z (P Σxz = 0), (ii) preserves the covariance with the target y
+    (P Σxy = Σxy), and (iii) minimises E||Px − x||² in the whitened metric (W = Σxx^{-1/2}). In whitened coordinates
+    the kernel is span(WΣxz) and the range is span(WΣxy) ⊕ (span(WΣxz, WΣxy))^⊥; P = W⁺ P̃ W.
+    Binary concept/target (one column each) as used here; `euclidean=True` reproduces the earlier un-whitened variant."""
 
-    def __init__(self, X, z, y):
+    def __init__(self, X, z, y, ridge: float = 1e-4, euclidean: bool = False):
         X = np.asarray(X, np.float64)
         self.mu = X.mean(0)
         Xc = X - self.mu
-        a = Xc.T @ (np.asarray(z, float) - np.mean(z)) / len(X)
-        b = Xc.T @ (np.asarray(y, float) - np.mean(y)) / len(X)
-        w = a - (a @ b) / (b @ b) * b
-        self.a, self.w, self.den = a, w, float(w @ a)
+        n, d = Xc.shape
+        Sxz = Xc.T @ (np.asarray(z, float) - np.mean(z)) / n
+        Sxy = Xc.T @ (np.asarray(y, float) - np.mean(y)) / n
+        if euclidean:
+            W = Wp = np.eye(d)
+        else:
+            S = Xc.T @ Xc / n
+            ev, V = np.linalg.eigh(S)
+            ev = np.maximum(ev, ridge * ev.mean())
+            W = (V / np.sqrt(ev)) @ V.T          # Σ^{-1/2}
+            Wp = (V * np.sqrt(ev)) @ V.T         # Σ^{1/2}
+        a = (W @ Sxz)[:, None]
+        b = (W @ Sxy)[:, None]
+        Qa, _ = np.linalg.qr(a)
+        K = np.linalg.svd(np.eye(d) - Qa @ Qa.T)[0][:, : d - 1]          # basis of span(a)^⊥ (kernel annihilator)
+        Qab, _ = np.linalg.qr(np.hstack([a, b]))
+        comp = np.linalg.svd(np.eye(d) - Qab @ Qab.T)[0][:, : d - 2]      # (span(a, b))^⊥
+        R = np.hstack([b / np.linalg.norm(b), comp])                     # range: b ⊕ complement
+        Pt = R @ np.linalg.solve(K.T @ R, K.T)
+        self.P = (Wp @ Pt @ W).astype(np.float64)
 
     def __call__(self, X):
         Xc = np.asarray(X, np.float64) - self.mu
-        return (Xc - np.outer(Xc @ self.w, self.a) / self.den + self.mu).astype(np.float32)
+        return (Xc @ self.P.T + self.mu).astype(np.float32)
