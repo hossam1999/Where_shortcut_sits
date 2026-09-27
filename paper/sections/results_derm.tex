@@ -46,7 +46,7 @@ lies, so no location gap appears.
 \subsection{What the real-hair shortcut is made of}
 Removing hair pixels at test time only closes 44--47\% of the ERM clean--reversed gap: most of what a frozen
 encoder exploits in a real hair trap is not the hair pixels but what accompanies hair (hair-bearing images differ in
-sex, age and body site). This bounds every pixel-level method, including oracle inpainting and \ItoE{}, and
+sex, age and body site). This bounds every pixel-level method, including oracle inpainting and U-MtE, and
 explains why image-level-label methods, which remove everything correlated with the label, recover more.
 
 \subsection{Reversed-environment gains can be gamed}
@@ -56,8 +56,3 @@ prevalence-equalised recalibration \citep{kina2026prevalence} behaves the same w
 ($+0.427$; correlated 0.433 vs reversed 0.918). Both remove diagnosis-correlated signal or over-correct the
 group prior rather than removing reliance on the artifact; we therefore read every reversed gain together with
 clean AUROC and the correlated/reversed ordering.
-
-\subsection{Leakage}
-Holding cohort, features and protocol fixed, replacing the grouped split with random image-level splits (93
-near-duplicate pairs across train/test) inflates the measured shortcut gap by 18\% (0\% overlap) and 10\% (100\%)
-and distorts both masking effects ($+0.184\rightarrow+0.223$; $-0.129\rightarrow-0.088$).

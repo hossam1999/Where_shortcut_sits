@@ -35,6 +35,8 @@ controlled sweeps (ovary $-0.20$, capsule $-0.10$, dermoscopy rulers), capsule f
 over masking on three backbones; +0.14 end-to-end with ResNet-50); erasure beats augmentation (3/4 cohorts); fails when
 the artifact resembles the disease (capsule) unless disease-protected, and cannot help when the shortcut lives in
 correlates of the artifact (hair, chest drains) --- there label-based reweighting wins.
+\item \ok\ \textbf{Foundation models.} The location effect is present in zero-shot vision--language models before any
+training; describing the artifact in text and erasing it does not work, our image-side method does.
 \item \mixed\ \textbf{One procedure for all cases.} A validation-driven selector beats masking everywhere and matches
 the best candidate in each cohort, but is not uniformly better than DFR.
 \item \ok\ \textbf{Reproducibility.} Pre-registration before every experiment; the original pilot replicated (73/88
@@ -106,6 +108,16 @@ out-of-lung tubes altogether.}\end{figure}
 
 \subsection{On real, unaltered data}
 \input{natural.tex}
+
+\subsection{Foundation models (no training)}
+\plain{We asked the big medical AI models to classify using text prompts alone, with no training at all. Their answers
+are already swayed by the artifacts, and masking helps them only when the artifact is outside the lesion---the same
+location law, built into the models themselves.}
+\ok\ Masking's effect on zero-shot hard-test accuracy is worse for in-ROI than out-of-ROI artifacts in all four tests
+(thyroid $+0.10$, capsule $+0.05$, ovarian $+0.18$, hair $+0.05$ location gaps, all significant).
+
+\no\ \textbf{Text-prompted erasure} (describe the artifact in words, erase that direction): a near no-op everywhere
+($\le +0.008$). Our image-side method with the same model gains $+0.20$ (thyroid) and $+0.22$ (ovarian).
 
 \subsection{Training the whole network}
 \mixed\ Capsule (ResNet-50): masking harms in-ROI ($-0.28$), crossover $+0.58$. Thyroid (ViT-S): crossover $+0.17$

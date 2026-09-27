@@ -49,6 +49,15 @@ minimal-distortion form of the original method, removes the artifact covariance 
 the other. By min(reversed, correlated) U-MtE$_{\text{bal}}$ exceeds SPLINCE on thyroid, capsule and hair (0.788 vs
 0.596; 0.857 vs 0.683; 0.704 vs 0.564); on chest drains SPLINCE is higher (0.609 vs 0.460) but below DFR (0.683).
 
+\subsection{Text-prompted erasure}
+With vision--language backbones an artifact direction can be obtained from text alone (``a thyroid ultrasound image
+with measurement calipers'' minus ``a thyroid ultrasound image''; biased-prompt construction, \citealp{chuang2023debiasing}).
+Erasing that subspace after masking is a near no-op in every cohort ($+0.001$ to $+0.008$ over masking; MedSigLIP
+thyroid, ovary, capsule and DermLIP hair), whereas U-MtE with the same MedSigLIP features gains $+0.204$
+[$+0.174, +0.237$] (thyroid) and $+0.215$ [$+0.182, +0.246$] (ovary). The direction along which a described artifact
+moves the \emph{text} embedding is not the direction along which the real artifact moves the \emph{image} embedding;
+synthetic insertions measure the latter directly.
+
 \subsection{A single procedure: validation-driven selection}
 Selecting, per fold, the candidate with the best group-aware validation score (image-level artifact labels needed on
 validation images only) beats masking in all five cohorts ($+0.17$ to $+0.40$), is within 0.02 of the best

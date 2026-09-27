@@ -66,7 +66,12 @@ halves) fixes the chest-drain case (0.656 vs 0.538) but makes choices noisier el
 uniformly best.
 \end{itemize}
 
-\section*{S6. Reproducibility}
+\section*{S6. Leakage}
+Holding cohort, features and protocol fixed, replacing the grouped split with random image-level splits (93
+near-duplicate pairs across train/test) inflates the measured shortcut gap by 18\% (0\% overlap) and 10\% (100\%)
+and distorts both masking effects ($+0.184\rightarrow+0.223$; $-0.129\rightarrow-0.088$).
+
+\section*{S7. Reproducibility}
 All numbers in the main paper and this supplement are produced by scripts in the repository
 (\texttt{scripts/}); tables and figures are generated, never typed. A two-command tool applies U-MtE and SLAS to new
 data with any frozen backbone; it reproduces the experimental features exactly (cosine similarity 1.0).
