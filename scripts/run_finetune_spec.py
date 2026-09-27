@@ -24,7 +24,8 @@ from wtss.synthetic import draw_generic_artifact
 
 spec = importlib.util.spec_from_file_location("rt", Path(__file__).with_name("run_thyroid_traps.py"))
 rt = importlib.util.module_from_spec(spec); spec.loader.exec_module(rt)
-COMP = [("mask", "erm"), ("mte_ft", "mask"), ("mask_balanced", "balanced"), ("mte_ft", "erm"), ("mte_post", "mask"), ("mte_post", "mask_post")]
+COMP = [("mask", "erm"), ("mte_ft", "mask"), ("mask_balanced", "balanced"), ("mte_ft", "erm"), ("mte_post", "mask"), ("mte_post", "mask_post"),
+        ("umte_ft", "mask"), ("umte_ft", "mte_ft"), ("cons_ft", "mask")]
 
 
 def main():
