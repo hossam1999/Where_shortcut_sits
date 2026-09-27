@@ -60,3 +60,7 @@ Trap A reversed (clean): ERM 0.593, mask 0.702, template MtE 0.222, U-MtE 0.465,
 U-MtE_protect_balanced 0.871 (0.904), U-MtE_balanced 0.854, balanced 0.810, DFR 0.801, mask+DFR 0.901 (0.908).
 Same pattern as DINOv2: masking helps less in Trap A than B; erasure fails on real debris unless protected; with
 artifact labels, masking + DFR is the most robust arm.
+
+## Replication — ConvNeXt-Base (CNN), generic library (results/capsule/convnext384_universal)
+Crossover +0.292 [+0.248, +0.337]; Trap A reversed: ERM 0.545, mask 0.639, U-MtE 0.559, U-MtE_protect 0.643,
+mte_aug 0.655, U-MtE_balanced 0.803, mask+DFR 0.864 (corr 0.878; most robust). Same pattern as DINOv2/MedSigLIP.
