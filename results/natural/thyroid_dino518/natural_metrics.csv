@@ -1,0 +1,12 @@
+method,auc,cross_group,auc_in_roi_caliper
+balanced,0.716,0.713,0.768
+dfr,0.697,0.625,0.749
+erm,0.736,0.679,0.781
+jtt,0.606,0.584,0.625
+mask,0.731,0.576,0.738
+mask_balanced,0.722,0.63,0.731
+mask_dfr,0.656,0.538,0.664
+mte,0.742,0.627,0.76
+mte_balanced,0.731,0.664,0.755
+mte_protect,0.715,0.518,0.723
+mte_protect_balanced,0.708,0.572,0.722

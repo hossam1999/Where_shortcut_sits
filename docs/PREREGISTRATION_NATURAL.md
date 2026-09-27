@@ -11,3 +11,19 @@ Committed before any model is fitted for this analysis.
   mask+DFR, JTT (DINOv2@518, generic library).
 - Claims: **N1** cross-group AUROC(U-MtE_protect) > cross-group AUROC(mask) and **N2** overall AUROC(U-MtE_protect)
   ≥ AUROC(mask) − 0.01 (no cost on the natural distribution). Reported whichever way they go.
+
+## Results — thyroid, DINOv2@518 (results/natural/thyroid_dino518; 5 seeds; official TN3K test, 614 images)
+| arm | AUROC | cross-group AUROC | AUROC within in-ROI-caliper images |
+|---|---|---|---|
+| ERM | 0.736 | 0.679 | 0.781 |
+| mask | 0.731 | **0.576** | 0.738 |
+| U-MtE | **0.742** | 0.627 | 0.760 |
+| U-MtE_protect | 0.715 | 0.518 | 0.723 |
+| balanced | 0.716 | **0.713** | 0.768 |
+| U-MtE_balanced | 0.731 | 0.664 | 0.755 |
+| DFR | 0.697 | 0.625 | 0.749 |
+- Under the natural distribution, masking lowers the cross-group AUROC by 0.10 (0.679 → 0.576): the in-ROI caliper is
+  retained while other evidence is removed — the thesis effect without any resampling.
+- **N1 not supported** (U-MtE_protect 0.518 < mask 0.576); unprotected U-MtE recovers half the loss (0.627).
+- **N2 not supported** (U-MtE_protect AUROC − mask = −0.017 [−0.027, −0.007]); unprotected U-MtE has the best overall
+  AUROC (0.742). Group balancing gives the best cross-group AUROC (0.713).
