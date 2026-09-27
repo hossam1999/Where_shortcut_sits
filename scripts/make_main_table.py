@@ -18,7 +18,8 @@ ROWS = [("erm", "ERM", "—"), ("mask", "ROI masking", "ROI"), ("U-mte_aug", "Ma
         ("U-mte_balanced", "\\textbf{U-MtE + balanced (ours)}", "ROI + $A$")]
 COLS = [("ISIC 2019 hair", "DINOv2"), ("ISIC 2019 hair", "DermLIP"), ("Thyroid US markers", "DINOv2"),
         ("Thyroid US markers", "MedSigLIP"), ("Thyroid US markers", "ConvNeXt"), ("Capsule debris", "DINOv2"),
-        ("Capsule debris", "MedSigLIP"), ("Capsule debris", "ConvNeXt"), ("NIH chest drains (in-ROI only)", "RAD-DINO")]
+        ("Capsule debris", "MedSigLIP"), ("Capsule debris", "ConvNeXt"), ("NIH chest drains (in-ROI only)", "RAD-DINO"),
+        ("NIH chest drains (in-ROI only)", "DINOv2")]
 SHORT = {"ISIC 2019 hair": "Hair", "Thyroid US markers": "Thyroid", "Capsule debris": "Capsule",
          "NIH chest drains (in-ROI only)": "Drain"}
 

@@ -60,8 +60,8 @@ labels ≈ 70 % pure), EAD endoscopy (no disease labels), BKAI-IGH NeoPolyp colo
 `python -m wtss.umte` (U-MtE) and `python -m wtss.slas` (SLAS): any backbone (ViT or CNN), two commands.
 
 ## 7. Latest (2026-09-27, 03:00–05:30 UTC)
-- Real chest drains (NIH pneumothorax, RAD-DINO): extreme shortcut (ERM reversed 0.19); lung masking +0.05;
-  U-MtE +0.03 over masking (significant, small); DFR best (0.68). Drain = treated lung → correlate-carried regime.
+- Real chest drains (NIH pneumothorax): extreme shortcut (ERM reversed 0.19 RAD-DINO, 0.28 DINOv2); lung masking +0.05 / +0.01;
+  U-MtE +0.03 over masking with RAD-DINO, none with DINOv2; DFR / mask+DFR best. Drain = treated lung → correlate-carried regime.
 - MedSigLIP controlled sweeps (capsule, thyroid): location interaction replicates (+0.19, +0.47); masking does not
   harm at full overlap; unbalanced U-MtE loses to masking (−0.11, −0.08); U-MtE_balanced beats masking (+0.31,
   +0.46) and is location-invariant.

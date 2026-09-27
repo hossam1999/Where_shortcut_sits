@@ -25,3 +25,11 @@ Interpretation: a real drain co-occurs with a treated (re-expanded) pneumothorax
 tube's pixels; pixel/insertion-based repair recovers little (+0.03), label-based group methods much more.
 
 ## Amendment (before fitting): DINOv2@518 replication of the drain trap — same arms and claims D1–D5.
+
+## Results — DINOv2@518 replication (results/cxr_drain/dino518_universal)
+Reversed: ERM 0.280, mask 0.292, U-MtE 0.285, U-MtE_protect 0.281, JTT 0.294, DFR 0.549, mask+DFR 0.566 (best),
+U-MtE_balanced 0.443 (vs balanced 0.399: +0.044 [+0.025, +0.064]).
+D1 mask − ERM +0.012 [+0.002, +0.023]; **D2 not supported** (U-MtE − mask −0.008 [−0.015, +0.000]); **D3 not
+supported** (−0.010); **D4 not supported** (−0.011); **D5 not supported** (−0.010). With RAD-DINO D2–D5 held but
+with small effects (+0.03): on real drains, insertion-based erasure does not transfer across backbones; group
+methods with drain labels are required.
