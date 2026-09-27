@@ -23,3 +23,10 @@ Thyroid Trap A, 5 folds, same training as the existing arms: ResNet-50 (lr 1e-4)
 - **G2** umte_ft − mte_ft reported (does erasure add to invariance?); cons_ft − mask reported if run.
 Clean and correlated AUROC reported alongside (a gain that only flips the shortcut is not a success).
 Reported whichever way it goes.
+
+## Amendment (before running it) — combined arm
+Observed so far: umte_ft works for ResNet-50 (+0.160 [+0.114, +0.207]) but is not significant for ViT-S (+0.061
+[−0.005, +0.141]); cons_ft is null for ResNet-50 (+0.007 [−0.014, +0.029]) but significant for ViT-S (+0.062
+[+0.031, +0.087]). Pre-registered combined arm **umte_cons_ft** = projection + feature invariance + prediction
+consistency (λ = 1 each; no tuning). **G3**: umte_cons_ft − mask > 0 for both ResNet-50 and ViT-S (thyroid, Trap A).
+Also running: umte_ft on ovary (ResNet-50), reported with CI.

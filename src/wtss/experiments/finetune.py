@@ -16,6 +16,7 @@ Arms (same trap environments as the linear-probe study):
                penultimate features is projected out before the head at every step (and at test time), plus the
                mte_ft invariance penalty. No artifact example, mask or label; any architecture.
   cons_ft    : prediction consistency — BCE + λ (logit(x) − logit(x+overlay))², masked view
+  umte_cons_ft: umte_ft + cons_ft (projection + feature invariance + prediction consistency)
 Model selection: fixed epochs; decision threshold / reporting on clean validation only.
 """
 from __future__ import annotations
@@ -81,10 +82,10 @@ def train_eval(arm: str, E: Dict[str, pd.DataFrame], render: Dict, arch: str = "
                device=None, workers: int = 6):
     device = device or torch.device("cuda")
     seed_all(seed)
-    view = "mask" if arm in ("mask", "mte_ft", "mask_balanced", "mte_post", "umte_ft", "cons_ft") else "erm"
+    view = "mask" if arm in ("mask", "mte_ft", "mask_balanced", "mte_post", "umte_ft", "cons_ft", "umte_cons_ft") else "erm"
     tr = E["train_corr"]
-    with_ins = arm in ("i2e_ft", "insert_aug", "mte_ft", "umte_ft", "cons_ft")
-    ins_view = "mask_insert" if arm in ("mte_ft", "umte_ft", "cons_ft") else "insert"
+    with_ins = arm in ("i2e_ft", "insert_aug", "mte_ft", "umte_ft", "cons_ft", "umte_cons_ft")
+    ins_view = "mask_insert" if arm in ("mte_ft", "umte_ft", "cons_ft", "umte_cons_ft") else "insert"
     dl = DataLoader(TrapImages(tr, render, view, size, True, with_ins, ins_view), batch_size=bs, shuffle=True,
                     num_workers=workers, drop_last=True, persistent_workers=True)
     body, head = make_model(arch)
@@ -124,7 +125,7 @@ def train_eval(arm: str, E: Dict[str, pd.DataFrame], render: Dict, arch: str = "
                     g0, g1 = g[: len(x)], g[len(x):]
                     logit = head(g0).squeeze(1)
                     inv = (F.normalize(g0.float(), dim=1) - F.normalize(g1.float(), dim=1)).pow(2).sum(1).mean()
-                elif arm == "umte_ft":
+                elif arm in ("umte_ft", "umte_cons_ft"):
                     g = body(torch.cat([x, xi]))
                     with torch.autocast("cuda", enabled=False):
                         g0, g1 = g[: len(x)].float(), g[len(x):].float()
@@ -139,6 +140,8 @@ def train_eval(arm: str, E: Dict[str, pd.DataFrame], render: Dict, arch: str = "
                         proj["t"] += 1
                         logit = head(_project(g0)).squeeze(1)
                         inv = (F.normalize(g0, dim=1) - F.normalize(g1, dim=1)).pow(2).sum(1).mean()
+                        if arm == "umte_cons_ft":
+                            inv = inv + (logit - head(_project(g1)).squeeze(1)).pow(2).mean()
                 elif arm == "cons_ft":
                     lg = head(body(torch.cat([x, xi]))).squeeze(1).float()
                     logit, inv = lg[: len(x)], (lg[: len(x)] - lg[len(x):]).pow(2).mean()
@@ -154,7 +157,7 @@ def train_eval(arm: str, E: Dict[str, pd.DataFrame], render: Dict, arch: str = "
             opt.zero_grad(set_to_none=True)
             scaler.scale(loss).backward(); scaler.step(opt); scaler.update(); sched.step()
 
-    if arm == "umte_ft":
+    if arm in ("umte_ft", "umte_cons_ft"):
         _refresh()  # final subspace from the end-of-training features
 
     @torch.inference_mode()
@@ -162,7 +165,7 @@ def train_eval(arm: str, E: Dict[str, pd.DataFrame], render: Dict, arch: str = "
         body.eval(); head.eval()
         out = []
         for x, _, _, _ in DataLoader(TrapImages(df, render, view, size, False), batch_size=128, num_workers=workers):
-            if arm == "umte_ft":
+            if arm in ("umte_ft", "umte_cons_ft"):
                 with torch.autocast("cuda", dtype=torch.float16):
                     g = body(x.to(device))
                 out.append(torch.sigmoid(head(_project(g.float()))).squeeze(1).cpu().numpy())
