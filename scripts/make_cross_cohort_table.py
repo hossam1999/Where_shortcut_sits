@@ -37,6 +37,8 @@ def load(label):
         if not f.exists():
             continue
         m = pd.read_csv(f)
+        if "trap" not in m:  # single-trap cohorts (e.g. chest drains: in-ROI only)
+            m["trap"] = "trapA"
         gen = any(rel.endswith(g) or f"_{g}" in rel for g in GENERIC_DIRS)
         for (trap, method, env), q in m.groupby(["trap", "method", "env"]):
             name = method if (method in SHARED or not gen) else f"U-{method}"

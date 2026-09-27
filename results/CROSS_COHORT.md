@@ -118,6 +118,21 @@ Label needs: erm/mask/U-mte/U-mte_protect: none; balanced/dfr/leace/*_balanced/*
 | U-mte_dfr | 0.869 / 0.848 (0.854) † | 0.848 | 0.871 / 0.889 (0.881) | 0.871 |
 | U-mask_dfr | 0.864 / 0.878 (0.866) | 0.864 | 0.884 / 0.913 (0.899) | 0.884 |
 
+## NIH chest drains (in-ROI only) — RAD-DINO
+
+| arm | Trap A rev / corr (clean) | Trap A min(rev,corr) | Trap B rev / corr (clean) | Trap B min(rev,corr) |
+|---|---|---|---|---|
+| erm | 0.191 / 0.948 (0.886) | 0.191 | – | – |
+| mask | 0.239 / 0.949 (0.870) | 0.239 | – | – |
+| balanced | 0.538 / 0.870 (0.853) | 0.538 | – | – |
+| dfr | 0.683 / 0.738 (0.800) | 0.683 | – | – |
+| U-mte | 0.268 / 0.940 (0.847) | 0.268 | – | – |
+| U-mte_balanced | 0.460 / 0.857 (0.826) | 0.460 | – | – |
+| U-mte_aug | 0.237 / 0.948 (0.866) | 0.237 | – | – |
+| U-mte_protect | 0.269 / 0.946 (0.867) | 0.269 | – | – |
+| U-mte_protect_balanced | 0.401 / 0.913 (0.851) | 0.401 | – | – |
+| U-mask_dfr | 0.646 / 0.770 (0.801) | 0.646 | – | – |
+
 ## Capsule debris — DINOv2
 
 | arm | Trap A rev / corr (clean) | Trap A min(rev,corr) | Trap B rev / corr (clean) | Trap B min(rev,corr) |
