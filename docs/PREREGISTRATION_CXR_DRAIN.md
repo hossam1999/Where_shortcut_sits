@@ -12,3 +12,14 @@ Committed before any model is fitted with this runner (the drain trap was built 
 - Claims (reversed AUROC, 95 % CI): **D1** mask − ERM ≤ small (in-ROI; reported with CI, no direction claimed);
   **D2** U-MtE − mask > 0; **D3** U-MtE − mte_aug > 0; **D4** U-MtE_protect − mask > 0;
   **D5** U-MtE − JTT > 0 (label-free comparison). Reported whichever way they go.
+
+## Results — RAD-DINO@518 (results/cxr_drain/raddino518_universal)
+Reversed (clean) AUROC: ERM 0.191 (0.886) — an extreme shortcut; mask 0.239; U-MtE 0.268; U-MtE_protect 0.269
+(0.867); JTT 0.175; balanced 0.538; DFR 0.683 (corr 0.738); mask+DFR 0.646.
+- D1: mask − ERM = +0.049 [+0.035, +0.061] (lung masking barely helps; drains lie in the lungs).
+- **D2 supported (small)**: U-MtE − mask = +0.029 [+0.021, +0.036]. **D3 supported**: U-MtE − mte_aug = +0.031
+  [+0.022, +0.042]. **D4 supported**: U-MtE_protect − mask = +0.030 [+0.022, +0.037] at no clean cost
+  (−0.003 [−0.009, +0.002]). **D5 supported**: U-MtE − JTT = +0.094 [+0.077, +0.109].
+- With artifact labels, DFR is best (0.683); U-MtE_balanced is worse than balanced (−0.079).
+Interpretation: a real drain co-occurs with a treated (re-expanded) pneumothorax, so the shortcut is not only the
+tube's pixels; pixel/insertion-based repair recovers little (+0.03), label-based group methods much more.
