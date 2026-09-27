@@ -23,7 +23,7 @@ unaltered thyroid test distribution, where masking lowers AUROC on shortcut-conf
 [$0.07$, $0.14$]. A linear-Gaussian analysis reproduces these signs and orderings in closed form. Among remedies, a
 mask-then-erase procedure driven by generic synthetic overlays (U-MtE) needs no artifact example, mask or label,
 removes in-ROI shortcuts where the artifact is a distinct overlay (thyroid $+0.13$ to $+0.22$ over masking on three
-backbones; $+0.14$ end-to-end), and beats using the same overlays as augmentation; it fails when the artifact
+backbones; $+0.14$ end-to-end), and beats using the same overlays as augmentation in three of four cohorts; it fails when the artifact
 resembles the pathology unless disease-protected, and cannot help when the shortcut is carried by correlates of the
 artifact (hair, chest drains), where label-based reweighting is required. A validation-driven selector over these
 options, using image-level artifact labels on validation data only, beats masking in all five settings and matches
@@ -55,7 +55,7 @@ actually needs, and whether the in-ROI regime can be mitigated without localisin
 \begin{enumerate}
 \item \textbf{A location law for ROI masking}, established with pre-registered real-artifact traps in four diseases
 and three imaging modalities, replicated on four frozen backbones and with end-to-end fine-tuning, confirmed on an
-unaltered test distribution, and robust to artifact-label definitions (Secs.~\ref{sec:derm}--\ref{sec:multi}).
+unaltered test distribution (Secs.~\ref{sec:derm}--\ref{sec:multi}).
 \item \textbf{A closed-form account} (Sec.~\ref{sec:theory}) that predicts when in-ROI masking harms, why erasure
 fails for pathology-like artifacts, and why group reweighting is location-invariant.
 \item \textbf{An annotation-free remedy (U-MtE)} and a disease-protected variant, with the evidence that erasure,
