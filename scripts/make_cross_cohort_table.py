@@ -10,8 +10,9 @@ from wtss import paths
 
 RUNS = {  # (cohort label, backbone): result dirs merged (first occurrence of an arm wins)
     ("ISIC 2019 hair", "DINOv2"): ["spec_e13/dino518_spec", "spec_e13/dino518_spec_universal", "spec_e13/dino518_spec_ablation",
-                                  "spec_e13/dino518_spec_protect_generic", "spec_e13/dino518_spec_pbal", "spec_e13/dino518_spec_u10"],
-    ("ISIC 2019 hair", "DermLIP"): ["spec_e13/dermlip224_spec", "spec_e13/dermlip224_spec_universal"],
+                                  "spec_e13/dino518_spec_protect_generic", "spec_e13/dino518_spec_pbal", "spec_e13/dino518_spec_u10", "spec_e13/dino518_spec_jtt"],
+    ("ISIC 2019 hair", "DermLIP"): ["spec_e13/dermlip224_spec", "spec_e13/dermlip224_spec_universal",
+                                   "spec_e13/dermlip224_spec_protect"],
     ("Thyroid US markers", "DINOv2"): ["thyroid/dino518_main", "thyroid/dino518_universal", "thyroid/dino518_ablation",
                                        "thyroid/dino518_protect_generic", "thyroid/dino518_pbal", "thyroid/dino518_u10"],
     ("Thyroid US markers", "MedSigLIP"): ["thyroid/medsiglip448_main", "thyroid/medsiglip448_universal"],
@@ -23,11 +24,12 @@ RUNS = {  # (cohort label, backbone): result dirs merged (first occurrence of an
     ("Capsule debris", "MedSigLIP"): ["capsule/medsiglip448_main", "capsule/medsiglip448_universal"],
 }
 # arms fitted with the generic library in *_universal / later runs get a "U-" prefix where the name is shared
-GENERIC_DIRS = ("universal", "ablation", "protect_generic", "pbal", "u10")
+GENERIC_DIRS = ("universal", "ablation", "protect_generic", "pbal", "u10", "spec_protect", "jtt")
 ORDER = ["erm", "mask", "inpaint", "balanced", "dfr", "leace_paired", "leace_unpaired", "mte", "mte_balanced",
          "U-mte", "U-mte_balanced", "U-mte_aug", "U-mte_protect", "U-mte_protect_balanced", "U-mte_dfr", "U-mask_dfr",
          "U-umte_pbal"]
-SHARED = {"erm", "mask", "inpaint", "balanced", "dfr", "leace_paired", "leace_unpaired", "prevcal", "mask_dfr"}
+SHARED = {"erm", "mask", "inpaint", "balanced", "dfr", "leace_paired", "leace_unpaired", "prevcal", "mask_dfr", "jtt",
+          "mask_jtt"}
 
 
 def load(label):

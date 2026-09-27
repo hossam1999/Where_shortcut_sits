@@ -42,6 +42,8 @@ Label needs: erm/mask/U-mte/U-mte_protect: none; balanced/dfr/leace/*_balanced/*
 | mte_balanced | 0.631 / 0.811 (0.721) | 0.631 | 0.743 / 0.631 (0.687) † | 0.631 |
 | U-mte | 0.509 / 0.868 (0.704) | 0.509 | 0.604 / 0.740 (0.668) | 0.604 |
 | U-mte_balanced | 0.648 / 0.811 (0.733) | 0.648 | 0.756 / 0.655 (0.704) † | 0.655 |
+| U-mte_protect | 0.589 / 0.872 (0.741) | 0.589 | 0.677 / 0.694 (0.678) | 0.677 |
+| U-mte_protect_balanced | 0.693 / 0.816 (0.753) | 0.693 | 0.765 / 0.652 (0.707) † | 0.652 |
 
 ## Thyroid US markers — DINOv2
 
