@@ -33,3 +33,14 @@ Subset bootstraps (results/natural/thyroid_dino518/subset_boot.json; post hoc, s
 - Easy pairs (malignant without vs benign with): mask − ERM = +0.048 [+0.019, +0.079].
 Masking helps where the natural shortcut agrees with the label and harms where it disagrees — the in-ROI
 shortcut is amplified by masking in unaltered data.
+
+## Amendment (2026-09-27, before fitting) — more natural-distribution tests
+Same design and arms as the thyroid analysis (scripts/run_natural.py):
+- **ISIC 2019 leave-one-hospital-out** (isic_BCN, isic_HAM, isic_MSK): train on the other two sources (natural
+  association: in-lesion hair 31 % of melanomas vs 20 % of benign lesions, similar in every source), test on the held-out
+  source; A = in-lesion hair (> 30 native px, r >= 0.5); all QC-passed images.
+- **Capsule**: SEE-AI, per seed a group-safe 80/20 split of frame-block groups; A = debris >= 10 % with r >= 0.5
+  (natural association: 11.6 % of erosions vs 20.9 % of polyp-like lesions).
+The "hard" (shortcut-conflicting) pairing is determined from the test-set association direction.
+Claims: **N3** mask − ERM < 0 on hard pairs (thesis effect in natural data) and **N4** U-MtE − mask > 0 on hard pairs,
+per cohort. Reported either way.
