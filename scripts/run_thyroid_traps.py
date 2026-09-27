@@ -20,7 +20,7 @@ from wtss.experiments.real_traps import RealCache
 from wtss.experiments.spec_traps import ARMS, run_spec
 from wtss.stats import difference_of_deltas, hierarchical_paired_bootstrap, safe_auc, slim
 
-BDIR = {"dino518": "dinov2_b14_518", "medsiglip448": "medsiglip_448"}
+BDIR = {"dino518": "dinov2_b14_518", "medsiglip448": "medsiglip_448", "convnext384": "convnext_b_384"}
 T = paths.DATA / "us" / "tncd"
 CAP = paths.DATA / "capsule"
 

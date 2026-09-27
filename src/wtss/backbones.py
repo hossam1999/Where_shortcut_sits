@@ -113,7 +113,30 @@ def load_medsiglip(device, size: int = 448) -> Backend:
     return Backend(f"medsiglip_{size}", size, model, pre, enc)
 
 
+def load_convnext(device, size: int = 384) -> Backend:
+    """ConvNeXt-Base (ImageNet-22k, fine-tuned 1k; timm) — a CNN backbone to show the methods are not ViT-specific.
+    Views are rendered at 518 (shared caches) and resized to 384 in preprocessing; global-average-pooled features."""
+    import timm
+
+    torch.hub.set_dir(str(CACHE / "torch_hub"))
+    model = timm.create_model("convnext_base.fb_in22k_ft_in1k_384", pretrained=True, num_classes=0).eval().to(device)
+    for p in model.parameters():
+        p.requires_grad_(False)
+    cfg = timm.data.resolve_data_config({}, model=model)
+    mean = torch.tensor(cfg["mean"]).view(3, 1, 1)
+    std = torch.tensor(cfg["std"]).view(3, 1, 1)
+
+    def pre(img: Image.Image) -> torch.Tensor:
+        if img.size != (size, size):
+            img = img.resize((size, size), Image.BICUBIC)
+        return (TF.to_tensor(img) - mean) / std
+
+    return Backend(f"convnext_b_{size}", size, model, pre, lambda x: model(x))
+
+
 def load_backend(name: str, device) -> Backend:
+    if name == "convnext384":
+        return load_convnext(device, 384)
     if name == "dino224":
         return load_dino(224, device)
     if name == "dino518":
@@ -127,5 +150,6 @@ def load_backend(name: str, device) -> Backend:
     raise ValueError(name)
 
 
-BACKEND_SIZE = {"dino224": 224, "dino518": 518, "dermlip224": 224, "raddino518": 518, "medsiglip448": 518}
+BACKEND_SIZE = {"dino224": 224, "dino518": 518, "dermlip224": 224, "raddino518": 518, "medsiglip448": 518,
+                "convnext384": 518}
 # medsiglip448 renders views at 518 (shared caches) and resizes to its native 448 in preprocessing

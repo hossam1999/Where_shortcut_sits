@@ -100,3 +100,8 @@ when the artifact subspace overlaps the disease subspace.
 U10 (mte_dfr > dfr and > mask_dfr) **not supported as a whole**: once a group-robust head (DFR) is used, the
 generic erasure adds ≤ 0.014 over masking + DFR. The gain over DFR comes from *masking* in marker/debris cohorts
 (+0.08–0.10) and masking costs −0.05 on hair — again location/type dependent.
+
+## Amendment (2026-09-27, before fitting) — backbone-type replication (CNN)
+ConvNeXt-Base (timm convnext_base.fb_in22k_ft_in1k_384, global-average-pooled, frozen) on the thyroid and capsule
+traps with the generic library; same arms as the DINOv2 runs. Claims as T6 / C5 / U7 / U9 (U-MtE − mask > 0,
+U-MtE − mte_aug > 0 in Trap A). Purpose: show the methods are not specific to ViTs. Reported either way.
