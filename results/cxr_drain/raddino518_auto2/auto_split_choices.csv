@@ -1,0 +1,6 @@
+trap,seed,fold,method
+trapA,0,0,mask_dfr_half
+trapA,1,0,dfr_half
+trapA,2,0,dfr_half
+trapA,3,0,dfr_half
+trapA,4,0,dfr_half

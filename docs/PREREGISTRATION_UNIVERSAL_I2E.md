@@ -202,3 +202,13 @@ mask_dfr_half are trained on half 0 only; ALL candidates (U13 set + these two) a
 U13 score. Claims: **U14a** auto_split − DFR ≥ −0.02 in all five cohorts (Trap A, reversed); **U14b** auto_split
 within 0.02 of the best fixed candidate (min(rev, corr)) in all five. (Image-level split: near-duplicate images can
 fall in both halves — small optimistic bias, reported as a limitation.) Reported either way.
+
+### U14 results — split-validation selection (logs/auto2_select.log; results/adaptive_select_split_summary.csv)
+Trap A min(rev, corr): auto_split vs [U13 auto] vs best single arm —
+thyroid 0.798 [0.795] vs 0.788 (U-MtE_bal); capsule 0.871 [0.852] vs 0.885 (mask+DFR); ovary 0.715 [0.733] vs 0.752
+(mask+DFR); ISIC hair 0.688 [0.705] vs 0.741 (DFR); drains 0.656 [0.538] vs 0.683 (DFR).
+auto_split − DFR (reversed): thyroid +0.060 [+0.037, +0.082], capsule +0.066 [+0.043, +0.088], ovary −0.007
+[−0.041, +0.031], hair −0.055 [−0.083, −0.028], drains −0.026 [−0.044, −0.009].
+**U14a supported 3/5** (fails hair, drains by −0.055 / −0.026); **U14b supported 2/5** (thyroid, capsule).
+Admitting DFR fixes the drain regime (+0.118 over U13) but halving the selection set makes choices noisier
+(ovary, hair worse). Neither selector is uniformly best; both beat masking everywhere (+0.17 to +0.42).
