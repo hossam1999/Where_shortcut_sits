@@ -35,3 +35,8 @@ Reported whichever way they go.
 - **S3**: larger models exploit the in-ROI caliper shortcut *more* (ERM gap thyroid 0.547 → 0.590 → 0.621; ovary
   0.319 → 0.409 → 0.570); capsule is flat. Scale does not remove the shortcut. On capsule, disease protection is less
   complete with ViT-L (−0.040 vs masking).
+
+## Amendment (before running) — ISIC 2019 hair
+The same ViT-S/14 and ViT-L/14 test on the ISIC 2019 hair traps (spec E13 protocol; `run_spec_e13.py --backbone
+{dinos518,dinol518} --generic --tag spec_scale`, arms erm, mask, balanced, dfr, mte, mte_balanced, mte_protect,
+mte_aug). Claim: crossover > 0 for both sizes (hair is the correlate-carried regime, so no U-MtE claim is made).

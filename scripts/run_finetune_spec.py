@@ -37,6 +37,8 @@ def main():
     ap.add_argument("--epochs", type=int, default=8)
     ap.add_argument("--lr", type=float, default=1e-4)
     ap.add_argument("--traps", nargs="+", default=["trapA", "trapB"])
+    ap.add_argument("--env_seed", type=int, default=42,
+                    help="split seed of the spec environments; folds of seed s != 42 get cluster id 10*s + fold (power extension)")
     a = ap.parse_args()
     if a.cohort == "thyroid":
         c = rt.cohort(); cache = RealCache(rt.T / "cache_518", roi_file="roi.npy", art_file="marker.npy")
@@ -44,7 +46,7 @@ def main():
         c = rt.ovary_cohort(); cache = RealCache(rt.OV / "cache_518", roi_file="roi.npy", art_file="marker.npy")
     else:
         c = rt.capsule_cohort(); cache = RealCache(rt.CAP / "cache_518", roi_file="roi.npy", art_file="contam.npy")
-    envs = build_spec_envs(c, seeds=(42,), group_col="group")
+    envs = build_spec_envs(c, seeds=(a.env_seed,), group_col="group")
     ins = lambda i, rgb, roi: np.asarray(draw_generic_artifact(Image.fromarray(rgb), roi, f"u|{i}"))
     render = make_renderers(cache, 518, [], ins)
     out = paths.ensure(paths.RESULTS / "finetune" / a.cohort / a.arch.replace("/", "_"))
@@ -53,13 +55,15 @@ def main():
     frames = [] if done is None else [done]
     for trap in a.traps:
         for k in a.folds:
-            E = {e: envs[(trap, 42, k, e)] for e in ("train_corr", "test_corr", "test_rev")}
-            E["clean_test"], E["clean_val"] = envs[(trap, 42, k, "clean")], envs[(trap, 42, k, "val_clean")]
+            S = a.env_seed
+            cid = k if S == 42 else 10 * S + k  # bootstrap cluster id (distinct from the seed-42 folds)
+            E = {e: envs[(trap, S, k, e)] for e in ("train_corr", "test_corr", "test_rev")}
+            E["clean_test"], E["clean_val"] = envs[(trap, S, k, "clean")], envs[(trap, S, k, "val_clean")]
             for arm in a.arms:
-                if done is not None and ((done.trap == trap) & (done.seed == k) & (done.method == arm)).any():
+                if done is not None and ((done.trap == trap) & (done.seed == cid) & (done.method == arm)).any():
                     continue
-                res = train_eval(arm, E, render, arch=a.arch, epochs=a.epochs, seed=k, lr=a.lr, device=torch.device("cuda"), workers=6)
-                meta = {"cohort": a.cohort, "backbone": f"ft_{a.arch}", "trap": trap, "seed": k, "method": arm}
+                res = train_eval(arm, E, render, arch=a.arch, epochs=a.epochs, seed=cid, lr=a.lr, device=torch.device("cuda"), workers=6)
+                meta = {"cohort": a.cohort, "backbone": f"ft_{a.arch}", "trap": trap, "seed": cid, "method": arm}
                 msg = []
                 for key, (clf, thr, d) in res.items():
                     m_, env = key if isinstance(key, tuple) else (arm, key)  # mte_post also returns mask_post

@@ -20,7 +20,8 @@ from wtss.experiments.real_traps import RealCache
 from wtss.experiments.spec_traps import run_spec
 from wtss.stats import difference_of_deltas, hierarchical_paired_bootstrap, slim
 
-BACKBONE_DIR = {"dino518": "dinov2_b14_518", "dermlip224": "dermlip_panderm_224", "dino224": "dinov2_b14_224"}
+BACKBONE_DIR = {"dino518": "dinov2_b14_518", "dermlip224": "dermlip_panderm_224", "dino224": "dinov2_b14_224",
+                "dinos518": "dinov2_s14_518", "dinol518": "dinov2_l14_518"}  # s/l: scale test (PREREGISTRATION_SCALE.md)
 
 EXPECTED = {  # docs/REPLICATION_SPEC.md E13 / E15: (trap, arm) -> (clean, rev, delta, lo, hi)
     "dino518": {("trapA", "erm"): (0.782, 0.516, None, None, None), ("trapB", "erm"): (None, 0.510, None, None, None),

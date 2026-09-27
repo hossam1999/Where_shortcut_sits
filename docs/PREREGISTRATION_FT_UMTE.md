@@ -78,3 +78,8 @@ version, same GPU; no other change). Results below.
   Only label-based balancing helps there (mask_balanced reversed 0.687).
 - Overall: erase-while-fine-tuning works across architectures (ResNet-50, ViT-S) for distinct-overlay artifacts
   (thyroid significant, ovary positive), and — like frozen U-MtE without protection — not for pathology-like artifacts.
+
+## Amendment 3 (before running) — ovary power extension
+The ovary result (+0.094 [−0.011, +0.210], 5 clusters) is underpowered. Added: spec split seeds 123 and 456, folds 0–4
+(10 more clusters; ids 10·seed + fold), arms mask and umte_cons_ft only, same training. **G4**: umte_cons_ft − mask > 0
+on ovary Trap A with all 15 clusters. Reported whichever way it goes.
