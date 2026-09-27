@@ -22,6 +22,20 @@ from wtss.stats import difference_of_deltas, hierarchical_paired_bootstrap, safe
 
 BDIR = {"dino518": "dinov2_b14_518", "medsiglip448": "medsiglip_448"}
 T = paths.DATA / "us" / "tncd"
+CAP = paths.DATA / "capsule"
+
+
+def capsule_cohort() -> pd.DataFrame:
+    """SEE-AI erosion vs polyp-like; contamination = debris / bubbles (docs/PREREGISTRATION_CAPSULE_TRAPS.md)."""
+    c = pd.read_csv(CAP / "capsule_cohort.csv")
+    c["source"] = "SEE-AI"
+    c["lesion_id"] = c.image_id
+    c["A0"] = c.contam_frac < 0.03
+    pres = c.contam_frac >= 0.10
+    c["trapA_A1"] = pres & (c.r >= 0.5)
+    c["trapB_A1"] = pres & (c.r < 0.1)
+    c["group"] = c.group.astype(str)
+    return c
 
 
 def cohort() -> pd.DataFrame:
@@ -44,12 +58,13 @@ def _b(j):
 def main():
     ap = argparse.ArgumentParser()
     ap.add_argument("--backbone", default="dino518")
+    ap.add_argument("--cohort", default="thyroid", choices=("thyroid", "capsule"))
     ap.add_argument("--generic", action="store_true")
     ap.add_argument("--tag", default="main")
     ap.add_argument("--counts_only", action="store_true")
     ap.add_argument("--arms", nargs="*", default=None)
     a = ap.parse_args()
-    c = cohort()
+    c = cohort() if a.cohort == "thyroid" else capsule_cohort()
     envs = build_spec_envs(c, group_col="group")
     rows = []
     for trap in ("trapA", "trapB"):
@@ -57,13 +72,17 @@ def main():
         rows.append({"trap": trap, **{f"A{x}_Y{y}": int(cells.get((x, y), 0)) for x in (0, 1) for y in (0, 1)},
                      "rev_pos_seed42": int(sum(envs[(trap, 42, k, "test_rev")].y.sum() for k in range(5)))})
     cnt = pd.DataFrame(rows)
-    out = paths.ensure(paths.RESULTS / "thyroid" / f"{a.backbone}_{a.tag}")
+    out = paths.ensure(paths.RESULTS / a.cohort / f"{a.backbone}_{a.tag}")
     cnt.to_csv(out / "counts.csv", index=False)
     print(cnt.to_string(), flush=True)
     if a.counts_only:
         return
-    cache = RealCache(T / "cache_518", roi_file="roi.npy", art_file="marker.npy")
-    donors = c[(c.marker_px >= 15) & c.r.between(0.1, 0.5, inclusive="left")].image_id.tolist()
+    if a.cohort == "thyroid":
+        cache = RealCache(T / "cache_518", roi_file="roi.npy", art_file="marker.npy")
+        donors = c[(c.marker_px >= 15) & c.r.between(0.1, 0.5, inclusive="left")].image_id.tolist()
+    else:
+        cache = RealCache(CAP / "cache_518", roi_file="roi.npy", art_file="contam.npy")
+        donors = c[(c.contam_frac >= 0.10) & c.r.between(0.1, 0.5, inclusive="left")].image_id.tolist()
     kw = {}
     if a.generic:
         from PIL import Image as _I
@@ -73,7 +92,7 @@ def main():
     if a.arms:
         kw["arms"] = tuple(a.arms)
     if not (out / "predictions.csv.gz").exists():
-        run_spec(envs, cache, a.backbone, out, paths.CACHE / "features" / "thyroid" / BDIR[a.backbone], donors,
+        run_spec(envs, cache, a.backbone, out, paths.CACHE / "features" / a.cohort / BDIR[a.backbone], donors,
                  device=torch.device("cuda"), **kw)
     preds = pd.read_csv(out / "predictions.csv.gz")
     arms = [m for m in preds.method.unique() if m != "erm"]
