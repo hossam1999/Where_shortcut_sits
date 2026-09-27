@@ -74,3 +74,8 @@ U8 helps only where the generic overlays resemble the real artifact in feature s
 | ISIC hair, DermLIP | 0.670 | 0.585 | **0.813** | 0.780 | 0.509 | 0.648 |
 U-MtE + balanced is best where the shortcut is carried by the artifact pixels (markers, debris); where the
 shortcut is mostly carried by non-pixel correlates (hair: site/age/sex), label-based group methods win.
+
+## Amendment (2026-09-27, before fitting) — erasure + DFR (U10)
+Arms: mask_dfr (DFR head on the masked view) and mte_dfr (DFR head on the masked, generic-erased view; eraser
+unchanged). Claim **U10**: mte_dfr − dfr > 0 and mte_dfr − mask_dfr > 0 (reversed AUROC, Trap A) on thyroid,
+capsule and ISIC hair (DINOv2@518, generic library). Reported either way.

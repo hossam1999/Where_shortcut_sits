@@ -109,6 +109,13 @@ def _fold_job(job):
                 fin(H.fit_on_transformed(er_p, mtr, ytr, mv, yv, seed)[0], "mte_protect", "mask")
             if "mte_protect_balanced" in arms:
                 fin(H.fit_on_transformed(er_p, mtr, ytr, mv, yv, seed, atr=atr, balanced=True)[0], "mte_protect_balanced", "mask")
+        if "mte_dfr" in arms or "mask_dfr" in arms:  # erasure / masking combined with DFR (group-balanced val)
+            g = E["val_groups"]
+            gm, ya, aa = X("mask", g), g.y.to_numpy(), g.a.to_numpy()
+            if "mte_dfr" in arms:
+                fin(H.TransformHead(er_m, H.fit_dfr(er_m(gm), ya, aa, er_m(mv), yv, seed)[0]), "mte_dfr", "mask")
+            if "mask_dfr" in arms:
+                fin(H.fit_dfr(gm, ya, aa, mv, yv, seed)[0], "mask_dfr", "mask")
         if "mte_aug" in arms:  # ablation: same overlays used as training augmentation instead of erasure
             fin(insert_aug_head(mtr, ytr, X("mask_insert", tr), mv, yv, seed)[0], "mte_aug", "mask")
     if "insert" in V:
