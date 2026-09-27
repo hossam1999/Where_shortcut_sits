@@ -33,3 +33,9 @@ mask_balanced 0.687 / 0.780 (0.754); mte_ft 0.190 / 0.904 (0.567).
 - F3 not supported: mask_balanced − balanced (A) +0.017 [−0.070, +0.105].
 
 ## Amendment (before training): ovarian ultrasound (MMOTU) fine-tuning with the same design and claims F1–F3.
+
+## Results — ovary, ResNet-50 fine-tuned (results/finetune/ovary/resnet50; 5 folds; small cohort → wide CIs)
+Trap A reversed / corr (clean): ERM 0.457 / 0.671 (0.576); mask 0.556 / 0.570 (0.578); balanced 0.602;
+mask_balanced 0.593; **mte_ft 0.649 / 0.743 (0.687)** — best reversed, correlated and clean AUROC.
+F1 not supported (crossover +0.136 [−0.085, +0.329]); F2 not supported at 95 % (mte_ft − mask +0.094
+[−0.025, +0.217]; mte_ft − ERM +0.192 [+0.103, +0.278]); F3 not supported (−0.009). Underpowered (1,202 images).
