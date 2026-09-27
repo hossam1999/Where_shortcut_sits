@@ -80,3 +80,22 @@ Credentials: gated models (DermLIP since 2026-09-21, MedSigLIP) and Kaggle (RANZ
 ISIC 2018/2019 (CC-BY-NC), HAM10000 lesion masks (Tschandl et al. 2020), ISIC 2019 artifact masks
 (Wegley et al. 2026, doi:10.71674/man1-qa33), NIH ChestX-ray14, NEATX drain labels
 (Jiménez-Sánchez et al., zenodo 14944064, CC BY-NC-SA). See `docs/DATA.md`.
+
+## Use the methods on your own data (any backbone, any artifact)
+
+**U-MtE** (artifact-agnostic mask-then-erase; the paper's method). Needs images + ROI masks only:
+```bash
+python -m wtss.umte fit   --backbone dino518 --images "train/*.png" --rois train_rois/ --out umte.pt
+python -m wtss.umte embed --model umte.pt --images "test/*.png" --rois test_rois/ --out test_feats.npz
+```
+Python: `UMtE(backbone).fit(imgs, rois[, y=..., artifact_free=...])` → `.transform(imgs, rois)` → any head
+(`UMtE.fit_head(Z, y, artifact=a)` gives the group-balanced variant). Backbones: `dino518`, `dermlip224`,
+`raddino518`, `medsiglip448`, `convnext384`, or any `wtss.backbones.Backend`. The tool reproduces the experiments'
+features exactly (verified: cosine 1.0 on thyroid).
+
+**SLAS** (few-shot patch-token artifact localisation; annotate ~5–50 images of ANY artifact):
+```bash
+python -m wtss.slas fit   --backbone dinov2 --images "ann/*.jpg" --masks ann_masks/ --out probe.pt
+python -m wtss.slas embed --probe probe.pt --images "test/*.jpg" --rois test_rois/ --out feats.npz
+```
+Backbones: `dinov2`, `raddino`, `medsiglip`, `dermlip`, `timm:<any timm model>` (ViT or CNN).

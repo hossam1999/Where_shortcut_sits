@@ -99,3 +99,25 @@ def test_slas_tool_backbone_agnostic(tmp_path):
     s.save(tmp_path / "p.pt")
     s2 = SLAS.load(tmp_path / "p.pt", device="cpu", backbone=bb)
     assert np.allclose(s2.embed(ims)["clean"], E["clean"], atol=1e-5)
+
+
+def test_umte_tool_stub_backbone(tmp_path):
+    """U-MtE fit/transform/save/load with a stub backbone (per-channel means of a 4x4 grid; no downloads)."""
+    import numpy as np
+    import torch
+
+    from wtss.backbones import Backend
+    from wtss.umte import UMtE
+
+    pre = lambda im: torch.from_numpy(np.asarray(im, np.float32) / 255).permute(2, 0, 1)
+    enc = lambda x: torch.nn.functional.avg_pool2d(x, 14).flatten(1)
+    bb = Backend("stub56", 56, None, pre, enc)
+    rng = np.random.default_rng(0)
+    ims = [(rng.random((56, 56, 3)) * 255).astype(np.uint8) for _ in range(24)]
+    rois = [np.pad(np.ones((28, 28)), 14) for _ in range(24)]
+    m = UMtE(bb, device="cpu", max_k=8).fit(ims, rois, y=np.r_[np.zeros(12), np.ones(12)], artifact_free=np.ones(24, bool))
+    Z = m.transform(ims, rois)
+    assert Z.shape == (24, 48) and m.eraser.k >= 1
+    m.save(tmp_path / "u.pt")
+    m2 = UMtE.load(tmp_path / "u.pt", device="cpu", backbone=bb)
+    assert np.allclose(m2.transform(ims, rois), Z, atol=1e-5)
