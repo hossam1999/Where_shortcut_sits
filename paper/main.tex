@@ -8,29 +8,26 @@
 
 \begin{document}
 \begin{frontmatter}
-\title{Where the shortcut sits: region-of-interest masking fails for in-ROI artifacts across dermoscopy, ultrasound and capsule endoscopy, and artifact-agnostic insertion erasure repairs it}
+\title{Masking cannot remove what is inside the region of interest: location-dependent shortcut mitigation across dermoscopy, ultrasound and capsule endoscopy}
 
 \begin{abstract}
-Medical image classifiers exploit acquisition artifacts---hair, rulers, sonographer calipers, intestinal
-debris---that correlate with the diagnosis in the training data. The standard defence restricts the model to the
-region of interest (ROI). We show that the value of this defence is governed by \emph{where the artifact sits}. In
-pre-registered, leakage-safe traps built from real artifacts in three modalities---hair in 25,331 ISIC 2019
-dermoscopy images, calipers in 3,493 thyroid ultrasound images and debris in 5,481 capsule-endoscopy frames---ROI
-masking removes most of an out-of-ROI shortcut but little or none of an in-ROI one (crossover of the masking gain
-between the two locations +0.15, +0.23 and +0.37 reversed-test AUROC; 95\,\% hierarchical CIs exclude zero), and in
-dermoscopy it is harmful when the hair lies inside the lesion. Controlled overlap sweeps with synthetic artifacts
-reproduce the sign reversal (dermoscopy rulers, two foundation models; capsule debris: $+0.10$ at no overlap,
-$-0.10$ at full overlap). We then propose \emph{mask-then-erase with a generic insertion library} (U-MtE): after
-masking, procedurally generated overlays that resemble no particular artifact are inserted into training images,
-and the subspace spanned by the resulting feature differences is erased, so no artifact example, mask or label is
-needed. On real in-ROI artifacts U-MtE improves on masking with three backbones in thyroid ultrasound
-(+0.13 to +0.22) and in dermoscopy (+0.05), while the same overlays used as augmentation do not (erase-versus-augment
-+0.12 to +0.21); in controlled sweeps the unbalanced method is backbone-dependent. Combined with group balancing,
-U-MtE beats masking in all four controlled sweeps with a benefit that no longer depends on artifact location, and
-is the most robust model on real thyroid artifacts with all three backbones. A disease-protected variant prevents the failure mode in which the
-artifact resembles the pathology. Where the shortcut is carried by non-pixel correlates of the artifact
-(dermoscopic hair), label-based group methods remain preferable. Code, frozen splits, pre-registrations and a
-backbone-agnostic tool are public.
+Medical image classifiers exploit acquisition artifacts---hair, sonographer calipers, intestinal debris---that
+correlate with the diagnosis. The standard defence restricts the model to the region of interest (ROI). We show
+that this defence fails for artifacts that lie \emph{inside} the ROI, give a model that predicts when and why, and
+evaluate what to do instead. In pre-registered, leakage-safe traps built from real artifacts in four diseases
+(dermoscopic hair, thyroid and ovarian calipers, capsule-endoscopy debris), the benefit of ROI masking is always
+larger for out-of-ROI than for in-ROI artifacts (crossover $+0.15$ to $+0.37$ reversed-test AUROC; all four survive
+Holm correction). The loss becomes harm when masking also removes disease context: in dermoscopy, in controlled
+overlap sweeps (ovary $-0.20$, capsule $-0.10$), with end-to-end fine-tuning (capsule $-0.28$), and on the
+unaltered thyroid test distribution, where masking lowers AUROC on shortcut-conflicting cases by $0.10$
+[$0.07$, $0.14$]. A linear-Gaussian analysis reproduces these signs and orderings in closed form. Among remedies, a
+mask-then-erase procedure driven by generic synthetic overlays (U-MtE) needs no artifact example, mask or label,
+removes in-ROI shortcuts where the artifact is a distinct overlay (thyroid $+0.13$ to $+0.22$ over masking on three
+backbones; $+0.14$ end-to-end), and beats using the same overlays as augmentation; it fails when the artifact
+resembles the pathology unless disease-protected, and cannot help when the shortcut is carried by correlates of the
+artifact (hair, chest drains), where label-based reweighting is required. A validation-driven selector over these
+options, using image-level artifact labels on validation data only, beats masking in all five settings and matches
+the best candidate in each. Code, splits, pre-registrations and a backbone-agnostic tool are public.
 \end{abstract}
 
 \begin{keyword}
@@ -56,21 +53,18 @@ actually needs, and whether the in-ROI regime can be mitigated without localisin
 
 \paragraph{Contributions}
 \begin{enumerate}
-\item \textbf{Location governs ROI masking, in three modalities.} Pre-registered real-artifact traps in
-dermoscopy (hair), thyroid ultrasound (calipers) and capsule endoscopy (debris) show a positive crossover of the
-masking gain between out-of-ROI and in-ROI artifacts in every modality, on general (DINOv2) and domain
-(DermLIP, MedSigLIP) foundation models; controlled overlap sweeps reproduce the sign reversal.
-\item \textbf{A mechanism and its limits.} Masking retains an in-ROI artifact while deleting competing evidence;
-when the shortcut is carried by non-pixel correlates of the artifact (hair co-varies with body site, age and sex),
-even oracle removal of every artifact patch cannot help.
-\item \textbf{Artifact-agnostic mask-then-erase (U-MtE).} A procedural overlay library estimates a nuisance
-subspace from insertion pairs without any artifact example, mask or label; erasure, not augmentation, is what
-works; a disease-protected variant guards against artifacts that resemble the pathology.
-\item \textbf{A practical decision rule} for choosing among masking, erasure and group-robust heads by artifact
-location and by whether artifact labels exist, with gaming-aware reporting (reversed \emph{and} correlated AUROC).
-\item \textbf{Reproducibility}: leakage-safe grouped splits, pre-registration before every experiment,
-hierarchical paired bootstrap, a replication of the original pilot (73/88 numbers matched, 12 more agreeing in sign and significance), and a
-backbone-agnostic open-source tool.
+\item \textbf{A location law for ROI masking}, established with pre-registered real-artifact traps in four diseases
+and three imaging modalities, replicated on four frozen backbones and with end-to-end fine-tuning, confirmed on an
+unaltered test distribution, and robust to artifact-label definitions (Secs.~\ref{sec:derm}--\ref{sec:multi}).
+\item \textbf{A closed-form account} (Sec.~\ref{sec:theory}) that predicts when in-ROI masking harms, why erasure
+fails for pathology-like artifacts, and why group reweighting is location-invariant.
+\item \textbf{An annotation-free remedy (U-MtE)} and a disease-protected variant, with the evidence that erasure,
+not augmentation, is what works, and a delineation of the regimes in which it does not.
+\item \textbf{A practical decision procedure}: a validation-driven selector and a decision rule based on where the
+artifact sits and what carries the shortcut, benchmarked against DFR, GroupDRO, JTT, LEACE and SPLICE with
+gaming-aware reporting.
+\item \textbf{Reproducibility}: pre-registration before every experiment, Holm-corrected primary claims, replication
+of the original pilot (73/88 numbers matched), public code and a two-command tool.
 \end{enumerate}
 
 \section{Related work}
