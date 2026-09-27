@@ -44,3 +44,16 @@ Same design and arms as the thyroid analysis (scripts/run_natural.py):
 The "hard" (shortcut-conflicting) pairing is determined from the test-set association direction.
 Claims: **N3** mask − ERM < 0 on hard pairs (thesis effect in natural data) and **N4** U-MtE − mask > 0 on hard pairs,
 per cohort. Reported either way.
+
+## Results — amendment cohorts (DINOv2@518, 5 seeds; results/natural/*_dino518/natural_boot.json)
+Hard = shortcut-conflicting pairs (direction from the test-set association). Δ reversed-free AUROC on hard pairs:
+| cohort | P(A\|Y=1) / P(A\|Y=0) | mask − ERM (N3: < 0) | U-MtE − mask (N4: > 0) | U-MtE_bal − mask | best cross-group AUROC |
+|---|---|---|---|---|---|
+| thyroid (official split) | 0.241 / 0.376 | **−0.102 [−0.139, −0.066]** | **+0.051 [+0.033, +0.072]** | — | balanced 0.713 |
+| ISIC, HAM held out | 0.274 / 0.184 | +0.053 [+0.037, +0.068] | **+0.023 [+0.017, +0.032]** | +0.065 [+0.056, +0.075] | **U-MtE_bal 0.786** |
+| ISIC, BCN held out | 0.362 / 0.247 | **−0.016 [−0.027, −0.005]** | +0.003 [+0.000, +0.006] | +0.034 [+0.029, +0.039] | balanced 0.735 ≈ U-MtE_bal 0.734 |
+| ISIC, MSK held out | 0.114 / 0.076 | **−0.056 [−0.084, −0.029]** | −0.008 [−0.015, −0.002] | +0.041 [+0.029, +0.053] | balanced 0.734 |
+| capsule | 0.101 / 0.232 | +0.021 [+0.000, +0.044] | +0.000 [−0.010, +0.009] | +0.014 [+0.003, +0.025] | **U-MtE_bal 0.947** |
+**N3 supported in 3/5** (thyroid, BCN, MSK): on unaltered data masking harms the shortcut-conflicting cases whenever
+it does. **N4 supported in 2/5** (thyroid, HAM). U-MtE_balanced improves on masking for hard pairs in every cohort
+where measured (4/4) and gives the best or tied-best cross-group AUROC in 3/5; plain balancing is best in 2/5.

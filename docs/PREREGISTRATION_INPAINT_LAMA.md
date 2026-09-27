@@ -22,3 +22,8 @@ Modern inpainting of the (detected) caliper pixels followed by masking is a stro
 masks, which U-MtE does not. U-MtE_protect matches it on thyroid (n.s. difference) and is below it on ovary;
 with image-level labels, U-MtE_bal beats it on both. Reversed / corr (clean) of mask∘LaMa: thyroid 0.626 / 0.825
 (0.735), ovary 0.668 / 0.812 (0.741).
+
+### ISIC hair (results/spec_e13/dino518_spec_lama)
+LaMa − mask +0.145 [+0.116, +0.177]; mask∘LaMa − mask +0.127 [+0.116, +0.138]; U-MtE_protect − mask∘LaMa −0.086
+[−0.098, −0.074]; U-MtE_bal − mask∘LaMa +0.123 [+0.105, +0.140]. With the (semi-automatic, published) hair masks,
+LaMa inpainting is clearly better than mask-free U-MtE on hair; with image-level labels U-MtE_bal is best.
