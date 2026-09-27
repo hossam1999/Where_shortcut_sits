@@ -25,8 +25,9 @@ masking, procedurally generated overlays that resemble no particular artifact ar
 and the subspace spanned by the resulting feature differences is erased, so no artifact example, mask or label is
 needed. U-MtE improves on masking in the in-ROI regime of all three modalities (thyroid +0.22, capsule synthetic
 +0.08, dermoscopy +0.05), the same overlays used as augmentation do not (erase-versus-augment +0.21 and +0.05),
-and combined with group balancing it gives the most robust model in ultrasound and capsule endoscopy with a benefit
-that no longer depends on artifact location. A disease-protected variant prevents the failure mode in which the
+and combined with group balancing it gives the most robust model in ultrasound and is competitive with masking
+plus last-layer retraining in capsule endoscopy; in the controlled capsule sweep its benefit no longer depends on
+artifact location. A disease-protected variant prevents the failure mode in which the
 artifact resembles the pathology. Where the shortcut is carried by non-pixel correlates of the artifact
 (dermoscopic hair), label-based group methods remain preferable. Code, frozen splits, pre-registrations and a
 backbone-agnostic tool are public.
