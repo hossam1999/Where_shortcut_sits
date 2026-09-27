@@ -18,7 +18,7 @@ improves on masking by $+0.22$ (the two representations differ, so the compariso
 information about a salient overlay across the whole representation; an in-ROI artifact is therefore not
 contained in ``its'' pixels or patches, and a representation-level operation is needed to remove it.
 
-\paragraph{Erasure, not augmentation} The same overlays used as training augmentation gain at most $+0.015$ over
+\paragraph{Erasure, not augmentation} The same overlays used as training augmentation gain at most $+0.03$ over
 masking in every cohort; used to estimate and erase a subspace they gain up to $+0.21$ more. Augmentation teaches
 invariance to the \emph{generated} overlays; erasure removes the directions along which \emph{any} overlay moves
 the representation, which transfers to real artifacts the generator never produced.
