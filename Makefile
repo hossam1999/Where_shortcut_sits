@@ -3,9 +3,11 @@
 PY := PYTHONPATH=src TQDM_DISABLE=1 python
 export WTSS_DATA ?= /root/data
 
-.PHONY: all data verify synthetic isic2019 cxr proposed paper test
+.PHONY: all data data_extra verify synthetic isic2019 cxr thyroid ovary capsule drain natural finetune \
+        sensitivity lama baselines analysis paper test
 
-all: data verify synthetic isic2019 cxr paper
+all: data data_extra verify synthetic isic2019 cxr thyroid ovary capsule drain natural finetune sensitivity lama \
+     baselines analysis paper
 
 # ---------------------------------------------------------------- data (≈75 GB download)
 data:
@@ -18,6 +20,20 @@ data:
 	$(PY) scripts/data/prepare_cxr.py --stage synthetic
 	$(PY) scripts/data/prepare_cxr.py --stage detector
 	$(PY) scripts/data/prepare_cxr.py --stage drain
+
+# ---------------------------------------------------------------- added datasets (thyroid, ovary, capsule, CXR devices)
+data_extra:
+	bash scripts/data/download_extra.sh
+	$(PY) scripts/data/scan_thyroid.py
+	$(PY) scripts/data/prepare_thyroid.py
+	$(PY) scripts/data/prepare_ovary.py
+	$(PY) scripts/data/prepare_capsule.py --stage probe
+	$(PY) scripts/data/prepare_capsule.py --stage cohort
+	$(PY) scripts/data/link_clip_nih.py
+	$(PY) scripts/data/prepare_clip.py
+	$(PY) scripts/data/prepare_isic2019.py --stage artifact_stats
+	$(PY) scripts/data/train_unet_spec.py
+	$(PY) scripts/data/prepare_spec_cohort.py
 
 # ---------------------------------------------------------------- verification of the pilot
 verify:
@@ -36,11 +52,64 @@ synthetic:
 	$(PY) scripts/run_synthetic.py --cohort isic2018 --backbone dino518 --artifact ruler_variable --tag stress --overlaps 0 0.5 1 --arms erm mask balanced leace --proposed
 	$(PY) scripts/run_leakage_experiment.py
 
-# ---------------------------------------------------------------- ISIC 2019 real hair (thesis §9)
+# ---------------------------------------------------------------- ISIC 2019 real hair (author spec E13/E15)
+GEN := erm mask balanced mask_balanced dfr mask_dfr mte mte_balanced mte_aug mte_protect mte_protect_balanced jtt mask_jtt umte_jtt
 isic2019:
-	$(PY) scripts/run_traps.py --cohort isic2019 --counts_only
-	$(PY) scripts/run_traps.py --cohort isic2019 --backbone dino518
-	$(PY) scripts/run_traps.py --cohort isic2019 --backbone dermlip224
+	$(PY) scripts/run_spec_e13.py --backbone dino518
+	$(PY) scripts/run_spec_e13.py --backbone dermlip224
+	$(PY) scripts/run_spec_e13.py --backbone dino518 --generic --tag spec_universal --save_val --arms $(GEN)
+	$(PY) scripts/run_spec_e13.py --backbone dermlip224 --generic --tag spec_universal --arms erm mask balanced dfr mte mte_balanced mte_protect
+
+# ---------------------------------------------------------------- thyroid / ovary / capsule (real traps + controlled sweeps)
+thyroid:
+	$(PY) scripts/run_thyroid_traps.py --backbone dino518
+	$(PY) scripts/run_thyroid_traps.py --backbone medsiglip448
+	$(PY) scripts/run_thyroid_traps.py --backbone dino518 --generic --tag universal --save_val --arms $(GEN)
+	$(PY) scripts/run_thyroid_traps.py --backbone medsiglip448 --generic --tag universal --arms $(GEN)
+	$(PY) scripts/run_thyroid_traps.py --backbone convnext384 --generic --tag universal --arms $(GEN)
+	$(PY) scripts/run_synthetic.py --cohort thyroid --backbone dino518 --artifact caliper --tag main --arms erm mask inpaint balanced dfr leace --proposed
+	$(PY) scripts/run_synthetic.py --cohort thyroid --backbone medsiglip448 --artifact caliper --tag main --arms erm mask inpaint balanced dfr leace --proposed
+ovary:
+	$(PY) scripts/run_thyroid_traps.py --cohort ovary --backbone dino518
+	$(PY) scripts/run_thyroid_traps.py --cohort ovary --backbone dino518 --generic --tag universal --save_val --arms $(GEN)
+	$(PY) scripts/run_synthetic.py --cohort ovary --backbone dino518 --artifact caliper --tag main --arms erm mask inpaint balanced dfr leace --proposed
+capsule:
+	$(PY) scripts/run_thyroid_traps.py --cohort capsule --backbone dino518
+	$(PY) scripts/run_thyroid_traps.py --cohort capsule --backbone medsiglip448
+	$(PY) scripts/run_thyroid_traps.py --cohort capsule --backbone dino518 --generic --tag universal --save_val --arms $(GEN)
+	$(PY) scripts/run_thyroid_traps.py --cohort capsule --backbone medsiglip448 --generic --tag universal --arms $(GEN)
+	$(PY) scripts/run_thyroid_traps.py --cohort capsule --backbone convnext384 --generic --tag universal --arms $(GEN)
+	$(PY) scripts/run_synthetic.py --cohort capsule --backbone dino518 --artifact debris --tag main --arms erm mask inpaint balanced dfr leace --proposed
+	$(PY) scripts/run_synthetic.py --cohort capsule --backbone medsiglip448 --artifact debris --tag main --arms erm mask inpaint balanced dfr leace --proposed
+drain:
+	$(PY) scripts/run_drain_spec.py --backbone raddino518 --save_val --arms $(GEN) splice mask_splice
+	$(PY) scripts/run_drain_spec.py --backbone dino518
+natural:
+	$(PY) scripts/run_natural.py --cohort thyroid
+	for s in HAM BCN MSK; do $(PY) scripts/run_natural.py --cohort isic_$$s; done
+	$(PY) scripts/run_natural.py --cohort capsule
+finetune:
+	for c in thyroid capsule ovary; do $(PY) scripts/run_finetune_spec.py --cohort $$c; done
+	$(PY) scripts/run_finetune_spec.py --cohort thyroid --arch vit_small_patch16_224.augreg_in21k_ft_in1k --lr 3e-5
+sensitivity:
+	for c in thyroid ovary; do \
+	  $(PY) scripts/run_thyroid_traps.py --cohort $$c --generic --tag sens_px50 --min_px 50 --arms erm mask balanced mte mte_protect mte_balanced; \
+	  $(PY) scripts/run_thyroid_traps.py --cohort $$c --generic --tag sens_strictloc --rA 0.7 --rB 0.05 --arms erm mask balanced mte mte_protect mte_balanced; done
+	$(PY) scripts/run_thyroid_traps.py --cohort capsule --generic --tag sens_strictB --max_cover_B 0.05 --arms erm mask balanced mte mte_protect mte_balanced
+lama:
+	for c in thyroid ovary capsule isic; do $(PY) scripts/data/precompute_lama.py --cohort $$c; done
+	for c in thyroid ovary; do $(PY) scripts/run_thyroid_traps.py --cohort $$c --lama --tag lama --arms erm mask; done
+	$(PY) scripts/run_spec_e13.py --backbone dino518 --lama --tag spec_lama --arms erm mask
+baselines:   # SPLICE + adaptive selectors (need the *_universal runs with --save_val)
+	$(PY) scripts/run_thyroid_traps.py --backbone dino518 --generic --tag splice --arms erm mask balanced splice mask_splice mte mte_protect mte_balanced
+	$(PY) scripts/analysis/adaptive_select.py results/thyroid/dino518_universal results/capsule/dino518_universal results/ovary/dino518_universal results/spec_e13/dino518_spec_universal
+analysis:
+	$(PY) scripts/make_summary.py
+	$(PY) scripts/analysis/primary_claims.py
+	$(PY) scripts/make_cross_cohort_table.py
+	$(PY) scripts/make_main_table.py
+	$(PY) scripts/analysis/theory_sim.py
+	$(PY) scripts/make_figures.py
 
 # ---------------------------------------------------------------- chest radiography (WP1)
 cxr:
@@ -51,6 +120,7 @@ cxr:
 
 paper:
 	$(PY) scripts/make_paper_tables.py
+	cd paper && (tectonic -X compile main.tex && tectonic -X compile supplement.tex || echo "install tectonic or latexmk to build the PDF")
 
 test:
 	$(PY) -m pytest -q tests

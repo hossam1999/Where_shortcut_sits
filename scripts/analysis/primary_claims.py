@@ -32,6 +32,16 @@ CLAIMS = [
 ]
 
 
+def resolve(rel):
+    """Historical runs were split over several tags; arms are deterministic (identical predictions across tags,
+    verified), so a fresh reproduction (Makefile) stores them in one consolidated *_universal / spec_universal run."""
+    if (R / rel / "predictions.csv.gz").exists():
+        return rel
+    cohort, tag = rel.split("/", 1)
+    alt = f"{cohort}/dino518_spec_universal" if cohort == "spec_e13" else f"{cohort}/dino518_universal"
+    return alt if (R / alt / "predictions.csv.gz").exists() else rel
+
+
 def holm(p):
     import numpy as np
     p = np.asarray(p); o = np.argsort(p); m = len(p); adj = np.empty(m); run = 0.0
@@ -51,6 +61,7 @@ def bh(p):
 def main():
     rows = []
     for fam, lab, rel, kind, a1, a0, trap in CLAIMS:
+        rel = resolve(rel)
         f = R / rel / "predictions.csv.gz"
         if not f.exists():
             print("missing", rel); continue
