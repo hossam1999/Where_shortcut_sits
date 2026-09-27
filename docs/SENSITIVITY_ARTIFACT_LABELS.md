@@ -28,3 +28,9 @@ the capsule crossover conservative. Variant **capsule-strict-B**: Trap B additio
 **Robust**: the crossover and U-MtE_protect − mask hold (CI excludes 0) in every variant and grow under stricter
 definitions, as expected if detector errors dilute rather than create the effects. The ovary balanced claim is not
 significant in any variant (as in the main analysis).
+| capsule | main | +0.368 [+0.340, +0.397] | −0.010 [−0.020, −0.001] | +0.082 [+0.064, +0.100] |
+| capsule | strict Trap B (lesion coverage < 5 %) | +0.259 [+0.213, +0.302] | −0.010 [−0.020, −0.001] | +0.082 [+0.064, +0.100] |
+Capsule strict-B: the crossover remains strongly positive but is smaller than in the main analysis (Trap B masking
+gain +0.355 vs +0.465; the strict Trap B has far fewer benign images, 32 vs 232) — so the expectation that the main
+definition was conservative was **not** confirmed; the claim itself is robust. (Trap A arms are unchanged by the
+Trap B definition.)
