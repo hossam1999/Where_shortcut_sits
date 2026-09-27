@@ -19,6 +19,14 @@ the balanced variant beats masking in all four controlled sweeps ($+0.193$ to $+
 interaction in any of them. Disease protection turns the MedSigLIP debris failure into a gain ($+0.061$
 [$+0.032, +0.092$] over masking) but not the caliper one ($-0.041$ [$-0.089, -0.005$]).
 
+\paragraph{Sensitivity to the erasure rank} In a pre-registered ablation (Trap~A, DINOv2), the thyroid gain over masking
+is $+0.18$ to $+0.22$ for every setting that erases at least 16 directions (held-out energy 0.5--0.99, or fixed
+$k\in\{16,64\}$), but only $+0.06$ to $+0.07$ with one to four directions: the shift caused by overlays is
+multi-dimensional. The pre-specified 90\% rule reached the rank cap ($k=64$) in all three cohorts. The protected
+variant never harms capsule by more than 0.010 and helps ovary at every rank ($+0.007$ to $+0.043$), whereas
+unprotected erasure harms capsule more the more directions it removes, as the overlap term $\rho$ of
+Sec.~\ref{sec:theory} predicts.
+
 \subsection{Erasure, not augmentation}
 Using the same generic overlays as training augmentation (overlaid copies of a random half of the training images,
 in the masked view) gains at most $+0.03$ over masking; erasing their subspace instead gains $+0.207$

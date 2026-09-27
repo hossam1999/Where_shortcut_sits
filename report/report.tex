@@ -140,6 +140,11 @@ its hard-test (reversed) results are compared with the real ones, which it never
 lung), which the formula cannot see. Because one of 14 location-gap signs (a value of $-0.002$) disagreed, our
 pre-registered rule calls it a ``qualitative'' account.}
 
+\begin{figure}[H]\centering\includegraphics[width=\linewidth]{../paper/figures/mechanism.png}
+\caption{Why masking fails in the ROI: how much the prediction changes when the artifact is added, versus how deep
+inside the ROI it sits. Masking (blue) makes the model rely on an in-ROI artifact more; U-MtE (orange) and U-MtE with
+balancing (green) remove that reliance.}\end{figure}
+
 \subsection{Remedies compared}
 \plain{Each column is a dataset/model; each row a method. Numbers are hard-test accuracy (in brackets: the fairer
 summary that also penalises ``flipping''). Bold = best in the column.}
@@ -160,6 +165,16 @@ effect and the protected-U-MtE gain hold in every variant (\texttt{docs/SENSITIV
 \ok\ \textbf{Stricter patient-leakage control.} Thyroid, ovary and capsule datasets have no patient IDs. We also
 grouped images whose foundation-model embeddings are near-identical (same patient or session) and re-ran everything:
 11 of 12 main results are unchanged; \no\ only the small ovary ``erase beats augment'' advantage loses significance.
+
+\ok\ \textbf{Model size.} Small, base and large DINOv2 models (21 M to 304 M parameters): the location effect holds
+in all 9 dataset/size pairs, and U-MtE beats masking on thyroid and ovary at every size. Larger models cheat
+\emph{more} on in-lesion calipers, so bigger models do not fix the problem.
+
+\ok\ \textbf{Erasure rank.} U-MtE's thyroid gain is +0.18 to +0.22 whenever it erases 16 or more directions; the
+protected version never hurts capsule by more than 0.01.
+
+\no\ \textbf{Fine-tune, then erase.} Applying U-MtE after fully fine-tuning a ResNet-50 does not help (+0.004):
+U-MtE is a tool for frozen foundation-model features.
 
 \mixed\ \textbf{Clinical metrics.} On the untouched thyroid test set, masking halves sensitivity at a fixed operating
 point (0.73 $\to$ 0.35) while raising specificity (0.62 $\to$ 0.89); U-MtE recovers part of it and has the best AUPRC and

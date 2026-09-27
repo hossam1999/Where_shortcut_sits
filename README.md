@@ -62,6 +62,10 @@ analysis scripts fall back to it when a historical per-ablation folder is absent
 - `results/CROSS_COHORT.md`, `paper/tables/main_inroi.tex` — every arm × cohort × backbone.
 - `docs/PREREGISTRATION_*.md` — each experiment's registration **and** its results section (supported / not).
 - `paper/figures/` — dose–response, forest plot, theory (simulation and real-encoder test), examples.
+- `results/scale/scale_compare.csv` — DINOv2 ViT-S/B/L: location law 9/9, protected U-MtE > mask on thyroid/ovary at
+  every size; larger models exploit in-ROI calipers more.
+- `results/ablation_umte/summary.csv` — U-MtE rank ablation (thyroid +0.18 to +0.22 for ≥ 16 erased directions).
+- `docs/PREREGISTRATION_FT_ERASE.md` — U-MtE applied after full fine-tuning does not help (+0.004).
 - `results/leakage/embedding_groups_compare.csv` — primary contrasts under stricter embedding-based leakage groups
   (11/12 unchanged).
 - `results/natural/clinical_metrics.csv`, `paper/tables/natural_clinical.tex` — AUPRC, Brier, ECE, sensitivity /

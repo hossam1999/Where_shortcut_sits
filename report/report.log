@@ -432,8 +432,10 @@ File: ../paper/figures/theory.png Graphic file (type bmp)
 <../paper/figures/theory.png>
 File: ../paper/figures/theory_predict.png Graphic file (type bmp)
 <../paper/figures/theory_predict.png>
- (../paper/tables/main_inroi.tex [9])
-Underfull \hbox (badness 2744) in paragraph at lines 157--159
+File: ../paper/figures/mechanism.png Graphic file (type bmp)
+<../paper/figures/mechanism.png>
+ [9] (../paper/tables/main_inroi.tex)
+Underfull \hbox (badness 2744) in paragraph at lines 162--164
 []\TU/lmr/bx/n/10.95 Succeeded[] \TU/lmr/m/n/10.95 Visual audit (40 images per 
 cell) and re-runs with large-marker and strict-
  []
@@ -442,4 +444,4 @@ cell) and re-runs with large-marker and strict-
 Package rerunfilecheck Info: File `report.out' has not changed.
 (rerunfilecheck)             Checksum: 281E76670CE337577B76CFC72F513CA8;2435.
  )
-Output written on report.xdv (11 pages, 179880 bytes).
+Output written on report.xdv (11 pages, 189024 bytes).

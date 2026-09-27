@@ -88,9 +88,12 @@ natural:
 	$(PY) scripts/run_natural.py --cohort thyroid
 	for s in HAM BCN MSK; do $(PY) scripts/run_natural.py --cohort isic_$$s; done
 	$(PY) scripts/run_natural.py --cohort capsule
+scale:   # DINOv2 ViT-S/14 and ViT-L/14 (docs/PREREGISTRATION_SCALE.md)
+	for b in dinos518 dinol518; do for c in thyroid ovary capsule; do $(PY) scripts/run_thyroid_traps.py --backbone $$b --cohort $$c --generic --tag scale --arms erm mask balanced mte mte_balanced mte_protect mte_aug; done; done
 finetune:
 	for c in thyroid capsule ovary; do $(PY) scripts/run_finetune_spec.py --cohort $$c; done
 	$(PY) scripts/run_finetune_spec.py --cohort thyroid --arch vit_small_patch16_224.augreg_in21k_ft_in1k --lr 3e-5
+	$(PY) scripts/run_finetune_spec.py --cohort thyroid --arms mte_post --traps trapA   # fine-tune, then erase
 sensitivity:
 	for c in thyroid ovary; do \
 	  $(PY) scripts/run_thyroid_traps.py --cohort $$c --generic --tag sens_px50 --min_px 50 --arms erm mask balanced mte mte_protect mte_balanced; \
@@ -115,6 +118,9 @@ analysis:
 	$(PY) scripts/analysis/theory_predict.py      # theory fitted on clean+corr vs held-out reversed results
 	$(PY) scripts/analysis/clinical_metrics.py    # AUPRC, Brier, ECE, sens/spec on the natural test sets
 	$(PY) scripts/analysis/leakage_emb_compare.py # primary contrasts under embedding-based leakage groups
+	$(PY) scripts/analysis/mechanism_figure.py    # counterfactual reliance vs overlap (controlled sweeps)
+	$(PY) scripts/analysis/umte_ablation.py       # U-MtE erasure-rank ablation (cached features)
+	$(PY) scripts/analysis/scale_compare.py       # DINOv2 ViT-S/B/L (needs the scale runs below)
 	$(PY) scripts/make_figures.py
 	$(PY) scripts/analysis/adhoc_bootstraps.py
 	$(PY) scripts/verify/audit_paper_numbers.py   # every CI in the paper must trace to a result file

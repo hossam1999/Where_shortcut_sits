@@ -122,3 +122,10 @@ A colleague's review raised seven points; what changed:
 - **Related work**: six verified references added (Pewton 2024; Wang 2024; Germani 2026 MedIA; Lin 2024 MICCAI;
   Zech 2018; Brown 2023).
 - **Integrity**: one archived prediction file (thyroid natural) failed a gzip CRC check; regenerated, identical numbers.
+- **Model scale** (`PREREGISTRATION_SCALE.md`): DINOv2 ViT-S/B/L — location law 9/9; protected U-MtE > mask on
+  thyroid and ovary at every size; larger models exploit in-ROI calipers more (ERM gap thyroid 0.547 → 0.621).
+- **U-MtE rank ablation** (`PREREGISTRATION_UMTE_ABLATION.md`): thyroid gain +0.18 to +0.22 for ≥ 16 erased
+  directions; protected variant safe on capsule at every rank.
+- **Fine-tune, then erase** (`PREREGISTRATION_FT_ERASE.md`): null (+0.004) — U-MtE is for frozen representations.
+- **Mechanism figure** (`paper/figures/mechanism.pdf`): masking increases counterfactual reliance on an in-ROI
+  artifact in every controlled sweep; U-MtE and balancing remove it.

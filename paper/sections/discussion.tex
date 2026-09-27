@@ -38,7 +38,8 @@ which the oracle-removal ceiling (a handful of annotated masks) reveals.
 \paragraph{Limitations}
 (i) U-MtE is a representation-level intervention for frozen (foundation-model) features with linear heads, the
 setting in which it is evaluated throughout; end-to-end fine-tuning is a secondary check (the location law
-replicates, the U-MtE analogue works on thyroid with ResNet-50 but not with ViT-S), not a full sweep.
+replicates, the U-MtE analogue works on thyroid with ResNet-50 but not with ViT-S, and post-hoc erasure of a
+fine-tuned network's features does not help), not a full sweep.
 (ii) Artifact masks for thyroid calipers and capsule debris come from an audited rule-based detector
 (precision/recall 0.86--0.89) and a patch-token probe (IoU 0.62); errors act as label noise on $A$ and on the
 overlap strata. (iii) Hair and ruler share one annotation channel in the ISIC 2019 archive. (iv) No patient or

@@ -185,7 +185,10 @@ shortcut-conflicting cases for thyroid and two of three held-out ISIC hospitals 
 validation-fixed operating point it halves thyroid sensitivity (0.734 $\to$ 0.347; AUPRC, Brier score and calibration
 in Appendix Table~\ref{tab:natural_clinical}). The claims are robust to the
 artifact-label definition (large-marker and strict-location variants) to a visual audit of the masks and to a stricter,
-embedding-based leakage grouping (11 of 12 primary estimates unchanged; Appendix~\ref{sec:robust}). Chest radiography is a boundary case: the encoder ignores extra-pulmonary tubes, so
+embedding-based leakage grouping (11 of 12 primary estimates unchanged; Appendix~\ref{sec:robust}). The law also
+holds across model scale: with DINOv2 ViT-S, ViT-B and ViT-L the crossover is positive in all nine cohort--size pairs
+($+0.17$ to $+0.41$), and larger models exploit in-ROI calipers \emph{more} (ERM correlated--reversed gap 0.547
+$\to$ 0.621 on thyroid, 0.319 $\to$ 0.570 on ovary from ViT-S to ViT-L). Chest radiography is a boundary case: the encoder ignores extra-pulmonary tubes, so
 masking has nothing to remove outside the lungs.
 
 \paragraph{Mechanism.} Three explanations were tested separately in the controlled dermoscopy sweep
@@ -221,6 +224,9 @@ $+0.03$; erasing their subspace gains $+0.207$ [$+0.182, +0.235$] more on thyroi
 erosion fibrin, unprotected erasure removes disease signal; disease protection removes the failure. With image-level
 artifact labels, U-MtE$_{\text{bal}}$ is the most robust model on thyroid with all three backbones
 (Table~\ref{m:tab:remedies}; full values in Table~\ref{tab:main}).
+The gain is stable across model sizes (protected U-MtE on thyroid: $+0.181$, $+0.217$, $+0.222$ for ViT-S/B/L) and
+erasure ranks $\ge16$ ($+0.18$ to $+0.22$), but applied post hoc to a fine-tuned ResNet-50 it does not help
+($+0.004$): U-MtE is a method for frozen representations.
 Where the shortcut is carried by correlates of the artifact (hair co-varies with body site, age and sex; a drain comes
 with a treated lung) no pixel- or insertion-based method helps much and DFR \citep{kirichenko2023dfr} is best.
 

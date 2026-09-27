@@ -454,33 +454,36 @@ LaTeX Info: Redefining \nameref on input line 9.
 \@outlinefile=\write4
 \openout4 = `main.out'.
 
-LaTeX Font Info:    Trying to load font information for U+msa on input line 19.
+LaTeX Font Info:    Trying to load font information for U+msa on input line 18.
 
  (umsa.fd
 File: umsa.fd 2013/01/14 v3.01 AMS symbols A
 )
-LaTeX Font Info:    Trying to load font information for U+msb on input line 19.
+LaTeX Font Info:    Trying to load font information for U+msb on input line 18.
 
  (umsb.fd
 File: umsb.fd 2013/01/14 v3.01 AMS symbols B
-) [1
-
-]
+)
 Overfull \hbox (2.22pt too wide) has occurred while \output is active
 [] 
  []
 
-[2] (sections/data [3] [4]
+[1
+
+] [2] (sections/data [3]
 File: figures/examples.pdf Graphic file (type pdf)
 <use figures/examples.pdf>
-) [5] (sections/theory
+) [4] [5] (sections/theory
 File: figures/theory.pdf Graphic file (type pdf)
 <use figures/theory.pdf>
  [6]
 File: figures/theory_predict.pdf Graphic file (type pdf)
 <use figures/theory_predict.pdf>
-) [7] (sections/results
-(sections/results_derm (tables/synthetic_isic_dino518) [8] [9])
+) (sections/results
+(sections/results_derm [7] (tables/synthetic_isic_dino518) [8]
+File: figures/mechanism.pdf Graphic file (type pdf)
+<use figures/mechanism.pdf>
+ [9])
 (sections/results_multimodal [10]
 File: figures/dose_response.pdf Graphic file (type pdf)
 <use figures/dose_response.pdf>
@@ -493,9 +496,9 @@ Overfull \hbox (63.70346pt too wide) in paragraph at lines 3--35
 ) [12] [13]) (sections/results_solution (tables/main_inroi)
 File: figures/forest.pdf Graphic file (type pdf)
 <use figures/forest.pdf>
- [14] [15] [16]))
-(sections/discussion [17]) [18] (main.bbl [19]) [20] (main.aux)
+ [14] [15] [16]
+[17])) (sections/discussion [18]) [19] (main.bbl [20]) [21] (main.aux)
 Package rerunfilecheck Info: File `main.out' has not changed.
-(rerunfilecheck)             Checksum: 72E76B58331EF47C3CE25E5CA7242F03;7475.
+(rerunfilecheck)             Checksum: F2731C1115342A777F0FF4F6AECF1AA7;7606.
  )
-Output written on main.xdv (20 pages, 578640 bytes).
+Output written on main.xdv (21 pages, 601240 bytes).
