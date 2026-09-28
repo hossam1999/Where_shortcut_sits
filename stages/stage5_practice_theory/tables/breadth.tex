@@ -1,0 +1,30 @@
+\begin{table}[H]\centering\scriptsize
+\caption{Replication breadth of the real-artifact crossover (crossed CIs).}\label{tab:breadth}
+\begin{tabular}{lccc}\toprule
+Cohort & Encoder & Training & Crossover [95\% CI] \\\midrule
+Dermoscopy hair & DINOv2 ViT-S/14 & frozen & $+0.163$ [$+0.130, +0.195$] \\
+Dermoscopy hair & DINOv2 ViT-B/14 & frozen & $+0.147$ [$+0.111, +0.185$] \\
+Dermoscopy hair & DINOv2 ViT-L/14 & frozen & $+0.153$ [$+0.110, +0.195$] \\
+Dermoscopy hair & DermLIP & frozen & $+0.014$ [$-0.037, +0.063$] \\
+Thyroid & DINOv2 ViT-S/14 & frozen & $+0.247$ [$+0.205, +0.288$] \\
+Thyroid & DINOv2 ViT-B/14 & frozen & $+0.239$ [$+0.196, +0.280$] \\
+Thyroid & DINOv2 ViT-L/14 & frozen & $+0.263$ [$+0.218, +0.307$] \\
+Thyroid & MedSigLIP-448 & frozen & $+0.195$ [$+0.153, +0.238$] \\
+Thyroid & ConvNeXt-384 & frozen & $+0.275$ [$+0.231, +0.320$] \\
+Ovary & DINOv2 ViT-S/14 & frozen & $+0.296$ [$+0.208, +0.384$] \\
+Ovary & DINOv2 ViT-B/14 & frozen & $+0.170$ [$+0.087, +0.252$] \\
+Ovary & DINOv2 ViT-L/14 & frozen & $+0.207$ [$+0.127, +0.286$] \\
+Ovary & MedSigLIP-448 & frozen & $+0.178$ [$+0.109, +0.248$] \\
+Capsule & DINOv2 ViT-S/14 & frozen & $+0.370$ [$+0.325, +0.415$] \\
+Capsule & DINOv2 ViT-B/14 & frozen & $+0.377$ [$+0.327, +0.426$] \\
+Capsule & DINOv2 ViT-L/14 & frozen & $+0.417$ [$+0.369, +0.464$] \\
+Capsule & MedSigLIP-448 & frozen & $+0.335$ [$+0.286, +0.383$] \\
+Capsule & ConvNeXt-384 & frozen & $+0.320$ [$+0.268, +0.372$] \\
+Dermoscopy hair & ResNet-50 & fine-tuned & $+0.143$ [$+0.054, +0.232$] \\
+Thyroid & ResNet-50 & fine-tuned & $+0.063$ [$-0.022, +0.144$] \\
+Thyroid & ViT-S & fine-tuned & $+0.122$ [$+0.039, +0.211$] \\
+Capsule & ResNet-50 & fine-tuned & $+0.606$ [$+0.495, +0.716$] \\
+Ovary & ResNet-50 (15 clusters) & fine-tuned & $+0.058$ [$-0.062, +0.179$] \\
+Dermoscopy hair, ISIC 2020 (external) & DINOv2 ViT-B/14 & frozen, new patients & $+0.250$ [$+0.174, +0.327$] \\
+\bottomrule\end{tabular}
+\end{table}

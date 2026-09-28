@@ -1,0 +1,15 @@
+\begin{table}[H]\centering\scriptsize
+\caption{Experiments of this stage. Commit times come from this machine and are not independent proof of order.}\label{tab:exp}
+\begin{tabular}{p{3.1cm}p{2.1cm}p{2.4cm}p{3.2cm}p{3.3cm}}\toprule
+Experiment & Status & Registration & First commit (local time) & Support criterion \\\midrule
+Natural test sets, N3 (hard pairs) & \ok{} registered & NATURAL & \texttt{74bd243}, 2026-09-27 09:39 & mask $-$ ERM $<0$ on hard pairs \\
+Operating points S1--S3 & \ok{} registered & REVIEW2 (R3) & \texttt{29cd0da}, 2026-09-27 18:56 & ``masking lowers sensitivity'' only if S1 and $\ge3$ of OP2--OP5 \\
+Thyroid subgroup, $n=$\sFiveNConf{} (S3) & \mixed{} registered test in a post hoc subgroup & REVIEW2 (R3) & \texttt{29cd0da}, 2026-09-27 18:56 & sensitivity loss in the subgroup, CI $<0$ \\
+Crossed CIs for the subgroup (R6) & \ok{} registered & REVIEW3 (R6) & \texttt{85da735}, 2026-09-27 23:43 & report corrected CI \\
+Encoder scale (S/B/L) & \ok{} registered & SCALE & \texttt{13303b0}, 2026-09-27 14:13 & crossover CI $>0$ at every scale \\
+Fine-tuned networks & \ok{} registered & FINETUNE & \texttt{7c8b466}, 2026-09-27 07:06 & crossover CI $>0$ (secondary) \\
+DermLIP hair traps & \ok{} registered & ISIC2019\_\allowbreak{}TRAPS & \texttt{76e25d4}, 2026-09-26 13:14 & crossover CI $>0$ \\
+Theory as held-out predictor, T1--T4 & \ok{} registered & THEORY\_\allowbreak{}PREDICTION & \texttt{4f78653}, 2026-09-27 13:46 & MAE below both heuristics; crossover signs \\
+External validation, X1 (ISIC 2020) & \ok{} registered & FINAL (A4) & \texttt{c45d482}, 2026-09-28 00:35 & gate, then crossover CI $>0$ \\
+\bottomrule\end{tabular}
+\end{table}

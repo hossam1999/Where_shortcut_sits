@@ -1,0 +1,162 @@
+\input{../common/preamble.tex}
+\input{tables/numbers.tex}
+\title{\textbf{Stage 5 --- Practice and theory}\\[3pt]\large Where the Shortcut Sits: supervisor meeting 5 of 6}
+\author{}
+\date{Report generated from the repository on \today}
+\begin{document}
+\maketitle
+\stagebox{\textbf{In one sentence.} On unaltered test sets masking harms exactly the cases the location law says it
+should --- shortcut-conflicting images with an in-ROI artifact --- and on the patient-disjoint thyroid split it lowers
+sensitivity at every validation-fixed operating point; the crossover replicates in \sFiveNFrozenPos{} of
+\sFiveNFrozen{} frozen encoder--cohort pairs, in \sFiveNFtPos{} of \sFiveNFt{} fine-tuned networks and on new patients
+(ISIC 2020, \sFiveExtX); a two-parameter theory predicts held-out reversed AUROC with mean error \sFiveTMae, less than
+half the error of the best heuristic.}
+\input{../common/notation.tex}
+
+\section{Where we are}
+Stages~2--4 established the location law in constructed environments --- a strong artifact--label correlation in
+training and its reversal at test --- and showed that it is not explained by measured confounders. A clinician will ask
+two questions this cannot answer: does it matter on data as it is collected, without an imposed correlation, and at
+the operating point a clinic would use? And is the result a property of one encoder, or something that can be
+predicted? This meeting answers both, reports the breadth of replication (encoder families and sizes, fine-tuning, new
+patients), and explains the one encoder that does not show the crossover.
+
+\section{Question}
+\begin{enumerate}[label=\textbf{Q5\alph*},leftmargin=*]\itemsep1pt
+\item On natural test sets, does masking harm the shortcut-conflicting cases, and does that change clinical
+sensitivity at fixed operating points?
+\item How broadly does the crossover replicate?
+\item Can a simple model predict, before seeing it, how a model will perform on the reversed test --- and so explain
+when masking helps?
+\end{enumerate}
+\paragraph{Design decisions} \emph{Hard pairs.} On a natural test set the artifact--label association is weak, so the
+overall AUROC barely moves. We therefore split positive--negative pairs by whether their artifact status conflicts with
+the test set's own association (``hard'') or follows it (``easy''); the law predicts harm on hard pairs.
+\emph{Operating points fixed on validation data} (never on test) at five clinically motivated targets, with thresholds
+re-estimated in every bootstrap replicate. \emph{Theory judged by held-out error}, not by fit: the model is fitted to
+each cell's clean and correlated AUROC and must predict the reversed AUROC it never saw, against two parameter-free
+heuristics. Rejected: judging the theory by agreement with simulations drawn from its own assumptions (circular).
+
+\section{Methods}
+\paragraph{Natural test sets} Thyroid: the official patient-disjoint TNCD test split \citep{gong2022acl}; dermoscopy: each
+source (BCN, HAM, MSK) held out in turn; capsule: held-out frame blocks. Models are trained on the natural training
+distribution (no imposed correlation). \paragraph{Clinical metrics and operating points} AUROC, AUPRC, Brier score,
+expected calibration error; sensitivity and specificity at OP1 (maximal balanced accuracy), OP2/OP3 (validation
+specificity $\ge0.80/0.90$) and OP4/OP5 (validation sensitivity $\ge0.80/0.90$), overall and among shortcut-conflicting
+positives. \paragraph{Replication} DINOv2 ViT-S/B/L, MedSigLIP-448, ConvNeXt-384 and DermLIP (frozen, linear heads);
+ResNet-50 and ViT-S fine-tuned end to end; ISIC 2020 as an external dermoscopy cohort with patient-disjoint folds.
+\paragraph{Theory} A linear-Gaussian model with disease signal-to-noise $S$ and artifact signal-to-noise $A$, an
+LDA-optimal head and the trap's training association predicts the AUROC of any test composition (\texttt{docs/THEORY.md}).
+Per cell, $(S, A)$ is fitted to the clean and correlated AUROC; the reversed AUROC is predicted. Heuristics:
+``reversed = clean'' and ``symmetric reversal'' (reversed $=$ clean $-$ (correlated $-$ clean)).
+
+\section{Experiments}
+\input{tables/experiments.tex}
+
+\section{Results}
+\subsection{Natural test sets}
+Table~\ref{tab:nat}. On all pairs, masking changes little. On shortcut-conflicting pairs it harms in thyroid
+(\sFiveNatthyroidhard), BCN (\sFiveNatisicBCNhard) and MSK (\sFiveNatisicMSKhard), and helps in HAM
+(\sFiveNatisicHAMhard); in capsule the interval includes zero (\sFiveNatcapsulehard). Where masking harms the hard
+pairs, it helps or is neutral on the easy ones (MSK \sFiveNatisicMSKeasy) --- the signature of a model that still uses
+an in-ROI artifact after masking. The registered claim N3 is thus supported in three of five natural test sets.
+\input{tables/natural.tex}
+
+\subsection{Clinical consequences: thyroid operating points}
+On the official, patient-disjoint thyroid test split, masking lowers sensitivity at every operating point
+(Table~\ref{tab:opthy}): at OP1 by \sFiveSensOPOne{} and at OP2--OP5 with intervals below zero in \sFiveNSensLoss{} of 4.
+By the decision rule registered before the operating points were computed (S1 and a loss at $\ge3$ of OP2--OP5), the
+paper may say that masking lowers sensitivity on this test set. Specificity rises: masking moves the operating point,
+and the loss falls on the malignant nodules whose caliper lies on the nodule.
+\paragraph{The subgroup of \sFiveNConf{} malignant nodules} \textbf{Registration status: a pre-registered test (S3)
+inside a post hoc subgroup --- exploratory confirmation.} The subgroup (malignant nodules with an in-ROI caliper) was
+defined after the natural-distribution AUROC results were known; the operating-point test in it was registered before
+the operating points were computed. The same \sFiveNConf{} nodules (of the official test split) enter every seed. At
+OP2, sensitivity in this subgroup falls from \sFiveConfErmOPTwo{} to \sFiveConfMaskOPTwo, a change of
+\sFiveConfOPTwo{} with the corrected bootstrap. The effect is large and consistent across operating points, but its
+confirmatory weight is limited by the post hoc subgroup definition; it is not part of the 16-test primary family.
+\input{tables/op_thyroid.tex}
+\begin{figure}[H]\centering\includegraphics[width=\linewidth]{figures/op_thyroid.pdf}
+\caption{Thyroid, official patient-disjoint test split: sensitivity of ERM and of the masked model at five
+validation-fixed operating points, for all malignant nodules (left) and for the \sFiveNConf{} malignant nodules with a
+caliper on the nodule (right; post hoc subgroup, exploratory).}\label{fig:op}\end{figure}
+\input{tables/op_other.tex}
+\input{tables/clinical.tex}
+
+\subsection{Replication breadth}
+Table~\ref{tab:breadth}. The crossover's interval lies above zero for \sFiveNFrozenPos{} of \sFiveNFrozen{} frozen
+encoder--cohort pairs (DINOv2 at three sizes, MedSigLIP, ConvNeXt); the exception is DermLIP. Among end-to-end
+fine-tuned networks it replicates in \sFiveNFtPos{} of \sFiveNFt{} (dermoscopy hair, thyroid ViT-S, capsule); the
+thyroid ResNet-50 and the ovary ResNet-50 are not significant, and the ovary network barely learns the task, so that
+null is uninformative. On \textbf{new patients} --- ISIC 2020, \sFiveExtImages{} images from \sFiveExtPatients{}
+patients, patient-disjoint folds, hair masks from a segmenter trained only on ISIC 2019 and frozen before any ISIC 2020
+image was scored --- masking harms with hair on the lesion (\sFiveExttrapA) and helps with hair beside it
+(\sFiveExttrapB); the crossover is \sFiveExtX{} (registered claim X1, supported).
+\input{tables/breadth.tex}
+\begin{figure}[H]\centering\includegraphics[width=0.8\linewidth]{figures/breadth_forest.pdf}
+\caption{Crossover across encoders, scales, fine-tuned networks (red) and new patients (green); crossed 95\% CIs.}
+\label{fig:breadth}\end{figure}
+
+\subsection{The DermLIP exception}
+With DermLIP, masking harms at both hair locations (Trap~A \sFiveDermmasktrapAtestrev, Trap~B
+\sFiveDermmasktrapBtestrev). Two measurements explain it. First, masking costs DermLIP disease signal wherever the hair
+lies: clean-test AUROC changes by \sFiveDermmasktrapAclean{} and \sFiveDermmasktrapBclean. Second, the pixel part of
+its hair shortcut is small at both locations (oracle hair inpainting \sFiveDerminpainttrapAtestrev{} and
+\sFiveDerminpainttrapBtestrev), whereas group balancing, which also removes correlates of hair, gains
+\sFiveDermbalancedtrapAtestrev{} and \sFiveDermbalancedtrapBtestrev: DermLIP carries the hair shortcut mostly through
+correlates that masking does not remove at either location. The theory anticipates this from the clean and correlated
+AUROC alone: predicted crossover \sFiveDermPred, observed \sFiveDermObs.
+
+\subsection{The theory, judged by held-out error}
+Table~\ref{tab:theory} and Figure~\ref{fig:theory}. Over \sFiveTN{} primary cells the theory predicts the reversed
+AUROC --- never used in fitting --- with mean absolute error \sFiveTMae{} (Pearson $r$ \sFiveTR; \sFiveTWithin{}
+within 0.05), against \sFiveTMaeSym{} for the symmetric-reversal heuristic and \sFiveTMaeClean{} for ``reversed =
+clean''. It gets the sign of all \sFiveTTwoN{} real-trap crossovers right (MAE \sFiveTTwoMae) and of \sFiveTTwoFt{}
+fine-tuned crossovers, and the sign of \sFiveTThreeSign{} of \sFiveTThreeN{} controlled-sweep gains (heuristic:
+\sFiveTThreeSymSign). The account is simple: a model's reliance on an artifact is fixed by the ratio of artifact to disease
+signal it sees; masking lowers the disease signal (less context) and leaves an in-ROI artifact's signal intact, so it
+raises that ratio exactly when the artifact is inside the ROI.
+\input{tables/theory.tex}
+\begin{figure}[H]\centering\includegraphics[width=\linewidth]{figures/theory_prediction.pdf}
+\caption{Left: predicted versus observed reversed AUROC (theory, blue; symmetric heuristic, grey). Right: predicted
+versus observed real-trap crossover (frozen encoders, blue; fine-tuned, red).}\label{fig:theory}\end{figure}
+
+\section{What failed or changed}
+\begin{itemize}[leftmargin=*]\itemsep1pt
+\item \textbf{Natural test sets}: N3 holds in three of five; HAM goes the other way and capsule is inconclusive. With
+the corrected bootstrap, masking's gain on easy thyroid pairs and U-MtE's gain over masking on hard thyroid pairs are no
+longer significant.
+\item \textbf{The thyroid subgroup} is a post hoc subgroup; its test was registered only after its AUROC result was
+known. Its interval is now the corrected one.
+\item \textbf{Fine-tuning}: thyroid ResNet-50 is not significant; the archived ovary ResNet-50 run could not be
+regenerated (no saved predictions) and is withdrawn; the 15-cluster ovary re-run is uninformative.
+\item \textbf{DermLIP}: no crossover; explained, and predicted by the theory, but still an exception.
+\item \textbf{Absolute performance} is below task-specific fine-tuned models on thyroid (frozen DINOv2 with a linear head
+reaches a clean AUROC of \sFiveThyAucerm{} on the official split).
+\end{itemize}
+
+\section{Conclusion}
+\textbf{Supported.} On unaltered data masking harms the shortcut-conflicting cases in three of five test sets and lowers
+thyroid sensitivity at every validation-fixed operating point (registered decision rule met). The crossover replicates
+across encoder families and sizes, in three of five fine-tuned networks and on new patients. A two-parameter theory
+predicts held-out reversed AUROC far better than heuristics and anticipates the DermLIP exception.
+\textbf{Qualified.} The \sFiveNConf-nodule subgroup is exploratory confirmation. \textbf{Not supported.} Harm on natural
+HAM and capsule test sets; the crossover for DermLIP and for two fine-tuned networks.
+
+\section{Questions for the supervisor}
+\begin{enumerate}\itemsep1pt
+\item Is a sensitivity loss on one patient-disjoint split (thyroid) enough for the clinical claim in the abstract, or
+should the abstract lead with the AUROC on shortcut-conflicting cases?
+\item Should the theory be a main contribution (with its held-out error as evidence) or a supporting section?
+\item Is ISIC 2020 enough external validation, given that it is the same modality and artifact as the main dermoscopy
+analysis?
+\end{enumerate}
+
+\section{Next stage}
+Stage~6 turns to what to do instead of masking (the decision guide, with its remedies tested in the primary family),
+the blinded image audit prepared for a clinician, the limitations, the paper itself, the CLAIM checklist and the
+submission statements.
+
+\bibliographystyle{plainnat}
+\bibliography{../common/references}
+\end{document}

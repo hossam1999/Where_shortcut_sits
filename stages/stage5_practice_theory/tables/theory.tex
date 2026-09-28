@@ -1,0 +1,13 @@
+\begin{table}[H]\centering\scriptsize
+\caption{Held-out prediction of the reversed-test AUROC (never used in fitting): the two-parameter theory fitted to each cell's clean and correlated AUROC, against two parameter-free heuristics.}\label{tab:theory}
+\begin{tabular}{lccccc}\toprule
+Cells & Predictor & $n$ & MAE & Pearson $r$ & within 0.05 \\\midrule
+Primary cells (ERM, mask) & linear-Gaussian theory & 136 & 0.052 & 0.914 & 66\% \\
+ & heuristic: symmetric reversal & 136 & 0.129 & 0.743 & 40\% \\
+ & heuristic: reversed = clean & 136 & 0.237 & 0.550 & 18\% \\
+All ERM-head arms & linear-Gaussian theory & 598 & 0.036 & 0.933 & 79\% \\
+ & heuristic: symmetric reversal & 598 & 0.076 & 0.823 & 65\% \\
+ & heuristic: reversed = clean & 598 & 0.151 & 0.584 & 40\% \\
+Fine-tuned (outside assumptions) & linear-Gaussian theory & 12 & 0.027 & 0.980 & 92\% \\
+\bottomrule\end{tabular}
+\end{table}

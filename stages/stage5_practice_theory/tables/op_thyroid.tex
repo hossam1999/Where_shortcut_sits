@@ -1,0 +1,11 @@
+\begin{table}[H]\centering\scriptsize
+\caption{Thyroid, official patient-disjoint test split: effect of masking at five validation-fixed operating points (crossed bootstrap with thresholds re-estimated in every replicate). The subgroup is the malignant nodules with an in-ROI caliper (shortcut-conflicting).}\label{tab:opthy}
+\resizebox{\linewidth}{!}{\begin{tabular}{lccccc}\toprule
+Operating point (fixed on validation) & Sensitivity ERM $\to$ mask & $\Delta$ sensitivity & $\Delta$ specificity & Sensitivity, conflicting malignant (ERM $\to$ mask) & $\Delta$ in that subgroup \\\midrule
+OP1 max.\ balanced accuracy & 0.699 $\to$ 0.424 & $-0.275$ [$-0.435, -0.138$] & $+0.202$ [$+0.115, +0.330$] & 0.703 $\to$ 0.223 & $-0.479$ [$-0.640, -0.313$] \\
+OP2 specificity $\ge0.80$ & 0.557 $\to$ 0.355 & $-0.202$ [$-0.300, -0.100$] & $+0.117$ [$+0.059, +0.172$] & 0.549 $\to$ 0.177 & $-0.372$ [$-0.499, -0.236$] \\
+OP3 specificity $\ge0.90$ & 0.371 $\to$ 0.219 & $-0.152$ [$-0.253, -0.043$] & $+0.075$ [$+0.029, +0.122$] & 0.336 $\to$ 0.100 & $-0.236$ [$-0.383, -0.089$] \\
+OP4 sensitivity $\ge0.80$ & 0.753 $\to$ 0.380 & $-0.373$ [$-0.469, -0.270$] & $+0.278$ [$+0.203, +0.359$] & 0.744 $\to$ 0.197 & $-0.546$ [$-0.671, -0.421$] \\
+OP5 sensitivity $\ge0.90$ & 0.869 $\to$ 0.588 & $-0.281$ [$-0.391, -0.178$] & $+0.339$ [$+0.236, +0.425$] & 0.862 $\to$ 0.400 & $-0.462$ [$-0.614, -0.310$] \\
+\bottomrule\end{tabular}}
+\end{table}
