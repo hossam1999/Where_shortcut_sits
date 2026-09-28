@@ -17,3 +17,6 @@ figures_local/
 results/round4/_local_examples/
 results/round4/_smoke/
 results/round4/logs/smoke/
+
+# round 5: smoke runs (never committed)
+results/round5/_smoke/
