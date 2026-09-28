@@ -547,6 +547,13 @@ def main():
     for s in sources:
         if s["name"] == "DermArtifactDB":
             s["n_matched"] = int(len(derm))
+            readme = next((C.EXT / "derm_tables").rglob("README.md"), None)
+            if readme:
+                text = readme.read_text(errors="replace")
+                i = text.find("Creative Commons")
+                s["licence"] = "CC BY 4.0"
+                s["licence_quote"] = " ".join(text[max(0, i - 80):i + 70].split()) if i >= 0 else ""
+                s["note"] = "Licence read from README.md inside the Zenodo archive before the labels were used. Heatmaps were not extracted."
         elif s["name"] == "IMA++":
             s["n_matched"] = int(len(ima_keep))
             s["n_excluded_isic2018_train"] = n_ima_ex
