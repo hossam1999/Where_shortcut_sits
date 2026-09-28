@@ -26,3 +26,6 @@ results/round6/_smoke/
 results/round6/_local/
 results/round6/logs/
 results/finetune/**/*_smoke/
+
+# round 7: smoke runs (never committed)
+results/round7/_smoke/
