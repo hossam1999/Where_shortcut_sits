@@ -1,0 +1,6 @@
+tier,subset,arm,ref,estimate,ci95_lo,ci95_hi,p_boot_two_sided,p_one_sided_lt,boot_seed,n_boot,estimator
+calibrated,strict_hard,mask,erm,-0.004694759807684501,-0.05729851317622269,0.04829152807295451,0.8758,0.4379,20264000,10000,crossed cluster x image (Poisson) bootstrap
+calibrated,strict_easy,mask,erm,0.02169219911155391,-0.018512264141932678,0.06433434571890978,0.2822,0.8589,20264001,10000,crossed cluster x image (Poisson) bootstrap
+calibrated,strict_hard,balanced,mask,0.016393277039311527,-0.03868765623077697,0.07541954585511959,0.5644,0.7178,20264002,10000,crossed cluster x image (Poisson) bootstrap
+calibrated,hout_mel_vs_h0_ben,mask,erm,-0.02765172951930168,-0.0598299894798451,0.004148250241225514,0.0872,0.0436,20264003,10000,crossed cluster x image (Poisson) bootstrap
+calibrated,h0_mel_vs_hout_ben,mask,erm,0.05933048187368491,0.010285184588701632,0.11161048318763928,0.0166,0.9917,20264004,10000,crossed cluster x image (Poisson) bootstrap
