@@ -21,5 +21,7 @@ results/round4/logs/smoke/
 # round 5: smoke runs (never committed)
 results/round5/_smoke/
 
-# round 6: smoke runs (never committed)
+# round 6: smoke runs, local images and the A4b blind key (never committed)
 results/round6/_smoke/
+results/round6/_local/
+results/round6/logs/

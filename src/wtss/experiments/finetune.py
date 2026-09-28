@@ -69,17 +69,17 @@ class TrapImages(Dataset):
         return x, x, self.y[i], self.a[i]
 
 
-def make_model(arch: str):
+def make_model(arch: str, model_kwargs=None):
     import timm
 
-    m = timm.create_model(arch, pretrained=True, num_classes=0)
+    m = timm.create_model(arch, pretrained=True, num_classes=0, **(model_kwargs or {}))
     head = torch.nn.Linear(m.num_features, 1)
     return m, head
 
 
 def train_eval(arm: str, E: Dict[str, pd.DataFrame], render: Dict, arch: str = "resnet50", size: int = 224,
                epochs: int = 8, bs: int = 48, lr: float = 1e-4, lam: float = 1.0, seed: int = 0,
-               device=None, workers: int = 6):
+               device=None, workers: int = 6, model_kwargs=None):
     device = device or torch.device("cuda")
     seed_all(seed)
     view = "mask" if arm in ("mask", "mte_ft", "mask_balanced", "mte_post", "umte_ft", "cons_ft", "umte_cons_ft") else "erm"
@@ -87,8 +87,8 @@ def train_eval(arm: str, E: Dict[str, pd.DataFrame], render: Dict, arch: str = "
     with_ins = arm in ("i2e_ft", "insert_aug", "mte_ft", "umte_ft", "cons_ft", "umte_cons_ft")
     ins_view = "mask_insert" if arm in ("mte_ft", "umte_ft", "cons_ft", "umte_cons_ft") else "insert"
     dl = DataLoader(TrapImages(tr, render, view, size, True, with_ins, ins_view), batch_size=bs, shuffle=True,
-                    num_workers=workers, drop_last=True, persistent_workers=True)
-    body, head = make_model(arch)
+                    num_workers=workers, drop_last=True, persistent_workers=workers > 0, pin_memory=True)
+    body, head = make_model(arch, model_kwargs)
     body, head = body.to(device), head.to(device)
     params = [{"params": body.parameters(), "lr": lr}, {"params": head.parameters(), "lr": lr * 10}]
     opt = torch.optim.AdamW(params, weight_decay=1e-4)
@@ -164,7 +164,8 @@ def train_eval(arm: str, E: Dict[str, pd.DataFrame], render: Dict, arch: str = "
     def predict(df):
         body.eval(); head.eval()
         out = []
-        for x, _, _, _ in DataLoader(TrapImages(df, render, view, size, False), batch_size=128, num_workers=workers):
+        for x, _, _, _ in DataLoader(TrapImages(df, render, view, size, False), batch_size=128, num_workers=workers,
+                                     pin_memory=True):
             if arm in ("umte_ft", "umte_cons_ft"):
                 with torch.autocast("cuda", dtype=torch.float16):
                     g = body(x.to(device))
