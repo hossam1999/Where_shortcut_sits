@@ -59,6 +59,8 @@ back to earlier stages, never forward.
 | Round 6: exploratory consensus view of the caliper labellers (E1), registered subgroup labels | 8 | 5.3 |
 | Round 6: blinded rating tool and MedGemma audit answers (A4, A4b; rating not yet done) | 8 | 2, 6 |
 | Round 6: fine-tuned thyroid model, recipe B1, FT0–FT4, operating points, comparison with the frozen probe | 8 | 5.6 |
+| Round 7 (`docs/PREREGISTRATION_ROUND7.md`, `scripts/round7/`, `results/round7/`): thresholds matched on the test set, TM1–TM2 | 8 | 5.7 |
+| Round 6 exploratory E1 (consensus traps) and E2 (confirmed subgroup) | 8 | 5.3 |
 
 Analyses whose per-image predictions were not saved (chest-radiograph devices and drains, LaMa, text prompts, SLAS,
 U8, U10, selectors, archived hair sensitivity designs) appear as point estimates labelled "not re-estimated"; their

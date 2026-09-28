@@ -58,7 +58,7 @@ Stage & Topic & Question & Answer in one line \\\midrule
 5 & Practice, breadth, theory & Does it matter clinically, how general is it, can it be predicted? & Lower thyroid sensitivity at every operating point; replicates widely incl.\ new patients; theory error \sFiveTMae{} vs \sFiveTMaeSym. \\
 6 & Remedies and thesis & What to do instead of masking? & It depends on what carries the shortcut; no remedy transfers uniformly to unaltered data. \\
 7 & Robustness & Is the law an artefact of the fill, the thresholds, the data or hindsight? & No: \sSevenNPrimOK/\sSevenNPrim{} crossovers for other implementations; graded in $r$ in \sSevenNHNine/\sSevenNHNineOf{} cohorts; hard-pair harm on ISIC 2020; theory predictive prospectively. \\
-8 & Labels and a strong model & Are the real-artifact labels right, and does the law hold for a near-benchmark model? & Hair position right, presence over-called; crossover grows on uncontradicted labels (\sEightCleanisic); fine-tuned thyroid model shows every registered harm (subgroup \sEightFTThree). \\
+8 & Labels and a strong model & Are the real-artifact labels right, and does the law hold for a near-benchmark model? & Hair position right, presence over-called; crossover grows on uncontradicted labels (\sEightCleanisic); fine-tuned thyroid model shows every registered harm (subgroup \sEightFTThree; \sEightTMOne{} with re-tuned thresholds). \\
 \bottomrule\end{tabular}\end{table}
 \input{../common/notation.tex}
 \clearpage
@@ -108,7 +108,9 @@ shortcut-conflicting cases in three of five (thyroid \sFiveNatthyroidhard); on t
 sensitivity at every validation-fixed operating point (OP2 \sFiveSensOPTwo), most for malignant nodules with a caliper on
 the nodule (\sFiveConfOPTwo; a post hoc subgroup, exploratory) (Stage~5). A fine-tuned model near the published
 benchmark (test AUROC \sEightFTZero{} against 0.773) shows the same pattern with the subgroup registered in advance:
-hard pairs \sEightFTOne, OP2 sensitivity in the subgroup \sEightFTThree, trap crossover \sEightFTFour{} (Stage~8).
+hard pairs \sEightFTOne, OP2 sensitivity in the subgroup \sEightFTThree, trap crossover \sEightFTFour. Most of the
+operating-point loss comes from transporting validation thresholds; with each model's threshold re-tuned on the test set the
+overall sensitivity is unchanged, and the conflicting subgroup still loses \sEightTMOne{} (registered) (Stage~8).
 \item \textbf{It is general.} The crossover replicates at three model sizes (larger models exploit the in-ROI caliper
 more), in fine-tuned networks, in the zero-shot scores of vision--language models, and on new patients (ISIC 2020,
 \sFiveExtX) (Stage~5).

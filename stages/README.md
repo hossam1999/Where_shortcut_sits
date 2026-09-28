@@ -31,7 +31,7 @@ bash stages/build_all.sh
 
 Rules the reports follow: every number is read from a result file by `make_stageN.py` (nothing typed by hand;
 summaries computed by the generators are written to `results/stage_derived/`); every
-interval comes from the regenerated runs in `results/rerun_2026-09-28/` (Stage 7: `results/round4/`, `results/round5/`; Stage 8: `results/round6/`) with the corrected (crossed seed × image)
+interval comes from the regenerated runs in `results/rerun_2026-09-28/` (Stage 7: `results/round4/`, `results/round5/`; Stage 8: `results/round6/`, `results/round7/`) with the corrected (crossed seed × image)
 bootstrap; registration commits are read from git (`stagelib.reg`), and commit times come from this machine, so they
 are not independent proof of order. `scripts/verify/audit_numbers_final.py --docs stages` fails the build if a number
 cannot be traced. Decisions taken during the unattended run are in `DECISIONS_LOG.md`.

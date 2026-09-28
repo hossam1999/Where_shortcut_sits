@@ -19,7 +19,8 @@ independent labellers wherever those agree with each other, but the registered c
 its test to run; the ovary and capsule labels could not yet be checked; and a fine-tuned thyroid model \sEightFTZeroGap{}
 AUROC below the published benchmark shows every registered harm of masking, including a sensitivity loss from
 \sEightConfErmOPTwo{} to \sEightConfMaskOPTwo{} in the \sEightSubN{} malignant nodules with a caliper on the nodule, a
-subgroup now registered before any result.}
+subgroup now registered before any result; about \sEightTMShare{} of that loss survives even when each model's threshold is
+re-tuned on the test set itself.}
 \input{../common/notation.tex}
 
 \tableofcontents
@@ -48,6 +49,7 @@ amendments before any analysis.
 \item Does the crossover survive on the images that no independent source contradicts?
 \item Does a fine-tuned model close to the published benchmark show the harms that masking caused the frozen probe?
 \item Does the subgroup harm hold when the subgroup is registered in advance?
+\item Is the sensitivity loss an artefact of thresholds transported from validation to test?
 \end{enumerate}
 \paragraph{Design decisions} \emph{Why a clinician-free check is enough for these claims.} Whether a hair crosses a lesion,
 a caliper lies on a nodule or debris lies inside a box is a visual fact, not a diagnosis, and the claims of Stage~3 need
@@ -91,6 +93,12 @@ balanced; validation predictions saved for the operating points) and in the thyr
 folds = 10 bootstrap clusters). FT0 (descriptive): mean ERM test AUROC $\ge0.773$. FT1: hard-pair AUROC, mask $-$ ERM $<0$.
 FT2: sensitivity CI below zero at $\ge3$ of OP2--OP5. FT3: at OP2, sensitivity of the malignant nodules with an in-ROI
 caliper, mask $-$ ERM $<0$. FT4: trap crossover $>0$. Holm over FT1--FT4.
+\paragraph{Round 7 --- thresholds matched on the test set} Registered after Part B was known and before this analysis
+ran (\texttt{docs/PREREGISTRATION\_ROUND7.md}); saved predictions only. For each seed and arm the threshold is chosen on
+the test images themselves --- the best case for any re-tuning at the deployment site --- so that ERM and the masked model
+reach the same test specificity (0.80: registered; 0.90 and matched sensitivity 0.80: descriptive). TM1 (fine-tuned model)
+and TM2 (frozen probe): sensitivity of the \sEightSubN{} conflicting malignant nodules, mask $-$ ERM $<0$ (Holm over two);
+thresholds are re-estimated in every bootstrap replicate.
 \paragraph{E1--E2 --- exploratory} Decided after A1--A3 were known and reported separately: a consensus view in which an
 image counts as contradicted only if both caliper labellers place it in the same cell and that cell differs from ours
 (E1), and FT3 restricted to the subgroup nodules that both labellers confirm (E2).
@@ -154,12 +162,16 @@ cell for \sEightNBoth{} of \sEightNCells{} images. On these, they agree with our
 contradicted only when both labellers agree against us removes \sEightConsContraartifactfree{} of caliper-free images,
 \sEightConsContratrapA{} of Trap~A and \sEightConsContratrapB{} of Trap~B (\sEightConsContraBYZero{} of benign,
 \sEightConsContraBYOne{} of malignant). Presence and in-nodule calipers are well supported; the weakest cell is Trap~B,
-calipers outside the nodule. The trap re-run under this rule (E1) is prepared and has not been run.
+calipers outside the nodule. Re-running the traps without the images that both labellers contradict (E1) keeps
+\sEightEoneBYZero{} benign and \sEightEoneBYOne{} malignant Trap-B caliper images, passes the gate, and gives a crossover of
+\sEightEoneCross, against \sEightOrigthyroid{} on the Stage~3 labels.
 \input{tables/thyroid_consensus.tex}
 \paragraph{The registered subgroup} Of the \sEightSubN{} malignant test nodules that our detector gives an in-ROI
 caliper (FT3), no nodule is contradicted by both labellers, both confirm the caliper inside the nodule for
 \sEightSubConfirmed, MedGemma places it inside for \sEightSubMgIn{} and never reports no caliper, and BUSClean finds no
-annotation on \sEightSubBusNone. FT3 restricted to the doubly confirmed nodules (E2) is prepared and has not been run.
+annotation on \sEightSubBusNone. Restricted to the \sEightEtwoFtConfN{} doubly confirmed nodules (E2), the OP2 sensitivity loss is \sEightEtwoFtConf{}
+for the fine-tuned model and \sEightEtwoFrozenConf{} for the frozen probe (the other \sEightEtwoFtRestN: \sEightEtwoFtRest{}
+and \sEightEtwoFrozenRest).
 
 \subsection{Ovary calipers: one usable labeller}
 BUSClean fails the validity guard: it fires on \sEightOvBusFreePos{} of our caliper-free ovary images, so on these screens
@@ -198,6 +210,22 @@ FT3). This test was registered before any result of this model existed.
 \caption{Test sensitivity of ERM (circles) and of the masked model (squares) at the five validation-fixed operating points,
 for the fine-tuned model (filled) and the frozen probe of Stage~5 (open); left: all malignant nodules, right: those with a
 caliper on the nodule. Thin lines join the two models.}\label{fig:op}\end{figure}
+\subsection{Round 7: is the loss a threshold artefact?}
+Table~\ref{tab:matched}. With each model's threshold re-tuned on the test set so that both reach a test specificity of
+0.80, the overall sensitivity of the two arms is the same (fine-tuned \sEightMfinetunedroundSixMspecEightZerosens), but the
+conflicting malignant nodules still lose: fine-tuned \sEightTMOneErm{} $\to$ \sEightTMOneMask{} (\sEightTMOne; TM1
+\sEightTMOneVerdict, Holm $p=$ \sEightTMOneHolm), frozen probe \sEightTMTwoErm{} $\to$ \sEightTMTwoMask{} (\sEightTMTwo;
+TM2 \sEightTMTwoVerdict). The aligned malignant nodules tend to gain (fine-tuned
+\sEightMfinetunedroundSixMspecEightZerosensaligned, frozen probe \sEightMfrozenstageFiveMspecEightZerosensaligned): masking
+moves detections from the nodules whose caliper points to benign to
+those whose caliper points to malignant, as the location law predicts. The surviving loss is about \sEightTMShare{} of the
+loss at validation-fixed thresholds (FT3), so most of that larger loss came from transporting thresholds; the part that
+remains cannot be removed by any threshold. At specificity 0.90 and at matched sensitivity the direction is the same with
+intervals that include zero. On the other natural test sets (Table~\ref{tab:matchedother}, descriptive) the conflicting
+positives lose in BCN (\sEightMOtherisicBCN), gain in HAM (\sEightMOtherisicHAM), matching the hard-pair AUROC of Stage~5,
+and show no change in MSK and capsule.
+\input{tables/matched.tex}
+\input{tables/matched_other.tex}
 \paragraph{Against the frozen probe} Table~\ref{tab:cmp}. Every effect is at least as large for the stronger model: the
 hard-pair harm (\sEightFrozenHard{} $\to$ \sEightFTOne), the OP2 sensitivity loss, and the subgroup loss
 (\sEightFrozenConf{} $\to$ \sEightFTThree). The trap crossover is smaller than the frozen probe's (\sEightFrozenCross) and
@@ -214,7 +242,10 @@ the two caliper labellers err in opposite directions; the consensus analysis (E1
 \item \textbf{FT0} is missed by \sEightFTZeroGap{} AUROC: the fine-tuned model is near, not at, the benchmark.
 \item \textbf{Capsule} labels could not be checked (\sEightNCap{} frames); \textbf{ovary} labels wait for the rating,
 because BUSClean is invalid on ovarian screens. Their ``supported'' HA2 rows reproduce Stage~3 and are not new evidence.
-\item \textbf{The rating} (A4, A4b) has not been done; E1 and E2 are prepared and have not been run.
+\item \textbf{The rating} (A4, A4b) has not been done.
+\item \textbf{Threshold transport.} About \sEightTMShare{} of the subgroup loss at validation-fixed thresholds survives
+thresholds re-tuned on the test set (round 7); the rest was a consequence of transporting thresholds. The secondary matched
+points (specificity 0.90, sensitivity 0.80) point the same way without significance.
 \item \textbf{Reporting corrections after the run} (no estimate changed): the attenuation correction had been printed per
 source even where another source of the same cohort flagged differential error, which A3 does not allow; it is now
 withheld for both flagged cohorts (dermoscopy, thyroid). For thyroid the withdrawn MedGemma-based value would have been
@@ -250,10 +281,13 @@ the truth; with a noisy labeller it inflates the crossover rather than correctin
 \paragraph{Is 0.769 ``benchmark-level''?} Not by the registered rule, which is 0.773. The paper can call the model
 near-benchmark (\sEightFTZeroGap{} below the lowest published baseline, above the frozen probe) and must not call it
 benchmark-level.
-\paragraph{Why does sensitivity fall by half while the AUROC barely moves?} The AUROC compares rankings; the operating
-points transport a threshold from validation to test. Training on masked images moves the model's test scores relative to
-that threshold (specificity rises at every operating point), and the loss is largest in the malignant nodules whose
-caliper, the retained shortcut, points to benign.
+\paragraph{Why does sensitivity fall by half while the AUROC barely moves?} Mostly because of the threshold: the
+operating points transport a threshold from validation to test, and training on masked images moves the model's test
+scores relative to it (specificity rises at every operating point). Round 7 separates the two parts: with thresholds
+re-tuned on the test set the overall sensitivity is the same for both arms, and what remains is a loss of \sEightTMOne{}
+among the malignant nodules whose caliper, the retained shortcut, points to benign.
+\paragraph{Would re-tuning the threshold at the hospital remove the harm?} Only in part. Re-tuning on the test set itself
+is the best any site can do, and the conflicting nodules still lose sensitivity (TM1, TM2).
 \paragraph{Why use exploratory analyses at all?} Because the registered rule failed for a structural reason that the
 consensus view makes visible. E1 and E2 are reported apart from the registered results and are never tests.
 
@@ -261,10 +295,13 @@ consensus view makes visible. E1 and E2 are reported apart from the registered r
 \textbf{Supported.} Where an artifact is present, our labels put it on the correct side of the ROI boundary (dermoscopy,
 two independent sources); the dermoscopy crossover survives, and grows, on uncontradicted labels (HA2); a fine-tuned model
 near the benchmark shows every registered harm of masking --- on conflicting pairs (FT1), at every operating point (FT2),
-in the subgroup of \sEightSubN{} malignant nodules with an in-ROI caliper, registered in advance (FT3), and in the traps (FT4).
+in the subgroup of \sEightSubN{} malignant nodules with an in-ROI caliper, registered in advance (FT3), and in the traps (FT4);
+the subgroup loss survives thresholds re-tuned on the test set (TM1, TM2).
 \textbf{Qualified.} Hair presence is over-called, with errors that differ by diagnosis; thyroid caliper labels agree with
 two independent labellers where those agree with each other, weakest for calipers outside the nodule, but the registered
-cleaned-trap test could not run; the fine-tuned model is \sEightFTZeroGap{} below the benchmark. \textbf{Not yet known.}
+cleaned-trap test could not run; the fine-tuned model is \sEightFTZeroGap{} below the benchmark; most of the operating-point loss is threshold transport,
+and the part that survives re-tuning (\sEightTMOne) has a wide interval. Exploratory: the thyroid crossover holds on
+consensus labels (\sEightEoneCross) and the subgroup loss holds in the doubly confirmed nodules. \textbf{Not yet known.}
 Whether the ovary caliper labels are right, and the author's blinded rating; the capsule labels cannot be checked with
 public data.
 
@@ -274,7 +311,8 @@ public data.
 non-clinician rating --- acceptable for the paper, stated as such?
 \item Should the paper lead with the cleaned dermoscopy crossover and report the over-called hair presence as a limitation
 of the published hair masks at our threshold?
-\item May the thyroid clinical result now be stated as registered (FT3), with the model described as near-benchmark?
+\item May the thyroid clinical result now be stated as registered (FT3, TM1), with the model described as
+near-benchmark and the operating-point loss split into its threshold part and its surviving part?
 \item Is the author's rating worth doing now, given that the ovary labels depend on it, or should the ovary real-artifact
 evidence be presented as unvalidated?
 \end{enumerate}

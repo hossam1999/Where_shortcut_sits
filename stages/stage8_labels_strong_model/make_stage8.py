@@ -90,6 +90,8 @@ def experiments():
              "highest validation AUROC of 12 recipes"],
             ["B2--B3 natural split and traps (FT0--FT4)", "\\registered{round 6}", L.reg(doc),
              "FT0 descriptive ($\\ge0.773$); FT1--FT4 one-sided, Holm over four"],
+            ["Round 7: thresholds matched on the test set (TM1--TM2)", "\\registered{round 7}",
+             L.reg("docs/PREREGISTRATION_ROUND7.md"), "conflicting sensitivity at test specificity 0.80, mask $-$ ERM $<0$ (Holm over two)"],
             ["E1--E2 consensus labels", "\\posthoc{exploratory; decided after A1--A3 were known}", "---",
              "descriptive; not a test"]]
     L.table(T / "experiments.tex", ["Experiment", "Status", "First commit (local time)", "Support criterion"], rows,
@@ -471,6 +473,9 @@ def exploratory():
     if e1.exists():
         x = json.loads(e1.read_text())
         M.add("EoneCross", cir(x) if x.get("ran") else "\\na")
+        cn = pd.read_csv(e1.parent / "counts.csv")
+        r = cn[cn.trap == "trapB"].iloc[0]
+        M.add("EoneBYZero", int(r.A1_Y0)); M.add("EoneBYOne", int(r.A1_Y1))
     e2 = R6 / "exploratory" / "ft3_confirmed.json"
     if e2.exists():
         x = json.loads(e2.read_text())
@@ -481,12 +486,60 @@ def exploratory():
                     M.add(f"Etwo{key}{gk}", cir(r, "delta")); M.add(f"Etwo{key}{gk}N", r["n_nodules"])
 
 
+def round7():
+    """Round 7: each arm's threshold chosen on the test set itself (docs/PREREGISTRATION_ROUND7.md)."""
+    R7 = L.ROOT / "results" / "round7"
+    if not (R7 / "tm.json").exists():
+        L.MISSING.append("results/round7/tm.json")
+        return
+    tm = json.loads((R7 / "tm.json").read_text())
+    d = pd.read_csv(R7 / "matched_thresholds.csv")
+    for k in ("TM1", "TM2"):
+        r = tm[k]
+        key = k.replace("TM", "TM")
+        M.add(key, cir(r)); M.add(f"{key}Holm", f"{r['p_holm']:.3f}")
+        M.add(f"{key}Erm", L.f3(r["erm_value"])); M.add(f"{key}Mask", L.f3(r["mask_value"]))
+        M.add(f"{key}Verdict", r["verdict"].lower())
+    res = j6("ft_results.json")
+    if res is not None:
+        M.add("TMShare", pct(tm["TM1"]["estimate"] / res["FT3"]["estimate"]))
+    mlab = {"M-spec80": "specificity 0.80", "M-spec90": "specificity 0.90", "M-sens80": "sensitivity 0.80"}
+    rows = []
+    for model, mname in (("finetuned_round6", "fine-tuned"), ("frozen_stage5", "frozen probe")):
+        for m, ml in mlab.items():
+            g = lambda k: d[(d.model == model) & (d.cohort == "thyroid") & (d.match == m) & (d.metric == k)].iloc[0]
+            cells = []
+            for k in ("sens_conflict", "sens_aligned", "sens"):
+                r = g(k)
+                cells.append(f"{L.f3(r.erm_value)} $\\to$ {L.f3(r.mask_value)}, {L.ci(r.delta, r.ci95_lo, r.ci95_hi)}")
+                M.add(f"M{L.Macros.clean(model + m + k)}", L.ci(r.delta, r.ci95_lo, r.ci95_hi))
+            sp = g("spec")
+            rows.append([mname if m == "M-spec80" else "", f"test {ml}", *cells, f"{L.f3(sp.erm_value)} / {L.f3(sp.mask_value)}"])
+    L.table(T / "matched.tex", ["Model", "Both arms matched at", "Malignant, in-ROI caliper (78)", "Malignant, no in-ROI caliper",
+                                "All malignant", "Specificity ERM / mask"], rows,
+            "Round 7: sensitivity when each arm's threshold is chosen on the test set itself, so that both arms reach the same "
+            "test specificity (or sensitivity); ERM $\\to$ mask, and mask $-$ ERM with crossed 95\\% CIs. The first row of each "
+            "model is the registered test (TM1, TM2).", "tab:matched", size="\\scriptsize", resize=True)
+    rows = []
+    lab = {"isic_BCN": "Dermoscopy, BCN held out", "isic_HAM": "Dermoscopy, HAM held out", "isic_MSK": "Dermoscopy, MSK held out",
+           "capsule": "Capsule (held-out frames)"}
+    for c, cl in lab.items():
+        g = lambda k: d[(d.model == "frozen_stage5") & (d.cohort == c) & (d.match == "M-spec80") & (d.metric == k)].iloc[0]
+        rows.append([cl] + [L.ci(g(k).delta, g(k).ci95_lo, g(k).ci95_hi) for k in ("sens_conflict", "sens_aligned", "sens")])
+        M.add(f"MOther{L.Macros.clean(c)}", L.ci(g("sens_conflict").delta, g("sens_conflict").ci95_lo, g("sens_conflict").ci95_hi))
+    L.table(T / "matched_other.tex", ["Test set (frozen probe)", "Conflicting positives", "Aligned positives", "All positives"], rows,
+            "Round 7, descriptive: the other natural test sets of Stage~5 at matched test specificity 0.80, mask $-$ ERM "
+            "(crossed 95\\% CIs); conflicting = positives whose artifact status conflicts with the test set's own association.",
+            "tab:matchedother", size="\\scriptsize")
+
+
 def main():
     experiments()
     coverage()
     isic(); thyroid(); ovary(); capsule()
     cleaned()
     part_b()
+    round7()
     exploratory()
     M.write(T / "numbers.tex")
     L.report_missing("stage8")
