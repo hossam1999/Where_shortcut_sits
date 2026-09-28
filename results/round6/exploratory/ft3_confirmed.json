@@ -1,0 +1,40 @@
+{
+  "note": "exploratory, not registered; decided after the round-6 label agreement was known",
+  "definition": "confirmed = BUSClean and MedGemma both place a caliper inside the nodule",
+  "finetuned_round6": {
+    "confirmed_by_both": {
+      "n_nodules": 36,
+      "arm_value": 0.25555555555555554,
+      "ref_value": 0.65,
+      "delta": -0.3944444444444445,
+      "ci95_lo": -0.5703703703703704,
+      "ci95_hi": -0.2363474025974027
+    },
+    "not_confirmed_by_both": {
+      "n_nodules": 42,
+      "arm_value": 0.19523809523809524,
+      "ref_value": 0.8238095238095238,
+      "delta": -0.6285714285714286,
+      "ci95_lo": -0.7607864450127877,
+      "ci95_hi": -0.43585365853658564
+    }
+  },
+  "frozen_stage5": {
+    "confirmed_by_both": {
+      "n_nodules": 36,
+      "arm_value": 0.23333333333333334,
+      "ref_value": 0.4222222222222222,
+      "delta": -0.18888888888888888,
+      "ci95_lo": -0.36373900293255135,
+      "ci95_hi": -0.010762762762763027
+    },
+    "not_confirmed_by_both": {
+      "n_nodules": 42,
+      "arm_value": 0.12857142857142856,
+      "ref_value": 0.6571428571428571,
+      "delta": -0.5285714285714286,
+      "ci95_lo": -0.6756955484896662,
+      "ci95_hi": -0.36000000000000004
+    }
+  }
+}

@@ -1,0 +1,26 @@
+{
+  "TM1": {
+    "model": "finetuned_round6",
+    "estimate": -0.1538461538461539,
+    "ci95_lo": -0.30244054878048776,
+    "ci95_hi": -0.02318340829585216,
+    "p": 0.0096,
+    "p_holm": 0.0192,
+    "erm_value": 0.5435897435897437,
+    "mask_value": 0.38974358974358975,
+    "n_conflicting_positives": 78,
+    "verdict": "SUPPORTED"
+  },
+  "TM2": {
+    "model": "frozen_stage5",
+    "estimate": -0.17435897435897435,
+    "ci95_lo": -0.31315789473684214,
+    "ci95_hi": -0.011901260504201722,
+    "p": 0.0179,
+    "p_holm": 0.0192,
+    "erm_value": 0.5051282051282051,
+    "mask_value": 0.33076923076923076,
+    "n_conflicting_positives": 78,
+    "verdict": "SUPPORTED"
+  }
+}
