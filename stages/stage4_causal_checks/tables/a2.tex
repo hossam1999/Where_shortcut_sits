@@ -1,0 +1,9 @@
+\begin{table}[H]\centering\scriptsize
+\caption{Regression-adjusted crossover on the matched traps (A2): per-image placement values of the masked minus the ERM score regressed on the Trap-B indicator, the label and all matching covariates, within seed; crossed bootstrap (2,000 replicates). Capsule is not analysed (matching infeasible; descriptive only).}\label{tab:a2}
+\resizebox{\linewidth}{!}{\begin{tabular}{lccccccc}\toprule
+Cohort & Test images per seed & Covariate columns & Post-matching max $|$SMD$|$ pooled / per label & Unadjusted crossover & Adjusted (doubly robust) & $p$ (Holm, 3) & A2 \\\midrule
+ISIC hair & 2960 & 17 & 0.108 / 0.164 & $+0.154$ [$+0.124, +0.186$] & $+0.156$ [$+0.127, +0.187$] & 0.002 & \ok \\
+Thyroid & 2150 & 6 & 0.045 / 0.150 & $+0.238$ [$+0.185, +0.291$] & $+0.238$ [$+0.184, +0.291$] & 0.002 & \ok \\
+Ovary & 576 & 11 & 0.079 / 0.140 & $+0.163$ [$+0.058, +0.268$] & $+0.165$ [$+0.056, +0.273$] & 0.002 & \ok \\
+\bottomrule\end{tabular}}
+\end{table}

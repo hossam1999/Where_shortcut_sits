@@ -1,0 +1,13 @@
+\begin{table}[H]\centering\scriptsize
+\caption{Experiments of this stage. Commit times come from this machine and are not independent proof of order; the final registration was additionally pushed to GitHub before the runs.}\label{tab:exp}
+\begin{tabular}{p{3.1cm}p{2.1cm}p{2.4cm}p{3.2cm}p{3.3cm}}\toprule
+Experiment & Status & Registration & First commit (local time) & Support criterion \\\midrule
+Covariate balance (SMD) and matched traps, M1 & \ok{} registered & REVIEW2 (R1) & \texttt{29cd0da}, 2026-09-27 18:56 & matched crossover CI $>0$, Holm over 3 feasible cohorts \\
+Stricter calliper 0.05 SD (R7) & \ok{} registered & REVIEW3 & \texttt{85da735}, 2026-09-27 23:43 & sensitivity, descriptive \\
+Real-artifact transplant, T1 & \ok{} registered & REVIEW2 (R2) & \texttt{29cd0da}, 2026-09-27 18:56 & interaction CI $>0$, Holm over 4 \\
+Neutral paste (paste-edge control), N3 & \ok{} registered & REVIEW3 (R5) & \texttt{85da735}, 2026-09-27 23:43 & artifact $-$ neutral interaction CI $>0$ \\
+Regression-adjusted crossover, A2 & \ok{} registered & FINAL (A2) & \texttt{c45d482}, 2026-09-28 00:35 & adjusted crossover CI $>0$, Holm over 3 \\
+Crossed bootstrap everywhere, A1 & \ok{} registered & FINAL (A1) & \texttt{c45d482}, 2026-09-28 00:35 & rewrite claims whose CI now includes 0 \\
+Capsule matched analysis & \no{} descriptive & REVIEW2 (R1) & \texttt{29cd0da}, 2026-09-27 18:56 & infeasible under the registered rule \\
+\bottomrule\end{tabular}
+\end{table}

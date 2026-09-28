@@ -1,0 +1,39 @@
+\begin{table}[H]\centering\scriptsize
+\caption{Verdict changes among intervals that concern masking, the primary family, natural test sets, fine-tuning and the transplant. Only the corrected interval is shown; the archived interval is in the comparison file.}\label{tab:corrclaims}
+\begin{tabular}{p{4.6cm}p{5.2cm}p{3.4cm}c}\toprule
+Result & Row & Corrected estimate [95\% CI] & Significance \\\midrule
+PRIMARY\_\allowbreak{}CLAIMS.csv & P2 U-MtE (protected) > mask | Capsule & $-0.006$ [$-0.018, +0.006$] & lost \\
+PRIMARY\_\allowbreak{}CLAIMS.csv & P4 U-MtE+balanced > balanced | Ovary & $+0.031$ [$-0.014, +0.077$] & lost \\
+adhoc\_\allowbreak{}bootstraps.json & sweep | capsule\_\allowbreak{}dino518 | r=1.0 | umte\_\allowbreak{}balanced-balanced & $+0.057$ [$-0.008, +0.121$] & lost \\
+thyroid/\allowbreak{}convnext384\_\allowbreak{}universal & trapA | mask | clean | mask | erm & $+0.021$ [$-0.000, +0.041$] & lost \\
+synthetic/\allowbreak{}isic2018/\allowbreak{}dino518\_\allowbreak{}ruler\_\allowbreak{}fixed\_\allowbreak{}corr\_\allowbreak{}main & 0.25 | mask | erm | test\_\allowbreak{}rev & $-0.059$ [$-0.127, +0.008$] & lost \\
+synthetic/\allowbreak{}isic2018/\allowbreak{}dino518\_\allowbreak{}ruler\_\allowbreak{}fixed\_\allowbreak{}occlusion\_\allowbreak{}occlusion & 0.0 | mask | erm | test\_\allowbreak{}uncorr & $+0.036$ [$-0.016, +0.086$] & lost \\
+synthetic/\allowbreak{}isic2018/\allowbreak{}dino518\_\allowbreak{}ruler\_\allowbreak{}fixed\_\allowbreak{}occlusion\_\allowbreak{}occlusion & 0.5 | mask | erm | test\_\allowbreak{}uncorr & $+0.041$ [$-0.010, +0.090$] & lost \\
+synthetic/\allowbreak{}isic2018/\allowbreak{}dino518\_\allowbreak{}ruler\_\allowbreak{}fixed\_\allowbreak{}occlusion\_\allowbreak{}occlusion & 0.75 | mask | erm | test\_\allowbreak{}uncorr & $+0.037$ [$-0.013, +0.086$] & lost \\
+synthetic/\allowbreak{}isic2018/\allowbreak{}dino518\_\allowbreak{}ruler\_\allowbreak{}fixed\_\allowbreak{}occlusion\_\allowbreak{}occlusion & 1.0 | mask | erm | test\_\allowbreak{}uncorr & $+0.039$ [$-0.010, +0.091$] & lost \\
+synthetic/\allowbreak{}isic2018/\allowbreak{}dino224\_\allowbreak{}ruler\_\allowbreak{}fixed\_\allowbreak{}corr\_\allowbreak{}main & 0.25 | mask | erm | test\_\allowbreak{}rev & $-0.049$ [$-0.117, +0.018$] & lost \\
+synthetic/\allowbreak{}thyroid/\allowbreak{}medsiglip448\_\allowbreak{}caliper\_\allowbreak{}corr\_\allowbreak{}main & 1.0 | mask | erm | test\_\allowbreak{}rev & $+0.044$ [$-0.011, +0.104$] & lost \\
+synthetic/\allowbreak{}ovary/\allowbreak{}dino518\_\allowbreak{}caliper\_\allowbreak{}corr\_\allowbreak{}main & 0.5 | mask | erm | test\_\allowbreak{}rev & $-0.107$ [$-0.269, +0.054$] & lost \\
+capsule/\allowbreak{}dinol518\_\allowbreak{}scale & trapA | mask | clean | mask | erm & $+0.012$ [$-0.006, +0.031$] & lost \\
+spec\_\allowbreak{}e13/\allowbreak{}dino518\_\allowbreak{}matched05 & trapA | mask | clean | all | mask | erm & $-0.026$ [$-0.053, +0.000$] & lost \\
+spec\_\allowbreak{}e13/\allowbreak{}dinos518\_\allowbreak{}spec\_\allowbreak{}scale & trapB | mask | clean | all | mask | erm & $+0.028$ [$-0.000, +0.055$] & lost \\
+spec\_\allowbreak{}e13/\allowbreak{}dinol518\_\allowbreak{}spec\_\allowbreak{}scale & trapA | mask | test\_\allowbreak{}rev | HAM | mask | erm & $-0.044$ [$-0.090, +0.002$] & lost \\
+spec\_\allowbreak{}e13/\allowbreak{}dinol518\_\allowbreak{}spec\_\allowbreak{}scale & trapB | mask | clean | all | mask | erm & $-0.025$ [$-0.055, +0.003$] & lost \\
+spec\_\allowbreak{}e13/\allowbreak{}dino518\_\allowbreak{}spec\_\allowbreak{}universal & trapA | mask | clean | all | mask | erm & $-0.023$ [$-0.045, -0.001$] & gained \\
+spec\_\allowbreak{}e13/\allowbreak{}dino518\_\allowbreak{}spec & trapA | mask | clean | all | mask | erm & $-0.023$ [$-0.045, -0.001$] & gained \\
+spec\_\allowbreak{}e13/\allowbreak{}dino518\_\allowbreak{}spec\_\allowbreak{}ablation & trapA | mask | clean | all | mask | erm & $-0.023$ [$-0.045, -0.001$] & gained \\
+spec\_\allowbreak{}e13/\allowbreak{}dino518\_\allowbreak{}spec\_\allowbreak{}splice\_\allowbreak{}v2 & trapA | mask | clean | all | mask | erm & $-0.023$ [$-0.045, -0.001$] & gained \\
+natural/\allowbreak{}thyroid\_\allowbreak{}dino518\_\allowbreak{}repro/\allowbreak{}natural\_\allowbreak{}boot.json & hard  |  mte-mask & $+0.030$ [$+0.000, +0.061$] & lost \\
+natural/\allowbreak{}thyroid\_\allowbreak{}dino518\_\allowbreak{}repro/\allowbreak{}natural\_\allowbreak{}boot.json & easy  |  mask-erm & $+0.042$ [$-0.011, +0.097$] & lost \\
+natural/\allowbreak{}isic\_\allowbreak{}MSK\_\allowbreak{}dino518\_\allowbreak{}repro/\allowbreak{}natural\_\allowbreak{}boot.json & all  |  mask-erm & $+0.016$ [$-0.007, +0.038$] & lost \\
+natural/\allowbreak{}isic\_\allowbreak{}MSK\_\allowbreak{}dino518\_\allowbreak{}repro/\allowbreak{}natural\_\allowbreak{}boot.json & all  |  balanced-mask & $-0.018$ [$-0.041, +0.005$] & lost \\
+finetune/\allowbreak{}thyroid/\allowbreak{}resnet50 & trapA | mte\_\allowbreak{}post | mask\_\allowbreak{}post & $-0.000$ [$-0.001, +0.001$] & lost \\
+finetune/\allowbreak{}thyroid/\allowbreak{}resnet50 & trapA | cons\_\allowbreak{}ft | mask & $+0.042$ [$+0.011, +0.074$] & gained \\
+finetune/\allowbreak{}thyroid/\allowbreak{}resnet50 & trapB | mte\_\allowbreak{}ft | mask & $-0.042$ [$-0.089, +0.003$] & lost \\
+finetune/\allowbreak{}thyroid/\allowbreak{}resnet50 & trapB | mask\_\allowbreak{}balanced | balanced & $+0.069$ [$-0.004, +0.143$] & lost \\
+finetune/\allowbreak{}thyroid/\allowbreak{}vit\_\allowbreak{}small\_\allowbreak{}patch16\_\allowbreak{}224.augreg\_\allowbreak{}in21k\_\allowbreak{}ft\_\allowbreak{}in1k & trapA | mask\_\allowbreak{}balanced | balanced & $+0.059$ [$+0.003, +0.122$] & gained \\
+finetune/\allowbreak{}thyroid/\allowbreak{}vit\_\allowbreak{}small\_\allowbreak{}patch16\_\allowbreak{}224.augreg\_\allowbreak{}in21k\_\allowbreak{}ft\_\allowbreak{}in1k & trapA | umte\_\allowbreak{}ft | mte\_\allowbreak{}ft & $+0.032$ [$-0.072, +0.125$] & lost \\
+finetune/\allowbreak{}capsule/\allowbreak{}resnet50 & trapB | mte\_\allowbreak{}ft | erm & $+0.120$ [$+0.020, +0.217$] & gained \\
+review2/\allowbreak{}transplant/\allowbreak{}ovary\_\allowbreak{}dino518 & 0.0 | balanced | erm | test\_\allowbreak{}rev & $+0.019$ [$-0.006, +0.046$] & lost \\
+\bottomrule\end{tabular}
+\end{table}

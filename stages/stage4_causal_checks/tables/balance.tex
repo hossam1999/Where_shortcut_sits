@@ -1,0 +1,10 @@
+\begin{table}[H]\centering\scriptsize
+\caption{Balance of pre-specified covariates between the in-ROI (Trap~A) and out-of-ROI (Trap~B) artifact images, before and after 1:1 nearest-neighbour matching within label (calliper 0.2 SD, pooled standardised mean differences). Registered rule: fewer than 30 matched images per label in either trap makes a cohort infeasible; target max $|$SMD$|\le0.1$ after matching.}\label{tab:bal}
+\resizebox{\linewidth}{!}{\begin{tabular}{lccccc}\toprule
+Cohort & Least balanced covariate & max $|$SMD$|$ before & after matching & min matched pairs per label & feasible (rule) \\\midrule
+ISIC hair & lesion\_area & 2.127 & 0.108 & 398 & yes \\
+Thyroid & caliper\_px\_log & 0.527 & 0.045 & 93 & yes \\
+Ovary & caliper\_px\_log & 0.389 & 0.079 & 86 & yes \\
+Capsule & roi\_area & 2.574 & 0.231 & 19 & \textbf{no} \\
+\bottomrule\end{tabular}}
+\end{table}

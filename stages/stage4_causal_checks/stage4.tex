@@ -1,0 +1,170 @@
+\input{../common/preamble.tex}
+\input{tables/numbers.tex}
+\title{\textbf{Stage 4 --- Causal checks and the bootstrap correction}\\[3pt]\large Where the Shortcut Sits: supervisor meeting 4 of 6}
+\author{}
+\date{Report generated from the repository on \today}
+\begin{document}
+\maketitle
+\stagebox{\textbf{In one sentence.} The real-artifact crossover survives covariate matching and regression adjustment
+in all three cohorts where matching is feasible (A2: \sFourNATwoOK{} of \sFourNATwo{} supported); moving the same real
+artifact inside and outside the ROI of the same image produces a crossover too, but a neutral paste of the same shape
+reproduces most of it, so only a small part --- significant for hair and thyroid calipers --- is attributable to the
+artifact's content. The bootstrap correction widened intervals by a median factor of \sFourCMedian{} and changed
+\sFourCChanged{} of \sFourCRows{} significance verdicts.}
+\input{../common/notation.tex}
+
+\section{Where we are}
+Stage~3 showed a positive crossover with real artifacts. Real artifacts are not placed at random: in dermoscopy, hair
+lies on large lesions more often than on small ones; in thyroid ultrasound, calipers inside the nodule are drawn on
+larger, more heavily measured nodules. Artifact-based debiasing studies in dermoscopy make the same point about where artifacts occur
+\citep{bissoto2020debiasing,nauta2022uncovering}. The crossover could therefore reflect \emph{which images} carry in-ROI artifacts
+rather than \emph{where} the artifact lies. This meeting reports the three checks designed to separate the two ---
+matching, regression adjustment on the matched sample (A2, new in this round) and transplantation of the same artifact
+with a paste-edge control --- and, because it concerns what every interval means, the full consequences of the
+bootstrap correction.
+
+\section{Question}
+\begin{enumerate}[label=\textbf{Q4\alph*},leftmargin=*]\itemsep1pt
+\item Is the crossover explained by measured differences between in-ROI and out-of-ROI artifact images?
+\item Does it survive when the artifact is moved within the \emph{same} image, and how much of that is due to the
+artifact rather than to pasting something into the image?
+\item Which earlier claims change when the uncertainty is estimated correctly?
+\end{enumerate}
+\paragraph{Why three checks} Matching removes measured imbalance but depends on the chosen covariates; regression on the
+matched sample (a doubly robust combination) protects against residual imbalance and model misspecification of either
+step alone; transplantation removes image-level confounding altogether but introduces its own artifact --- the paste.
+The neutral paste (same mask shape, same compositing, filled with the donor's own clean tissue) measures that paste
+effect. Rejected alternatives: inverse-probability weighting (extreme weights with standardised differences above 2 in
+dermoscopy and capsule) and synthetic control images (they would test Stage~2 again, not real artifacts).
+
+\section{Methods}
+\paragraph{Balance and matching (R1)} Pre-specified covariates per cohort (dermoscopy: lesion area, hair amount, age,
+sex, site, source, image size; thyroid: nodule area, caliper pixels, image size, grey level, nodule position; ovary and
+capsule analogous). Standardised mean differences (SMD) between Trap~A and Trap~B artifact images; greedy 1:1
+nearest-neighbour matching on the logit of a propensity model within label, without replacement, calliper 0.2 SD
+(0.05 SD as a stricter sensitivity analysis, R7). A cohort with fewer than 30 matched images per label is infeasible.
+\paragraph{Regression adjustment (A2)} For each reversed-test image of the matched sample, the \emph{placement value} of
+the masked minus the ERM score (for a positive: the weighted share of negatives ranked below it; for a negative: the
+complement of the share of positives ranked above it), so that the class means reproduce the AUROC and the unadjusted
+difference between traps equals the crossover exactly (verified per seed). Within each seed, weighted least squares of
+this outcome on an intercept, the Trap-B indicator, the label and all matching covariates; the adjusted crossover is
+the Trap-B coefficient averaged over seeds. Crossed bootstrap with placement values and regression recomputed in every
+replicate (2,000 replicates); Holm over the three cohorts.
+\paragraph{Transplant (R2) and neutral paste (R5)} For each artifact-free recipient image, a real artifact instance is
+cut from a donor of the same cohort (the donor's mask pixels, largest connected component) and alpha-composited at a
+position fully inside and at a position fully outside the recipient's ROI, with a random dihedral transform. The trap
+environments are then built as in Stage~1 with the pasted instance as the artifact. The neutral paste keeps the mask
+shape, the transform and the compositing but fills the mask with tissue from the donor image at a window that does
+not touch its artifact.
+\paragraph{Bootstrap correction (A1)} Every archived interval with a regenerated counterpart was compared row by row:
+old and new interval, whether ``excludes zero'' changed, width ratio and point-estimate difference.
+
+\section{Experiments}
+\input{tables/experiments.tex}
+
+\section{Results}
+\subsection{Imbalance and matching}
+The in-ROI and out-of-ROI artifact images differ strongly (Table~\ref{tab:bal}): in dermoscopy the largest SMD is
+\sFourSmdBeforeHair{} (\sFourWorstHair: hair lies inside large lesions), in capsule \sFourSmdBeforeCap{}
+(\sFourWorstCap). Matching brings the maximum SMD to \sFourSmdAfterHair{} (dermoscopy), \sFourSmdAfterThy{} (thyroid)
+and \sFourSmdAfterOv{} (ovary); capsule matching is infeasible (\sFourPairsCap{} pairs in the smaller label, SMD after
+matching \sFourSmdAfterCap). The crossover is essentially unchanged by matching (Table~\ref{tab:match}): dermoscopy
+\sFourMatchHair, thyroid \sFourMatchThy, ovary \sFourMatchOv; with the stricter calliper \sFourMatchFiveHair,
+\sFourMatchFiveThy{} and \sFourMatchFiveOv. Capsule, matched descriptively, gives \sFourMatchCap{} --- lower than the
+unmatched \sFourXCap{} and imprecise.
+\input{tables/balance.tex}
+\input{tables/matched.tex}
+\input{tables/balance_detail.tex}
+
+\subsection{Regression adjustment on the matched sample (A2)}
+The adjusted crossover equals the unadjusted one to the third decimal in every cohort (Table~\ref{tab:a2}): dermoscopy
+\sFourAdjHair{} (unadjusted \sFourUnadjHair), thyroid \sFourAdjThy{} (\sFourUnadjThy), ovary \sFourAdjOv{}
+(\sFourUnadjOv); Holm-adjusted $p$ = \sFourAdjHolmHair, \sFourAdjHolmThy{} and \sFourAdjHolmOv. All \sFourNATwo{} pre-registered tests are supported.
+Residual imbalance after matching (up to the per-label maxima in Table~\ref{tab:a2}) does not carry the effect. Capsule
+stays descriptive, as registered. What this cannot exclude is an \emph{unmeasured} difference between the images.
+\input{tables/a2.tex}
+
+\subsection{The same artifact inside and outside the ROI}
+\begin{figure}[H]\centering\includegraphics[width=0.62\linewidth]{figures/transplant_examples.pdf}
+\caption{Transplant and neutral paste on the same recipient images (openly licensed cohorts; MMOTU, SEE-AI CC BY 4.0).
+Left: a real artifact instance pasted inside the ROI (\textcolor{roigreen}{green}; the pasted region outlined in
+\textcolor{artred}{red}). Right: the neutral paste --- same mask shape and compositing, filled with artifact-free tissue
+from the donor.}\label{fig:tx}\end{figure}
+Pasting the same real instance outside versus inside the ROI yields a positive location interaction in every cohort
+(Table~\ref{tab:tx}; dermoscopy \sFourTIHair, thyroid \sFourTIThy, ovary \sFourTIOv, capsule \sFourTICap). The neutral
+paste, however, reproduces \sFourShareMin{} to \sFourShareMax{} of that interaction (Table~\ref{tab:neutral}): pasting
+\emph{anything} into the ROI changes what masking does, because the paste itself is a new, label-correlated pattern
+inside the ROI (the environments make the pasted region label-correlated whatever it contains). Only the difference
+between the two --- N3, the interaction with the real artifact minus the interaction with the neutral paste --- is
+attributable to the artifact's content: dermoscopy \sFourNThreeHair, thyroid \sFourNThreeThy, ovary \sFourNThreeOv{}
+and capsule \sFourNThreeCap{} (\sFourNNThreePos{} of 4 excluding zero).
+\textbf{Consequently no harm figure from the transplant (for example, the effect of masking with the pasted hair
+inside the lesion) is attributed to the real artifact.} The transplant supports the \emph{location} mechanism --- a
+label-correlated pattern inside the ROI survives masking --- and N3 shows that the real hair and caliper content adds
+to it.
+\input{tables/transplant.tex}
+\input{tables/neutral.tex}
+
+\subsection{Consequences of the bootstrap correction}
+Across \sFourCRows{} regenerated intervals with an archived counterpart, the corrected intervals are wider by a median
+factor of \sFourCMedian{} (interquartile range \sFourCQlo--\sFourCQhi; Figure~\ref{fig:width}); \sFourCLost{} lost
+significance and \sFourCGained{} gained it (Table~\ref{tab:corr}). \sFourCEstDiff{} regenerated point estimates differ
+from the archived ones by more than 0.03; most are in the capsule synthetic sweeps (up to \sFourCapMaxDiff), whose
+cohort was rebuilt on this machine: only \sFourCapCommon{} of the \sFourCapOld{} archived artifact-bearing test frames
+fall in the new test set of \sFourCapNewTest{} frames, because a seeded shuffle of the group list re-dealt the split.
+Table~\ref{tab:corrclaims} lists the \sFourCClaims{} verdict changes that touch a quoted claim. The claims rewritten as
+a result:
+\begin{itemize}[leftmargin=*]\itemsep1pt
+\item Controlled sweeps: masking at 25\% overlap (dermoscopy, DINOv2 at 518 and 224\,px) and at 50\% overlap (ovary) is
+no longer significantly harmful; MedSigLIP's benefit at full thyroid overlap is no longer significant; the lesion-size
+strata lost two cells (Stage~2).
+\item Occlusion control: the small positive effects of masking on the 50/50 test are no longer significant; the
+conclusion (occlusion does not harm) is unchanged.
+\item Primary family: \sFourPrimNew{} instead of \sFourPrimOld{} of 16 supported after Holm (Stage~3); P3 ovary lost support.
+\item Natural test sets: masking's gain on easy thyroid pairs and on MSK dermoscopy, and U-MtE's gain over masking on
+hard thyroid pairs, are no longer significant (Stage~5).
+\item Fine-tuned models: several thyroid comparisons changed in both directions; fine-tuned results remain supplementary
+(Stage~5).
+\item Gained: masking's cost in clean-test AUROC in the hair Trap~A is now significant.
+\end{itemize}
+\input{tables/correction_by_source.tex}
+\begin{figure}[H]\centering\includegraphics[width=0.55\linewidth]{figures/width_scatter.pdf}
+\caption{Width of each corrected interval against the archived one (dashed: equal width).}\label{fig:width}\end{figure}
+\input{tables/correction_claims.tex}
+
+\section{What failed or changed}
+\begin{itemize}[leftmargin=*]\itemsep1pt
+\item \textbf{The transplant ``harm'' is mostly a paste effect.} Earlier drafts quoted the pasted-hair effect as the
+harm of masking with in-lesion hair; that attribution is withdrawn. Only N3 is attributed to the artifact, and it is
+significant for hair and thyroid only.
+\item \textbf{Capsule cannot be matched} under the registered rule; its crossover is descriptive.
+\item \textbf{The bootstrap correction} changed \sFourCChanged{} verdicts, and the claims above were rewritten.
+\item \textbf{The capsule synthetic cohort did not reproduce its split}; its point estimates moved by up to
+\sFourCapMaxDiff, while the location interaction kept its sign and significance.
+\end{itemize}
+
+\section{Conclusion}
+\textbf{Supported.} The real-artifact crossover is not explained by measured covariates: it survives matching (M1,
+3 of 3 feasible cohorts) and doubly robust adjustment (A2, \sFourNATwoOK{} of \sFourNATwo, Holm). Moving the same real
+artifact inside the ROI changes what masking does, and for hair and thyroid calipers the artifact's content adds to the
+effect of the paste. \textbf{Qualified.} Most of the transplant interaction is produced by the paste itself;
+unmeasured confounding of the natural location cannot be excluded. \textbf{Not supported.} A causal harm figure for
+the real artifact from the transplant; the capsule matched analysis.
+
+\section{Questions for the supervisor}
+\begin{enumerate}\itemsep1pt
+\item Is matching plus A2 plus the transplant sufficient causal evidence for a Q1 journal, or should an
+instrumental or negative-control analysis be attempted?
+\item How should the paper present the paste effect: as a limitation of the transplant, or as a finding in itself
+(any label-correlated pattern inside the ROI defeats masking)?
+\item Should the full old-versus-new interval table be published as supplementary material?
+\end{enumerate}
+
+\section{Next stage}
+Stage~5 moves from trap environments to practice: natural test sets without an imposed correlation, clinical
+operating points, the thyroid subgroup of 78 patients, the breadth of replication across encoders and fine-tuning,
+the DermLIP exception, and a theory judged by its held-out prediction error.
+
+\bibliographystyle{plainnat}
+\bibliography{../common/references}
+\end{document}
