@@ -1,8 +1,8 @@
-"""Number-tracing audit for the paper, the supplement and the six stage reports (docs/PREREGISTRATION_FINAL.md).
+"""Number-tracing audit for the paper, the supplement and the seven stage reports (docs/PREREGISTRATION_FINAL.md).
 
 Rules
 1. Every interval "[lo, hi]" must have both endpoints (±0.001) on one line of a result file under the regenerated
-   folders (results/rerun_2026-09-28/, results/audit/) — i.e. produced by the corrected (crossed) bootstrap. An interval
+   folders (results/rerun_2026-09-28/, results/audit/, results/round4/) — i.e. produced by the corrected (crossed) bootstrap. An interval
    that only traces to archived results is an error: no interval of the old estimator may appear.
 2. Every other number written with three decimals (e.g. 0.147, +0.253) must occur (±0.001) in some result file
    (archived or regenerated).
@@ -20,7 +20,7 @@ from pathlib import Path
 
 ROOT = Path(__file__).resolve().parents[2]
 RES = ROOT / "results"
-NEW_ROOTS = [RES / "rerun_2026-09-28", RES / "audit"]
+NEW_ROOTS = [RES / "rerun_2026-09-28", RES / "audit", RES / "round4"]
 NUM = re.compile(r"[-+−]?\d*\.\d+")
 CI = re.compile(r"\[\s*\$?([-+−]?\d*\.\d+)\s*,\s*\$?\s*([-+−]?\d*\.\d+)\s*\$?\s*\]")
 THREE = re.compile(r"(?<![\d.])[-+−]?\d+\.\d{3}(?!\d)")

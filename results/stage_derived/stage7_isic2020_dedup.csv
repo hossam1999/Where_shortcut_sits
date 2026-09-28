@@ -1,0 +1,7 @@
+hamming,n_dropped
+0-0,26.0
+1-2,112.0
+3-5,790.0
+6-8,6729.0
+melanoma drop rate,0.17152658662092624
+benign drop rate,0.23314000123403467

@@ -11,7 +11,7 @@ Hard pairs & positive--negative pairs whose artifact status conflicts with the t
 OP1--OP5 & thresholds fixed on validation data: maximal balanced accuracy; specificity $\ge0.80$, $\ge0.90$; sensitivity $\ge0.80$, $\ge0.90$. \\
 U-MtE & mask-then-erase: ROI masking followed by erasure of the feature subspace along which generic synthetic overlays move masked images. \\
 min(rev, corr) & robustness summary: the lower of reversed and correlated AUROC ($^\dagger$: the arm flips the shortcut). \\}
-\title{\textbf{Where the Shortcut Sits}\\[4pt]\Large Location-dependent failure of region-of-interest masking as a shortcut defence\\[4pt]\large Full report: the six stages of the work}
+\title{\textbf{Where the Shortcut Sits}\\[4pt]\Large Location-dependent failure of region-of-interest masking as a shortcut defence\\[4pt]\large Full report: the seven stages of the work}
 \author{}
 \date{}
 \begin{document}
@@ -19,7 +19,7 @@ min(rev, corr) & robustness summary: the lower of reversed and correlated AUROC 
 \begin{abstract}
 \noindent Region-of-interest (ROI) masking --- segmenting the lesion and discarding the background --- is the most common
 defence against acquisition artifacts that act as shortcuts in medical image classifiers. Its rationale assumes that the
-artifact lies outside the ROI. This report asks what happens when it does not. It collects the six stages of the work in
+artifact lies outside the ROI. This report asks what happens when it does not. It collects the seven stages of the work in
 one document. Stage~1 re-implements the pilot study from its written specification, fixes the protocol and corrects the
 interval estimator. Stage~2 varies only the artifact's overlap with the ROI and establishes the \emph{location law}:
 masking helps when the artifact lies outside the ROI and loses its benefit --- often turning harmful --- once it
@@ -28,7 +28,9 @@ artifacts in dermoscopy, thyroid and ovarian ultrasound and capsule endoscopy, a
 Stage~4 shows that the crossover is not explained by which images carry the artifact. Stage~5 shows that it matters on
 unaltered data and at clinical operating points, replicates across encoders, sizes, fine-tuning, untrained models and new
 patients, and is explained by a two-parameter theory. Stage~6 develops and tests what to do instead of masking and
-concludes that the right remedy depends on what carries the shortcut. Every number is generated from the result files of
+concludes that the right remedy depends on what carries the shortcut. Stage~7 tests the law's robustness: it holds for
+every masking implementation tried, falls continuously with the real overlap, reappears on an external test set at natural
+prevalence, and was predicted prospectively by the theory. Every number is generated from the result files of
 the repository and traced by an automatic audit.
 \end{abstract}
 
@@ -38,13 +40,13 @@ the repository and traced by an automatic audit.
 \section*{Overview}\addcontentsline{toc}{section}{Overview}
 \paragraph{The question} Does the benefit of ROI masking depend on where the artifact sits relative to the ROI --- and
 if so, through which mechanism, is it causal, does it matter clinically, and what should replace masking when it fails?
-\paragraph{How the report is organised} Each of Sections~\ref{sec:stage1}--\ref{sec:stage6} is one stage of the work, in
+\paragraph{How the report is organised} Each of Sections~\ref{sec:stage1}--\ref{sec:stage7} is one stage of the work, in
 the order in which it was carried out. Each stage opens with a one-sentence summary, states its questions and the
 reasons for its design, describes its methods and registrations, reports its results with figures and tables, lists
 what failed or changed, answers the questions a reader is likely to ask, draws its conclusion and lists the decisions it
 raises. Section~\ref{sec:conclusion} draws the conclusions of the work as a whole.
 \begin{table}[H]\centering\scriptsize
-\caption{The six stages at a glance.}\label{tab:overview}
+\caption{The seven stages at a glance.}\label{tab:overview}
 \begin{tabular}{p{0.6cm}p{3.4cm}p{5.6cm}p{5.6cm}}\toprule
 Stage & Topic & Question & Answer in one line \\\midrule
 1 & Problem, pilot, protocol & Does the pilot reproduce, and is its protocol sound? & Yes for the central sweep result (\sOneNewMatch{} of \sOneNewN{} numbers match); the interval estimator was too narrow and was replaced. \\
@@ -53,6 +55,7 @@ Stage & Topic & Question & Answer in one line \\\midrule
 4 & Causal checks & Is it location, or which images carry the artifact? & Location: survives matching and adjustment (\sFourNATwoOK/\sFourNATwo) and the same-image transplant. \\
 5 & Practice, breadth, theory & Does it matter clinically, how general is it, can it be predicted? & Lower thyroid sensitivity at every operating point; replicates widely incl.\ new patients; theory error \sFiveTMae{} vs \sFiveTMaeSym. \\
 6 & Remedies and thesis & What to do instead of masking? & It depends on what carries the shortcut; no remedy transfers uniformly to unaltered data. \\
+7 & Robustness & Is the law an artefact of the fill, the thresholds, the data or hindsight? & No: \sSevenNPrimOK/\sSevenNPrim{} crossovers for other implementations; graded in $r$ in \sSevenNHNine/\sSevenNHNineOf{} cohorts; hard-pair harm on ISIC 2020; theory predictive prospectively. \\
 \bottomrule\end{tabular}\end{table}
 \input{../common/notation.tex}
 \clearpage
@@ -68,6 +71,8 @@ Stage & Topic & Question & Answer in one line \\\midrule
 \input{body_stage5.tex}
 \clearpage
 \input{body_stage6.tex}
+\clearpage
+\input{body_stage7.tex}
 \clearpage
 
 \section{Conclusion}\label{sec:conclusion}
@@ -100,11 +105,19 @@ the nodule (\sFiveConfOPTwo; a post hoc subgroup, exploratory) (Stage~5).
 \item \textbf{It is general.} The crossover replicates at three model sizes (larger models exploit the in-ROI caliper
 more), in fine-tuned networks, in the zero-shot scores of vision--language models, and on new patients (ISIC 2020,
 \sFiveExtX) (Stage~5).
+\item \textbf{It does not depend on how masking is done, and it is graded.} Black fill, a blurred background, a crop
+to the lesion box and a crop of the masked image all give a positive crossover in all four real-artifact cohorts
+(\sSevenNPrimOK{} of \sSevenNPrim, Holm); and the mask gain falls monotonically with the real overlap in all four
+cohorts (slope for hair \sSevenSlopeisic), turning into harm for hair above $r\approx$ \sSevenZeroIsic{} (Stage~7).
+\item \textbf{It is visible on external data at natural prevalence.} Trained on ISIC 2019 and tested on ISIC 2020, masking
+raises the overall AUROC (\sSevenBmaskermall) but lowers it on shortcut-conflicting pairs (\sSevenBmaskermhard,
+borderline); a sensitivity loss at a fixed operating point was not found there (Stage~7).
 \item \textbf{It is predictable.} A two-parameter linear-Gaussian model fitted to each model's clean and correlated
 AUROC predicts the held-out reversed AUROC with mean error \sFiveTMae{} against \sFiveTMaeSym{} for the best heuristic, gets
 every real-trap crossover sign right, and explains when masking harms (it removes disease context) and why the crossover
-is always positive. By its own pre-registered rule it is a qualitative account; it cannot see shortcuts carried by
-correlates of the artifact (Stage~5).
+is always positive. Across all cohorts it is, by its pre-registered rule, a qualitative account and cannot see shortcuts
+carried by correlates of the artifact (Stage~5); tested prospectively on \sSevenTN{} new frozen-encoder cells it met the
+registered criterion for quantitative prediction (error \sSevenTMae) (Stage~7).
 \item \textbf{What carries the shortcut decides the fix.} For frozen foundation-model features, the annotation-free U-MtE
 repairs overlay-like in-ROI artifacts (thyroid Trap~A \sSixRemThyroidmte{} versus ERM, masking \sSixRemThyroidmask), needs
 disease protection when the artifact resembles the pathology (capsule), and cannot help when the shortcut is carried by
@@ -120,7 +133,10 @@ data no remedy improves on masking uniformly (\sSixNatRemPos{} of \sSixNatRemN{}
 with real artifacts in four diseases and three modalities, with chest radiography as a principled boundary.
 \item Its mechanism (retention with amplified reliance), its causal identification on fixed images, and its clinical
 consequence at validation-fixed operating points.
-\item A closed-form account that matches held-out results and explains every regime observed.
+\item A closed-form account that matches held-out results, explains every regime observed and predicted new results
+prospectively.
+\item Robustness evidence: the law is independent of the masking implementation, graded in the real overlap, and visible
+on an external test set in the shortcut-conflicting cases while the overall AUROC improves.
 \item A decision guide for practitioners and an annotation-free remedy (U-MtE) with a public tool, tested against the
 relevant published baselines.
 \item A methodological correction: the per-seed bootstrap inherited from the pilot understates uncertainty whenever
@@ -130,7 +146,9 @@ seeds share test images; the crossed estimator fixes it and is used throughout.
 \subsection{Claims the work does not make}
 \begin{itemize}[leftmargin=*]\itemsep1pt
 \item That masking always harms in-ROI (it helps a little for calipers and debris).
-\item That the theory predicts magnitudes (it is a qualitative account that closely matches held-out results).
+\item That the theory predicts magnitudes in general (across all cohorts it is a qualitative account; the prospective
+test that it passed covers frozen-encoder linear heads on four cohorts).
+\item That masking causes a sensitivity loss on ISIC 2020 (it lowers only the hard-pair AUROC, borderline).
 \item That U-MtE improves deployment performance (it does not on unaltered data), or works post hoc on fine-tuned networks.
 \item That the transplant measures the harm of a particular real artifact (most of it is the paste).
 \item That the cohorts without patient identifiers are patient-independent.
@@ -139,7 +157,9 @@ seeds share test images; the crossed estimator fixes it and is used throughout.
 \subsection{Limitations and open work}
 Artifact labels come from detectors and a probe that a non-clinician audited visually; the blinded clinician audit is
 prepared but not done. Three cohorts publish no patient identifiers. Reversed environments are constructed by subsampling.
-Frozen linear probes are below published fine-tuned models on thyroid. External validation exists for dermoscopy only.
+Frozen linear probes are below published fine-tuned models on thyroid. External validation exists for dermoscopy only,
+and its near-duplicate removal was aggressive (\sSevenDropPct{} of ISIC 2020). The robustness analyses of Stage~7 use one
+encoder.
 Some analyses could only be kept as point estimates. The open work before submission is the clinician audit, the
 institutional confirmation of the submission statements, and the decisions on thesis structure listed at the end of
 Stage~6.

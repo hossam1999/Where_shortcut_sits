@@ -1,0 +1,17 @@
+\begin{table}[H]\centering\scriptsize
+\caption{ISIC 2020 (external, natural prevalence), models trained on ISIC 2019: seed means. Hard pairs = melanomas without in-lesion hair vs benign lesions with it (they conflict with the training association).}\label{tab:r10m}
+\begin{tabular}{lccccc}\toprule
+Arm & AUROC & Cross-group AUROC & AUROC, in-lesion hair & Hard pairs & Easy pairs \\\midrule
+ERM & 0.791 & 0.772 & 0.779 & 0.772 & 0.798 \\
+mask & 0.811 & 0.746 & 0.781 & 0.746 & 0.843 \\
+balanced & 0.779 & 0.749 & 0.776 & 0.805 & 0.749 \\
+mask + balanced & 0.792 & 0.776 & 0.777 & 0.786 & 0.783 \\
+U-MtE & 0.799 & 0.752 & 0.783 & 0.752 & 0.827 \\
+U-MtE balanced & 0.778 & 0.764 & 0.780 & 0.787 & 0.764 \\
+U-MtE protect & 0.804 & 0.715 & 0.752 & 0.715 & 0.839 \\
+U-MtE protect balanced & 0.790 & 0.753 & 0.747 & 0.753 & 0.789 \\
+DFR & 0.765 & 0.730 & 0.746 & 0.782 & 0.731 \\
+mask + DFR & 0.767 & 0.717 & 0.730 & 0.718 & 0.781 \\
+JTT & 0.706 & 0.632 & 0.722 & 0.796 & 0.632 \\
+\bottomrule\end{tabular}
+\end{table}

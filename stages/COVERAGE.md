@@ -1,6 +1,6 @@
 # Coverage checklist: every piece of work → the stage report that contains it
 
-Sources checked: `report/full/full_report.tex` (the complete record on `main`, its Stages 0–15), every document in
+Sources checked (Stages 1–6): `report/full/full_report.tex` (the complete record on `main`, its Stages 0–15), every document in
 `docs/`, `CHANGES.md`, `results/`, and the additions of the branch `stages-and-final-runs` (crossed bootstrap A1,
 regression adjustment A2, ISIC 2020 A4, audit package, licences). Rule followed by the reports: a stage only refers
 back to earlier stages, never forward.
@@ -49,6 +49,10 @@ back to earlier stages, never forward.
 | Decision guide; `wtss.umte` / `wtss.slas` tools | 6 | 3, 5.12 |
 | Clinician audit package, licences | 6 | 6 |
 | Manuscript (paper/), NeurIPS version, number audit, CLAIM 2024, related work, statements, limitations | 6 | 7–8 |
+| Round 4 (`docs/PREREGISTRATION_ROUND4.md`, `scripts/round4/`, `results/round4/`): masking implementations R8 | 7 | 5.1 |
+| Round 4: dose-response over the real overlap R9 (bin counts committed before fitting) | 7 | 5.2 |
+| Round 4: ISIC 2019 → ISIC 2020 natural test, near-duplicate removal, operating points R10 | 7 | 5.3 |
+| Round 4: prospective theory test R11 | 7 | 5.4 |
 
 Analyses whose per-image predictions were not saved (chest-radiograph devices and drains, LaMa, text prompts, SLAS,
 U8, U10, selectors, archived hair sensitivity designs) appear as point estimates labelled "not re-estimated"; their

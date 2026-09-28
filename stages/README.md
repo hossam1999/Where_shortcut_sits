@@ -1,6 +1,6 @@
 # Stage reports
 
-Six standalone progress reports, meant to be handed over one at a time. Each report builds only on the stages
+Seven standalone progress reports, meant to be handed over one at a time. Each report builds only on the stages
 before it and never refers to a later one; `COVERAGE.md` maps every piece of work in the repository to the stage and
 section that contains it. Each folder holds the LaTeX source, the built PDF, generated
 tables and figures, and the script that regenerates them from result files:
@@ -13,12 +13,13 @@ tables and figures, and the script that regenerates them from result files:
 | `stage4_causal_checks/` | balance (SMD), matched traps and the regression-adjusted crossover (A2), real-artifact transplant, neutral paste, artifact-label sensitivity, embedding leakage groups, rebuild on a second machine |
 | `stage5_practice_theory/` | natural test sets, clinical metrics and operating points, the n = 78 thyroid subgroup, scale, fine-tuning, zero-shot models, ISIC 2020 external validation, literature comparison, the DermLIP exception, the theory |
 | `stage6_remedies_audit_paper/` | U-MtE and every remedy and baseline (frozen and fine-tuned), the 16-test family, the decision guide, the clinician audit package, the manuscript, CLAIM, statements, limitations |
+| `stage7_robustness_external/` | round 4: masking implementations (black, blur, box crop, crop of the masked image), dose-response over the real overlap, ISIC 2019 → ISIC 2020 natural test with operating points, prospective theory test |
 
 Layout of each stage: `stageN.tex`, `stageN.pdf`, `figures/`, `tables/` (generated; `numbers.tex` holds every number
 quoted in the prose as a macro), `make_stageN.py`. Shared files are in `common/` (`preamble.tex`, `notation.tex`,
 `references.bib`, `stagelib.py`).
 
-`combined/full_report.pdf` joins the six stages into one document (one section per stage, an overview and an overall
+`combined/full_report.pdf` joins the seven stages into one document (one section per stage, an overview and an overall
 conclusion); `combined/make_combined.py` assembles it from the stage sources.
 
 Build everything and run the number audit:
@@ -29,7 +30,7 @@ bash stages/build_all.sh
 
 Rules the reports follow: every number is read from a result file by `make_stageN.py` (nothing typed by hand;
 summaries computed by the generators are written to `results/stage_derived/`); every
-interval comes from the regenerated runs in `results/rerun_2026-09-28/` with the corrected (crossed seed × image)
+interval comes from the regenerated runs in `results/rerun_2026-09-28/` (Stage 7: `results/round4/`) with the corrected (crossed seed × image)
 bootstrap; registration commits are read from git (`stagelib.reg`), and commit times come from this machine, so they
 are not independent proof of order. `scripts/verify/audit_numbers_final.py --docs stages` fails the build if a number
 cannot be traced. Decisions taken during the unattended run are in `DECISIONS_LOG.md`.

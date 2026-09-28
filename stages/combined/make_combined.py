@@ -1,4 +1,4 @@
-"""Assemble the six stage reports into one document (stages/combined/full_report.tex).
+"""Assemble the seven stage reports into one document (stages/combined/full_report.tex).
 
 Each stage becomes one top-level section; its sections become subsections. The body of every stage and the generated
 tables it includes are copied verbatim (labels prefixed per stage so they do not collide, file paths rewritten), so the
@@ -11,10 +11,11 @@ from pathlib import Path
 
 HERE = Path(__file__).resolve().parent
 STAGES = HERE.parent
-DIRS = sorted(p for p in STAGES.glob("stage[1-6]_*") if p.is_dir())
+DIRS = sorted(p for p in STAGES.glob("stage[1-7]_*") if p.is_dir())
 TITLES = {1: "The problem, the pilot and the protocol", 2: "The location law and its mechanism",
           3: "Real artifacts across modalities", 4: "Is it location, or which images carry the artifact?",
-          5: "Practice, breadth and theory", 6: "What to do instead of masking, and the state of the thesis"}
+          5: "Practice, breadth and theory", 6: "What to do instead of masking, and the state of the thesis",
+          7: "How robust is the location law?"}
 
 
 def demote(s: str) -> str:

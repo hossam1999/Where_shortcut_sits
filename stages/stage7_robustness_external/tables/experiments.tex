@@ -1,0 +1,10 @@
+\begin{table}[H]\centering\scriptsize
+\caption{Experiments of this stage. One registration document (\texttt{docs/PREREGISTRATION\_ROUND4.md}) was committed before any feature, count or model of this stage existed. Commit times are set by the committing machine and are not independent proof of order.}\label{tab:exp}
+\begin{tabular}{p{3.6cm}p{3.2cm}p{2.8cm}p{5.4cm}}\toprule
+Experiment & Status & First commit (local time) & Support criterion \\\midrule
+R8 masking implementations (H8a, H8b) & \registered{round 4} & \texttt{d34b8b8}, 2026-09-28 11:28 & H8a: $C_v>0$ for black fill and box crop of the masked image in all four cohorts (Holm over 16) \\
+R9 dose-response over the real overlap (H9) & \registered{round 4}; bin counts committed before fitting & \texttt{d34b8b8}, 2026-09-28 11:28 & slope of the mask gain on $r$ $<0$ in every cohort that passes the count gate (Holm) \\
+R10 ISIC 2019 $\to$ ISIC 2020 natural test (H10a--c) & \registered{round 4} & \texttt{d34b8b8}, 2026-09-28 11:28 & hard-pair AUROC mask $-$ ERM $<0$; OP5 sensitivity loss; balancing $>$ mask on hard pairs \\
+R11 prospective theory test (T1$'$--T3$'$) & \registered{round 4} & \texttt{d34b8b8}, 2026-09-28 11:28 & all crossover signs, $r\ge0.7$, MAE below ``reversed = clean'' \\
+\bottomrule\end{tabular}
+\end{table}

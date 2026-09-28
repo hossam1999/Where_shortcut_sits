@@ -104,3 +104,23 @@ C_v = [rev(v) − rev(ERM)]_TrapB − [rev(v) − rev(ERM)]_TrapA on reversed-te
 ## Not changed by this round
 No existing result, table or claim is re-estimated here; the round adds evidence and is reported as a separate
 block, including every hypothesis that is not supported.
+
+## Results (added after the run; the text above is unchanged)
+Full run on the GPU machine: scripts at `f381bfc`; R9 bin counts and gate committed at `ac90660` before any
+dose-response model was fitted; results committed at `d2a854b`. Write-up: `stages/stage7_robustness_external/`.
+Execution-only changes during the run (parallel fitting and bootstraps, one BLAS thread per process, feature
+extraction in a child process, batch size 128 for new views); data, seeds, models, estimands and replicates as
+registered. Reproducibility gate: re-fitted ERM and mean-fill masking equal the stored runs (largest difference 0.000).
+
+| hypothesis | result | verdict |
+|---|---|---|
+| H8a full-removal views, $C_v>0$ in all four cohorts (Holm over 16) | 8/8 positive and Holm-significant (all 16 of the family) | supported: implementation-independent |
+| H8b partial-removal views weaker than mean fill | crossovers 8/8 positive; contrast $C_{mask}-C_v>0$ in 4/8 | partly supported |
+| H9 slope of the mask gain on $r$ < 0 | 4/4 cohorts, Holm; Spearman −1 in every cohort; hair gain crosses zero at r ≈ 0.40 | supported |
+| H10a hard-pair AUROC mask − ERM < 0 (ISIC 2020) | −0.026 [−0.052, −0.000] (upper bound −0.0004) | supported, borderline |
+| H10b OP5 sensitivity loss, melanomas without in-lesion hair | −0.007 [−0.060, +0.047] | not supported |
+| H10c hard-pair AUROC balanced − mask > 0 | +0.059 [+0.035, +0.084] | supported |
+| R11 decision rule | T1' MAE 0.011 (ref. a 0.177), T2' signs 16/16, r = 0.992, T3' slopes 4/4 | quantitatively predictive |
+
+Near-duplicate removal (registered rule, Hamming ≤ 8) discarded 7,657 of 32,997 ISIC 2020 images; 26 at distance 0,
+6,729 at 6–8; melanomas 17 %, benign 23 %. A stricter-distance sensitivity analysis was not run.

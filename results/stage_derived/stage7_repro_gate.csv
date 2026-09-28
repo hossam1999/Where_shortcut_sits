@@ -1,0 +1,5 @@
+cohort,max_abs_diff,pool_images,empty_roi_images
+isic,0.0,9841,0
+thyroid,0.0,3277,0
+capsule,0.0,2563,0
+ovary,0.0,1159,0

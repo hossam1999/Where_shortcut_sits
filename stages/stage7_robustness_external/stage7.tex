@@ -1,0 +1,280 @@
+\input{../common/preamble.tex}
+\input{tables/numbers.tex}
+\newcommand{\notY}{1 = melanoma, malignant nodule, tumour with a solid component, erosion}
+\newcommand{\notA}{a real artifact: hair, sonographer caliper, capsule debris}
+\newcommand{\notROI}{lesion, nodule, tumour, union of expert lesion boxes}
+\newcommand{\notCross}{$C_v=[v-\text{ERM}]_{\text{Trap B}}-[v-\text{ERM}]_{\text{Trap A}}$ of reversed-test AUROC, for a masking implementation $v$ (mean-colour fill in Stages~1--6).}
+\newcommand{\notCI}{95\% crossed seed$\times$image bootstrap interval (Stage~1), 10{,}000 replicates; one Poisson weight per test image shared by every term in which the image appears.}
+\newcommand{\notExtra}{$r$ & share of an artifact's pixels that lie inside the ROI (Stage~3). \\ $g_b$ & mask gain in overlap bin $b$: reversed AUROC of mask minus ERM. \\ Hard pairs & positive--negative pairs whose artifact status conflicts with the training association (Stage~5). \\}
+\title{\textbf{Stage 7 --- How robust is the location law?}\\[3pt]\large Where the Shortcut Sits: progress report 7}
+\author{}
+\date{}
+\begin{document}
+\maketitle
+\stagebox{\textbf{In one sentence.} The location law does not depend on how masking is implemented --- black fill, a
+blurred background, cropping to the lesion box and cropping the masked image all give a positive crossover in all four
+real-artifact cohorts (\sSevenNPrimOK{} of \sSevenNPrim{}, Holm) --- it is graded rather than a threshold effect (the mask
+gain falls monotonically with the real overlap $r$ in all four cohorts, and for hair turns into harm above $r\approx$
+\sSevenZeroIsic), it reappears on an external, patient-level test set at natural prevalence (ISIC 2019 $\to$ ISIC 2020:
+masking raises overall AUROC but lowers it on the shortcut-conflicting pairs), and the two-parameter theory of Stage~5,
+tested prospectively on \sSevenTN{} cells that did not exist when the test was registered, met its registered criterion for
+quantitative prediction.}
+\input{../common/notation.tex}
+
+\tableofcontents
+\clearpage
+
+\section{Where this stage starts}
+Stages~1--6 established the location law --- ROI masking removes an out-of-ROI shortcut and keeps, or amplifies, an
+in-ROI one --- in controlled sweeps (Stage~2), with real artifacts in four cohorts (Stage~3), against the alternative that
+different images carry the artifact in the two traps (Stage~4), on natural test sets and across encoders, with a theory
+that closely matches held-out results (Stage~5), and they built remedies around it (Stage~6). Four objections remained
+open, each of which a reviewer can raise against the central claim:
+\begin{enumerate}[leftmargin=*]\itemsep1pt
+\item \emph{``Mean-colour fill is one implementation.''} Clinical pipelines crop to the lesion or use black
+backgrounds; the law might be a property of the particular fill used in Stages~1--6.
+\item \emph{``Trap~A ($r\ge0.5$) and Trap~B ($r<0.1$) are two hand-picked extremes.''} The crossover might be a
+dichotomy produced by the thresholds rather than a graded dependence on where the artifact lies.
+\item \emph{``Resampled traps are artificial and the data are internal.''} The natural test sets of Stage~5 were
+held-out parts of the training datasets; the ISIC 2020 validation of Stage~5 still used resampled traps.
+\item \emph{``The theory was checked only on results that already existed.''} Stage~5's test of the theory was
+retrospective.
+\end{enumerate}
+This stage answers each with one pre-registered analysis (R8--R11).
+
+\section{Questions}
+\begin{enumerate}[label=\textbf{Q7\alph*},leftmargin=*]\itemsep1pt
+\item Does the crossover hold for other masking implementations, and do implementations that remove out-of-ROI
+content only partly give a weaker location effect?
+\item Does the mask gain fall continuously as more of a real artifact lies inside the ROI?
+\item Trained on one dataset and tested on another collected from other patients, at natural prevalence and without
+resampling, does masking harm the cases that conflict with the in-lesion hair association?
+\item Does the theory predict results it has never seen, by the rule registered before they existed?
+\end{enumerate}
+\paragraph{Design decisions} \emph{One registration for the whole stage} (Table~\ref{tab:exp}), committed before any
+feature, cell count or model of this stage existed; every hypothesis is reported whichever way it went.
+\emph{Identical environments}: every trap of R8 and R9 uses the cohorts, artifact definitions, matching, seeds, folds,
+heads and thresholds of Stage~3, so the new arms are paired with ERM on the same images. \emph{A reproducibility gate}: each
+R8 run re-fits ERM and mean-colour masking and had to reproduce the stored Stage~3 runs within 0.03 AUROC before any new
+result was read; the largest difference was \sSevenReproMax. \emph{Counts before models}: the dose-response bins, their
+count gate and the merge rule were applied and committed (\sSevenCommitCounts) before any dose-response model was fitted
+(results committed \sSevenCommitGains). \emph{The crossed bootstrap from the start} (Stage~1), so no interval of this stage
+needs a second estimator check. Rejected: a new encoder for these analyses (it would confound the new question with a
+change of representation), and choosing the overlap bins after seeing the data.
+
+\section{Methods}
+\paragraph{R8 --- masking implementations} Five views of every image, computed from the cached 518-px image and its ROI
+(Figure~\ref{fig:views}): \emph{mean-colour fill} (the reference of Stages~1--6); \emph{black fill}; \emph{blurred
+background} (pixels outside the ROI replaced by a Gaussian-blurred copy, $\sigma=16$\,px; the ROI stays sharp --- a partial
+removal: coarse context survives, thin structures fade); \emph{box crop} (the ROI bounding box enlarged by 10\% on each
+side, padded to a square and resized --- out-of-ROI pixels near the lesion survive); \emph{box crop of the masked image} (no
+out-of-ROI pixels; the lesion is enlarged to fill the frame). A plain ERM head is fitted on each view. The primary family
+is the crossover $C_v$ of the four new views in the four cohorts (16 tests, Holm). H8a: $C_v>0$ for the two
+full-removal views in all four cohorts. H8b: the two partial-removal views also give $C_v>0$, but a smaller one than mean
+fill ($C_{\text{mask}}-C_v>0$). \sSevenEmptyRoi{} images had an empty ROI.
+\begin{figure}[H]\centering\includegraphics[width=\linewidth]{figures/views_schematic.pdf}
+\caption{The masking implementations of R8, illustrated on a synthetic image (a lesion with a hair-like line inside it
+and two outside). No patient image is shown.}\label{fig:views}\end{figure}
+\paragraph{R9 --- dose-response over the real overlap} The artifact-bearing images of each cohort are binned by $r$:
+$[0,0.1)$, $[0.1,0.3)$, $[0.3,0.5)$, $[0.5,0.75)$, $[0.75,1]$. Each bin is a trap with the cohort's shared artifact-free
+group, built exactly like Trap~A and Trap~B. A bin with fewer than 25 images in any matched cell or fewer than 40
+reversed-test positives is merged towards the middle of the $r$ range by a fixed rule. The primary endpoint is the
+least-squares slope of $g_b$ on the bin's mean $r$, written as a linear combination of AUROCs so that the crossed bootstrap
+gives the artifact-free images, which appear in every bin, one shared weight. H9: slope $<0$ in every cohort (Holm).
+\paragraph{R10 --- ISIC 2019 $\to$ ISIC 2020} Train and validate on all \sSevenIsicTwoZeroOneNineTrainValImages{}
+quality-controlled ISIC 2019 images (\sSevenIsicTwoZeroOneNineMelanomas{} melanomas) at their natural distribution; 5 seeds
+of a group-safe 80/20 train/validation split. Test on every ISIC 2020 image \citep{rotemberg2021isic2020} with a lesion mask
+(\sSevenIsicTwoZeroTwoZeroWithLesionMask) after removing near-duplicates of any ISIC 2019 image (perceptual hash, Hamming
+distance $\le8$ --- the leakage rule of Stage~1): \sSevenTestImages{} images of \sSevenTestPatients{} patients,
+\sSevenTestMelanomas{} melanomas. Lesion and hair masks are those of the Stage~5 external validation (models frozen before
+any ISIC 2020 image was scored). In-lesion hair ($A$): hair on the lesion with $r\ge0.5$. Arms as in the natural test
+sets of Stage~5 plus the remedies of Stage~6. Operating points OP1--OP5 use thresholds from each seed's ISIC 2019
+validation predictions only. H10a: hard-pair AUROC mask $-$ ERM $<0$; H10b: at OP5 masking lowers sensitivity among
+melanomas without in-lesion hair; H10c: group balancing beats masking on hard pairs.
+\paragraph{R11 --- prospective theory test} The procedure of Stage~5, unchanged: for every cell (cohort $\times$ trap
+or bin $\times$ arm) the two parameters $(S,A)$ are fitted to the clean and correlated AUROC, and the reversed AUROC --- and
+every crossover, gain and slope built from it --- is predicted. The cells are the \sSevenTN{} R8 and R9 cells, none of which
+existed when the rule was registered. Decision rule as in Stage~5: \emph{quantitatively predictive} only if every R8
+crossover sign agrees, both correlations are $\ge0.7$ and the error beats ``reversed = clean''.
+
+\section{Experiments}
+\input{tables/experiments.tex}
+
+\section{Results}
+\subsection{R8: the law does not depend on how masking is implemented}
+Table~\ref{tab:r8} and Figure~\ref{fig:r8}. Every implementation gives a positive crossover in every cohort:
+\sSevenNPrimOK{} of \sSevenNPrim{} tests are supported after Holm adjustment. For the full-removal views (H8a) this is
+\sSevenHEightaN{} of \sSevenHEightaOf{}, so by the registered rule the law is \textbf{implementation-independent}. The
+re-fitted mean-colour crossovers reproduce Stage~3 (dermoscopy \sSevenXisicmask, thyroid \sSevenXthyroidmask, capsule
+\sSevenXcapsulemask, ovary \sSevenXovarymask).
+\input{tables/r8_crossover.tex}
+\begin{figure}[H]\centering\includegraphics[width=\linewidth]{figures/r8_crossover.pdf}
+\caption{Crossover $C_v$ per masking implementation and cohort (crossed 95\% CIs). The reference (mean-colour fill) is
+the leftmost point of each panel.}\label{fig:r8}\end{figure}
+\paragraph{Partial removal (H8b)} Both partial-removal views also give positive crossovers in every cohort
+(\sSevenHEightbN{} of \sSevenHEightbOf), but they are weaker than mean fill only where the surviving content still
+carries the artifact (Table~\ref{tab:r8c}). The blurred background weakens the effect for capsule debris
+(\sSevenCcapsulemaskblur) and ovarian calipers (\sSevenCovarymaskblur), not for hair (\sSevenCisicmaskblur): a 16-px blur
+erases thin hair but leaves large debris recognisable. The box crop weakens it for hair (\sSevenCisiccropbox) and debris
+(\sSevenCcapsulecropbox), whose out-of-ROI instances often lie next to the lesion and survive the crop, but not for
+thyroid or ovarian calipers (\sSevenCthyroidcropbox, \sSevenCovarycropbox). The registered expectation ``partial removal
+is weaker'' therefore holds in \sSevenHEightbConN{} of \sSevenHEightbConOf{} contrasts. One result was not expected: for hair, black fill gives a \emph{larger} crossover than mean fill
+(\sSevenCisicmaskblack{} as $C_{\text{mask}}-C_v$).
+\input{tables/r8_contrast.tex}
+\paragraph{What each implementation does in each trap} Figure~\ref{fig:r8traps} and Table~\ref{tab:r8t}. The pattern of
+Stage~3 recurs for every implementation. For hair, every full-removal view harms inside the lesion (Trap~A: mean fill
+\sSevenDisicmasktrapArev, black \sSevenDisicmaskblacktrapArev) and helps beside it (Trap~B: mean fill
+\sSevenDisicmasktrapBrev). The views that keep some context harm less in Trap~A (blur \sSevenDisicmaskblurtrapArev, box
+crop \sSevenDisiccropboxtrapArev) and gain less in Trap~B (box crop \sSevenDisiccropboxtrapBrev). For calipers and debris
+every view still helps a little in Trap~A --- it removes clutter and overlays elsewhere on the screen (Stage~3) --- and
+much more in Trap~B.
+\begin{figure}[H]\centering\includegraphics[width=\linewidth]{figures/r8_traps.pdf}
+\caption{Each implementation minus ERM on the reversed test, in Trap~A (artifact inside the ROI, orange circles) and
+Trap~B (outside, blue squares); crossed 95\% CIs.}\label{fig:r8traps}\end{figure}
+\input{tables/r8_traps.tex}
+
+\subsection{R9: the location effect is graded}
+Table~\ref{tab:r9}, Table~\ref{tab:r9b} and Figure~\ref{fig:r9}. In every cohort the mask gain falls as more of the
+artifact lies inside the ROI: slope \sSevenSlopeisic{} (hair), \sSevenSlopethyroid{} (thyroid), \sSevenSlopecapsule{}
+(capsule) and \sSevenSlopeovary{} (ovary); \sSevenNHNine{} of \sSevenNHNineOf{} supported after Holm adjustment, with a
+perfectly monotone ordering of the bins in every cohort. The two traps of Stages~3--6 are the ends of a continuous
+dependence, not an artefact of the thresholds. For hair the gain passes through zero near $r=$ \sSevenZeroIsic{} and
+becomes a harm when almost all of the hair lies on the lesion (\sSevenGisicbFive{} for $r\ge0.75$, against
+\sSevenGisicbOne{} for $r<0.1$). For calipers and debris the gain shrinks several-fold (capsule
+\sSevenGcapsulebOne{} $\to$ \sSevenGcapsulebFive; thyroid \sSevenGthyroidbOne{} $\to$ \sSevenGthyroidbFive) but stays
+non-negative, for the reason given above: masking also removes on-screen clutter. The ovary cohort had too few images
+with intermediate overlap and was analysed with three bins after the registered merge rule
+(\sSevenBinsovary{} bins).
+\input{tables/r9_slopes.tex}
+\begin{figure}[H]\centering\includegraphics[width=\linewidth]{figures/r9_dose.pdf}
+\caption{Mask gain on the reversed test against the mean overlap $r$ of each bin (filled: observed, crossed 95\% CIs;
+open: the theory's prediction from each bin's clean and correlated AUROC only).}\label{fig:r9}\end{figure}
+\input{tables/r9_bins.tex}
+
+\subsection{R10: an external test at natural prevalence}
+\paragraph{The data} After near-duplicate removal the test set has \sSevenTestImages{} images
+(\sSevenTestMelanomas{} melanomas, \sSevenTestPatients{} patients). The removal was large: \sSevenDroppedNearDuplicates{}
+images (\sSevenDropPct) were within Hamming distance 8 of an ISIC 2019 image --- \sSevenDupZerotoZero{} at distance 0,
+\sSevenDupOnetoTwo{} at 1--2, \sSevenDupThreetoFive{} at 3--5 and \sSevenDupSixtoEight{} at 6--8 --- and it removed
+melanomas less often (\sSevenDropMel) than benign lesions (\sSevenDropBen). Most removed images are therefore look-alikes
+rather than copies (below). The association that masking can amplify is present
+in both datasets: in-lesion hair on \sSevenHairisicTwoZeroOneNinemel{} of ISIC 2019 melanomas and
+\sSevenHairisicTwoZeroOneNineben{} of benign lesions, and on \sSevenHairisicTwoZeroTwoZeromel{} and
+\sSevenHairisicTwoZeroTwoZeroben{} in ISIC 2020.
+\paragraph{AUROC} Tables~\ref{tab:r10m} and \ref{tab:r10b}, Figure~\ref{fig:r10}. On all ISIC 2020 pairs masking
+\emph{improves} the AUROC (\sSevenBmaskermall; ERM \sSevenNmermauc, mask \sSevenNmmaskauc) --- masking is the best arm by
+overall AUROC. The improvement comes entirely from the shortcut-aligned pairs (\sSevenBmaskermeasy); on the
+shortcut-conflicting pairs masking lowers the AUROC (\sSevenBmaskermhard; H10a \textbf{supported}, but only just: the upper
+bound is \sSevenBhimaskerm). This is the Stage~5 signature --- right for the wrong reason on aligned cases, wrong on
+conflicting ones --- on patients the model never saw, without any resampling. An external validation that reported only
+the overall AUROC would recommend masking. Group balancing recovers the conflicting pairs (\sSevenBbalancedmaskhard{}
+over mask; H10c \textbf{supported}) at a cost on aligned pairs (\sSevenBbalancedmaskeasy) and overall
+(\sSevenBbalancedmaskall); combining masking with group balancing gives the highest cross-group AUROC
+(\sSevenNmmaskbalancedcrossgroup, against ERM \sSevenNmermcrossgroup{} and mask \sSevenNmmaskcrossgroup).
+\input{tables/r10_metrics.tex}
+\input{tables/r10_boot.tex}
+\begin{figure}[H]\centering\includegraphics[width=0.75\linewidth]{figures/r10_pairs.pdf}
+\caption{ISIC 2020: AUROC differences on all, hard (shortcut-conflicting) and easy (shortcut-aligned) pairs; crossed
+95\% CIs.}\label{fig:r10}\end{figure}
+\paragraph{Operating points} Table~\ref{tab:r10op}. The AUROC effect does \emph{not} translate into a detectable
+sensitivity loss at a fixed threshold: at OP5 (validation sensitivity $\ge0.90$) the sensitivity among melanomas without
+in-lesion hair changes by \sSevenOpOPFiveconf{} (H10b \textbf{not supported}); at OP1 masking even raises sensitivity
+without significance (\sSevenOpOPOnesens), and at OP2--OP4 it raises specificity (OP2 \sSevenOpOPTwospec). The clinical
+consequence shown on the thyroid split of Stage~5 is therefore not reproduced here.
+\input{tables/r10_op.tex}
+
+\subsection{R11: the theory predicts results it had not seen}
+Table~\ref{tab:r11} and Figure~\ref{fig:r11}. Fitted only to each cell's clean and correlated AUROC, the theory's
+predictions of the \sSevenTN{} held-out reversed AUROCs have a mean absolute error of \sSevenTMae{} (Pearson $r=$
+\sSevenTR; \sSevenTWithin{} within 0.05), against \sSevenTMaeSym{} for the symmetric-reversal heuristic and
+\sSevenTMaeClean{} for ``reversed = clean''. It gets the sign of all \sSevenTTwoN{} R8 crossovers right (\sSevenTTwoSign{} of
+\sSevenTTwoN; $r=$ \sSevenTTwoR, MAE \sSevenTTwoMae), the sign of \sSevenTThreeSign{} of \sSevenTThreeN{} dose-response slopes
+(MAE \sSevenTThreeMae) and of \sSevenTBinSign{} of \sSevenTBinN{} bin gains. By the registered rule the verdict is
+\textbf{\sSevenTVerdict}. The difference from Stage~5's verdict (a qualitative account) is one of scope, not of rule:
+Stage~5's cell set included chest radiographs, where one near-zero crossover had the wrong sign; the cells here are frozen
+DINOv2 encoders with linear heads on four cohorts --- the setting the theory assumes.
+\input{tables/r11.tex}
+\begin{figure}[H]\centering\includegraphics[width=\linewidth]{figures/r11_theory.pdf}
+\caption{Prospective test of the theory. Left: predicted versus observed reversed AUROC for every R8 and R9 cell. Middle:
+R8 crossovers. Right: R9 dose-response slopes. Grey lines are the identity.}\label{fig:r11}\end{figure}
+
+\section{What failed or changed}
+\begin{itemize}[leftmargin=*]\itemsep1pt
+\item \textbf{H8b} holds in \sSevenHEightbConN{} of \sSevenHEightbConOf{} contrasts: partial removal is weaker than mean
+fill for debris and ovarian calipers (blur) and for hair and debris (box crop), not otherwise; black fill gives a larger
+hair crossover than mean fill.
+\item \textbf{H10a} is supported by a margin that disappears at the third decimal; \textbf{H10b} is not supported: on
+ISIC 2020 masking does not measurably lower sensitivity at a fixed operating point.
+\item \textbf{Near-duplicate removal} discarded \sSevenDropPct{} of ISIC 2020. The rule was registered and uses no labels,
+but \sSevenDupSixtoEight{} of the \sSevenDroppedNearDuplicates{} removed images are at distance 6--8, where a perceptual
+hash also matches merely similar dermoscopy images, and melanomas were removed less often than benign lesions; the test
+set is smaller than necessary, and a sensitivity analysis with a stricter distance was not run.
+\item \textbf{The ovary} dose-response has only three bins.
+\item \textbf{Scope}: R8--R10 use one encoder (DINOv2 ViT-B/14); R10 is dermoscopy only; the prospective theory test
+covers frozen-encoder linear heads only.
+\item No deviation from the registration. During the run only the execution was changed (parallel head fitting and
+bootstraps, one BLAS thread per process, feature extraction in a separate process, batch size 128 for the new views);
+data, seeds, models, estimands and bootstrap replicates are those registered, and the reproducibility gate was passed
+exactly.
+\end{itemize}
+
+\section{Anticipated questions}
+\paragraph{Why test several masking implementations if the theory already says what masking does?} Because the theory
+treats masking abstractly (it lowers the disease signal and removes the out-of-ROI artifact signal). Real implementations
+differ in what they leave behind --- a black border, blurred context, nearby pixels --- and a reviewer can reasonably
+suspect that one of them escapes the law. None does.
+\paragraph{Why does blur work as well as mean fill for hair but not for debris?} A 16-px Gaussian blur removes structures
+a few pixels wide --- hair --- almost completely, so for hair it is effectively full removal. Capsule debris and bubbles
+are large, low-frequency blobs that remain recognisable after blurring, so part of the out-of-ROI shortcut survives
+(\sSevenCcapsulemaskblur{} weaker crossover).
+\paragraph{Why is black fill stronger than mean fill for hair?} Not established. Black fill removes slightly more disease
+context than mean fill inside Trap~A (clean AUROC \sSevenDisicmaskblacktrapAclean{} against \sSevenDisicmasktrapAclean{}) and
+gains slightly more in Trap~B, which widens the crossover; why a black background does this for DINOv2 was not examined.
+\paragraph{Why do the thyroid, capsule and ovary gains stay positive at $r\approx0.9$?} Masking removes more than the
+artifact: on-screen annotations, scanner overlays and clutter outside the ROI also carry label information in the
+training environment (Stage~3). The location law is about the part of the gain that the artifact's position controls, and
+that part falls monotonically; for hair, where masking also removes disease context (Stage~2), the net gain becomes a harm.
+\paragraph{Why is masking the best arm on ISIC 2020 by overall AUROC if it amplifies a shortcut?} Because the shortcut
+agrees with the label in ISIC 2020 too: in-lesion hair is more common on melanomas. A model that relies more on in-lesion
+hair gains on the many aligned pairs and loses on the fewer conflicting ones, and the aligned pairs dominate the overall
+AUROC. This is exactly why the location law matters for external validation: the harm is invisible in the headline metric.
+\paragraph{Why is the AUROC harm not visible at the operating points?} The hard-pair AUROC compares melanomas without hair
+with benign lesions \emph{with} hair; a fixed threshold instead compares each melanoma with a threshold learned on ISIC
+2019. Masking moved that threshold (specificity rises at OP2--OP4), and with \sSevenTestMelanomas{} melanomas the
+sensitivity intervals are wide. On the thyroid split of Stage~5 the loss was large enough to show at every operating point;
+on ISIC 2020 it is not.
+\paragraph{Why were so many ISIC 2020 images removed, and does it matter?} The registered rule removes any ISIC 2020 image
+within Hamming distance 8 of any ISIC 2019 image, the same threshold used to group near-duplicates for leakage-safe splits
+(Stage~1). Dermoscopy images share a global layout (a central dark lesion on skin), so at distances 6--8 the hash also
+matches different images. Only \sSevenDupZerotoZero{} removed images were exact
+copies; \sSevenDupSixtoEight{} were at distance 6--8. The rule errs on the side of removing leakage and uses no labels, but
+it removed melanomas less often than benign lesions (\sSevenDropMel{} against \sSevenDropBen), so it slightly raised the
+melanoma share of the test set. Whether the hard-pair effect depends on it can be checked with a stricter distance.
+\paragraph{Does the ``quantitatively predictive'' verdict replace Stage~5's ``qualitative account''?} No. Each verdict
+belongs to its registered cell set. The defensible statement is: across all cohorts (Stage~5) the theory is a qualitative
+account; for frozen-encoder linear heads on the four real-artifact cohorts it predicted \sSevenTN{} new cells
+prospectively within \sSevenTMae{} AUROC and met the registered criterion.
+
+\section{Conclusion}
+\textbf{Supported.} The location crossover is independent of the masking implementation (\sSevenNPrimOK{} of \sSevenNPrim{} tests; H8a \sSevenHEightaN{} of \sSevenHEightaOf); it is
+graded in the real overlap in all four cohorts (H9); on an external, patient-level test set at natural prevalence
+masking lowers the AUROC on shortcut-conflicting pairs while raising it overall (H10a, borderline), and group balancing
+recovers those pairs (H10c); the theory met its registered criterion for quantitative prediction on \sSevenTN{} prospective
+cells. \textbf{Qualified.} Partial-removal views are weaker than mean fill in only \sSevenHEightbConN{} of \sSevenHEightbConOf{} contrasts (H8b), the
+external AUROC harm is small, and near-duplicate removal was aggressive. \textbf{Not supported.} A sensitivity loss at a
+fixed operating point on ISIC 2020 (H10b).
+
+\section{Questions for the supervisor}
+\begin{enumerate}\itemsep1pt
+\item Should the masking-implementation result (R8) and the dose-response (R9) enter the main text, as the direct answers
+to ``is mean fill a strawman?'' and ``are the traps hand-picked?''?
+\item Is the ISIC 2020 result --- overall improvement, conflicting-pair harm, no operating-point effect --- best presented
+as an argument for subgroup reporting in external validation rather than as a clinical harm?
+\item May the paper now say that the theory \emph{predicts} for frozen-encoder linear probes, keeping ``qualitative
+account'' for the full cell set?
+\item Should the near-duplicate sensitivity analysis (a stricter hash distance) be run before submission?
+\end{enumerate}
+
+\bibliographystyle{plainnat}
+\bibliography{../common/references}
+\end{document}
