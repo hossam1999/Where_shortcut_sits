@@ -1,0 +1,13 @@
+cohort,cell,image_id,overlap_r,artifact_px,roi_file,overlay_file,committed_roi,committed_overlay,donor
+isic_hair,in_roi,ISIC_0029128,0.5340344596106511,22345.0,figures/examples/isic_hair_in_roi_roi.png,figures_local/examples/isic_hair_in_roi_overlay.png,True,False,
+isic_hair,out_roi,ISIC_0032508,0.0,270.0,figures/examples/isic_hair_out_roi_roi.png,figures_local/examples/isic_hair_out_roi_overlay.png,True,False,
+thyroid_calipers,in_roi,tr_2520,0.9306759098786829,1731.0,figures_local/examples/thyroid_calipers_in_roi_roi.png,figures_local/examples/thyroid_calipers_in_roi_overlay.png,False,False,
+thyroid_calipers,out_roi,te_0195,0.10173160173160173,462.0,figures_local/examples/thyroid_calipers_out_roi_roi.png,figures_local/examples/thyroid_calipers_out_roi_overlay.png,False,False,
+ovary_calipers,in_roi,ov_444,1.0,1426.0,figures/examples/ovary_calipers_in_roi_roi.png,figures/examples/ovary_calipers_in_roi_overlay.png,True,True,
+ovary_calipers,out_roi,ov_229,0.0,2086.0,figures/examples/ovary_calipers_out_roi_roi.png,figures/examples/ovary_calipers_out_roi_overlay.png,True,True,
+capsule_debris,in_roi,see12707,0.7398854278553527,27930.0,figures/examples/capsule_debris_in_roi_roi.png,figures/examples/capsule_debris_in_roi_overlay.png,True,True,
+capsule_debris,out_roi,see10404,0.004978638947757931,29727.0,figures/examples/capsule_debris_out_roi_roi.png,figures/examples/capsule_debris_out_roi_overlay.png,True,True,
+ovary,transplant,ov_148,1.0,,figures/examples/ovary_transplant_in_roi.png,figures/examples/ovary_transplant_in_roi.png,True,True,ov_540
+ovary,neutral_paste,ov_148,1.0,,figures/examples/ovary_neutral_paste_in_roi.png,figures/examples/ovary_neutral_paste_in_roi.png,True,True,ov_540
+capsule,transplant,see08850,1.0,,figures/examples/capsule_transplant_in_roi.png,figures/examples/capsule_transplant_in_roi.png,True,True,see01707
+capsule,neutral_paste,see08850,1.0,,figures/examples/capsule_neutral_paste_in_roi.png,figures/examples/capsule_neutral_paste_in_roi.png,True,True,see01707
