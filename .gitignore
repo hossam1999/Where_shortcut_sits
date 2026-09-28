@@ -29,3 +29,7 @@ results/finetune/**/*_smoke/
 
 # round 7: smoke runs (never committed)
 results/round7/_smoke/
+
+# round 8: smoke runs and per-source scoreboard parts (regenerable; never committed)
+results/round8/_smoke/
+results/round8/scoreboard_parts/
