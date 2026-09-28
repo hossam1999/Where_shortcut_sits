@@ -75,9 +75,12 @@ def locrand_plan(tr: pd.DataFrame, info: pd.DataFrame, pl: dict, allowed: set, k
                 version[i] = v["k"]
                 break
     m = info.reindex(ids)
-    trm = tr.assign(a_any=m.present.astype(int).to_numpy(),
+    pres = m.present.fillna(False).astype(bool).to_numpy()
+    inside = m.r.fillna(0).to_numpy() >= 0.5
+    trm = tr.assign(a_any=pres.astype(int), a_in=(pres & inside).astype(int), a_out=(pres & ~inside).astype(int),
                     recipient=m.recipient.fillna(False).astype(bool).to_numpy() & np.array([i in version for i in ids]))
-    plan = CA.paste_plan(trm, np.random.default_rng(stable_int("r8_ft_paste", *key)), "locrand")
+    # Amendment 1: the location-matched plan (in-ROI and out-of-ROI presence each equalised across classes)
+    plan = CA.paste_plan(trm, np.random.default_rng(stable_int("r8_ft_paste", *key)), "loc_matched")
     return plan, version, CA.plan_balance(trm, plan)
 
 
@@ -128,7 +131,8 @@ def run(part: str, smoke: bool):
         cid = key[1] * 10 + key[2]
         allowed = set(ta.image_id.astype(str)) | set(tr.image_id.astype(str))
         plan, version, st = locrand_plan(tr, info, pl, allowed, key)
-        stats.append({"trap": key[0], "seed": key[1], "fold": key[2], **st, "n_in": sum(v == "in" for v in plan.values())})
+        stats.append({"trap": key[0], "seed": key[1], "fold": key[2], **st, "n_in": sum(v == "in" for v in plan.values()),
+                      "n_out": sum(v == "out" for v in plan.values())})
         # all evaluation sets in one pass: rows keep their env tag
         ev = pd.concat([d.assign(_env=e) for e, d in tests.items()], ignore_index=True)
         # train_eval also predicts test_corr / test_rev: give it two validation rows (discarded)

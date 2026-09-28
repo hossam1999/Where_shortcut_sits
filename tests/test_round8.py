@@ -198,3 +198,24 @@ def test_smoke_envs_never_contain_test_images():
          "clean": pd.DataFrame({"image_id": ["t2"]})}
     S = C.smoke_envs_from_validation(E)
     assert S["test_rev"].image_id.tolist() == ["v"] and S["clean"].image_id.tolist() == ["v"]
+
+
+# ----------------------------------------------------------------------------------------------- Amendment 1
+def test_fixed_sequence_stops_at_first_failure():
+    A = _load("analyse")
+    block = [{"candidate": c, "p_iut": p} for c, p in
+             (("mask_cmc", 0.01), ("full_cmc", 0.2), ("mask_bal", 0.001), ("locrand_loc", 0.001))]
+    out = A.fixed_sequence(block)
+    assert [b["dominates"] for b in out] == [True, False, False, False]
+    assert [b["sequence"] for b in out] == ["tested", "tested", "not tested in the sequence", "not tested in the sequence"]
+    assert C.PRIMARY == ("mask_cmc", "full_cmc", "mask_bal", "locrand_loc")
+
+
+def test_loss_and_inconclusive_labels():
+    A = _load("analyse")
+    arr = np.linspace(-0.05, 0.05, 1001)
+    assert A.summarise(-0.02, arr - 0.02, 0.0, "SUP")["label"] == "loss"
+    assert A.summarise(0.01, arr + 0.01, 0.0, "SUP")["label"] == "inconclusive"
+    assert A.summarise(-0.006, arr - 0.006, 0.01, "NI")["label"] == "loss"          # below -margin/2
+    assert A.summarise(-0.004, arr - 0.004, 0.01, "NI")["label"] == "inconclusive"
+    assert A.summarise(0.2, np.full(100, 0.2), 0.01, "NI")["label"] == "met"

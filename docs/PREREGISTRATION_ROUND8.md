@@ -219,4 +219,20 @@ bootstraps) → `results/round8/SUMMARY.md`. Predictions and features are never 
 verdicts and summaries are.
 
 ## Amendments
-(none)
+
+### Amendment 1 (2026-09-28, overnight run; before any development or confirmation run)
+Made by the author after review of this registration, before any development or confirmation result existed. No
+margin, cell, estimand or seed is changed. Implemented in `scripts/round8/{common,analyse,ft}.py` and
+`tests/test_round8.py`; the smoke run and the unit tests were re-run before this amendment was committed.
+1. **Multiplicity across the four primary candidates**: Holm (§7) is replaced by a **fixed-sequence test** in the order
+   of `docs/ROUND8_DESIGN.md` §5c: mask_cmc → full_cmc → mask_bal(λ) → the paste candidate. Each H_c is tested at
+   one-sided 0.025 (intersection–union within the candidate, D4 as a condition, unchanged). The sequence stops at the
+   first H_c that is not rejected; later candidates are reported as "not tested in the sequence" with their unadjusted
+   p_c. The same rule applies to the verdict without ovary. D5 and R keep Holm.
+2. **The primary paste candidate is locrand_loc** (in-ROI and out-of-ROI presence each equalised across classes;
+   §3, §3.1), because masking deletes out-of-ROI pastes (the prediction of §3.1). locrand becomes descriptive. D6
+   (`locrand_ft`) uses the locrand_loc (location-matched) paste plan.
+3. **Reporting**: each failed NI or SUP component is labelled **loss** (SUP: estimate < 0; NI: estimate < −margin/2)
+   or **inconclusive** (otherwise); a failed D4 condition is a loss. "Wins where masking fails but costs elsewhere"
+   (§9) names only the components labelled loss.
+Reason: made after review of the registration, before any development or confirmation result existed.

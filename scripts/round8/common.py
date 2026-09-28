@@ -153,7 +153,8 @@ CONF_SEEDS = (8101, 8202, 8303, 8404, 8505)
 FT_TRAP_SEEDS = (8101, 8202)          # fine-tuned traps: 2 env seeds x 5 folds = 10 clusters (as FT4 of round 6)
 SMOKE_SEEDS = (99991,)
 GUARD_MARGIN = 0.005                  # same-artifact validation AUROC >= masking head's - 0.005
-PRIMARY = ("mask_cmc", "full_cmc", "mask_bal", "locrand")
+# fixed-sequence order (Amendment 1): mask_cmc -> full_cmc -> mask_bal(lambda) -> locrand_loc
+PRIMARY = ("mask_cmc", "full_cmc", "mask_bal", "locrand_loc")
 
 
 def seeds_for(stage: str, smoke: bool) -> tuple:

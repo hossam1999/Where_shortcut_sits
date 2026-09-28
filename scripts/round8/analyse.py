@@ -5,7 +5,8 @@
 Reads the confirmation predictions (git-ignored) and writes results/round8/confirm/{components,verdicts,replication,
 descriptive_all_cells}.csv and results/round8/SUMMARY.md. Every contrast is candidate − masking on shared crossed
 seed × image replicates (common.joint_replicates); one-sided bootstrap p-values; dominance = intersection–union test
-(IUT: p = max over components; a D4 violation fails it); Holm over the four primary candidates at one-sided 0.025.
+(IUT: p = max over components; a D4 violation fails it); fixed-sequence test over the four primary candidates
+(Amendment 1: mask_cmc -> full_cmc -> mask_bal -> locrand_loc, each at one-sided 0.025, stop at the first failure).
 """
 from __future__ import annotations
 
@@ -88,8 +89,11 @@ def summarise(est, arr, margin, kind):
     lo, hi = C.ci(a)
     thr = -margin if kind == "NI" else 0.0
     p = float(max((a <= thr).mean(), 1 / max(len(a), 1))) if len(a) else float("nan")
+    met = bool(np.isfinite(p) and p <= ALPHA)
+    # Amendment 1: a failed component is a "loss" (SUP: estimate < 0; NI: estimate < -margin/2), else "inconclusive"
+    label = "met" if met else ("loss" if (est < 0 if kind == "SUP" else est < -margin / 2) else "inconclusive")
     return {"estimate": est, "ci95_lo": lo, "ci95_hi": hi, "margin": margin, "test": kind, "p_one_sided": p,
-            "met": bool(np.isfinite(p) and p <= ALPHA)}
+            "met": met, "label": label}
 
 
 def primary_components(S: dict, cand: str, include_ovary: bool = True) -> list:
@@ -129,9 +133,27 @@ def primary_components(S: dict, cand: str, include_ovary: bool = True) -> list:
         for trap in ("trapA", "trapB"):
             if R and (trap, cand, "test_rev") in R and (trap, cand, "test_corr") in R:
                 rev, corr = R[(trap, cand, "test_rev")][0], R[(trap, cand, "test_corr")][0]
+                ok = bool(corr >= rev - 0.02)
                 rows.append({"component": "D4 no flipping", "cohort": f"{coh} {trap}", "estimate": corr - rev,
-                             "test": "point", "margin": 0.02, "met": bool(corr >= rev - 0.02), "p_one_sided": np.nan})
+                             "test": "point", "margin": 0.02, "met": ok, "p_one_sided": np.nan,
+                             "label": "met" if ok else "loss"})
     return rows
+
+
+def fixed_sequence(block: list) -> list:
+    """Amendment 1: candidates tested in the order of C.PRIMARY, each H_c at one-sided ALPHA (IUT within); the sequence
+    stops at the first failure and later candidates are 'not tested in the sequence' (unadjusted p_c reported)."""
+    going = True
+    for b in block:
+        p = b["p_iut"]
+        if going:
+            b["sequence"] = "tested"
+            b["dominates"] = bool(np.isfinite(p) and p <= ALPHA)
+            going = b["dominates"]
+        else:
+            b["sequence"] = "not tested in the sequence"
+            b["dominates"] = False
+    return block
 
 
 def iut(rows: list) -> tuple:
@@ -185,10 +207,7 @@ def main():
             block.append({"scope": scope, "candidate": cand, "p_iut": p, "no_flipping": flips, "components": len(rows),
                           "components_met": int(sum(bool(r["met"]) for r in rows)),
                           "all_D2_met": bool(d2) and all(r["met"] for r in d2)})
-        adj = C.holm(np.nan_to_num([b["p_iut"] for b in block], nan=1.0))
-        for b, q in zip(block, adj):
-            b["p_holm"], b["dominates"] = float(q), bool(q <= ALPHA)
-        verdicts += block
+        verdicts += fixed_sequence(block)
     comp = pd.DataFrame(comp_rows)
     ver = pd.DataFrame(verdicts)
 
@@ -279,22 +298,32 @@ def decision(ver: pd.DataFrame) -> str:
     return "no gain"
 
 
+def losses(comp: pd.DataFrame, cand: str, scope: str = "all cohorts") -> str:
+    """The components labelled 'loss' (Amendment 1) — the only ones named as costs."""
+    g = comp[(comp.scope == scope) & (comp.candidate == cand) & (comp.label == "loss")]
+    return "; ".join(f"{r.component} {r.cohort} {r.estimate:+.3f}" for r in g.itertuples()) or "none"
+
+
 def write_summary(path: Path, comp: pd.DataFrame, ver: pd.DataFrame, rep: pd.DataFrame, smoke: bool):
     lines = ["# Round 8 — does any remedy dominate ROI masking?", "",
              "Registration: `docs/PREREGISTRATION_ROUND8.md`. Frozen development choices: "
              "`results/round8/frozen_choice.json`. Every contrast is candidate − masking with a crossed seed × image 95% "
-             "interval; one-sided p; dominance = intersection–union of D1–D4; Holm over the four primary candidates "
-             "(one-sided 0.025).", ""]
+             "interval; one-sided p; dominance = intersection–union of D1–D4; fixed-sequence test over the four primary "
+             "candidates in the order mask_cmc, full_cmc, mask_bal, locrand_loc (one-sided 0.025 each; Amendment 1).", ""]
     if smoke:
         lines += ["**SMOKE RUN — validation images stand in for every test set; no number here is a result.**", ""]
-    lines += [f"**Decision (registered rule, all cohorts): {decision(ver)}**", "", "## Verdicts", "",
-              R4.md_table(ver.fillna(""))]
+    lines += [f"**Decision (registered rule, all cohorts): {decision(ver)}**", ""]
+    v = ver[(ver.scope == "all cohorts") & ver.get("all_D2_met", pd.Series(False, index=ver.index)).fillna(False).astype(bool)]
+    for cand in v.candidate:
+        lines += [f"- {cand} costs (components labelled loss): {losses(comp, cand)}"]
+    lines += ["", "## Verdicts", "", R4.md_table(ver.fillna(""))]
     for (scope, cand), g in comp.groupby(["scope", "candidate"], sort=False):
-        t = g[["component", "cohort", "test", "margin", "estimate", "ci95_lo", "ci95_hi", "p_one_sided", "met"]]
-        fails = g[~g.met.astype(bool)]
+        t = g[["component", "cohort", "test", "margin", "estimate", "ci95_lo", "ci95_hi", "p_one_sided", "label"]]
         lines += ["", f"## {cand} — {scope}", "", R4.md_table(t.fillna("")), "",
-                  "Fails: " + ("none" if fails.empty else "; ".join(
-                      f"{r.component} {r.cohort} {r.estimate:+.3f}" for r in fails.itertuples()))]
+                  "Losses: " + (lambda s: s if s else "none")("; ".join(
+                      f"{r.component} {r.cohort} {r.estimate:+.3f}" for r in g[g.label == "loss"].itertuples())),
+                  "Inconclusive: " + (lambda s: s if s else "none")("; ".join(
+                      f"{r.component} {r.cohort} {r.estimate:+.3f}" for r in g[g.label == "inconclusive"].itertuples()))]
     if len(rep):
         lines += ["", "## Replication (MedSigLIP, ConvNeXt; Trap A min(rev,corr), Holm within)", "",
                   R4.md_table(rep.fillna(""))]
