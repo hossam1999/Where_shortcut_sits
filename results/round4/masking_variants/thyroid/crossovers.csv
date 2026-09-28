@@ -1,0 +1,26 @@
+cohort,view,quantity,estimate,ci95_lo,ci95_hi,p_boot_two_sided,boot_seed,estimator
+thyroid,mask,crossover,0.2385752065741104,0.19621161077294041,0.2798182363010711,0.0001,20261001,crossed cluster x image (Poisson) bootstrap
+thyroid,mask,trapA_delta_rev,0.10928222349079852,0.08574675819200837,0.13293823065471458,0.0001,20261101,crossed cluster x image (Poisson) bootstrap
+thyroid,mask,trapA_delta_clean,0.08097518919436728,0.06251499202090932,0.09982435533886597,0.0001,20261102,crossed cluster x image (Poisson) bootstrap
+thyroid,mask,trapB_delta_rev,0.34785743006490893,0.3073727392041007,0.38799355591824797,0.0001,20261103,crossed cluster x image (Poisson) bootstrap
+thyroid,mask,trapB_delta_clean,0.16607484536999956,0.11812669728096929,0.21281016578003317,0.0001,20261104,crossed cluster x image (Poisson) bootstrap
+thyroid,mask_black,crossover,0.22306799133036384,0.18108611776684222,0.26462471966125944,0.0001,20261002,crossed cluster x image (Poisson) bootstrap
+thyroid,mask_black,trapA_delta_rev,0.11593482330574392,0.09280231434414458,0.13973050510340274,0.0001,20261111,crossed cluster x image (Poisson) bootstrap
+thyroid,mask_black,trapA_delta_clean,0.06684288884631354,0.0444628214336215,0.08930291324184153,0.0001,20261112,crossed cluster x image (Poisson) bootstrap
+thyroid,mask_black,trapB_delta_rev,0.33900281463610776,0.29738360272895015,0.37865679149522746,0.0001,20261113,crossed cluster x image (Poisson) bootstrap
+thyroid,mask_black,trapB_delta_clean,0.1707359943042762,0.12468633344230476,0.2177153551068651,0.0001,20261114,crossed cluster x image (Poisson) bootstrap
+thyroid,mask_blur,crossover,0.21849829476541896,0.17693925087972906,0.25835728221223714,0.0001,20261003,crossed cluster x image (Poisson) bootstrap
+thyroid,mask_blur,trapA_delta_rev,0.10749496542566997,0.08559268510897816,0.13019823724799837,0.0001,20261121,crossed cluster x image (Poisson) bootstrap
+thyroid,mask_blur,trapA_delta_clean,0.06486073857649202,0.04411977569345998,0.08524763567655168,0.0001,20261122,crossed cluster x image (Poisson) bootstrap
+thyroid,mask_blur,trapB_delta_rev,0.32599326019108893,0.28636686643857884,0.36474835114770454,0.0001,20261123,crossed cluster x image (Poisson) bootstrap
+thyroid,mask_blur,trapB_delta_clean,0.15382236461531615,0.10883820147161692,0.19852747757976527,0.0001,20261124,crossed cluster x image (Poisson) bootstrap
+thyroid,crop_box,crossover,0.2455202781240043,0.20625274034805405,0.28515312599992515,0.0001,20261004,crossed cluster x image (Poisson) bootstrap
+thyroid,crop_box,trapA_delta_rev,-0.006097182790173105,-0.022706729121712663,0.010814697505501316,0.4684,20261131,crossed cluster x image (Poisson) bootstrap
+thyroid,crop_box,trapA_delta_clean,0.014862933869783167,-0.0033748399965044217,0.032467586007169806,0.1036,20261132,crossed cluster x image (Poisson) bootstrap
+thyroid,crop_box,trapB_delta_rev,0.23942309533383116,0.20250620226608035,0.2772774812782771,0.0001,20261133,crossed cluster x image (Poisson) bootstrap
+thyroid,crop_box,trapB_delta_clean,0.08724469363235883,0.03958505669421298,0.13472223682948437,0.001,20261134,crossed cluster x image (Poisson) bootstrap
+thyroid,crop_mask,crossover,0.24989305604352746,0.21008168108087083,0.2900286752845269,0.0001,20261005,crossed cluster x image (Poisson) bootstrap
+thyroid,crop_mask,trapA_delta_rev,0.09242605093179182,0.07025305986809097,0.11518617611743896,0.0001,20261141,crossed cluster x image (Poisson) bootstrap
+thyroid,crop_mask,trapA_delta_clean,0.08261148098476864,0.06286173494368734,0.10125146161261196,0.0001,20261142,crossed cluster x image (Poisson) bootstrap
+thyroid,crop_mask,trapB_delta_rev,0.34231910697531925,0.3027127874356437,0.38132294579448217,0.0001,20261143,crossed cluster x image (Poisson) bootstrap
+thyroid,crop_mask,trapB_delta_clean,0.1737551728741156,0.12914484912206187,0.21947400611366238,0.0001,20261144,crossed cluster x image (Poisson) bootstrap

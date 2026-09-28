@@ -1,0 +1,2 @@
+cohort,status,n_bins,bins,slope,ci95_lo,ci95_hi,p_boot_two_sided,boot_seed,spearman_x_gain,zero_crossing_r,estimator
+thyroid,tested,5,"b1, b2, b3, b4, b5",-0.24955402065213778,-0.3028680007937986,-0.1967442422598512,0.0001,20261399,-0.9999999999999999,,crossed cluster x image (Poisson) bootstrap

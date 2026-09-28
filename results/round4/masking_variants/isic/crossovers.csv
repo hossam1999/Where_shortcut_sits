@@ -1,0 +1,26 @@
+cohort,view,quantity,estimate,ci95_lo,ci95_hi,p_boot_two_sided,boot_seed,estimator
+isic,mask,crossover,0.1474504004676915,0.11107981335341208,0.18522028216986836,0.0001,20261001,crossed cluster x image (Poisson) bootstrap
+isic,mask,trapA_delta_rev,-0.04944619629483641,-0.08282778654276524,-0.017289602372068582,0.0024,20261101,crossed cluster x image (Poisson) bootstrap
+isic,mask,trapA_delta_clean,-0.022751754750004526,-0.04502326926163545,-0.00146377201887533,0.0368,20261102,crossed cluster x image (Poisson) bootstrap
+isic,mask,trapB_delta_rev,0.09800420417285509,0.060133265116157006,0.1362948099829336,0.0001,20261103,crossed cluster x image (Poisson) bootstrap
+isic,mask,trapB_delta_clean,-0.014111979213655456,-0.04142416537828451,0.013604950414428541,0.3102,20261104,crossed cluster x image (Poisson) bootstrap
+isic,mask_black,crossover,0.17038853581561347,0.1333207782141731,0.20657025728879067,0.0001,20261002,crossed cluster x image (Poisson) bootstrap
+isic,mask_black,trapA_delta_rev,-0.061443042964130855,-0.09662830509923705,-0.027619050328618736,0.0006,20261111,crossed cluster x image (Poisson) bootstrap
+isic,mask_black,trapA_delta_clean,-0.02847341260533014,-0.052124420774970516,-0.005387680743405075,0.0138,20261112,crossed cluster x image (Poisson) bootstrap
+isic,mask_black,trapB_delta_rev,0.10894549285148261,0.07067380500819342,0.1476969796766674,0.0001,20261113,crossed cluster x image (Poisson) bootstrap
+isic,mask_black,trapB_delta_clean,-0.0058470615831544,-0.033937386151362624,0.02245627278826347,0.6954,20261114,crossed cluster x image (Poisson) bootstrap
+isic,mask_blur,crossover,0.15383650421024497,0.11665913924219631,0.19136370291421376,0.0001,20261003,crossed cluster x image (Poisson) bootstrap
+isic,mask_blur,trapA_delta_rev,-0.022513992905005897,-0.051426316881813205,0.005398280477734603,0.1116,20261121,crossed cluster x image (Poisson) bootstrap
+isic,mask_blur,trapA_delta_clean,-0.003991717940852757,-0.02186214245010908,0.013849391647448944,0.6622,20261122,crossed cluster x image (Poisson) bootstrap
+isic,mask_blur,trapB_delta_rev,0.13132251130523906,0.09576762464169357,0.16642384755749906,0.0001,20261123,crossed cluster x image (Poisson) bootstrap
+isic,mask_blur,trapB_delta_clean,0.02024593565615924,-0.005817670587705346,0.04688770245001618,0.1356,20261124,crossed cluster x image (Poisson) bootstrap
+isic,crop_box,crossover,0.09135643703548627,0.06449112642027624,0.11737788690242798,0.0001,20261004,crossed cluster x image (Poisson) bootstrap
+isic,crop_box,trapA_delta_rev,-0.017026803310997228,-0.03776444519889218,0.0027718252192455274,0.0882,20261131,crossed cluster x image (Poisson) bootstrap
+isic,crop_box,trapA_delta_clean,-0.004823983688493549,-0.018987274763046118,0.009320769680495854,0.4964,20261132,crossed cluster x image (Poisson) bootstrap
+isic,crop_box,trapB_delta_rev,0.07432963372448904,0.049297156291752915,0.09801287213300297,0.0001,20261133,crossed cluster x image (Poisson) bootstrap
+isic,crop_box,trapB_delta_clean,0.009868551632052802,-0.007119704916531592,0.026365201960430695,0.2528,20261134,crossed cluster x image (Poisson) bootstrap
+isic,crop_mask,crossover,0.1540255272768977,0.12135761683477435,0.18658291643128233,0.0001,20261005,crossed cluster x image (Poisson) bootstrap
+isic,crop_mask,trapA_delta_rev,-0.02966101694915253,-0.06166164390507061,0.0015539787562866287,0.06,20261141,crossed cluster x image (Poisson) bootstrap
+isic,crop_mask,trapA_delta_clean,-0.009868551632052847,-0.03019206595832084,0.010634546231757308,0.3442,20261142,crossed cluster x image (Poisson) bootstrap
+isic,crop_mask,trapB_delta_rev,0.12436451032774516,0.08891673723335435,0.16028762420705503,0.0001,20261143,crossed cluster x image (Poisson) bootstrap
+isic,crop_mask,trapB_delta_clean,0.010741866801392951,-0.01371142170189769,0.03496274932818855,0.3858,20261144,crossed cluster x image (Poisson) bootstrap

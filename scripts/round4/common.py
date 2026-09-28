@@ -6,10 +6,20 @@ file is ever written.
 """
 from __future__ import annotations
 
+import os
+
+# One BLAS thread per process. Must be set before numpy loads. This container allows only
+# 2816 processes total; OpenBLAS otherwise starts one thread per core inside every worker.
+for _k in ("OMP_NUM_THREADS", "OPENBLAS_NUM_THREADS", "MKL_NUM_THREADS", "NUMEXPR_NUM_THREADS"):
+    os.environ.setdefault(_k, "1")
+
 import importlib.util
 import json
-import os
+import multiprocessing as mp
+import subprocess
+import sys
 import time
+from concurrent.futures import ProcessPoolExecutor
 from pathlib import Path
 
 import numpy as np
@@ -77,6 +87,54 @@ def smoke_subset(c: pd.DataFrame, traps, n=150, seed=0) -> pd.DataFrame:
 
 def smoke_envs(envs: dict) -> dict:
     return {k: v for k, v in envs.items() if k[1] == 42 and k[2] == 0}
+
+
+def n_cpus() -> int:
+    """Worker processes that fit under the container pid ceiling (2816) even if a library
+    still opens a few threads. liblinear is single-threaded, so 16-way is the useful limit."""
+    return min(16, os.cpu_count() or 8)
+
+
+def _limit_blas_threads():
+    """Inherited by forked workers. Do not call threadpoolctl here: asking OpenBLAS to
+    shrink its pool first creates one thread per core and exhausts the pid limit."""
+    for k in ("OMP_NUM_THREADS", "OPENBLAS_NUM_THREADS", "MKL_NUM_THREADS", "NUMEXPR_NUM_THREADS"):
+        os.environ[k] = "1"
+
+
+def parallel_map(fn, jobs):
+    """Run independent jobs (each carries its own seed) across the CPUs. Result order matches `jobs`."""
+    jobs = list(jobs)
+    if len(jobs) <= 1:
+        return [fn(j) for j in jobs]
+    n = min(len(jobs), n_cpus())
+    ctx = mp.get_context("fork")
+    with ProcessPoolExecutor(n, mp_context=ctx, initializer=_limit_blas_threads) as ex:
+        return list(ex.map(fn, jobs))
+
+
+def views_ready(pool, views, fdir: Path, fname=lambda v: f"{v}.npz") -> bool:
+    return all(_covered(fdir / fname(v), pool) for v in views)
+
+
+def gpu_then_cpu(needs_gpu: bool, extract_fn, fit_fn) -> str:
+    """Feature extraction initializes CUDA. Forking afterwards can deadlock, so extraction runs in a
+    child process and the parent (which never touches the GPU) fits heads on every core.
+    Returns "extracted" in the child, which must then exit before analysis."""
+    if os.environ.get("WTSS_EXTRACT_ONLY") == "1":
+        extract_fn()
+        return "extracted"
+    if needs_gpu:
+        env = os.environ.copy()
+        env["WTSS_EXTRACT_ONLY"] = "1"
+        log(stage="gpu-child", why="extract away from the fitter so every core can be used")
+        rc = subprocess.call([sys.executable, *sys.argv], env=env)
+        if rc != 0:
+            raise SystemExit(rc)
+    else:
+        extract_fn()
+    fit_fn()
+    return "fit"
 
 
 def _covered(f: Path, pool) -> bool:

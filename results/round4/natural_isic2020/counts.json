@@ -1,0 +1,19 @@
+{
+ "tau_pred_hair_px": 200,
+ "isic2020_with_lesion_mask": 32997,
+ "dropped_near_duplicates": 7657,
+ "dropped_same_name": 0,
+ "test_images": 25340,
+ "test_melanomas": 483,
+ "test_patients": 2044,
+ "isic2019_train_val_images": 25179,
+ "isic2019_melanomas": 4509,
+ "isic2019_in_lesion_hair": {
+  "P(a|y=1)": 0.30538922155688625,
+  "P(a|y=0)": 0.19646831156265118
+ },
+ "isic2020_in_lesion_hair": {
+  "P(a|y=1)": 0.16149068322981366,
+  "P(a|y=0)": 0.07647745101983344
+ }
+}

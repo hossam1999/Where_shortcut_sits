@@ -1,0 +1,5 @@
+cohort,view,quantity,estimate,ci95_lo,ci95_hi,p_boot_two_sided,boot_seed,estimator
+capsule,mask_black,C_mask_minus_C_v,0.009612241609762928,-0.0014795853134142555,0.02055832189460626,0.088,20261202,crossed cluster x image (Poisson) bootstrap
+capsule,mask_blur,C_mask_minus_C_v,0.09921924334792007,0.06690241105900852,0.13212826966545166,0.0001,20261203,crossed cluster x image (Poisson) bootstrap
+capsule,crop_box,C_mask_minus_C_v,0.0592954652822663,0.03198202337205233,0.08718790976464406,0.0001,20261204,crossed cluster x image (Poisson) bootstrap
+capsule,crop_mask,C_mask_minus_C_v,0.019086379225324034,0.0009777278915060709,0.036689163481143865,0.0378,20261205,crossed cluster x image (Poisson) bootstrap

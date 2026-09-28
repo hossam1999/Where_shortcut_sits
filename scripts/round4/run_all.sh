@@ -1,12 +1,15 @@
 #!/usr/bin/env bash
 # Round 4 end to end (docs/PREREGISTRATION_ROUND4.md). Resumable: finished steps are skipped on a re-run.
+# GPU extraction runs in a child process; head fitting and the 10,000-replicate bootstrap then use every CPU.
+# Seeds, replicate counts and copied feature rows are unchanged. New views are encoded at batch size 128.
 #   bash scripts/round4/run_all.sh smoke     # quick check of every script on small subsets (results/round4/_smoke/)
 #   bash scripts/round4/run_all.sh           # the full pre-registered analyses
 # A failing step is reported and the remaining steps still run; the list of failures is printed at the end.
 set -uo pipefail
 cd "$(dirname "$0")/../.."
 : "${WTSS_DATA:?set WTSS_DATA to the data root (the directory that contains isic2019/, us/, capsule/, ovary/, external/)}"
-export PYTHONPATH="$PWD/src${PYTHONPATH:+:$PYTHONPATH}" WTSS_BOOTSTRAP=crossed TQDM_DISABLE=1
+export PYTHONPATH="$PWD/src${PYTHONPATH:+:$PYTHONPATH}" WTSS_BOOTSTRAP=crossed TQDM_DISABLE=1 \
+  OMP_NUM_THREADS=1 OPENBLAS_NUM_THREADS=1 MKL_NUM_THREADS=1 NUMEXPR_NUM_THREADS=1
 S=""; [ "${1:-}" = "smoke" ] && S="--smoke"
 LOG=results/round4/logs${S:+/smoke}; mkdir -p "$LOG"
 FAILED=()

@@ -1,0 +1,2 @@
+cohort,status,n_bins,bins,slope,ci95_lo,ci95_hi,p_boot_two_sided,boot_seed,spearman_x_gain,zero_crossing_r,estimator
+isic,tested,5,"b1, b2, b3, b4, b5",-0.2349860111171224,-0.27603765544124864,-0.19418621205814812,0.0001,20261399,-0.9999999999999999,0.40111046594583394,crossed cluster x image (Poisson) bootstrap

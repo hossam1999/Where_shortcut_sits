@@ -8,10 +8,15 @@ operating_points.csv, SUMMARY.md}.
 """
 from __future__ import annotations
 
+import os
+
+for _k in ("OMP_NUM_THREADS", "OPENBLAS_NUM_THREADS", "MKL_NUM_THREADS", "NUMEXPR_NUM_THREADS"):
+    os.environ.setdefault(_k, "1")
+
 import argparse
 import json
 import sys
-from concurrent.futures import ProcessPoolExecutor, ThreadPoolExecutor
+from concurrent.futures import ThreadPoolExecutor
 from pathlib import Path
 
 import numpy as np
@@ -87,8 +92,9 @@ def prepare(out: Path, smoke=False):
     f = out / "dedup.csv"
     if not f.exists():
         K.log(step="phash", n19=len(c19), n20=len(d))
-        h19 = phash_all(cache, c19.image_id.tolist())
-        h20 = phash_all(cache, d.image_id.tolist())
+        threads = min(32, K.n_cpus())
+        h19 = phash_all(cache, c19.image_id.tolist(), threads=threads)
+        h20 = phash_all(cache, d.image_id.tolist(), threads=threads)
         best_d, best_j = np.full(len(h20), 64, np.int32), np.zeros(len(h20), np.int64)
         for k in range(0, len(h20), 256):
             x = popcount64(h20[k:k + 256, None] ^ h19[None, :])
@@ -124,6 +130,11 @@ def _boot(job):
     q, a1, a0, seed = job
     from wtss import stats_crossed as X
     return X.hierarchical_paired_bootstrap(q, a1, a0, "clean", N_BOOT, seed)
+
+
+def _op_job(job):
+    pv, arm, ref, seed = job
+    return op_crossed(pv, arm, ref, seed)
 
 
 def op_crossed(p, arm, ref, seed, hard_pos_a=0):
@@ -198,18 +209,16 @@ def analyse(out: Path, c19, test):
                 q = te[sel & te.method.isin([a1, a0])][["seed", "method", "env", "image_id", "y", "prob"]]
                 jobs.append((q, a1, a0, 20261401 + 10 * k + ("hard", "easy", "all").index(name)))
                 keys.append((name, a1, a0))
-    with ProcessPoolExecutor(4) as ex:
-        res = list(ex.map(_boot, jobs))
+    res = K.parallel_map(_boot, jobs)
     b = pd.DataFrame([{"subset": n, "arm": a1, "ref": a0, "estimate": r["seed_delta_mean"], "ci95_lo": r["ci95_lo"],
                        "ci95_hi": r["ci95_hi"], "p_boot_two_sided": r["p_boot_two_sided"], "boot_seed": j[3],
                        "estimator": r.get("estimator", "")} for (n, a1, a0), r, j in zip(keys, res, jobs)])
     b.to_csv(out / "natural_boot.csv", index=False)
     print(b.round(3).to_string(), flush=True)
     pv = p[p.env.isin(["clean", "val_groups"])]
-    ops = []
-    for k, (arm, ref) in enumerate([("mask", "erm"), ("balanced", "mask")]):
-        if {arm, ref} <= set(pv.method):
-            ops += op_crossed(pv, arm, ref, 20261501 + k)
+    op_jobs = [(pv, arm, ref, 20261501 + k) for k, (arm, ref) in enumerate([("mask", "erm"), ("balanced", "mask")])
+               if {arm, ref} <= set(pv.method)]
+    ops = [row for part in K.parallel_map(_op_job, op_jobs) for row in part]
     o = pd.DataFrame(ops)
     o.to_csv(out / "operating_points.csv", index=False)
     return mm, b, o
@@ -247,8 +256,10 @@ def main():
     ap.add_argument("--smoke", action="store_true")
     ap.add_argument("--device", default="cuda")
     ap.add_argument("--workers", type=int, default=8)
-    ap.add_argument("--n_jobs", type=int, default=4)
+    ap.add_argument("--batch_size", type=int, default=128)
+    ap.add_argument("--n_jobs", type=int, default=0, help="head-fitting processes (0 = up to 16)")
     a = ap.parse_args()
+    a.n_jobs = min(a.n_jobs or K.n_cpus(), K.n_cpus())
     out = K.OUT / ("_smoke" if a.smoke else "") / "natural_isic2020"
     out.mkdir(parents=True, exist_ok=True)
     rn, c19, test, cache, fdir19 = prepare(out, a.smoke)
@@ -281,9 +292,18 @@ def main():
     srcs = {v: [(fdir19 / fname(v), lambda i: None if i.startswith(PFX) else i)] +
             ([(f20 / fname(v), strip)] if v in ("erm", "mask") else []) for v in ("erm", "mask", "mask_insert")}
     if not (out / "predictions.csv.gz").exists():
-        K.assemble_views(pool, ("erm", "mask", "mask_insert"), rend, fdir, srcs, dev, fname=fname, workers=a.workers)
-        run_spec(envs, cache, K.BACKBONE, out, fdir, [], arms=rn.ARMS, traps=("natural",), device=dev, insert_fn=ins,
-                 insert_tag="_generic", folds=[0], save_val=True, workers=a.workers, n_jobs=a.n_jobs)
+        views = ("erm", "mask", "mask_insert")
+
+        def extract():
+            K.assemble_views(pool, views, rend, fdir, srcs, dev, fname=fname, batch_size=a.batch_size, workers=a.workers)
+
+        def fit():
+            run_spec(envs, cache, K.BACKBONE, out, fdir, [], arms=rn.ARMS, traps=("natural",), device=dev, insert_fn=ins,
+                     insert_tag="_generic", folds=[0], save_val=True, batch_size=a.batch_size, workers=a.workers,
+                     n_jobs=a.n_jobs)
+
+        if K.gpu_then_cpu(not K.views_ready(pool, views, fdir, fname), extract, fit) == "extracted":
+            return
     mm, b, o = analyse(out, c19, test)
     write_summary(out, mm, b, o)
 

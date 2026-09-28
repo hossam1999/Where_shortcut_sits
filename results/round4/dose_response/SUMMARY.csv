@@ -1,0 +1,5 @@
+cohort,status,n_bins,bins,slope,ci95_lo,ci95_hi,p_boot_two_sided,boot_seed,spearman_x_gain,zero_crossing_r,estimator,p_holm,H9_supported
+isic,tested,5,"b1, b2, b3, b4, b5",-0.2349860111171224,-0.2760376554412486,-0.1941862120581481,0.0001,20261399,-1.0,0.4011104659458339,crossed cluster x image (Poisson) bootstrap,0.0004,True
+thyroid,tested,5,"b1, b2, b3, b4, b5",-0.2495540206521377,-0.3028680007937986,-0.1967442422598512,0.0001,20261399,-1.0,,crossed cluster x image (Poisson) bootstrap,0.0004,True
+capsule,tested,5,"b1, b2, b3, b4, b5",-0.4887891782320888,-0.5385298342288636,-0.4380493732387056,0.0001,20261399,-1.0,,crossed cluster x image (Poisson) bootstrap,0.0004,True
+ovary,tested,3,"b1, b2b3b4, b5",-0.204511563458564,-0.2998838564705873,-0.109330418550143,0.0001,20261399,-1.0,,crossed cluster x image (Poisson) bootstrap,0.0004,True

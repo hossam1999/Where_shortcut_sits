@@ -8,10 +8,14 @@ metrics_per_seed.csv}; results/round4/masking_variants/SUMMARY.{csv,md}.
 """
 from __future__ import annotations
 
+import os
+
+for _k in ("OMP_NUM_THREADS", "OPENBLAS_NUM_THREADS", "MKL_NUM_THREADS", "NUMEXPR_NUM_THREADS"):
+    os.environ.setdefault(_k, "1")
+
 import argparse
 import json
 import sys
-from concurrent.futures import ProcessPoolExecutor
 from pathlib import Path
 
 import cv2
@@ -125,8 +129,7 @@ def analyse(out: Path, cohort: str, smoke: bool):
         if v != "mask":
             jobs.append(("cross", (sub("trapB", "test_rev", ("mask", v)), sub("trapA", "test_rev", ("mask", v)), "mask", v), 20261201 + k))
             keys.append((v, "C_mask_minus_C_v"))
-    with ProcessPoolExecutor(4) as ex:
-        res = list(ex.map(_boot, jobs))
+    res = K.parallel_map(_boot, jobs)
     rows = [{"cohort": cohort, "view": v, "quantity": q, "estimate": r["seed_delta_mean"], "ci95_lo": r["ci95_lo"],
              "ci95_hi": r["ci95_hi"], "p_boot_two_sided": r["p_boot_two_sided"], "boot_seed": j[2],
              "estimator": r.get("estimator", "")} for (v, q), r, j in zip(keys, res, jobs)]
@@ -181,9 +184,11 @@ def main():
     ap.add_argument("--smoke", action="store_true")
     ap.add_argument("--summary", action="store_true")
     ap.add_argument("--device", default="cuda")
-    ap.add_argument("--workers", type=int, default=6)
-    ap.add_argument("--n_jobs", type=int, default=4)
+    ap.add_argument("--workers", type=int, default=8)
+    ap.add_argument("--batch_size", type=int, default=128)  # 24 GB GPU; 64 left most of the card idle
+    ap.add_argument("--n_jobs", type=int, default=0, help="head-fitting processes (0 = up to 16)")
     a = ap.parse_args()
+    a.n_jobs = min(a.n_jobs or K.n_cpus(), K.n_cpus())
     root = K.OUT / ("_smoke" if a.smoke else "") / "masking_variants"
     if a.summary:
         return summary(root)
@@ -218,11 +223,19 @@ def main():
         examples(cache, ex_ids, rend, K.OUT / "_local_examples" / f"masking_{a.cohort}")
     fdir = K.FEAT / ("_smoke" if a.smoke else "") / "masking_variants" / a.cohort / K.BDIR
     srcs = {v: [(d / f"{v}.npz", lambda i: i) for d in co["old"]] for v in ("erm", "mask")}
+    views = ("erm",) + VIEWS
     if not (out / "predictions.csv.gz").exists():
-        K.assemble_views(pool, ("erm",) + VIEWS, rend, fdir, srcs, dev, workers=a.workers)
-        run_spec(envs, cache, K.BACKBONE, out, fdir, co["donors"], arms=("erm", "mask"), device=dev, workers=a.workers,
-                 n_jobs=a.n_jobs, folds=[0] if a.smoke else range(5), extra_ctx={"extra_views": VARIANTS, "extra_renderers": variant_renderers(cache),
-                                             "view_arms": [(v, v, False) for v in VARIANTS]})
+        def extract():
+            K.assemble_views(pool, views, rend, fdir, srcs, dev, batch_size=a.batch_size, workers=a.workers)
+
+        def fit():
+            run_spec(envs, cache, K.BACKBONE, out, fdir, co["donors"], arms=("erm", "mask"), device=dev,
+                     batch_size=a.batch_size, workers=a.workers, n_jobs=a.n_jobs, folds=[0] if a.smoke else range(5),
+                     extra_ctx={"extra_views": VARIANTS, "extra_renderers": variant_renderers(cache),
+                                "view_arms": [(v, v, False) for v in VARIANTS]})
+
+        if K.gpu_then_cpu(not K.views_ready(pool, views, fdir), extract, fit) == "extracted":
+            return
     analyse(out, a.cohort, a.smoke)
 
 

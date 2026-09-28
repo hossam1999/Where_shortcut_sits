@@ -1,0 +1,5 @@
+cohort,view,quantity,estimate,ci95_lo,ci95_hi,p_boot_two_sided,boot_seed,estimator
+thyroid,mask_black,C_mask_minus_C_v,0.015507215243746564,-0.0042150484211728725,0.03585379505727122,0.1226,20261202,crossed cluster x image (Poisson) bootstrap
+thyroid,mask_blur,C_mask_minus_C_v,0.020076911808691457,-0.007951455974573885,0.04867751038010452,0.1608,20261203,crossed cluster x image (Poisson) bootstrap
+thyroid,crop_box,C_mask_minus_C_v,-0.006945071549893855,-0.049266547206134985,0.03194782540795785,0.758,20261204,crossed cluster x image (Poisson) bootstrap
+thyroid,crop_mask,C_mask_minus_C_v,-0.011317849469417052,-0.03743802439755787,0.014181237113491648,0.3908,20261205,crossed cluster x image (Poisson) bootstrap

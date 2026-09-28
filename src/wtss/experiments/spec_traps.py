@@ -2,6 +2,11 @@
 predictions are pooled per seed, every paired comparison is on identical image IDs."""
 from __future__ import annotations
 
+import os
+
+for _k in ("OMP_NUM_THREADS", "OPENBLAS_NUM_THREADS", "MKL_NUM_THREADS", "NUMEXPR_NUM_THREADS"):
+    os.environ.setdefault(_k, "1")
+
 import gc
 from pathlib import Path
 from typing import Dict, Sequence
@@ -27,9 +32,8 @@ _CTX: dict = {}
 def _fold_job(job):
     """Fit every arm for one (trap, seed, fold); runs in a forked worker (reads _CTX)."""
     trap, seed, k = job
-    from threadpoolctl import threadpool_limits
-
-    threadpool_limits(2)  # 4 workers x 2 BLAS threads = 8 cores (avoids oversubscription)
+    # BLAS threads are fixed by OPENBLAS_NUM_THREADS (set before numpy loads). Calling
+    # threadpoolctl here makes OpenBLAS spawn one thread per core and trips the pid limit.
     V, pos, envs, arms = _CTX["V"], _CTX["pos"], _CTX["envs"], _CTX["arms"]
     X = lambda v, d: V[v][[pos[i] for i in d.image_id]]
     frames = []
@@ -200,24 +204,29 @@ def run_spec(envs: Dict, cache, backend_name: str, out_dir: Path, feat_dir: Path
     V = {v: extract_view(backend, pool, rend[v], feat_dir / fname(v), device, batch_size, workers, desc=v)
          for v in sorted(need)}
     del backend; gc.collect(); torch.cuda.empty_cache()
+    cpus = os.cpu_count() or 8
+    blas = max(1, min(2, cpus // max(n_jobs, 1)))  # keep total BLAS threads near the core count
     global _CTX
     _CTX = dict(V=V, pos=pos, envs=envs, arms=arms, backend_name=backend_name, extra_meta=extra_meta or {},
-                save_val=save_val, **(extra_ctx or {}))
+                save_val=save_val, blas_threads=blas, **(extra_ctx or {}))
     seeds = sorted({k[1] for k in envs})
     jobs = [(trap, seed, k) for trap in traps for seed in seeds for k in folds]
     import multiprocessing as mp
     frames = []
-    # (seed, fold) fits are independent: fork-based pool shares the cached features copy-on-write
+    # (seed, fold) fits are independent: fork-based pool shares the cached features copy-on-write.
     # Forking after torch/CUDA ran in this process can deadlock workers (OpenMP / CUDA state). Parallelise only
-    # when no backbone was loaded here (all views cached); otherwise fit sequentially.
-    if cached and n_jobs > 1:
-        with mp.get_context("fork").Pool(n_jobs) as pool:
+    # when no backbone was loaded here and this process has not initialized CUDA.
+    if cached and n_jobs > 1 and not torch.cuda.is_initialized():
+        with mp.get_context("fork").Pool(min(n_jobs, 16, len(jobs))) as pool:
             results = pool.imap(_fold_job, jobs)
             for (trap, seed, k), fr in zip(jobs, results):
                 frames.extend(fr)
                 if k == max(folds):
                     print(f"[spec] {backend_name} {trap} seed {seed} done", flush=True)
     else:
+        if cached and n_jobs > 1 and torch.cuda.is_initialized():
+            print("[spec] CUDA is already active in this process; fitting one job at a time. "
+                  "Round 4 extracts features in a child process so the fitter can use every core.", flush=True)
         for trap, seed, k in jobs:
             frames.extend(_fold_job((trap, seed, k)))
             if k == max(folds):
