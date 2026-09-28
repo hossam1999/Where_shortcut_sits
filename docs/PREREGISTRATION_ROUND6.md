@@ -96,3 +96,20 @@ and schedule of `wtss.experiments.finetune`. No test image is scored during sele
 - **FT3**: at OP2, sensitivity among malignant nodules with an in-ROI caliper, mask − ERM < 0. This subgroup was post hoc
   in Stage 5; for this model it is registered before any result.
 - **FT4**: thyroid trap crossover (mask − ERM)_B − (mask − ERM)_A > 0.
+
+## Amendment 1 (2026-09-28, before any analysis of this round)
+Reason: the coverage of our images by each source is unknown, and some sources overlap the training data of our own
+labellers. Changes:
+1. **Exclude labeller training data from every agreement statistic**: ISIC 2018 Task 1 training images (training set of
+   the lesion U-Net) from the IMA++ comparison; the expert-masked frames of figshare 27645021 (training set of the
+   capsule probe) from the capsule comparison. Their counts are reported.
+2. **Coverage report first**: A0 writes, per cohort and source, the number of matched images after exclusion, by cell
+   and by Y. Sources with ≥ 200 matched images are analysed as registered; 50–199 are reported descriptively only;
+   fewer than 50 are reported as not feasible.
+3. **Additional independent hair masks**: the Mendeley hair masks of Kabir et al. (doi:10.17632/j5ywpd2p27.2,
+   CC BY 4.0; already on the machine) are compared with our hair masks where they overlap (Dice; r recomputed with
+   our lesion mask; trap-class agreement), under the same coverage rule.
+4. **Larger human rating for calipers (A4b, optional)**: because no public caliper annotation exists, an additional
+   stratified sample of 150 thyroid and 150 ovary images (50 per cell, 25 per diagnosis; fixed seed; blind key hashed
+   and committed before rating) is added to the rating tool for presence and location of calipers only. If the author
+   does not rate it, this is reported.
