@@ -1,0 +1,32 @@
+{
+ "bins": [
+  {
+   "name": "b1",
+   "lo": 0.0,
+   "hi": 0.1,
+   "x": 0.0042601497835649945,
+   "gate_ok": true
+  },
+  {
+   "name": "b2b3b4",
+   "lo": 0.1,
+   "hi": 0.75,
+   "x": 0.5310287928656695,
+   "gate_ok": true
+  },
+  {
+   "name": "b5",
+   "lo": 0.75,
+   "hi": 1.000000001,
+   "x": 0.9085932512488251,
+   "gate_ok": true
+  }
+ ],
+ "merges": [
+  "b2 failed the gate -> merged with b3 into b2b3",
+  "b2b3 failed the gate -> merged with b4 into b2b3b4"
+ ],
+ "status": "tested",
+ "min_cell": 25,
+ "min_rev_pos": 40
+}
