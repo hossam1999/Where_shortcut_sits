@@ -88,6 +88,7 @@ def main():
                     help="capsule sensitivity: Trap B also requires lesion coverage (roi_cover) below this")
     ap.add_argument("--groups_csv", default=None, help="leakage sensitivity: csv image_id,group_emb overriding the groups")
     ap.add_argument("--match", action="store_true", help="covariate-matched trap cells (docs/PREREGISTRATION_REVIEW2.md, R1)")
+    ap.add_argument("--match_caliper", type=float, default=0.2, help="calliper in SD of the logit (R7 uses 0.05)")
     a = ap.parse_args()
     if a.match and a.tag == "main":
         raise SystemExit("the matched variant must use its own --tag (it would overwrite the main results)")
@@ -108,7 +109,7 @@ def main():
     match_rep = None
     if a.match:
         from wtss.matching import match_traps
-        c, match_rep = match_traps(a.cohort, c)
+        c, match_rep = match_traps(a.cohort, c, caliper_sd=a.match_caliper)
     envs = build_spec_envs(c, group_col="group")
     rows = []
     for trap in ("trapA", "trapB"):

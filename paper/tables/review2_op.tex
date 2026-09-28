@@ -1,10 +1,10 @@
 \begin{table}[t]\centering\scriptsize
-\caption{Masking versus ERM on the unaltered official thyroid test split at five operating points fixed on validation data (mean over five seeds; $\Delta$ = mask $-$ ERM with 95\% hierarchical bootstrap CI, thresholds re-estimated in every replicate). \emph{Conflicting}: malignant nodules with an in-ROI caliper (the caliper marks benign nodules in this dataset) and benign nodules without one.}\label{tab:op}
-\resizebox{\linewidth}{!}{\begin{tabular}{lcccc}\toprule
-Threshold on validation & Sensitivity ERM $\to$ mask & $\Delta$ sensitivity & $\Delta$ sensitivity, conflicting & $\Delta$ specificity \\\midrule
-max.\ balanced accuracy & 0.699 $\to$ 0.424 & $-0.275$ [$-0.399, -0.182$] & $-0.479$ [$-0.583, -0.362$] & $+0.202$ [$+0.140, +0.300$] \\
-specificity $\ge0.80$ & 0.557 $\to$ 0.355 & $-0.202$ [$-0.265, -0.134$] & $-0.372$ [$-0.436, -0.291$] & $+0.117$ [$+0.082, +0.151$] \\
-specificity $\ge0.90$ & 0.371 $\to$ 0.219 & $-0.152$ [$-0.225, -0.071$] & $-0.236$ [$-0.345, -0.132$] & $+0.075$ [$+0.043, +0.109$] \\
-sensitivity $\ge0.80$ & 0.753 $\to$ 0.380 & $-0.373$ [$-0.431, -0.310$] & $-0.546$ [$-0.614, -0.480$] & $+0.278$ [$+0.229, +0.329$] \\
-sensitivity $\ge0.90$ & 0.869 $\to$ 0.588 & $-0.281$ [$-0.353, -0.221$] & $-0.462$ [$-0.560, -0.369$] & $+0.339$ [$+0.269, +0.396$] \\
+\caption{Masking versus ERM on the unaltered, patient-disjoint official thyroid test split (614 images, 236 malignant) at five operating points fixed on validation data (mean over five seeds; $\Delta$ = mask $-$ ERM with 95\% crossed seed$\times$image bootstrap CI, thresholds re-estimated in every replicate). \emph{Conflicting}: the 78 malignant nodules with an in-ROI caliper (the caliper marks benign nodules in this dataset). The subgroup was defined after the first unaltered-data analysis; the operating-point test in it was registered before these numbers were computed.}\label{tab:op}
+\resizebox{\linewidth}{!}{\begin{tabular}{lccccc}\toprule
+Threshold on validation & Sens.\ ERM $\to$ mask & $\Delta$ sensitivity & Sens.\ conflicting ($n=78$) & $\Delta$ sensitivity, conflicting & $\Delta$ specificity \\\midrule
+max.\ balanced accuracy & 0.699 $\to$ 0.424 & $-0.275$ [$-0.435, -0.138$] & 0.703 $\to$ 0.223 & $-0.479$ [$-0.640, -0.313$] & $+0.202$ [$+0.115, +0.330$] \\
+specificity $\ge0.80$ & 0.557 $\to$ 0.355 & $-0.202$ [$-0.300, -0.100$] & 0.549 $\to$ 0.177 & $-0.372$ [$-0.499, -0.236$] & $+0.117$ [$+0.059, +0.172$] \\
+specificity $\ge0.90$ & 0.371 $\to$ 0.219 & $-0.152$ [$-0.253, -0.043$] & 0.336 $\to$ 0.100 & $-0.236$ [$-0.383, -0.089$] & $+0.075$ [$+0.029, +0.122$] \\
+sensitivity $\ge0.80$ & 0.753 $\to$ 0.380 & $-0.373$ [$-0.469, -0.270$] & 0.744 $\to$ 0.197 & $-0.546$ [$-0.671, -0.421$] & $+0.278$ [$+0.203, +0.359$] \\
+sensitivity $\ge0.90$ & 0.869 $\to$ 0.588 & $-0.281$ [$-0.391, -0.178$] & 0.862 $\to$ 0.400 & $-0.462$ [$-0.614, -0.310$] & $+0.339$ [$+0.236, +0.425$] \\
 \bottomrule\end{tabular}}\end{table}

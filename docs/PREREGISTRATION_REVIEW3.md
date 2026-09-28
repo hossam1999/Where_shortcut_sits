@@ -52,3 +52,17 @@ Within-label balance after R1 matching exceeded |SMD| 0.1 for some covariates (h
 0.14). Re-run R1 with a calliper of 0.05 SD of the logit (everything else unchanged; `--tag matched05`). Reported:
 images kept, max |SMD| pooled and within label, crossover (crossed CI). Descriptive sensitivity analysis; no new
 claim.
+
+## Results (results/review3/*.csv)
+- **R5.** Neutral-paste interaction: hair +0.204 [+0.164, +0.244], thyroid +0.145 [+0.130, +0.161], ovary +0.052
+  [+0.021, +0.084], capsule +0.459 [+0.383, +0.535] (ratio to artifact 0.81 / 0.52 / 0.71 / 0.92). N3 (artifact −
+  neutral, Holm): hair +0.049 [+0.026, +0.072] supported, thyroid +0.132 [+0.116, +0.148] supported, ovary +0.022
+  [−0.002, +0.048] not, capsule +0.037 [−0.017, +0.093] not. **Decision rule: not attributable to the artifact alone in
+  any cohort** (neutral ratio ≥ 0.25 everywhere); the paper states that pasting seams contribute. N1: neutral pastes are
+  learned as shortcuts (ERM correlated − reversed gap 0.09–0.42). Deviation: 213/340 capsule and 56/860 hair neutral
+  windows came from artifact-free images (no artifact-free window in the donor).
+- **R6.** Crossed CIs 1.1–2.2× wider than per-seed CIs; all headline claims still exclude zero (table S15); downgraded:
+  balancing transplant interaction for ovary/capsule, MSK all-pairs mask − ERM. Thyroid subgroup (n = 78): −0.372
+  [−0.499, −0.236].
+- **R7.** Calliper 0.05: kept 1,777 / 299 / 165 per trap; crossover +0.124 [+0.086, +0.162], +0.218 [+0.165, +0.270],
+  +0.152 [+0.041, +0.265]; within-label max |SMD| 0.18 / 0.19 / 0.18 (not improved); capsule still infeasible.

@@ -128,7 +128,7 @@ def _greedy_match(la: np.ndarray, lb: np.ndarray, caliper: float, key: str) -> L
     return pairs
 
 
-def match_traps(name: str, c: pd.DataFrame, strata: Sequence[str] = ()) -> Tuple[pd.DataFrame, Dict]:
+def match_traps(name: str, c: pd.DataFrame, strata: Sequence[str] = (), caliper_sd: float = 0.2) -> Tuple[pd.DataFrame, Dict]:
     """Returns c with trapA_A1 / trapB_A1 restricted to matched images, plus a report (balance before/after)."""
     tab, num, cat = covariates(name, c)
     c = c.copy()
@@ -146,7 +146,7 @@ def match_traps(name: str, c: pd.DataFrame, strata: Sequence[str] = ()) -> Tuple
         lr = LogisticRegression(C=1.0, max_iter=2000).fit(X, g)
         p = np.clip(lr.predict_proba(X)[:, 1], 1e-6, 1 - 1e-6)
         logit = np.log(p / (1 - p))
-        cal = 0.2 * logit.std()
+        cal = caliper_sd * logit.std()
         ia, ib = np.flatnonzero(g == 1), np.flatnonzero(g == 0)
         pairs = _greedy_match(logit[ia], logit[ib], cal, str(key))
         ids = u.image_id.to_numpy()

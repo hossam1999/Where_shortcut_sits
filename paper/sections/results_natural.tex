@@ -15,8 +15,10 @@ each seed's validation split at five operating points and compared test sensitiv
 (Table~\ref{tab:op}; the bootstrap re-estimates the thresholds in every replicate). On the official thyroid split
 masking lowers sensitivity at all five operating points, each with a CI excluding zero, for example from
 \input{tables/review2_op_inline}. Specificity rises correspondingly, so part of the change is a shift of the score distribution; but the loss is
-concentrated where the shortcut conflicts with the label: among malignant nodules that carry an in-ROI caliper, at a
-validation specificity of 0.80 sensitivity falls by \input{tables/review2_op_conflict}. The pre-registered decision rule
+concentrated where the shortcut conflicts with the label: among the malignant nodules that carry an in-ROI caliper,
+at a validation specificity of 0.80 sensitivity falls by \input{tables/review2_op_conflict}. This subgroup was
+defined after the first unaltered-data analysis (where its AUROC harm was found); the operating-point test in it was
+registered before the numbers were computed. The pre-registered decision rule
 (loss at the maximal-balanced-accuracy threshold and at $\ge3$ of the four other operating points) is met. On capsule
 endoscopy, where masking improves AUROC overall, it lowers the sensitivity for erosions carrying debris on the lesion
 at the two high-sensitivity operating points (Supplement~S9).

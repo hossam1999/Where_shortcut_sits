@@ -413,6 +413,23 @@ only open candidate; it lacks nodule masks and needs a re-validated caliper dete
 \subsection*{Fine-tuned replication per cohort}\label{sec:review2ft}
 \input{../../paper/tables/review2_ft_text}
 
+\section{Stage 15 --- third review round: paste-edge control, crossed bootstrap, full matching report}\label{sec:review3}
+Seven further comments (registry \S\ref{doc:REVIEW3_RESPONSE}; registration \S\ref{doc:PREREGISTRATION_REVIEW3}, pushed
+before computing).
+\begin{itemize}[leftmargin=*]\itemsep1pt
+\item \mixed\ \textbf{Paste-edge control.} Neutral tissue pasted through the same masks reproduces 52--92\% of the
+transplant interaction; the artifact adds significantly only for hair and thyroid. The transplant shows that \emph{where}
+a label-correlated pattern sits decides what masking removes on fixed images, not anything about a particular artifact's
+appearance or the harm of real artifacts in context.
+\item \ok\ \textbf{Crossed bootstrap.} The per-seed bootstrap understated CIs when seeds share test images (1.1--2.2$\times$);
+every headline claim survives the crossed estimator; the thyroid subgroup ($n=78$) is $-0.372$ [$-0.499,-0.236$].
+\item \ok\ \textbf{Matching reported fully}; the effect shrinks by 9--16\% with a stricter calliper and survives; within-label
+imbalance up to 0.19 remains. Capsule's real-trap crossover is descriptive. The ovary fine-tuned model is not evaluable.
+\item \ok\ \textbf{Provenance of labels} (human vs automatic) and \textbf{registration status} of every analysis family are
+tabulated in the paper supplement (S1, S4).
+\end{itemize}
+\input{../../paper/tables/review3_paste_edge}
+
 \section{External review and responses}\label{sec:review}
 \begin{enumerate}[leftmargin=*]\itemsep1pt
 \item ``U-MtE needs no mask'' is misleading (it uses the ROI mask) --- \emph{valid}; wording fixed everywhere.

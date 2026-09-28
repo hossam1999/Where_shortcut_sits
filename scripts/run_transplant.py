@@ -26,7 +26,7 @@ from wtss.data.isic2019_spec import load_spec_cohort, pool_groups
 from wtss.experiments.real_traps import RealCache
 from wtss.experiments.synthetic import SynthConfig, analyse_synthetic, run_synthetic
 from wtss.stats import safe_auc
-from wtss.transplant import extract_instance, make_drawer, place
+from wtss.transplant import extract_instance, make_drawer, neutral_instance, place
 
 spec = importlib.util.spec_from_file_location("rt", Path(__file__).with_name("run_thyroid_traps.py"))
 rt = importlib.util.module_from_spec(spec); spec.loader.exec_module(rt)
@@ -104,11 +104,13 @@ def main():
     ap.add_argument("--backbone", default="dino518")
     ap.add_argument("--arms", nargs="+", default=list(ARMS))
     ap.add_argument("--placements_only", action="store_true")
+    ap.add_argument("--neutral", action="store_true",
+                    help="paste-edge control: same masks/positions/compositing, neutral tissue (PREREGISTRATION_REVIEW3 R5)")
     a = ap.parse_args()
     rec, donors, cache, kind, roi_name = setup(a.cohort)
     wd = paths.ensure(paths.DATA / "review2")
     pl = placements(a.cohort, rec, donors, cache, kind, wd / f"transplant_{a.cohort}_placements.json")
-    out = paths.ensure(paths.RESULTS / "review2" / "transplant" / f"{a.cohort}_{a.backbone}")
+    out = paths.ensure(paths.RESULTS / "review2" / "transplant" / (f"{a.cohort}_{a.backbone}" + ("_neutral" if a.neutral else "")))
     rec["feasible"] = rec.image_id.isin(pl)
     cnt = rec.groupby(["y", "feasible"]).size().unstack(fill_value=0)
     cnt.to_csv(out / "feasibility_by_label.csv")
@@ -116,6 +118,18 @@ def main():
     d = rec[rec.feasible].drop(columns="feasible").reset_index(drop=True)
     used = sorted({p["donor"] for p in pl.values()})
     inst = {k: extract_instance(cache.get(k)[2], cache.get(k)[0], kind) for k in used}
+    if a.neutral:  # per recipient: the donor's mask filled with neutral tissue (keyed by recipient -> own instance)
+        free = rec.image_id.tolist()
+        fb = [cache.get(free[j])[0] for j in np.random.default_rng(20260928).choice(len(free), 20, replace=False)]
+        ninst, src = {}, []
+        for i, p in pl.items():
+            dn = p["donor"]
+            drgb, _, dart = cache.get(dn)
+            ninst[i] = neutral_instance(inst[dn], drgb, dart, f"{i}|{dn}", fb)
+            src.append(ninst[i]["source"])
+        pl = {i: {**p, "donor": i, "orig_donor": p["donor"]} for i, p in pl.items()}  # drawer looks up by "donor"
+        inst = ninst
+        pd.Series(src).value_counts().to_csv(out / "neutral_source_counts.csv")
     pd.DataFrame([{"image_id": i, **{k: v for k, v in p.items() if k in ("donor", "op", "n_px")},
                    "ov_in": p["1.00"]["achieved"], "ov_out": p["0.00"]["achieved"]} for i, p in pl.items()]
                  ).to_csv(out / "placements.csv", index=False)
@@ -134,7 +148,8 @@ def main():
         fdir = out / f"fold{k}"
         if not (fdir / "predictions.csv.gz").exists():
             df = d.assign(split=np.where(fold == k, "test", np.where(fold == (k + 1) % 5, "val", "train")))
-            cfg = SynthConfig(phase="corr", overlaps=(0.0, 1.0), seeds=SEEDS, arms=a.arms, artifact="transplant",
+            cfg = SynthConfig(phase="corr", overlaps=(0.0, 1.0), seeds=SEEDS, arms=a.arms,
+                              artifact="transplant_neutral" if a.neutral else "transplant",
                               drawer=make_drawer(pl, inst), workers=8, batch_size=64)
             run_synthetic(Cohort(f"{a.cohort}_transplant", df, roi_name), a.backbone, pl, fdir, cfg,
                           paths.CACHE / "images", loaders, paths.CACHE / "features", torch.device("cuda"))

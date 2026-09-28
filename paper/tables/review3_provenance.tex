@@ -1,0 +1,9 @@
+\begin{center}\scriptsize\begin{tabular}{p{2.6cm}p{5.2cm}p{6.8cm}}\toprule
+Cohort & Human annotation & Automatic annotation (model or rules) \\\midrule
+ISIC 2019 (hair) & diagnoses (ISIC); lesion masks for the 10,015 HAM10000 images (manual) & lesion masks for the other 15,316 images (U-Net trained on manual ISIC 2018 masks); hair/ruler masks (published semi-automatic masks) \\
+TN3K/TNCD (thyroid) & nodule masks; benign/malignant from cytological biopsy & caliper masks for all 3,493 images (rule-based detector) \\
+MMOTU (ovary) & tumour masks; tumour categories & caliper masks for all 1,202 images (same detector) \\
+SEE-AI (capsule) & lesion boxes and classes; contamination masks for 22 frames (expert) & contamination masks for 5,459 of 5,481 frames (linear probe on DINOv2 patch tokens, IoU 0.62) \\
+NIH ChestX-ray14 & drain labels of pneumothorax images (NEATX, non-expert annotators) & disease labels (text-mined from reports); lung masks (TorchXRayVision); drain labels of pneumothorax-negative images (drain detector) \\
+All cohorts & --- & visual audits of the automatic labels (by the analysis team, which includes an AI agent; no clinician) \\
+\bottomrule\end{tabular}\end{center}

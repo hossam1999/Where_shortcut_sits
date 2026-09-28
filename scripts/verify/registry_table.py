@@ -33,8 +33,10 @@ RESULTS = {
     "PREREGISTRATION_UMTE_ABLATION.md": ["results/ablation_umte"],
     "PREREGISTRATION_FT_ERASE.md": "pickaxe:mte_post",  # new arms in an existing folder: first commit adding the arm
     "PREREGISTRATION_FT_UMTE.md": "pickaxe:umte_ft",
-    "PREREGISTRATION_REVIEW2.md": ["results/review2/repro", "results/review2/matched", "results/review2/transplant",
-                                   "results/review2/operating_points.csv"],
+    "PREREGISTRATION_REVIEW2.md": ["results/review2/transplant", "results/review2/operating_points.csv",
+                                   "results/review2/R0_R1_crossovers.csv"],
+    "PREREGISTRATION_REVIEW3.md": ["results/review3", "results/review2/transplant/isic_dino518_neutral",
+                                   "results/review2/transplant/thyroid_dino518_neutral"],
 }
 
 

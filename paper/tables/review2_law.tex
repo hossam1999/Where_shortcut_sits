@@ -1,11 +1,11 @@
 \begin{table}[t]\centering\small
-\caption{The location law under three designs (reversed-test AUROC, DINOv2 ViT-B/14; 95\% hierarchical bootstrap CIs). \emph{Real traps}: crossover $[\text{mask}-\text{ERM}]_{\text{out}}-[\text{mask}-\text{ERM}]_{\text{in}}$ between different artifact-bearing images (rebuilt run). \emph{Matched}: the same after 1:1 propensity matching of the in-ROI and out-of-ROI artifact-bearing images on lesion size, artifact amount and acquisition covariates (max $|$SMD$|$ after matching). \emph{Transplant}: the same real artifact instance pasted inside or outside the ROI of the same artifact-free images (location interaction). Holm over four cohorts per design.}\label{tab:law}
+\caption{The location law under four designs (reversed-test AUROC, DINOv2 ViT-B/14; 95\% crossed seed$\times$image bootstrap CIs, Sec.~\ref{sec:setup}). \emph{Real traps}: crossover $[\text{mask}-\text{ERM}]_{\text{out}}-[\text{mask}-\text{ERM}]_{\text{in}}$ between different artifact-bearing images (rebuilt run). \emph{Matched}: the same after 1:1 propensity matching of the in-ROI and out-of-ROI artifact-bearing images (calliper 0.2 SD; Supplement~S11). \emph{Transplant}: one real artifact instance pasted inside or outside the ROI of the same artifact-free images (location interaction). \emph{Neutral paste}: neutral tissue pasted through the same masks, positions and blending (paste-edge control). Transplant and matching were designed after the real-trap results and registered before their own results; each design is its own Holm family.}\label{tab:law}
 \resizebox{\linewidth}{!}{\begin{tabular}{lccccc}\toprule
-Cohort & Real traps & Matched & $|$SMD$|_{\max}$ before/after & Transplant & $n$ transplant \\\midrule
-ISIC hair & $+0.147$ [$+0.119, +0.177$] & $+0.154$ [$+0.125, +0.184$] & 2.13 / 0.11 & $+0.253$ [$+0.231, +0.275$] & 860 \\
-Thyroid & $+0.239$ [$+0.212, +0.264$] & $+0.238$ [$+0.207, +0.269$] & 0.53 / 0.04 & $+0.277$ [$+0.264, +0.290$] & 1,800 \\
-Ovary & $+0.170$ [$+0.116, +0.223$] & $+0.163$ [$+0.087, +0.237$] & 0.39 / 0.08 & $+0.074$ [$+0.055, +0.092$] & 348 \\
-Capsule & $+0.377$ [$+0.339, +0.412$] & $+0.230$ [$+0.125, +0.337$]$^\dagger$ & 2.57 / 0.23 & $+0.497$ [$+0.455, +0.539$] & 340 \\
+Cohort & Real traps & Matched & Transplant (artifact) & Neutral paste & Artifact $-$ neutral \\\midrule
+ISIC hair & $+0.147$ [$+0.109, +0.185$] & $+0.154$ [$+0.122, +0.187$] & $+0.253$ [$+0.214, +0.293$] & $+0.204$ [$+0.164, +0.244$] & $+0.049$ [$+0.026, +0.072$] \\
+Thyroid & $+0.239$ [$+0.196, +0.280$] & $+0.238$ [$+0.186, +0.291$] & $+0.277$ [$+0.256, +0.298$] & $+0.145$ [$+0.130, +0.161$] & $+0.132$ [$+0.116, +0.148$] \\
+Ovary & $+0.170$ [$+0.087, +0.253$] & $+0.163$ [$+0.049, +0.274$] & $+0.074$ [$+0.044, +0.104$] & $+0.052$ [$+0.021, +0.084$] & $+0.022$ [$-0.002, +0.048$] \\
+Capsule & $+0.377$ [$+0.326, +0.425$]$^\ddagger$ & infeasible$^\dagger$ & $+0.497$ [$+0.427, +0.567$] & $+0.459$ [$+0.383, +0.535$] & $+0.037$ [$-0.017, +0.093$] \\
 \bottomrule\end{tabular}}
-\par\smallskip{\footnotesize $^\dagger$Fewer than 30 matched pairs per label (pre-registered feasibility limit): exploratory only. Capsule lesions carrying debris are much larger than those with debris beside them.}
+\par\smallskip{\footnotesize $^\dagger$19 matched pairs in one label, below the pre-registered minimum of 30. $^\ddagger$Descriptive: capsule lesions carrying debris are much larger than those with debris beside them (standardised mean difference 2.6) and matching is infeasible, so this crossover is not by itself evidence about location.}
 \end{table}

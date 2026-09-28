@@ -117,3 +117,26 @@ def make_drawer(placements: Dict, instances: Dict[str, Dict]):
         return composite(img, instances[p["donor"]], p["op"], int(pp["x"]), int(pp["y"]))
 
     return draw
+
+
+def neutral_instance(inst: Dict, donor_rgb: np.ndarray, donor_art: np.ndarray, key: str,
+                     fallback_rgbs: Sequence[np.ndarray] = ()) -> Dict:
+    """Paste-edge control (docs/PREREGISTRATION_REVIEW3.md, R5): the same mask as `inst`, filled with neutral tissue
+    cut from the donor image at a window that does not touch its artifact (dilated 5 px), inside its field of view;
+    falls back to artifact-free images of the cohort. Seam geometry and compositing stay identical."""
+    h, w = inst["mask"].shape
+    rng = np.random.default_rng(stable_int("neutral_window", key))
+    for k, src in enumerate([donor_rgb, *fallback_rgbs]):
+        art = cv2.dilate((donor_art > 0).astype(np.uint8), np.ones((11, 11), np.uint8)) if k == 0 else \
+            np.zeros(src.shape[:2], np.uint8)
+        if h >= src.shape[0] or w >= src.shape[1]:
+            continue
+        box = np.ones((h, w), np.float32)
+        touch = cv2.matchTemplate(art.astype(np.float32), box, cv2.TM_CCORR)
+        fov = _window_fraction(field_of_view(src), box)
+        ok = np.argwhere((touch < 0.5) & (fov >= FOV_MIN))
+        if len(ok):
+            y, x = ok[rng.integers(len(ok))]
+            return {"mask": inst["mask"], "pix": np.ascontiguousarray(src[y:y + h, x:x + w]).copy(), "n_px": inst["n_px"],
+                    "source": "donor" if k == 0 else "artifact_free"}
+    raise ValueError(f"no neutral window for {key}")

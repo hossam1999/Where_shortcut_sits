@@ -3038,6 +3038,189 @@ the law. \textbf{F2}: thyroid is the only cohort with a published benchmark on t
 
 }
 
+\section{Third review round: verification and responses}\label{doc:REVIEW3_RESPONSE}
+\noindent\textit{Source: docs/REVIEW3\_RESPONSE.md}
+
+{\small
+Seven comments on the second-review results, checked against the result files first. New analyses are registered in
+\texttt{docs/PREREGISTRATION\_REVIEW3.md} (pushed before computing).
+
+\subsubsection{Verification}\label{verification}
+
+{ % do not increment counter
+\begin{longtable}[]{@{}llll@{}}
+\toprule\noalign{}
+\# & Comment & Verdict & Evidence \\
+\midrule\noalign{}
+\endhead
+\bottomrule\noalign{}
+\endlastfoot
+1 & The transplant needs a paste-edge control & \textbf{Valid} & No control for pasting seams exists; R5 registered. \\
+2 & Transplanted hair is pixel-carried; natural hair is correlate-carried & \textbf{Correct} & Oracle hair-pixel removal gains +0.015 on the real hair trap; the transplant constructs a pixel-carried shortcut by design. \\
+3 & Capsule\textquotesingle s real-trap crossover is not supported by matching & \textbf{Correct} & Matching left 19 polyp-like pairs (\textless{} 30, infeasible); lesion-box area SMD 2.57. Capsule\textquotesingle s location evidence rests on the transplant. \\
+4 & Report the matched analysis fully (balance \textless{} 0.1, before/after, images kept) & \textbf{Partly met before} & Pooled max \textbar SMD\textbar{} after matching 0.108 / 0.045 / 0.079 (hair / thyroid / ovary), but within label up to 0.164 / 0.150 / 0.140; images kept 1,829 / 316 / 179 per trap of 5,438 / 1,150 / 617 in-ROI. R7 (stricter calliper) registered. \\
+5 & The ovary fine-tuned model is uninformative, not a failed replication & \textbf{Correct} & ERM clean AUROC 0.596 (Trap A) and 0.500 (Trap B) with 15 clusters. \\
+6 & Report n, CI and registration status of the −0.372 subgroup & \textbf{Valid; and the CI was too narrow} & n = 78 malignant nodules with an in-ROI caliper (official test split, 614 images; the same 78 for every seed). Subgroup defined post hoc; S3 registered before computing. The CI came from a bootstrap that resamples the shared test images independently per seed --- too narrow (R6). \\
+7 & Label new analyses by registration status; keep them out of the 16-test family & \textbf{Valid} & They are separate Holm families already but the paper did not say so; status now stated. \\
+\end{longtable}
+}
+
+\subsubsection{Additional issue found while checking (not in the review)}\label{additional-issue-found-while-checking-not-in-the-review}
+
+The hierarchical bootstrap resamples test images independently within each seed cluster even when clusters share the
+same test images; this understates the test-set sampling variance. R6 re-estimates the headline CIs with a crossed
+(seed × image) bootstrap.
+
+\subsubsection{\texorpdfstring{Responses (results/review3/\emph{.csv; tables paper/tables/review3\_}.tex and the regenerated review2\_* tables)}{Responses (results/review3/.csv; tables paper/tables/review3\_.tex and the regenerated review2\_* tables)}}\label{responses-resultsreview3csv-tables-papertablesreview3_tex-and-the-regenerated-review2_-tables}
+
+\begin{enumerate}
+\def\labelenumi{\arabic{enumi}.}
+
+\item
+  \textbf{Paste-edge control (R5).} Neutral tissue pasted through the same masks, positions and blending gives location
+  interactions of hair +0.204 {[}+0.164, +0.244{]}, thyroid +0.145 {[}+0.130, +0.161{]}, ovary +0.052 {[}+0.021, +0.084{]},
+  capsule +0.459 {[}+0.383, +0.535{]} --- 52--92 \% of the artifact transplant\textquotesingle s. The artifact adds significantly beyond the
+  paste in hair (+0.049 {[}+0.026, +0.072{]}) and thyroid (+0.132 {[}+0.116, +0.148{]}), not in ovary or capsule. By the
+  pre-registered rule the transplant signal is \textbf{not} attributable to the artifact alone in any cohort: seams / the
+  pasted patch are part of the signal. The paper now says what the transplant does show --- on fixed images, \emph{where} a
+  label-correlated pattern sits decides what masking removes (the image-population explanation is excluded) --- and what
+  it does not: anything about a particular artifact\textquotesingle s appearance, or the in-ROI harm of real artifacts in context.
+\item
+  \textbf{Hair.} Stated explicitly: the transplant shows the location effect for pixel-carried hair; natural hair\textquotesingle s
+  shortcut is mostly carried by correlates (oracle removal +0.015), so +0.253 is not a claim about natural hair.
+\item
+  \textbf{Capsule.} Its real-trap crossover is labelled descriptive (table footnote and text); its location evidence rests on
+  the transplant (which, per point 1, shows location dependence of a pasted pattern).
+\item
+  \textbf{Matched analysis, full.} Supplement S11 table: images kept (hair 1,829 of 5,438 in-ROI / 8,329 out; thyroid 316
+  of 1,150 / 326; ovary 179 of 617 / 194), pooled max \textbar SMD\textbar{} before → after (2.13 → 0.11, 0.53 → 0.04, 0.39 → 0.08),
+  within label up to 0.16 / 0.15 / 0.14. Stricter calliper (R7, 0.05 SD) does not improve within-label balance (up to
+  0.18 / 0.19 / 0.18) and shrinks the crossover by 16 / 9 / 11 \% (+0.124, +0.218, +0.152), all CIs excluding zero.
+  Stated as a shrinking-but-surviving effect with residual imbalance.
+\item
+  \textbf{Ovary fine-tuned model.} Now "not evaluable" (ERM clean AUROC 0.60 / 0.50): the fine-tuned replication holds in
+  all three evaluable cohorts (hair ResNet-50 +0.143 {[}+0.056, +0.231{]}, capsule, thyroid ViT-S).
+\item
+  \textbf{Subgroup.} n = 78 malignant nodules with an in-ROI caliper (of 236 malignant; 614-image official test split).
+  Crossed CI: −0.372 {[}−0.499, −0.236{]} (was {[}−0.436, −0.291{]}). Defined post hoc; the operating-point test was registered
+  before computing. All 15 thyroid operating-point contrasts still exclude zero with the crossed bootstrap.
+\item
+  \textbf{Registration status.} Main-text paragraph and supplement table (S1): transplant, matching, operating points and the
+  paste-edge control were designed after earlier results and registered before their own; each is its own Holm family,
+  outside the unchanged 16-test primary family.
+\end{enumerate}
+
+\textbf{R6 crossed bootstrap.} Headline CIs are 1.1--2.2× wider (natural analyses ≈ 2×). Every headline claim still excludes
+zero. Now including zero: balancing\textquotesingle s transplant interaction for ovary and capsule, MSK all-pairs mask − ERM, and the
+ovary out-of-ROI transplant mask − ERM is borderline (+0.064 {[}+0.001, +0.126{]}). Controlled sweeps and supplement
+mitigation analyses keep per-seed CIs (predictions not regenerated) --- stated as a limitation.
+
+\textbf{Also answered:} which labels are automatic --- supplement S4 provenance table (e.g. capsule debris masks: probe for
+5,459 of 5,481 frames, expert for 22; non-HAM ISIC lesion masks: U-Net for 15,316 images; all caliper masks: rule-based
+detector; all audits by the analysis team including an AI agent).
+
+}
+
+\section{Pre-registration: paste-edge control, crossed bootstrap, stricter matching}\label{doc:PREREGISTRATION_REVIEW3}
+\noindent\textit{Source: docs/PREREGISTRATION\_REVIEW3.md}
+
+{\small
+Committed and pushed to GitHub before any of the analyses below is computed. Responds to a third set of comments on
+the second-review results (\texttt{docs/REVIEW3\_RESPONSE.md}) and to a statistical issue found while checking them.
+
+\subsubsection{Registration status of the second-review analyses (for the record)}\label{registration-status-of-the-second-review-analyses-for-the-record}
+
+The real-artifact transplant (R2), the covariate-matched traps (R1), the operating points (R3) and the fine-tuned hair
+model (R4) were \textbf{designed after the earlier results were known} (in response to a review of them) and \textbf{registered
+before their own results were computed} (\texttt{docs/PREREGISTRATION\_REVIEW2.md}, pushed in 29cd0da). The subgroup of
+malignant nodules with an in-ROI caliper was \textbf{defined post hoc} in the natural-distribution analysis
+(\texttt{PREREGISTRATION\_NATURAL.md}, "subset bootstraps, post hoc"); the operating-point test in it (R3/S3) was registered
+before the operating points were computed but after the subgroup\textquotesingle s AUROC result was known. These analyses form their
+own Holm families (T1: four cohorts; M1: four cohorts) and are \textbf{not} part of the original 16-test primary family,
+which is unchanged. The same holds for everything registered below.
+
+\subsubsection{R5 --- paste-edge control for the real-artifact transplant}\label{r5--paste-edge-control-for-the-real-artifact-transplant}
+
+Concern: the model might respond to the editing seams of a pasted crop rather than to the artifact.
+
+\begin{itemize}
+
+\item
+  \textbf{Design.} Identical to R2 (same recipients, folds, presence seeds, environments, arms erm and mask, DINOv2@518),
+  and for every recipient the \textbf{same} donor instance mask, dihedral transform, positions (inside / outside the ROI)
+  and alpha compositing (Gaussian-blurred mask, σ = 0.7). Only the pasted pixels differ: instead of the artifact they
+  are \textbf{neutral tissue} cut from the same donor image with the same (transformed) mask, at a random position in the
+  donor\textquotesingle s field of view whose window does not touch the donor\textquotesingle s artifact mask (dilated by 5 px); if no such window
+  exists, from a random artifact-free image of the cohort (stable seeds). The seam geometry is therefore identical to
+  the artifact transplant; only the content is neutral.
+\item
+  \textbf{N1} (descriptive) ERM shortcut gap, correlated − reversed AUROC, for neutral pastes at each location.
+\item
+  \textbf{N2} neutral-paste location interaction {[}mask − ERM{]}\_out − {[}mask − ERM{]}\_in (reversed AUROC), CI.
+\item
+  \textbf{N3 (primary)} artifact interaction − neutral interaction \textgreater{} 0 (paired: same images and seeds; crossed bootstrap,
+  R6), per cohort, Holm over the four cohorts.
+\item
+  \textbf{Decision rule.} In a cohort, the transplant result is attributed to the artifact rather than the seams if N3
+  holds \textbf{and} the neutral interaction is below one quarter of the artifact interaction (point estimates). Otherwise
+  the paper states that pasting seams contribute to the transplant signal in that cohort.
+\end{itemize}
+
+\subsubsection{R6 --- crossed (seed × image) bootstrap}\label{r6--crossed-seed--image-bootstrap}
+
+Issue found while checking the thyroid subgroup CI: the hierarchical bootstrap (\texttt{wtss.stats}, unchanged from the
+pilot) resamples images independently within every sampled seed cluster. When the clusters share the same test images
+(the official thyroid split, the transplant, and largely the real traps, where every seed\textquotesingle s pooled folds cover the
+same pool), this divides the test-set sampling variance by the number of clusters and makes CIs too narrow.
+
+\begin{itemize}
+
+\item
+  \textbf{Estimator.} Per replicate: clusters (seeds, or folds) resampled with replacement; one Poisson(1) weight per
+  \textbf{image identifier}, shared by every cluster in which that image appears; the statistic (AUROC difference,
+  crossover, interaction, sensitivity difference with thresholds re-estimated on weighted validation images) is
+  computed per selected cluster with those weights and averaged. 10,000 replicates (2,000 for operating points).
+\item
+  \textbf{Applied to} every headline claim whose predictions are available on this machine: the four real-trap crossovers
+  (rebuilt runs), the three feasible matched crossovers, the four transplant interactions and R5 N2/N3, the five
+  natural hard-pair mask − ERM contrasts, the thyroid operating points (S1--S3), and the fine-tuned hair crossover.
+\item
+  \textbf{Rule.} The paper reports the crossed CI for these claims (the original CI in the supplement). A claim is stated
+  as supported only if its crossed CI excludes 0; claims whose crossed CI includes 0 are downgraded in the text.
+  Analyses whose predictions are not on this machine (controlled sweeps, U-MtE arms of the archived runs) keep the
+  original CI, and the paper says so.
+\end{itemize}
+
+\subsubsection{R7 --- stricter matching (sensitivity)}\label{r7--stricter-matching-sensitivity}
+
+Within-label balance after R1 matching exceeded \textbar SMD\textbar{} 0.1 for some covariates (hair 0.16, thyroid 0.15, ovary
+0.14). Re-run R1 with a calliper of 0.05 SD of the logit (everything else unchanged; \texttt{-\/-tag\ matched05}). Reported:
+images kept, max \textbar SMD\textbar{} pooled and within label, crossover (crossed CI). Descriptive sensitivity analysis; no new
+claim.
+
+\subsubsection{Results (results/review3/*.csv)}\label{results-resultsreview3csv}
+
+\begin{itemize}
+
+\item
+  \textbf{R5.} Neutral-paste interaction: hair +0.204 {[}+0.164, +0.244{]}, thyroid +0.145 {[}+0.130, +0.161{]}, ovary +0.052
+  {[}+0.021, +0.084{]}, capsule +0.459 {[}+0.383, +0.535{]} (ratio to artifact 0.81 / 0.52 / 0.71 / 0.92). N3 (artifact −
+  neutral, Holm): hair +0.049 {[}+0.026, +0.072{]} supported, thyroid +0.132 {[}+0.116, +0.148{]} supported, ovary +0.022
+  {[}−0.002, +0.048{]} not, capsule +0.037 {[}−0.017, +0.093{]} not. \textbf{Decision rule: not attributable to the artifact alone in
+  any cohort} (neutral ratio ≥ 0.25 everywhere); the paper states that pasting seams contribute. N1: neutral pastes are
+  learned as shortcuts (ERM correlated − reversed gap 0.09--0.42). Deviation: 213/340 capsule and 56/860 hair neutral
+  windows came from artifact-free images (no artifact-free window in the donor).
+\item
+  \textbf{R6.} Crossed CIs 1.1--2.2× wider than per-seed CIs; all headline claims still exclude zero (table S15); downgraded:
+  balancing transplant interaction for ovary/capsule, MSK all-pairs mask − ERM. Thyroid subgroup (n = 78): −0.372
+  {[}−0.499, −0.236{]}.
+\item
+  \textbf{R7.} Calliper 0.05: kept 1,777 / 299 / 165 per trap; crossover +0.124 {[}+0.086, +0.162{]}, +0.218 {[}+0.165, +0.270{]},
+  +0.152 {[}+0.041, +0.265{]}; within-label max \textbar SMD\textbar{} 0.18 / 0.19 / 0.18 (not improved); capsule still infeasible.
+\end{itemize}
+
+}
+
 \section{Findings overview (living document)}\label{doc:FINDINGS_OVERVIEW}
 \noindent\textit{Source: docs/FINDINGS\_OVERVIEW.md}
 

@@ -24,13 +24,15 @@ $+0.230$ [$+0.204, +0.255$], ovarian calipers $+0.170$ [$+0.116, +0.224$] and ca
 [$+0.340, +0.397$]. On dermoscopy masking \emph{harms} in-ROI ($-0.037$ [$-0.057, -0.019$], negative in all five
 seeds; BCN $-0.051$ [$-0.075, -0.027$]) and helps out of the ROI ($+0.107$ [$+0.078, +0.135$]). On thyroid, ovarian and
 capsule images in-ROI masking still helps, but far less than out of the ROI (thyroid $+0.111$ [$+0.097, +0.124$]
-versus $+0.341$ [$+0.320, +0.363$]; capsule $+0.096$ versus $+0.465$), and the masked Trap~A model still relies on
-the calipers (correlated 0.902 versus reversed 0.400). What is universal in our data is therefore the \emph{gap}:
+versus $+0.341$ [$+0.320, +0.363$]; capsule $+0.096$ versus $+0.465$), and the masked Trap~A model still relies on the calipers (correlated 0.902 versus reversed 0.400). Because the
+artifact-bearing images of the two traps differ (next subsections), these crossovers describe the traps as built;
+their attribution to location rests on the matched traps for hair, thyroid and ovary and on the transplant for
+capsule, where matching is infeasible. What is universal in our data is therefore the \emph{gap}:
 masking leaves an in-ROI shortcut largely intact while it removes an out-of-ROI one. Harm is conditional; it appears
 when the mask also removes disease context or leaves the artifact a larger share of what remains
 (Sec.~\ref{sec:theory}).
 
-\subsection{Same images, same artifact: real-artifact transplant}\label{sec:transplant}
+\subsection{Same images, same artifact: real-artifact transplant and paste-edge control}\label{sec:transplant}
 Trap~A and Trap~B contain different artifact-bearing images, and these differ systematically
 (Supplement~S11): lesions carrying in-lesion hair are much larger (standardised mean difference 2.1), as are
 thyroid nodules with calipers on them (0.4) and capsule lesions with debris on them (2.6), and in-ROI calipers carry
@@ -38,21 +40,23 @@ more marker pixels. The crossover could therefore reflect population differences
 removed this possibility by design (pre-registered): real artifact instances---a caliper measurement line with its end
 crosses, a hair strand, a piece of debris---were cut from artifact-bearing images with their masks and pasted
 \emph{inside} (overlap $\ge0.95$) or \emph{outside} (overlap 0) the ROI of the \emph{same} artifact-free images, with
-the same instance, transform and compositing in both locations; environments as in the controlled sweeps.
+the same instance, transform and compositing in both locations; environments as in the controlled sweeps. As a
+paste-edge control, neutral tissue was pasted through the same masks, at the same positions and with the same
+blending (Supplement~S11).
 \input{tables/review2_transplant_text}
 \input{tables/review2_law}
 
 \subsection{Covariate-matched traps}\label{sec:matched}
 As a second, observational check we matched the artifact-bearing images of the two traps 1:1 on a propensity score of
 lesion or nodule size, artifact amount and acquisition covariates (age, sex, body site, source, diagnosis subtype for
-dermoscopy; image size and grey level for ultrasound; pre-registered), leaving everything else unchanged.
+dermoscopy; image size and grey level for ultrasound; pre-registered), leaving everything else unchanged, and repeated
+it with a four times stricter calliper (full balance tables in Supplement~S11).
 \input{tables/review2_matched_text}
 
 \subsection{Replication across encoders, training regimes and foundation models}\label{sec:replication}
 The crossover replicates with MedSigLIP (thyroid $+0.163$ [$+0.132, +0.194$], capsule $+0.332$ [$+0.296, +0.365$],
 ovary $+0.179$), a CNN (ConvNeXt-Base: thyroid $+0.284$ [$+0.253, +0.315$], capsule $+0.292$ [$+0.248, +0.337$]) and
-DINOv2 at three sizes (positive in all nine cohort--size combinations; Supplement~S7), and with end-to-end fine-tuning
-\input{tables/review2_ft_text}
+DINOv2 at three sizes (positive in all nine cohort--size combinations; Supplement~S7), and with end-to-end fine-tuning \input{tables/review2_ft_text}.
 Without any task training, the zero-shot scores of vision--language models are already swayed by artifacts, and
 masking changes them as the law predicts (MedSigLIP crossovers: thyroid $+0.103$ [$+0.079, +0.127$], capsule $+0.049$
 [$+0.024, +0.076$], ovary $+0.181$ [$+0.135, +0.228$]; DermLIP on hair $+0.051$ [$+0.031, +0.071$]); MedSigLIP's

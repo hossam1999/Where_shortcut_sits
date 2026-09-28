@@ -68,6 +68,7 @@ def main():
     ap.add_argument("--text_dirs", default=None, help="npz from scripts/make_text_directions.py (text-prompted arms)")
     ap.add_argument("--save_val", action="store_true", help="also save val_groups predictions (adaptive selection)")
     ap.add_argument("--match", action="store_true", help="covariate-matched trap cells (docs/PREREGISTRATION_REVIEW2.md, R1)")
+    ap.add_argument("--match_caliper", type=float, default=0.2, help="calliper in SD of the logit (R7 uses 0.05)")
     a = ap.parse_args()
     if a.match and a.tag == "spec":
         raise SystemExit("the matched variant must use its own --tag (it would overwrite the spec results)")
@@ -75,7 +76,7 @@ def main():
     match_rep = None
     if a.match:
         from wtss.matching import match_traps
-        c, match_rep = match_traps("isic", c, strata=("source",))
+        c, match_rep = match_traps("isic", c, strata=("source",), caliper_sd=a.match_caliper)
     envs = build_spec_envs(c)
     cnt = spec_counts(c, envs)
     for t, e in EXPECTED_COUNTS.items():

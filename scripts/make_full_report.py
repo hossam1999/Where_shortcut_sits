@@ -53,6 +53,8 @@ DOCS = [("Replication specification of the pilot (author protocol)", "REPLICATIO
         ("Related work and novelty assessment", "RELATED_WORK_NOVELTY.md"),
         ("Second external review: verification of the claims and responses", "REVIEW2_RESPONSE.md"),
         ("Pre-registration: second-review analyses (transplant, matched traps, operating points, fine-tuned hair)", "PREREGISTRATION_REVIEW2.md"),
+        ("Third review round: verification and responses", "REVIEW3_RESPONSE.md"),
+        ("Pre-registration: paste-edge control, crossed bootstrap, stricter matching", "PREREGISTRATION_REVIEW3.md"),
         ("Findings overview (living document)", "FINDINGS_OVERVIEW.md")]
 RESULT_MD = [("Pilot replication: all 88 numbers", "SUMMARY.md"), ("Holm-corrected primary claims", "PRIMARY_CLAIMS.md"),
              ("Every arm × cohort × backbone", "CROSS_COHORT.md")]

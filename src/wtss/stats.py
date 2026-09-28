@@ -321,3 +321,63 @@ def hierarchical_paired_mean_bootstrap(paired_rows: pd.DataFrame, value_a: str, 
 def fmt_ci(d: Dict, key: str = "delta_mean_bootstrap", point_key: str = "seed_delta_mean", signed: bool = True) -> str:
     f = "{:+.3f}" if signed else "{:.3f}"
     return f"{f.format(d[point_key])} [{f.format(d['ci95_lo'])}, {f.format(d['ci95_hi'])}]"
+
+
+# --------------------------------------------------------------------------- crossed (cluster x image) bootstrap
+def crossed_auc_bootstrap(terms: List[tuple], n_boot: int = 10000, seed: int = 20260928, chunk: int = 250) -> Dict:
+    """Bootstrap for statistics that are signed sums of AUROCs, when clusters (training seeds / folds) share test
+    images (docs/PREREGISTRATION_REVIEW3.md, R6).
+
+    terms: (cluster, coef, image_ids, y, scores). Per cluster the statistic is sum_j coef_j * AUROC_j; the estimate is
+    the mean over clusters. Each replicate resamples clusters with replacement and draws ONE Poisson(1) weight per
+    image identifier, shared by every term and cluster in which that image appears (crossed design), instead of
+    resampling images independently within each cluster (which understates test-set sampling variance when the
+    clusters share test images).
+    """
+    rng = np.random.default_rng(seed)
+    ids = sorted({i for t in terms for i in t[2]})
+    pos = {k: j for j, k in enumerate(ids)}
+    clusters = sorted({t[0] for t in terms})
+    prep = {c: [] for c in clusters}
+    point = {c: 0.0 for c in clusters}
+    for c, coef, im, y, s in terms:
+        y, s = np.asarray(y), np.asarray(s, float)
+        prep[c].append((coef, np.array([pos[i] for i in im]), _WeightedAUC(y, s)))
+        point[c] += coef * binary_auc(y, s)
+    est = float(np.mean([point[c] for c in clusters]))
+    out = []
+    for b0 in range(0, n_boot, chunk):
+        B = min(chunk, n_boot - b0)
+        W = rng.poisson(1.0, size=(B, len(ids))).astype(np.float64)
+        cw = np.stack([rng.multinomial(len(clusters), np.full(len(clusters), 1 / len(clusters))) for _ in range(B)])
+        vals = np.zeros((B, len(clusters)))
+        for k, c in enumerate(clusters):
+            v = np.zeros(B)
+            for coef, idx, f in prep[c]:
+                v += coef * f(W[:, idx])
+            vals[:, k] = v
+        with np.errstate(invalid="ignore"):
+            r = np.nansum(vals * cw, 1) / np.where(np.isnan(vals), 0, cw).sum(1)
+        out.append(r)
+    arr = np.concatenate(out)
+    arr = arr[np.isfinite(arr)]
+    lo, hi = _ci(arr)
+    return {"estimate": est, "ci95_lo": lo, "ci95_hi": hi, "p_boot_two_sided": boot_p(arr), "n_boot_valid": int(len(arr)),
+            "ci_excludes_zero": bool(lo > 0 or hi < 0), "n_images": len(ids), "n_clusters": len(clusters),
+            "estimator": "crossed cluster x image (Poisson) bootstrap"}
+
+
+def paired_terms(preds: pd.DataFrame, a: str, b: str, env: str, coef: float = 1.0, cluster_col: str = "seed",
+                 cluster_tag: str = "") -> List[tuple]:
+    """+coef*AUROC(a) - coef*AUROC(b) on the images both arms scored, per cluster."""
+    out = []
+    x = preds[preds.env == env]
+    for c, q in x.groupby(cluster_col):
+        qa = q[q.method == a][["image_id", "y", "prob"]]
+        qb = q[q.method == b][["image_id", "y", "prob"]]
+        z = qa.merge(qb, on=["image_id", "y"], suffixes=("_a", "_b"))
+        if z.y.nunique() < 2:
+            continue
+        ids = (cluster_tag + z.image_id.astype(str)).tolist() if cluster_tag else z.image_id.astype(str).tolist()
+        out += [(c, coef, ids, z.y.to_numpy(), z.prob_a.to_numpy()), (c, -coef, ids, z.y.to_numpy(), z.prob_b.to_numpy())]
+    return out

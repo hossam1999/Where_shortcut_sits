@@ -26,7 +26,7 @@ No. & Item & Answer & Where / comment \\\midrule\endhead
 \multicolumn{4}{l}{\emph{Methods --- reference standard}}\\
 14 & Definition of method(s) used to obtain reference standard & Yes & Diagnoses as released by the dataset providers (TNCD: cytological biopsy; ISIC: histopathology, follow-up or expert consensus; MMOTU tumour categories; SEE-AI expert lesion annotation) (M Data). \\
 15 & Rationale for choosing the reference standard & Yes & Dataset reference standards; ROI masks from manual annotation or a U-Net (M Data). \\
-16 & Source of reference standard annotations & Yes & Dataset annotators; artifact labels from a rule-based detector, a patch probe and published masks (M Data). \\
+16 & Source of reference standard annotations & Yes & Dataset annotators; artifact labels from a rule-based detector, a patch probe and published masks; full human/automatic provenance in S4. \\
 17 & Annotation of test set & Yes & Same procedures as for training images. \\
 18 & Measures of inter- and intrarater variability of features described by the annotators & No & Artifact labels were audited by the analysis team only; a blinded two-rater expert audit kit with Cohen's $\kappa$ is prepared (S4) but not yet carried out (M Limitations). \\
 \multicolumn{4}{l}{\emph{Methods --- data partitions}}\\
@@ -44,7 +44,7 @@ No. & Item & Answer & Where / comment \\\midrule\endhead
 27 & Ensembling techniques & NA & No ensembles. \\
 \multicolumn{4}{l}{\emph{Methods --- evaluation}}\\
 28 & Metrics of model performance & Yes & Reversed, correlated and clean AUROC; location crossover; AUPRC, Brier, ECE, sensitivity/specificity (M Setup, Consequences on unaltered data). \\
-29 & Statistical measures of significance and uncertainty & Yes & Hierarchical paired bootstrap (10,000); Holm-corrected primary family (M Setup; S1). \\
+29 & Statistical measures of significance and uncertainty & Yes & Crossed seed$\times$image bootstrap for headline claims, per-seed bootstrap elsewhere (S15); Holm per family (M Setup; S1). \\
 30 & Robustness or sensitivity analysis & Yes & Label definitions, leakage grouping, covariate matching, rebuild on new hardware (M Robustness). \\
 31 & Methods for explainability or interpretability & Yes & Same-head counterfactual sensitivity to inserting the artifact (M Mechanism). \\
 32 & Evaluation on internal data & Yes & All traps and sweeps. \\

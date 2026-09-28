@@ -1,9 +1,11 @@
 % Discussion — every number is taken from results/CROSS_COHORT.md, results/review2/* and the pre-registration result sections.
 \paragraph{What the evidence supports} Masking is not a neutral preprocessing step: its benefit depends on where the
-artifact sits. The strongest evidence is the real-artifact transplant, in which the same real calipers, hair or debris
-on the same images are removed by masking outside the ROI and retained---with amplified reliance---inside it; the
-real traps, covariate-matched traps, controlled sweeps, fine-tuned networks and foundation-model zero-shot scores all
-point the same way. The claim is about the \emph{gap}. Whether in-ROI masking helps a little or harms depends on
+artifact sits. Four designs agree: real traps, covariate-matched traps (hair, thyroid, ovary), the real-artifact transplant on
+fixed images, and controlled sweeps, with fine-tuned networks and foundation-model zero-shot scores pointing the same
+way. The transplant removes the image-population explanation, but its paste-edge control shows that what it isolates
+is location, not the artifact's appearance: neutral tissue pasted through the same masks produces 52--92\% of the
+effect. The evidence that \emph{real} artifacts behave this way in \emph{natural} images therefore comes from the real
+and matched traps and from the unaltered test data, not from the transplant. The claim is about the \emph{gap}. Whether in-ROI masking helps a little or harms depends on
 whether the mask also removes disease context, which the linear-Gaussian account makes explicit and which differs
 between modalities (harm in dermoscopy, small gains in ultrasound and capsule endoscopy).
 
@@ -44,7 +46,13 @@ tasks have no published benchmark on the same split (Supplement~S10).
 (v) \emph{Scope.} Chest radiography is a boundary case: the encoder ignored extra-pulmonary tubes and real drains carry
 the shortcut through correlates. The linear-Gaussian account is fitted per model and cannot anticipate a shortcut
 carried by correlates that the clean and correlated environments do not expose.
-(vi) \emph{Pre-registration.} Every registration is committed before its outcome results (registry with commit hashes
+(vi) \emph{Uncertainty and balance.} The original per-seed bootstrap understated CIs where seeds share test
+images; headline claims use a crossed bootstrap, but the controlled sweeps and the mitigation analyses of the
+supplement keep per-seed CIs, which are up to about twice too narrow. Matching left within-label standardised
+differences of up to 0.19 for some covariates. (vii) \emph{Transplant.} Pasted patterns, including neutral tissue,
+become learnable shortcuts; the transplant establishes location dependence on fixed images, not the size of real
+artifacts' effects in their natural context (for hair, whose natural shortcut is carried mostly by correlates, the
+difference is large). (viii) \emph{Pre-registration.} Every registration is committed before its outcome results (registry with commit hashes
 and times in Supplement~S1); commit times are set by the committing machine, so only the registrations of the second
 review round carry an external (GitHub push) time stamp, and the 16-test primary family was assembled after the
 individual results.

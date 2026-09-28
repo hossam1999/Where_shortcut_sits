@@ -1,0 +1,2 @@
+method,baseline,env,lo,hi,estimand,delta_mean_bootstrap,ci95_lo,ci95_hi,n_boot_valid,seed_delta_mean,seed_delta_sd,seed_deltas_json,ci_excludes_zero,p_boot_two_sided
+mask,erm,test_rev,0.0,1.0,mean_seed_specific_interaction,0.4590393679548431,0.4099950677076756,0.5077477416786035,10000,0.4592954049757864,0.044158346750344135,"[0.42046504750286484, 0.5000554508151269, 0.50079479501682, 0.46892905992384754, 0.4062326716202726]",True,0.0001

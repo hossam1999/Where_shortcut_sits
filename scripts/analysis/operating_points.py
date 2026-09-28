@@ -102,7 +102,81 @@ def _boot(args):
     return out
 
 
+def threshold_w(y, p, w, kind, target):
+    """Weighted version of `threshold` (Poisson image weights; crossed bootstrap, PREREGISTRATION_REVIEW3 R6)."""
+    o = np.argsort(-p, kind="stable")
+    ps, ys, ws = p[o], y[o], w[o]
+    tp, fp = np.cumsum(ws * (ys == 1)), np.cumsum(ws * (ys == 0))
+    P, N = max(tp[-1], 1e-9), max(fp[-1], 1e-9)
+    last = np.r_[np.flatnonzero(np.diff(ps) != 0), len(ps) - 1]  # last index of each distinct score
+    sens, spec, thr = tp[last] / P, 1 - fp[last] / N, ps[last]
+    if kind == "ba":
+        j = int(np.argmax(sens + spec))
+    elif kind == "spec":
+        ok = np.flatnonzero(spec >= target)
+        j = int(ok[np.argmax(sens[ok])]) if len(ok) else 0
+    else:
+        ok = np.flatnonzero(sens >= target)
+        j = int(ok[np.argmax(spec[ok])]) if len(ok) else len(thr) - 1
+    return float(thr[j])
+
+
+def crossed(cohort="thyroid", n_boot=2000, seed=20260928):
+    """Crossed bootstrap for mask - ERM at every operating point: seeds resampled, one Poisson weight per image id
+    (validation and test), thresholds re-estimated on the weighted validation images."""
+    p, hpa = load(cohort)
+    ids = sorted(p.image_id.astype(str).unique()); pos = {k: j for j, k in enumerate(ids)}
+    S = {}
+    for s, q in p.groupby("seed"):
+        g = lambda m, e: q[(q.method == m) & (q.env == e)].sort_values("image_id")
+        va, vr, ta, tr = g("mask", "val_groups"), g("erm", "val_groups"), g("mask", "clean"), g("erm", "clean")
+        S[s] = dict(vy=va.y.to_numpy(), vpa=va.prob.to_numpy(), vpr=vr.prob.to_numpy(), vi=np.array([pos[i] for i in va.image_id.astype(str)]),
+                    ty=ta.y.to_numpy(), tpa=ta.prob.to_numpy(), tpr=tr.prob.to_numpy(), ti=np.array([pos[i] for i in ta.image_id.astype(str)]),
+                    ta=ta.artifact_present.to_numpy())
+    seeds = sorted(S); rng = np.random.default_rng(seed)
+    res = {op: {k: [] for k in ("sens", "spec", "sens_conflict")} for op in OPS}
+    for _ in range(n_boot):
+        W = rng.poisson(1.0, len(ids)).astype(float)
+        pick = rng.choice(seeds, len(seeds), replace=True)
+        acc = {op: {k: [] for k in ("sens", "spec", "sens_conflict")} for op in OPS}
+        for s in pick:
+            d = S[s]; wv, wt = W[d["vi"]], W[d["ti"]]
+            y, t = d["ty"], d["ta"]
+            hp = (y == 1) & (t == hpa)
+            for op, (kind, tg) in OPS.items():
+                out = []
+                for vp, tp in ((d["vpa"], d["tpa"]), (d["vpr"], d["tpr"])):
+                    th = threshold_w(d["vy"], vp, wv, kind, tg)
+                    pr = tp >= th
+                    out.append({"sens": np.sum(wt * pr * (y == 1)) / max(np.sum(wt * (y == 1)), 1e-9),
+                                "spec": np.sum(wt * ~pr * (y == 0)) / max(np.sum(wt * (y == 0)), 1e-9),
+                                "sens_conflict": np.sum(wt * pr * hp) / max(np.sum(wt * hp), 1e-9)})
+                for k in acc[op]:
+                    acc[op][k].append(out[0][k] - out[1][k])
+        for op in OPS:
+            for k in acc[op]:
+                res[op][k].append(np.mean(acc[op][k]))
+    rows = []
+    for op in OPS:
+        for k, v in res[op].items():
+            lo, hi = np.percentile(v, [2.5, 97.5])
+            rows.append({"cohort": cohort, "op": op, "metric": k, "crossed_lo": lo, "crossed_hi": hi,
+                         "crossed_excludes_zero": bool(lo > 0 or hi < 0)})
+    n_conf = int(((S[seeds[0]]["ty"] == 1) & (S[seeds[0]]["ta"] == hpa)).sum())
+    return pd.DataFrame(rows).assign(n_conflicting_positives=n_conf)
+
+
 def main():
+    import sys
+    if "--crossed" in sys.argv:
+        d = pd.concat([crossed(c) for c in ("thyroid",)])
+        orig = pd.read_csv(paths.RESULTS / "review2" / "operating_points.csv")
+        orig = orig[(orig.arm == "mask") & (orig.ref == "erm")][["cohort", "op", "metric", "delta", "ci95_lo", "ci95_hi"]]
+        d = d.merge(orig, on=["cohort", "op", "metric"], how="left")
+        out = paths.ensure(paths.RESULTS / "review3")
+        d.to_csv(out / "operating_points_crossed.csv", index=False)
+        print(d.round(3).to_string())
+        return
     rows, seeds_all = [], []
     for cohort in COHORTS:
         try:
