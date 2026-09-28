@@ -22,6 +22,12 @@ from sklearn.metrics import roc_auc_score
 KEEP = ["seed", "method", "image_id", "y", "prob"]
 
 
+def _use_crossed() -> bool:
+    """WTSS_BOOTSTRAP=crossed routes every estimator below to wtss.stats_crossed (corrected, shared-test-set bootstrap)."""
+    import os
+    return os.environ.get("WTSS_BOOTSTRAP", "").lower() == "crossed"
+
+
 def slim(preds: pd.DataFrame, env: str, methods, cluster_col: str = "seed") -> pd.DataFrame:
     """Rows/columns needed by one paired bootstrap (keeps worker payloads small)."""
     cols = [c for c in dict.fromkeys(KEEP + [cluster_col]) if c in preds.columns] + ["env"]
@@ -172,6 +178,9 @@ def hierarchical_paired_bootstrap(predictions: pd.DataFrame, method_a: str, meth
 
     fast=False reproduces the pilot's RNG stream exactly; fast=True is the vectorised equivalent.
     """
+    if _use_crossed():
+        from . import stats_crossed as _x
+        return _x.hierarchical_paired_bootstrap(predictions, method_a, method_b, env, n_boot, seed, cluster_col)
     by, deltas = paired_by_cluster(predictions, method_a, method_b, env, cluster_col)
     arrays = {s: (p.y.to_numpy(), p.pa.to_numpy(), p.pb.to_numpy()) for s, p in by.items()}
     arr = (_cluster_bootstrap_fast(arrays, "delta", n_boot, seed) if fast else
@@ -193,6 +202,9 @@ def hierarchical_paired_bootstrap(predictions: pd.DataFrame, method_a: str, meth
 def hierarchical_auc_bootstrap(predictions: pd.DataFrame, method: str, env: str, n_boot: int = 10000,
                                seed: int = 20260918, cluster_col: str = "seed", fast: bool = True) -> Dict:
     """Mean cluster-specific AUROC of one method with hierarchical CI."""
+    if _use_crossed():
+        from . import stats_crossed as _x
+        return _x.hierarchical_auc_bootstrap(predictions, method, env, n_boot, seed, cluster_col)
     x = predictions[(predictions.env == env) & (predictions.method == method)]
     arrays = {int(s): (q.y.to_numpy(), q.prob.to_numpy()) for s, q in x.groupby(cluster_col) if q.y.nunique() == 2}
     arr = (_cluster_bootstrap_fast(arrays, "auc", n_boot, seed) if fast else
@@ -210,6 +222,9 @@ def hierarchical_interaction(predictions: pd.DataFrame, method: str, baseline: s
     Used for the synthetic location interaction (key_col='overlap', same test images at
     0% and 100%). For real traps, whose test sets differ, use ``difference_of_deltas``.
     """
+    if _use_crossed():
+        from . import stats_crossed as _x
+        return _x.hierarchical_interaction(predictions, method, baseline, env, key_col, lo_val, hi_val, n_boot, seed, cluster_col)
     x = predictions[predictions["env"] == env]
     by: Dict[int, pd.DataFrame] = {}
     effects: List[float] = []
@@ -253,6 +268,9 @@ def difference_of_deltas(pred_1: pd.DataFrame, pred_2: pd.DataFrame, method: str
     Each replicate resamples clusters (shared ids, e.g. CV folds), then images independently within
     each set (multinomial weights), and averages cluster-specific crossovers. Vectorised.
     """
+    if _use_crossed():
+        from . import stats_crossed as _x
+        return _x.difference_of_deltas(pred_1, pred_2, method, baseline, env, n_boot, seed, cluster_col)
     by1, _ = paired_by_cluster(pred_1, method, baseline, env, cluster_col)
     by2, _ = paired_by_cluster(pred_2, method, baseline, env, cluster_col)
     keys = np.array(sorted(set(by1) & set(by2)))
@@ -295,6 +313,9 @@ def hierarchical_paired_mean_bootstrap(paired_rows: pd.DataFrame, value_a: str, 
                                        n_boot: int = 10000, seed: int = 20260918,
                                        cluster_col: str = "seed") -> Dict:
     """Hierarchical CI for an image-level paired mean effect (A - B), e.g. |Δp| differences."""
+    if _use_crossed():
+        from . import stats_crossed as _x
+        return _x.hierarchical_paired_mean_bootstrap(paired_rows, value_a, value_b, n_boot, seed, cluster_col)
     by = {int(s): q.dropna(subset=[value_a, value_b]) for s, q in paired_rows.groupby(cluster_col)}
     by = {s: q for s, q in by.items() if len(q)}
     if not by:
