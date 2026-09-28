@@ -1,0 +1,10 @@
+\begin{table}[H]\centering\scriptsize
+\caption{Real-artifact cohorts and pool sizes (images, positive/negative diagnosis) before the environments are sampled. Trap A: artifact mostly inside the ROI ($r\ge0.5$); Trap B: outside ($r<0.1$); both share the artifact-free group.}\label{tab:cohorts}
+\resizebox{\linewidth}{!}{\begin{tabular}{p{3.4cm}p{2.4cm}p{2.5cm}p{2.2cm}ccc}\toprule
+Cohort & Task & Artifact (mask source) & ROI & Artifact-free pos/neg & Trap A pos/neg & Trap B pos/neg \\\midrule
+ISIC 2019 dermoscopy (HAM10000, BCN20000, MSK) & melanoma vs other & hair (published masks) & lesion: HAM manual / U-Net & 157/706 & 942/2655 & 969/4412 \\
+TN3K ultrasound, TNCD labels & malignant vs benign nodule & calipers (rule detector) & nodule (manual) & 749/1052 & 292/858 & 99/227 \\
+MMOTU 2D ultrasound & malignant vs benign tumour & calipers (rule detector) & tumour (manual) & 178/170 & 276/341 & 103/91 \\
+SEE-AI capsule endoscopy & erosion vs polyp-like lesion & debris (patch probe) & lesion box (expert) & 343/164 & 412/404 & 1009/231 \\
+\bottomrule\end{tabular}}
+\end{table}

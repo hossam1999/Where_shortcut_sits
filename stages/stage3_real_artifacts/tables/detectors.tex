@@ -1,0 +1,14 @@
+\begin{table}[H]\centering\scriptsize
+\caption{Validity of the automatic masks that define artifact presence and location. Visual audits: \texttt{docs/ARTIFACT\_MASK\_AUDIT.md} (by the analysis agent, not a clinician; Stage~6 reports the blinded image audit prepared for a clinician).}\label{tab:det}
+\begin{tabular}{p{3.0cm}p{3.0cm}p{3.8cm}p{4.6cm}}\toprule
+Mask & Source & Check & Result \\\midrule
+ISIC 2019 lesion masks (BCN, MSK) & U-Net trained on ISIC 2018 Task 1 & held-out Dice (mean) / Dice vs HAM manual masks & 0.886 / 0.895 \\
+Hair (DullRazor-type detector, E10) & morphological & IoU / precision / recall vs Mendeley masks & 0.222 / 0.316 / 0.472 \\
+Capsule debris masks & patch-token probe (2,160 expert-masked frames) & held-out pixel accuracy / IoU & 0.922 / 0.625 \\
+Thyroid (TN3K), detected (A1) & visual audit, 40 images & detection lies on a real caliper / measurement mark & 38/40 (95 \%); 2 border false positives; 1 dotted zoom box (overlay) \\
+Thyroid, marker-free (A0) & visual audit, 40 images & no visible caliper & 38–39/40 (95–97 \%); depth-scale ticks present in all images (not label-related) \\
+Ovary (MMOTU), detected (A1) & visual audit, 40 images & an on-screen overlay is present & 40/40; caliper specifically 31/40 (others: dotted zoom arcs, focus markers, thumbnail inset) \\
+Ovary, marker-free (A0) & visual audit, 40 images & no visible caliper & 37/40 (92 \%) \\
+Ovary, marker-free (A0) & visual audit, 40 images & no overlay of any kind (arrows, boxes) & $\sim$29/40 (72 \%); text labels common \\
+\bottomrule\end{tabular}
+\end{table}

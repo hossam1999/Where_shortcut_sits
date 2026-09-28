@@ -1,0 +1,15 @@
+\begin{table}[H]\centering\scriptsize
+\caption{Experiments of this stage with registration status, first commit of the registration and the support criterion stated in advance. Commit times come from this machine and are not independent proof of order.}\label{tab:exp}
+\begin{tabular}{p{3.1cm}p{2.1cm}p{2.4cm}p{3.2cm}p{3.3cm}}\toprule
+Experiment & Status & Registration & First commit (local time) & Support criterion \\\midrule
+Dermoscopy hair traps (E13, DINOv2) & \ok{} registered & ISIC2019\_\allowbreak{}TRAPS & \texttt{76e25d4}, 2026-09-26 13:14 & crossover CI $>0$ \\
+Dermoscopy hair, DermLIP & \ok{} registered & ISIC2019\_\allowbreak{}TRAPS & \texttt{76e25d4}, 2026-09-26 13:14 & crossover CI $>0$ \\
+Thyroid caliper traps & \ok{} registered & THYROID\_\allowbreak{}TRAPS & \texttt{ea57661}, 2026-09-26 22:46 & crossover CI $>0$ \\
+Ovarian caliper traps & \ok{} registered & OVARY\_\allowbreak{}TRAPS & \texttt{2517600}, 2026-09-27 07:29 & crossover CI $>0$ \\
+Capsule debris traps & \ok{} registered & CAPSULE\_\allowbreak{}TRAPS & \texttt{fcbf8d9}, 2026-09-27 00:40 & crossover CI $>0$ \\
+Chest-radiograph device traps & \ok{} registered & CXR\_\allowbreak{}DEVICE\_\allowbreak{}TRAPS & \texttt{4d1a924}, 2026-09-26 18:07 & crossover CI $>0$ \\
+E12 overlap-contrast trap & \mixed{} pilot design, replicated & REPLICATION\_\allowbreak{}SPEC & \texttt{2699d51}, 2026-09-26 15:47 & null (pilot result) \\
+16-test primary family (Holm) & \no{} grouped after the individual results & STATISTICAL\_\allowbreak{}PLAN & \texttt{4e9d44c}, 2026-09-27 09:37 & Holm $p<0.05$, positive estimate \\
+Regeneration with the crossed bootstrap & \ok{} registered & FINAL (A1) & \texttt{c45d482}, 2026-09-28 00:35 & claims whose CI now includes 0 are rewritten \\
+\bottomrule\end{tabular}
+\end{table}

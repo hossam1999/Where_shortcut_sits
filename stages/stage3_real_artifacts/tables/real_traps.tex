@@ -1,0 +1,13 @@
+\begin{table}[H]\centering\scriptsize
+\caption{Real-artifact traps: change in reversed-test AUROC from ROI masking, per trap, and the crossover (5 seeds $\times$ 5 grouped folds; crossed 95\% CIs).}\label{tab:traps}
+\resizebox{\linewidth}{!}{\begin{tabular}{lccccc}\toprule
+Cohort & Encoder & ERM reversed AUROC A / B & mask $-$ ERM, Trap A (in ROI) & mask $-$ ERM, Trap B (outside) & Crossover B $-$ A \\\midrule
+Dermoscopy hair & DINOv2 & 0.510 / 0.510 & $-0.049$ [$-0.083, -0.018$] & $+0.098$ [$+0.060, +0.136$] & $+0.147$ [$+0.111, +0.185$] \\
+Dermoscopy hair & DermLIP & 0.665 / 0.735 & $-0.104$ [$-0.143, -0.067$] & $-0.090$ [$-0.135, -0.046$] & $+0.014$ [$-0.037, +0.063$] \\
+Thyroid calipers & DINOv2 & 0.289 / 0.405 & $+0.109$ [$+0.085, +0.133$] & $+0.348$ [$+0.307, +0.388$] & $+0.239$ [$+0.196, +0.280$] \\
+Thyroid calipers & MedSigLIP & 0.289 / 0.481 & $+0.053$ [$+0.032, +0.073$] & $+0.248$ [$+0.200, +0.293$] & $+0.195$ [$+0.153, +0.238$] \\
+Ovarian calipers & DINOv2 & 0.413 / 0.423 & $+0.132$ [$+0.072, +0.196$] & $+0.302$ [$+0.225, +0.378$] & $+0.170$ [$+0.087, +0.252$] \\
+Capsule debris & DINOv2 & 0.581 / 0.429 & $+0.084$ [$+0.055, +0.112$] & $+0.461$ [$+0.415, +0.506$] & $+0.377$ [$+0.327, +0.426$] \\
+Capsule debris & MedSigLIP & 0.570 / 0.464 & $+0.117$ [$+0.088, +0.147$] & $+0.452$ [$+0.407, +0.495$] & $+0.335$ [$+0.286, +0.383$] \\
+\bottomrule\end{tabular}}
+\end{table}
