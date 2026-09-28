@@ -80,7 +80,15 @@ def read_busclean_licence() -> dict:
     return {"name": "BUSClean", "url": "https://github.com/hawaii-ai/bus-cleaning", "version": commit,
             "download_date": TODAY, "licence": "MIT", "licence_text": text.strip(),
             "research_use": bool(permits), "skip": not permits,
-            "skip_reason": None if permits else "LICENSE does not grant research use"}
+            "skip_reason": None if permits else "LICENSE does not grant research use",
+            "detector": {
+                "search": "grep -rni caliper over the bus-cleaning clone",
+                "caliper_specific_function": None,
+                "function_used": "detect_anno",
+                "signature": "detect_anno(im: Image.Image, show_thresh: bool = False)",
+                "also_defined": "detect_anno_BUSI(im: Image.Image, show_thresh: bool = False)",
+                "note": "No function is named for calipers. README.md and SampleArtifacts.ipynb describe detect_anno, run after enhance_image, as the detector of lesion annotations, markers, and calipers. detect_anno_BUSI adds a Hough step for BUSI cross-style marks when detect_anno returns nothing; it is not used. No thresholds were changed. The registered validity guard decides on the full cohort.",
+            }}
 
 
 def medgemma_status() -> dict:
@@ -441,7 +449,7 @@ def main():
     sources = []
 
     bus = read_busclean_licence()
-    sources.append({k: bus[k] for k in ("name", "url", "version", "download_date", "licence", "research_use", "skip", "skip_reason")})
+    sources.append({k: bus[k] for k in ("name", "url", "version", "download_date", "licence", "research_use", "skip", "skip_reason", "detector")})
     mg = medgemma_status()
     sources.append(mg)
     kab = kabir_licence()
