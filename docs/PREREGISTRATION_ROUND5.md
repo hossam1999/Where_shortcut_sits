@@ -48,3 +48,18 @@ all-pair AUROC, excluded from the group pairs).
 ## Not changed by this round
 No existing result is re-estimated; R10's registered verdicts (H10a supported, borderline; H10b not supported; H10c
 supported) stand. The operating-point hypothesis H10b is not re-tested with new thresholds.
+
+## Results (added after the run; the text above is unchanged)
+Calibration committed at `a02db23` before any model of this round was fitted; results at `d2b6b24`; write-up in
+Stage 7 (Section 5.4). Predictions on the 25,340 R10 test images equal R10's (max |Δp| 2.2e-7 over 1,393,700 rows).
+
+- Calibration: F(8) = 0.41 (41 % of ISIC 2020 images lie within hash distance 8 of another patient's image), so the R10
+  rule mostly removed look-alikes. t* = 1, c* = 0.971; the calibrated rule removes 45 images (32,952 kept, 575 melanomas).
+- **H12 supported, decision label "robust"**: hard-pair mask − ERM −0.037 [−0.061, −0.012]; the same under exact-copy
+  and distance ≤ 2 rules; R10's rule gave −0.026 [−0.052, −0.000]. All pairs +0.016 [−0.000, +0.033] (borderline);
+  easy pairs +0.048 [+0.009, +0.090]; balanced − mask on hard pairs +0.072 [+0.048, +0.097]. OP5 sensitivity among
+  melanomas without in-lesion hair −0.022 [−0.076, +0.039] (no detectable change).
+- **H13 not supported** (gate met: 53 hair-free melanomas, 1,868 benign with clear in-lesion hair): −0.005 [−0.057, +0.048].
+  Descriptive: melanomas with hair beside the lesion vs hair-free benign −0.028 [−0.060, +0.004]; hair-free melanomas vs
+  benign with hair beside the lesion +0.059 [+0.010, +0.112] — the out-of-ROI half of the law. The hard-pair harm combines
+  removal of hair beside melanomas and retention of hair on benign lesions.

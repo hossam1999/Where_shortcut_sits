@@ -1,0 +1,11 @@
+\begin{table}[H]\centering\scriptsize
+\caption{Cleaner hair groups on the calibrated ISIC 2020 test set (R13): hair-free ($\le\tau$ predicted hair pixels), clear in-lesion hair ($\ge3\tau$, $r\ge0.5$) and clear hair beside the lesion only ($\ge3\tau$, $r<0.1$); ambiguous images excluded from these pairs.}\label{tab:r13}
+\begin{tabular}{p{3.4cm}p{3.4cm}p{2.0cm}p{3.4cm}p{1.6cm}}\toprule
+Positives & Negatives & Contrast & AUROC difference [95\% CI] & Status \\\midrule
+hair-free melanomas & benign, clear in-lesion hair & mask $-$ ERM & $-0.005$ [$-0.057, +0.048$] & H13 \\
+melanomas, clear in-lesion hair & hair-free benign & mask $-$ ERM & $+0.022$ [$-0.019, +0.064$] & descriptive \\
+melanomas, hair beside the lesion only & hair-free benign & mask $-$ ERM & $-0.028$ [$-0.060, +0.004$] & descriptive \\
+hair-free melanomas & benign, hair beside the lesion only & mask $-$ ERM & $+0.059$ [$+0.010, +0.112$] & descriptive \\
+hair-free melanomas & benign, clear in-lesion hair & balanced $-$ mask & $+0.016$ [$-0.039, +0.075$] & descriptive \\
+\bottomrule\end{tabular}
+\end{table}

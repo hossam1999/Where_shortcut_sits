@@ -66,10 +66,15 @@ def experiments():
             ["R10 ISIC 2019 $\\to$ ISIC 2020 natural test (H10a--c)", "\\registered{round 4}", L.reg(doc),
              "hard-pair AUROC mask $-$ ERM $<0$; OP5 sensitivity loss; balancing $>$ mask on hard pairs"],
             ["R11 prospective theory test (T1$'$--T3$'$)", "\\registered{round 4}", L.reg(doc),
-             "all crossover signs, $r\\ge0.7$, MAE below ``reversed = clean''"]]
+             "all crossover signs, $r\\ge0.7$, MAE below ``reversed = clean''"],
+            ["R12 calibrated duplicate rule (H12)", "\\registered{round 5}; sensitivity analysis of R10, registered after R10; "
+             "label-free calibration committed before fitting", L.reg("docs/PREREGISTRATION_ROUND5.md"),
+             "hard-pair mask $-$ ERM CI $<0$ on the calibrated test set (``robust'')"],
+            ["R13 cleaner hair groups (H13)", "\\registered{round 5}; secondary", L.reg("docs/PREREGISTRATION_ROUND5.md"),
+             "hair-free melanomas vs benign with clear in-lesion hair: CI $<0$; gate $\\ge30$ / $\\ge100$"]]
     L.table(T / "experiments.tex", ["Experiment", "Status", "First commit (local time)", "Support criterion"], rows,
-            "Experiments of this stage. One registration document (\\texttt{docs/PREREGISTRATION\\_ROUND4.md}) was committed "
-            "before any feature, count or model of this stage existed. Commit times are set by the committing machine and "
+            "Experiments of this stage. \\texttt{docs/PREREGISTRATION\\_ROUND4.md} was committed before any feature, count or "
+            "model of R8--R11 existed, \\texttt{docs/PREREGISTRATION\\_ROUND5.md} before any analysis of R12--R13. Commit times are set by the committing machine and "
             "are not independent proof of order.", "tab:exp", align="p{3.6cm}p{3.2cm}p{2.8cm}p{5.4cm}", size="\\scriptsize")
     M.add("CommitCounts", first_commit("results/round4/dose_response/isic/counts.csv"))
     M.add("CommitGains", first_commit("results/round4/dose_response/isic/bin_gains.csv"))
@@ -342,6 +347,79 @@ def r10():
         fig.tight_layout(); fig.savefig(F / "r10_pairs.pdf"); plt.close(fig)
 
 
+# ------------------------------------------------------------------------------------------------ R12, R13 (round 5)
+R5 = L.ROOT / "results" / "round5"
+TIERS = [("exact", "exact copies only"), ("d19_le2", "hash distance $\\le2$"), ("calibrated", "calibrated (R12 primary)"),
+         ("d19_le8", "hash distance $\\le8$ (R10)")]
+
+
+def r12():
+    cal, mc = L.js("calibration.json", R5), L.js("match_check.json", R5)
+    tb, cnt, top, rb = L.csv("tier_boot.csv", R5), L.csv("counts_by_tier.csv", R5), L.csv("tier_operating_points.csv", R5), L.csv("r13_boot.csv", R5)
+    if any(x is None for x in (cal, mc, tb, cnt, top, rb)):
+        return
+    M.add("RegFive", L.reg("docs/PREREGISTRATION_ROUND5.md"))
+    M.add("CommitCal", first_commit("results/round5/calibration.json"))
+    M.add("CommitFive", first_commit("results/round5/tier_boot.csv"))
+    M.add("Tstar", int(cal["t_star"])); M.add("Cstar", f"{cal['c_star']:.3f}")
+    M.add("FEight", f"{100 * cal['F']['8']:.0f}\\%"); M.add("FTwo", f"{100 * cal['F']['2']:.1f}\\%")
+    M.add("MatchMax", f"${mc['max_abs']:.1e}".replace("e-0", "\\times10^{-") + "}$")
+    M.add("MatchRows", f"{mc['n_matched']:,}".replace(",", "{,}"))
+    g = lambda t, s, a, r: tb[(tb.tier == t) & (tb.subset == s) & (tb.arm == a) & (tb.ref == r)].iloc[0]
+    rows = []
+    for t, lab in TIERS:
+        n0 = cnt[(cnt.tier == t) & (cnt.y == 0)].iloc[0]; n1 = cnt[(cnt.tier == t) & (cnt.y == 1)].iloc[0]
+        rows.append([lab, f"{cal['n_dropped'][t]:,}".replace(",", "{,}"), f"{int(n0.n + n1.n):,}".replace(",", "{,}"), int(n1.n),
+                     cir(g(t, "all", "mask", "erm")), cir(g(t, "hard", "mask", "erm")), cir(g(t, "easy", "mask", "erm")),
+                     cir(g(t, "hard", "balanced", "mask"))])
+        k = L.Macros.clean(t)
+        M.add(f"Drop{k}", f"{cal['n_dropped'][t]:,}".replace(",", "{,}")); M.add(f"Mel{k}", int(n1.n))
+        M.add(f"Kept{k}", f"{int(n0.n + n1.n):,}".replace(",", "{,}"))
+        for s in ("all", "hard", "easy"):
+            M.add(f"T{k}{s}", cir(g(t, s, "mask", "erm")))
+        M.add(f"T{k}balhard", cir(g(t, "hard", "balanced", "mask"))); M.add(f"T{k}balall", cir(g(t, "all", "balanced", "mask")))
+        M.add(f"Thi{k}all", f"{float(g(t, 'all', 'mask', 'erm').ci95_lo):+.4f}")
+        o = top[(top.tier == t) & (top.arm == "mask") & (top.ref == "erm") & (top.op == "OP5_sens0.90") & (top.metric == "sens_conflict")].iloc[0]
+        M.add(f"Op{k}", L.ci(o.delta, o.ci95_lo, o.ci95_hi))
+    L.table(T / "r12_tiers.tex", ["Duplicate rule", "Removed", "Test images", "Melanomas", "mask $-$ ERM, all pairs",
+                                  "hard pairs", "easy pairs", "balanced $-$ mask, hard pairs"], rows,
+            "ISIC 2020 under four duplicate rules, from one set of predictions for all 32{,}997 images (crossed 95\\% CIs). "
+            "The calibrated rule is label-free and was committed before any model of round 5 was fitted.", "tab:r12",
+            size="\\scriptsize", resize=True)
+    h = rb.set_index("subset")
+    c1 = cnt[(cnt.tier == "calibrated") & (cnt.y == 1)].iloc[0]; c0 = cnt[(cnt.tier == "calibrated") & (cnt.y == 0)].iloc[0]
+    for k_, col in (("HZeroMel", c1.H0), ("HinBen", c0.Hin), ("HoutMel", c1.Hout), ("HinMel", c1.Hin), ("HZeroBen", c0.H0), ("HoutBen", c0.Hout)):
+        M.add(k_, f"{int(col):,}".replace(",", "{,}"))
+    names = {"strict_hard": ("hair-free melanomas", "benign, clear in-lesion hair", "mask $-$ ERM", "H13"),
+             "strict_easy": ("melanomas, clear in-lesion hair", "hair-free benign", "mask $-$ ERM", "descriptive"),
+             "hout_mel_vs_h0_ben": ("melanomas, hair beside the lesion only", "hair-free benign", "mask $-$ ERM", "descriptive"),
+             "h0_mel_vs_hout_ben": ("hair-free melanomas", "benign, hair beside the lesion only", "mask $-$ ERM", "descriptive")}
+    rows = []
+    for s, (pos, neg, con, st) in names.items():
+        r = rb[(rb.subset == s) & (rb.arm == "mask")].iloc[0]
+        rows.append([pos, neg, con, cir(r), st]); M.add(f"S{L.Macros.clean(s)}", cir(r))
+    r = rb[(rb.subset == "strict_hard") & (rb.arm == "balanced")].iloc[0]
+    rows.append(["hair-free melanomas", "benign, clear in-lesion hair", "balanced $-$ mask", cir(r), "descriptive"])
+    M.add("Sstricthardbal", cir(r))
+    M.add("HThirteenP", f"{float(rb[(rb.subset == 'strict_hard') & (rb.arm == 'mask')].iloc[0].p_one_sided_lt):.2f}")
+    L.table(T / "r13_groups.tex", ["Positives", "Negatives", "Contrast", "AUROC difference [95\\% CI]", "Status"], rows,
+            "Cleaner hair groups on the calibrated ISIC 2020 test set (R13): hair-free ($\\le\\tau$ predicted hair pixels), clear "
+            "in-lesion hair ($\\ge3\\tau$, $r\\ge0.5$) and clear hair beside the lesion only ($\\ge3\\tau$, $r<0.1$); ambiguous "
+            "images excluded from these pairs.", "tab:r13", size="\\scriptsize", align="p{3.4cm}p{3.4cm}p{2.0cm}p{3.4cm}p{1.6cm}")
+    plt = L.plot_style()
+    fig, ax = plt.subplots(figsize=(6.4, 2.6))
+    for i, (t, lab) in enumerate(TIERS):
+        for j, (s, col, mk) in enumerate((("all", "#52514e", "o"), ("hard", "#eb6834", "s"), ("easy", "#2a78d6", "D"))):
+            r = g(t, s, "mask", "erm")
+            ax.errorbar([r.estimate], [i * 4 + j], xerr=[[r.estimate - r.ci95_lo], [r.ci95_hi - r.estimate]], fmt=mk, color=col,
+                        ms=5, capsize=2, lw=1.2, label={"all": "all pairs", "hard": "hard pairs", "easy": "easy pairs"}[s] if i == 0 else None)
+    ax.set_yticks([i * 4 + 1 for i in range(len(TIERS))])
+    ax.set_yticklabels([lab.replace("$\\le", "≤").replace("$", "") for _, lab in TIERS], fontsize=7.5)
+    ax.axvline(0, color=MUTED, lw=0.6); ax.invert_yaxis(); ax.set_xlabel("ISIC 2020 AUROC: mask $-$ ERM")
+    ax.legend(fontsize=7, frameon=False, loc="lower right")
+    fig.tight_layout(); fig.savefig(F / "r12_tiers.pdf"); plt.close(fig)
+
+
 # ------------------------------------------------------------------------------------------------ R11
 def r11():
     sm = j4("theory/summary.json")
@@ -396,7 +474,7 @@ def main():
         views_schematic()
     except Exception as e:  # noqa: BLE001 - the schematic needs opencv; the report builds without it
         print("[stage7] schematic not rebuilt:", e)
-    r8(); r9(); r10(); r11()
+    r8(); r9(); r10(); r12(); r11()
     M.write(T / "numbers.tex")
     L.report_missing("stage7")
 

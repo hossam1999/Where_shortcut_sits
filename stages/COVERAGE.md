@@ -52,7 +52,8 @@ back to earlier stages, never forward.
 | Round 4 (`docs/PREREGISTRATION_ROUND4.md`, `scripts/round4/`, `results/round4/`): masking implementations R8 | 7 | 5.1 |
 | Round 4: dose-response over the real overlap R9 (bin counts committed before fitting) | 7 | 5.2 |
 | Round 4: ISIC 2019 → ISIC 2020 natural test, near-duplicate removal, operating points R10 | 7 | 5.3 |
-| Round 4: prospective theory test R11 | 7 | 5.4 |
+| Round 4: prospective theory test R11 | 7 | 5.5 |
+| Round 5 (`docs/PREREGISTRATION_ROUND5.md`, `results/round5/`): calibrated duplicate rule R12, cleaner hair groups R13 | 7 | 5.4 |
 
 Analyses whose per-image predictions were not saved (chest-radiograph devices and drains, LaMa, text prompts, SLAS,
 U8, U10, selectors, archived hair sensitivity designs) appear as point estimates labelled "not re-estimated"; their

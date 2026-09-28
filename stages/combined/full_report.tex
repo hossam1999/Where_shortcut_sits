@@ -110,8 +110,10 @@ to the lesion box and a crop of the masked image all give a positive crossover i
 (\sSevenNPrimOK{} of \sSevenNPrim, Holm); and the mask gain falls monotonically with the real overlap in all four
 cohorts (slope for hair \sSevenSlopeisic), turning into harm for hair above $r\approx$ \sSevenZeroIsic{} (Stage~7).
 \item \textbf{It is visible on external data at natural prevalence.} Trained on ISIC 2019 and tested on ISIC 2020, masking
-raises the overall AUROC (\sSevenBmaskermall) but lowers it on shortcut-conflicting pairs (\sSevenBmaskermhard,
-borderline); a sensitivity loss at a fixed operating point was not found there (Stage~7).
+leaves the overall AUROC nearly unchanged (\sSevenTcalibratedall) but lowers it on shortcut-conflicting pairs
+(\sSevenTcalibratedhard{} under a label-free calibrated duplicate rule; \sSevenBmaskermhard{} under the looser registered rule).
+The harm combines both halves of the law --- masking removes hair beside the lesion and keeps hair on it --- and a
+sensitivity loss at a fixed operating point was not found (Stage~7).
 \item \textbf{It is predictable.} A two-parameter linear-Gaussian model fitted to each model's clean and correlated
 AUROC predicts the held-out reversed AUROC with mean error \sFiveTMae{} against \sFiveTMaeSym{} for the best heuristic, gets
 every real-trap crossover sign right, and explains when masking harms (it removes disease context) and why the crossover
@@ -148,7 +150,8 @@ seeds share test images; the crossed estimator fixes it and is used throughout.
 \item That masking always harms in-ROI (it helps a little for calipers and debris).
 \item That the theory predicts magnitudes in general (across all cohorts it is a qualitative account; the prospective
 test that it passed covers frozen-encoder linear heads on four cohorts).
-\item That masking causes a sensitivity loss on ISIC 2020 (it lowers only the hard-pair AUROC, borderline).
+\item That masking causes a sensitivity loss on ISIC 2020 (it lowers the hard-pair AUROC, not the sensitivity at a fixed
+operating point), or that the external harm is due to amplified in-lesion hair alone.
 \item That U-MtE improves deployment performance (it does not on unaltered data), or works post hoc on fine-tuned networks.
 \item That the transplant measures the harm of a particular real artifact (most of it is the paste).
 \item That the cohorts without patient identifiers are patient-independent.
@@ -157,8 +160,9 @@ test that it passed covers frozen-encoder linear heads on four cohorts).
 \subsection{Limitations and open work}
 Artifact labels come from detectors and a probe that a non-clinician audited visually; the blinded clinician audit is
 prepared but not done. Three cohorts publish no patient identifiers. Reversed environments are constructed by subsampling.
-Frozen linear probes are below published fine-tuned models on thyroid. External validation exists for dermoscopy only,
-and its near-duplicate removal was aggressive (\sSevenDropPct{} of ISIC 2020). The robustness analyses of Stage~7 use one
+Frozen linear probes are below published fine-tuned models on thyroid. External validation exists for dermoscopy only;
+its registered near-duplicate rule was too loose and was replaced by a calibrated rule in a registered sensitivity
+analysis. The robustness analyses of Stage~7 use one
 encoder.
 Some analyses could only be kept as point estimates. The open work before submission is the clinician audit, the
 institutional confirmation of the submission statements, and the decisions on thesis structure listed at the end of
