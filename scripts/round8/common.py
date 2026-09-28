@@ -143,3 +143,105 @@ def terms_from_predictions(p: pd.DataFrame, key_cols: List[str], cluster_col: st
         k = tuple(k) if len(k) > 1 else k[0]
         out.setdefault(k, []).append((c, q.image_id.astype(str).tolist(), q.y.to_numpy(), q.prob.to_numpy()))
     return out
+
+
+# ----------------------------------------------------------------------------------------------- round 8, Phase 2
+# docs/PREREGISTRATION_ROUND8.md. Seeds: development uses the environments of the earlier rounds (validation data only);
+# confirmation uses new environment / fold / validation seeds that no earlier analysis has drawn.
+DEV_SEEDS = (42, 123, 456, 789, 2026)
+CONF_SEEDS = (8101, 8202, 8303, 8404, 8505)
+FT_TRAP_SEEDS = (8101, 8202)          # fine-tuned traps: 2 env seeds x 5 folds = 10 clusters (as FT4 of round 6)
+SMOKE_SEEDS = (99991,)
+GUARD_MARGIN = 0.005                  # same-artifact validation AUROC >= masking head's - 0.005
+PRIMARY = ("mask_cmc", "full_cmc", "mask_bal", "locrand")
+
+
+def seeds_for(stage: str, smoke: bool) -> tuple:
+    if smoke:
+        return SMOKE_SEEDS
+    return {"dev": DEV_SEEDS, "confirm": CONF_SEEDS}[stage]
+
+
+def stage_dir(stage: str, smoke: bool) -> Path:
+    d = out_dir(smoke) / stage
+    d.mkdir(parents=True, exist_ok=True)
+    return d
+
+
+def _pair_auc(sp: np.ndarray, sn: np.ndarray) -> Tuple[float, int]:
+    """Mann-Whitney AUROC of positive scores sp against negative scores sn, and the number of pairs."""
+    if len(sp) == 0 or len(sn) == 0:
+        return float("nan"), 0
+    s = np.concatenate([sp, sn])
+    r = pd.Series(s).rank(method="average").to_numpy()[: len(sp)]
+    return float((r.sum() - len(sp) * (len(sp) + 1) / 2) / (len(sp) * len(sn))), len(sp) * len(sn)
+
+
+def pair_type_aucs(y, a, p) -> Dict[str, Tuple[float, int]]:
+    """AUROC and pair count of the four positive-negative pair types by artifact status (a = 1 / 0)."""
+    y, a, p = np.asarray(y).astype(int), np.asarray(a).astype(int), np.asarray(p, float)
+    g = lambda yy, aa: p[(y == yy) & (a == aa)]
+    return {"y1a0_y0a1": _pair_auc(g(1, 0), g(0, 1)), "y1a1_y0a0": _pair_auc(g(1, 1), g(0, 0)),
+            "y1a1_y0a1": _pair_auc(g(1, 1), g(0, 1)), "y1a0_y0a0": _pair_auc(g(1, 0), g(0, 0))}
+
+
+def worst_group_auc(y, a, p) -> float:
+    """Selection objective (as U13): min(AUROC(Y1A0 vs Y0A1), AUROC(Y1A1 vs Y0A0)) over the cross-artifact pairs."""
+    t = pair_type_aucs(y, a, p)
+    v = [t["y1a0_y0a1"][0], t["y1a1_y0a0"][0]]
+    v = [x for x in v if np.isfinite(x)]
+    return float(min(v)) if v else float("nan")
+
+
+def same_artifact_auc(y, a, p) -> float:
+    """Guard statistic: AUROC over the pairs whose two images share the artifact status (both carry / both lack it),
+    i.e. the pair-weighted mean of AUROC(Y1A1 vs Y0A1) and AUROC(Y1A0 vs Y0A0). Inside such a pair a linear score's
+    artifact term cancels, so this measures disease ranking and is unaffected by how strongly the validation split
+    associates artifact and label."""
+    t = pair_type_aucs(y, a, p)
+    num = den = 0.0
+    for k in ("y1a1_y0a1", "y1a0_y0a0"):
+        v, n = t[k]
+        if n and np.isfinite(v):
+            num, den = num + v * n, den + n
+    return float(num / den) if den else float("nan")
+
+
+def all_pairs_auc(y, p) -> float:
+    y = np.asarray(y).astype(int)
+    return _pair_auc(np.asarray(p, float)[y == 1], np.asarray(p, float)[y == 0])[0]
+
+
+def select_setting(val: Dict[str, Tuple[np.ndarray, np.ndarray, np.ndarray]], reference: str = "mask",
+                   margin: float = GUARD_MARGIN, guard: str = "same_artifact") -> Tuple[str, pd.DataFrame]:
+    """Validation-only selection rule (docs/PREREGISTRATION_ROUND8.md, section 4).
+
+    val: setting -> (y, a, p) on the selection split; `reference` (the masking head) is always admissible.
+    Objective: worst-group AUROC. Guard: same-artifact AUROC >= reference's - margin (guard="all_pairs" is the rule of
+    docs/ROUND8_DESIGN.md 5d that the registration replaced; kept for the unit test that shows why).
+    Ties (objective within 1e-9) go to the earlier setting in `val`'s order, which lists settings closest to masking
+    first. Returns (chosen setting, table of every setting's statistics)."""
+    rows = []
+    stat = same_artifact_auc if guard == "same_artifact" else (lambda y, a, p: all_pairs_auc(y, p))
+    ref = stat(*val[reference])
+    for name, (y, a, p) in val.items():
+        g = stat(y, a, p)
+        rows.append({"setting": name, "objective": worst_group_auc(y, a, p), "guard_stat": g,
+                     "guard_ref": ref, "admissible": bool(name == reference or (np.isfinite(g) and g >= ref - margin))})
+    t = pd.DataFrame(rows)
+    ok = t[t.admissible & np.isfinite(t.objective)]
+    if ok.empty:
+        return reference, t.assign(chosen=t.setting == reference)
+    best = ok.objective.max()
+    choice = ok[ok.objective >= best - 1e-9].setting.iloc[0]
+    return choice, t.assign(chosen=t.setting == choice)
+
+
+def smoke_envs_from_validation(E: dict, test_envs=("test_rev", "test_corr", "clean")) -> dict:
+    """Smoke runs never score an image outside the run's own training/validation data: every test environment is
+    replaced by the selection split (val_groups)."""
+    E = dict(E)
+    for e in test_envs:
+        if e in E:
+            E[e] = E["val_groups"]
+    return E
