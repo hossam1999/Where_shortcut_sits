@@ -1,0 +1,10 @@
+\begin{table}[H]\centering\small
+\caption{Leakage: grouped versus random image-level splits (controlled sweep, DINOv2@518).}\label{tab:leak}
+\resizebox{\linewidth}{!}{\begin{tabular}{lcccc}\toprule
+Overlap & Split & Near-duplicate pairs across split & ERM gap (corr $-$ rev) & mask $-$ ERM (rev) \\\midrule
+0\% & grouped & 0 & 0.241 & $+0.184$ \\
+ & random (mean of 5) & 93 & 0.284 & $+0.223$ \\
+100\% & grouped & 0 & 0.421 & $-0.129$ \\
+ & random (mean of 5) & 93 & 0.465 & $-0.088$ \\
+\bottomrule\end{tabular}}
+\end{table}

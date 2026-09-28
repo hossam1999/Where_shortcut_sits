@@ -1,0 +1,95 @@
+{\scriptsize
+\begin{longtable}{llp{1.7cm}p{3.3cm}l}
+\caption{Pilot replication ledger, re-checked with the regenerated runs and the corrected estimator. The pilot's own intervals (old estimator) are not reproduced.}\label{tab:ledger}\\\toprule
+Exp. & Quantity & Pilot (point) & Replication (crossed CI) & Verdict \\\midrule
+\endfirsthead
+\toprule Exp. & Quantity & Pilot (point) & Replication (crossed CI) & Verdict \\\midrule
+\endhead
+\bottomrule
+\endlastfoot
+E1 & mask $-$ ERM rev @0\% & +0.184 & +0.184 [+0.117, +0.250] & MATCH \\
+E1 & mask $-$ ERM rev @25\% & -0.058 & -0.059 [-0.127, +0.008] & MISMATCH \\
+E1 & mask $-$ ERM rev @50\% & -0.097 & -0.097 [-0.164, -0.030] & MATCH \\
+E1 & mask $-$ ERM rev @75\% & -0.111 & -0.111 [-0.181, -0.043] & MATCH \\
+E1 & mask $-$ ERM rev @100\% & -0.128 & -0.129 [-0.195, -0.064] & MATCH \\
+E1 & interaction 0\% $-$ 100\% (mask) & +0.312 & +0.313 [+0.258, +0.370] & MATCH \\
+E2 & dino224 mask $-$ ERM @0\% & +0.364 & +0.361 [+0.275, +0.444] & MATCH \\
+E2 & dino224 mask $-$ ERM @25\% & -0.040 & -0.049 [-0.117, +0.018] & MATCH \\
+E2 & dino224 mask $-$ ERM @50\% & -0.076 & -0.081 [-0.143, -0.019] & MATCH \\
+E2 & dino224 mask $-$ ERM @75\% & -0.102 & -0.106 [-0.166, -0.044] & MATCH \\
+E2 & dino224 mask $-$ ERM @100\% & -0.092 & -0.095 [-0.156, -0.035] & MATCH \\
+E2 & dermlip224 mask $-$ ERM @0\% & +0.160 & +0.161 [+0.102, +0.222] & MATCH \\
+E2 & dermlip224 mask $-$ ERM @25\% & -0.291 & -0.289 [-0.366, -0.215] & MATCH \\
+E2 & dermlip224 mask $-$ ERM @50\% & -0.300 & -0.298 [-0.371, -0.225] & MATCH \\
+E2 & dermlip224 mask $-$ ERM @75\% & -0.313 & -0.309 [-0.378, -0.239] & MATCH \\
+E2 & dermlip224 mask $-$ ERM @100\% & -0.268 & -0.263 [-0.348, -0.180] & MATCH \\
+E3 & variable ruler mask $-$ ERM @0\% & +0.147 & +0.146 [+0.082, +0.211] & MATCH \\
+E3 & variable ruler mask $-$ ERM @50\% & -0.094 & -0.094 [-0.168, -0.021] & MATCH \\
+E3 & variable ruler mask $-$ ERM @100\% & -0.155 & -0.155 [-0.228, -0.084] & MATCH \\
+E3 & variable ruler balanced $-$ ERM @0\% & +0.103 & +0.102 [+0.068, +0.140] & MATCH \\
+E3 & variable ruler balanced $-$ ERM @50\% & +0.171 & +0.171 [+0.132, +0.213] & MATCH \\
+E3 & variable ruler balanced $-$ ERM @100\% & +0.222 & +0.222 [+0.181, +0.265] & MATCH \\
+E4 & occlusion (50/50) mask $-$ ERM @0\% & +0.035 & +0.036 [-0.016, +0.086] & MISMATCH \\
+E4 & occlusion (50/50) mask $-$ ERM @50\% & +0.033 & +0.041 [-0.010, +0.090] & MATCH \\
+E4 & occlusion (50/50) mask $-$ ERM @100\% & +0.039 & +0.039 [-0.010, +0.091] & MISMATCH \\
+E5 & dilate0 $-$ ERM @50\% & -0.097 & -0.097 [-0.164, -0.031] & MATCH \\
+E5 & dilate10 $-$ ERM @50\% & -0.138 & -0.138 [-0.203, -0.074] & MATCH \\
+E5 & dilate25 $-$ ERM @50\% & -0.153 & -0.153 [-0.221, -0.089] & MATCH \\
+E5 & dilate50 $-$ ERM @50\% & -0.142 & -0.142 [-0.206, -0.083] & MATCH \\
+E5 & dilate0 $-$ ERM @100\% & -0.128 & -0.129 [-0.195, -0.066] & MATCH \\
+E5 & dilate10 $-$ ERM @100\% & -0.143 & -0.144 [-0.206, -0.082] & MATCH \\
+E5 & dilate25 $-$ ERM @100\% & -0.144 & -0.144 [-0.209, -0.082] & MATCH \\
+E5 & dilate50 $-$ ERM @100\% & -0.138 & -0.138 [-0.200, -0.082] & MATCH \\
+E6 & $|\Delta p|$ erm @100\% & +0.235 & +0.235 & MATCH \\
+E6 & $|\Delta p|$ mask @100\% & +0.490 & +0.491 & MATCH \\
+E6 & $|\Delta p|$ mask @0\% & +0.000 & +0.000 & MATCH \\
+E6 & $|\Delta p|$ erm @0\% & +0.128 & +0.128 & MATCH \\
+E6 & $|\Delta p|$ erm @50\% & +0.195 & +0.195 & MATCH \\
+E7 & mask $-$ ERM, large lesions @0\% & +0.249 & +0.249 & MATCH \\
+E7 & mask $-$ ERM, medium lesions @0\% & +0.214 & +0.215 & MATCH \\
+E7 & mask $-$ ERM, small lesions @0\% & +0.150 & +0.150 & MATCH \\
+E7 & mask $-$ ERM, large lesions @50\% & +0.087 & +0.087 & MATCH \\
+E7 & mask $-$ ERM, medium lesions @50\% & -0.129 & -0.129 & MATCH \\
+E7 & mask $-$ ERM, small lesions @50\% & -0.325 & -0.326 & MATCH \\
+E7 & mask $-$ ERM, large lesions @100\% & +0.064 & +0.063 & MATCH \\
+E7 & mask $-$ ERM, medium lesions @100\% & -0.158 & -0.158 & MATCH \\
+E7 & mask $-$ ERM, small lesions @100\% & -0.364 & -0.364 & MATCH \\
+E14 & in-lesion hair median area ratio & +0.033 & +0.033 & MATCH \\
+E14 & Trap A mask $-$ ERM, area-ratio tertile T1 & -0.064 & -0.057 [-0.095, -0.022] & MATCH \\
+E14 & Trap A mask $-$ ERM, area-ratio tertile T2 & -0.057 & -0.046 [-0.082, -0.013] & MATCH \\
+E14 & Trap A mask $-$ ERM, area-ratio tertile T3 & -0.059 & -0.037 [-0.071, -0.005] & SIGN+CI \\
+E10 & hair decodability test AUROC & +0.943 & +0.943 [+0.919, +0.964] & MATCH \\
+E10 & detector mean IoU & +0.220 & +0.222 & MATCH \\
+E10 & detector median IoU & +0.180 & +0.184 & MATCH \\
+E10 & LEACE A-decoder after erasure & +0.500 & +0.500 & MATCH \\
+E10 & clean melanoma AUROC after erasure & +0.814 & +0.815 & MATCH \\
+E10 & melanoma-head $|\Delta p|$ after erasure & +0.058 & +0.057 & MATCH \\
+E10 & LEACE projection rank & +1.000 & +1.000 & MATCH \\
+E12 & overlap-contrast trap mask $-$ ERM (spec: null) & +0.047 & -0.103 [-0.121, -0.085] & MISMATCH \\
+E8/E9 & inpaint $-$ ERM @50\% & +0.211 & +0.211 [+0.175, +0.249] & MATCH \\
+E8/E9 & inpaint $-$ ERM @100\% & +0.244 & +0.243 [+0.205, +0.284] & MATCH \\
+E8/E9 & inpaint\_consistency $-$ ERM @50\% & +0.046 & +0.044 [-0.007, +0.092] & MATCH \\
+E8/E9 & inpaint\_consistency\_lam0 $-$ ERM @50\% & +0.036 & +0.035 [-0.015, +0.086] & MATCH \\
+E8/E9 & leace $-$ ERM @100\% & +0.294 & +0.294 [+0.249, +0.339] & MATCH \\
+E8/E9 & balanced $-$ ERM @100\% & +0.281 & +0.281 [+0.236, +0.329] & MATCH \\
+E8/E9 & dfr $-$ ERM @100\% & +0.279 & +0.279 [+0.220, +0.339] & MATCH \\
+E8/E9 & groupdro $-$ ERM @100\% & +0.197 & +0.197 [+0.155, +0.240] & MATCH \\
+E13 & trapA mask $-$ ERM (rev) & -0.064 & -0.049 [-0.083, -0.018] & MATCH \\
+E13 & trapB mask $-$ ERM (rev) & +0.124 & +0.098 [+0.060, +0.136] & SIGN+CI \\
+E13 & trapA inpaint $-$ ERM (rev) & +0.101 & +0.098 [+0.084, +0.112] & MATCH \\
+E13 & trapB inpaint $-$ ERM (rev) & +0.108 & +0.100 [+0.083, +0.117] & MATCH \\
+E13 & trapA balanced $-$ ERM (rev) & +0.213 & +0.213 [+0.183, +0.243] & MATCH \\
+E13 & trapB balanced $-$ ERM (rev) & +0.234 & +0.204 [+0.166, +0.245] & SIGN+CI \\
+E13 & trapA dfr $-$ ERM (rev) & +0.202 & +0.196 [+0.157, +0.235] & MATCH \\
+E13 & trapB dfr $-$ ERM (rev) & +0.192 & +0.196 [+0.147, +0.251] & MATCH \\
+E13 & trapA leace\_paired $-$ ERM (rev) & +0.058 & +0.074 [+0.062, +0.086] & MATCH \\
+E13 & trapB leace\_paired $-$ ERM (rev) & +0.078 & +0.078 [+0.059, +0.097] & MATCH \\
+E13 & trapA leace\_unpaired $-$ ERM (rev) & +0.316 & +0.320 [+0.280, +0.361] & MATCH \\
+E13 & trapA mask $-$ ERM, HAM only & -0.030 & -0.011 [-0.064, +0.043] & MISMATCH \\
+E13 & trapA mask $-$ ERM, BCN only & -0.078 & -0.067 [-0.110, -0.025] & MATCH \\
+E15 & trapA mask $-$ ERM (rev) & -0.069 & -0.104 [-0.143, -0.067] & SIGN+CI \\
+E15 & trapA balanced $-$ ERM (rev) & +0.126 & +0.146 [+0.122, +0.170] & MATCH \\
+E15 & trapA dfr $-$ ERM (rev) & +0.114 & +0.116 [+0.090, +0.145] & MATCH \\
+E15 & trapA leace\_paired $-$ ERM (rev) & +0.031 & +0.034 [+0.026, +0.042] & MATCH \\
+E15 & trapA leace\_unpaired $-$ ERM (rev) & +0.192 & +0.203 [+0.165, +0.243] & MATCH \\
+\end{longtable}}

@@ -1,0 +1,184 @@
+\input{../common/preamble.tex}
+\input{tables/numbers.tex}
+\title{\textbf{Stage 1 --- The problem, the pilot and the protocol}\\[3pt]\large Where the Shortcut Sits: supervisor meeting 1 of 6}
+\author{}
+\date{Report generated from the repository on \today}
+\begin{document}
+\maketitle
+\stagebox{\textbf{In one sentence.} Region-of-interest (ROI) masking is the standard defence against acquisition
+artifacts that act as shortcuts; this project asks whether it still works when the artifact lies \emph{inside} the ROI.
+This first meeting presents the clinical problem, the pilot that raised the question, its independent replication, and
+the protocol that every later stage uses --- including a correction to the bootstrap that widened every interval.}
+\input{../common/notation.tex}
+
+\section{Where we are}
+This is the first of six meetings. It sets up everything the later stages rely on: the question, the evidence from
+the pilot study (experiments E1--E15), an independent re-implementation of that pilot from its written specification,
+and the experimental protocol --- environments, frozen backbones, linear heads, grouped splits, pre-registration and
+the statistical estimator. What is new relative to the pilot is (i) that every pilot claim was re-derived from scratch
+and compared number by number, and (ii) that the uncertainty estimator was corrected after a flaw was found late in
+the project; all intervals in these six reports use the corrected estimator.
+
+\section{Question}
+\subsection{Why shortcut artifacts matter clinically}
+Deep classifiers exploit features that are correlated with the diagnosis in the training data but are not evidence of
+disease \citep{geirhos2020shortcut,degrave2021ai}. In dermoscopy, surgical skin markings \citep{winkler2019markings}
+and ruler scale bars \citep{winkler2021scalebars} changed the melanoma predictions of a market-approved system; in
+chest radiography, pneumothorax classifiers detect the chest drain that treats the condition
+\citep{oakden2020hidden,jimenez2023shortcuts}. Such correlations arise from clinical workflow --- suspicious lesions are
+measured and marked, sonographers place calipers on nodules they consider suspicious --- so they are present in every
+retrospectively collected dataset, and a model that relies on them fails exactly on the patients whose workflow
+differs (for example, a malignant nodule that was not measured).
+
+\subsection{The research question and why we asked it this way}
+The most widely recommended defence is to restrict the classifier to the ROI: segment the lesion and discard the
+background. Its rationale assumes that the shortcut lives in the background. Rulers, hair and calipers do not respect
+that assumption; when an artifact overlaps the ROI, masking cannot remove it and removes everything \emph{else}. The
+question is therefore:
+\begin{quote}\emph{Does the benefit of ROI masking depend on where the artifact sits relative to the ROI --- and if so,
+which quantity governs that dependence, and does it matter on unaltered clinical data?}\end{quote}
+\paragraph{Design decisions and rejected alternatives}
+\begin{itemize}[leftmargin=*]\itemsep1pt
+\item \emph{Control the overlap first, then use real artifacts.} The pilot pasted a synthetic ruler at controlled
+overlap with the lesion (0--100\%). This isolates location from everything else; real artifacts (Stage~3) come later
+because their location is confounded with the images that carry them (Stage~4). Starting with real artifacts only was
+rejected because a location effect could not be separated from population differences.
+\item \emph{Frozen foundation-model features and linear heads.} This is how foundation models are typically deployed on
+small medical datasets, it makes every arm comparable (same features, only the head or the input changes), and it is
+cheap enough to repeat over seeds, overlaps and cohorts. End-to-end fine-tuning was kept as a replication check
+(Stage~5), not the main protocol, because it multiplies compute by two orders of magnitude.
+\item \emph{A trap design with a reversed test.} Training with a strong artifact--label association and testing on the
+reversed association measures shortcut reliance directly; clean and correlated tests measure the cost of a
+mitigation. A single natural test set was rejected as the main design because its shortcut is too weak to measure
+location effects precisely; natural test sets are used in Stage~5.
+\end{itemize}
+
+\section{Methods}
+\paragraph{Pilot cohort} ISIC 2018 Task 1/2 images with manual lesion masks and melanoma labels from the union of the
+ISIC 2016 and 2017 tables (three images with conflicting labels dropped); perceptual-hash (Hamming $\le8$) and lesion
+grouping; \sOneNPilot{} images for which a $65\times19$\,px ruler can be placed at 0/25/50/75/100\% overlap within 10
+percentage points \citep{codella2019isic}. Placements are frozen and reused by every run.
+\paragraph{Backbones and heads} DINOv2 ViT-B/14 at 518\,px \citep{oquab2024dinov2} (CLS token), DINOv2 at 224\,px and
+the dermatology foundation model DermLIP at 224\,px \citep{yan2025derm1m}; logistic-regression heads; regularisation
+and decision threshold (maximal balanced accuracy) chosen on clean validation data only.
+\paragraph{Environments} Training and correlated test use $P(A{=}1\mid Y{=}1)=0.9$ and $P(A{=}1\mid Y{=}0)=0.1$; the
+reversed test swaps them; the clean test has no artifact (sweeps) or an artifact independent of the label (real traps).
+Figure~\ref{fig:env} shows the four environments. Seeds: 42, 123, 456 for the sweeps.
+\begin{figure}[H]\centering\includegraphics[width=0.78\linewidth]{figures/environments.pdf}
+\caption{The trap environments. A model that uses the artifact gains on the correlated test and collapses on the
+reversed one; the reversed-test AUROC is the primary metric.}\label{fig:env}\end{figure}
+\paragraph{Splits and leakage} Splits are grouped by lesion identifier and perceptual hash; a leakage experiment
+(Sec.~\ref{sec:leak}) compares grouped with random splits. Table~\ref{tab:protocol} summarises the protocol.
+\input{tables/protocol.tex}
+
+\subsection{The corrected bootstrap}\label{sec:bootstrap}
+Every comparison is a paired difference of AUROCs between two arms on the same test images, averaged over training
+seeds. The original estimator (inherited from the pilot) resampled seeds and then, \emph{independently within each
+sampled seed}, the test images. In most analyses, however, every seed scores the \emph{same} test images (a fixed test
+split, or cross-validation folds that together cover the same pool). Resampling images independently per seed then
+treats one test set as several and divides the test-sampling variance by the number of seeds: intervals were too
+narrow. The corrected (\emph{crossed}) estimator resamples seeds with replacement and draws one Poisson(1) weight per
+test image, shared by every seed in which the image appears, then recomputes the per-seed statistic and averages
+(\texttt{wtss.stats\_crossed}; 10,000 replicates). Every interval in these reports comes from regenerated runs with this
+estimator (Sec.~\ref{sec:correction} gives its consequences).
+
+\subsection{Pre-registration}
+Before every experiment a document stating the design, the claims and what would count as support was committed to
+the repository; results were committed afterwards. The registry lists \sOneNRegistered{} registrations; every one
+precedes its first outcome result except that the SLAS registration and its localisation result share a commit, and
+the 16-test primary family (Stage~3) was grouped after the individual results. \textbf{Caveat:} commit times come from
+the machine that made the commits and are not independent proof of order; only the registrations of the last three
+rounds were additionally pushed to GitHub before running, which provides an external time stamp.
+
+\section{Experiments}
+\subsection{The pilot (E1--E15)}
+\posthoc{the pilot preceded this project's pre-registration; its specification was written down afterwards and then
+re-implemented}. Table~\ref{tab:pilot} lists what each pilot experiment tested.
+\input{tables/pilot_overview.tex}
+
+\subsection{Independent replication of the pilot}
+\registered{specification \texttt{docs/REPLICATION\_SPEC.md}, first commit \sOneRegRep}. The pilot was re-implemented
+from its written specification and every reported number was compared with the re-derived one. \emph{Support} means:
+same sign, same verdict on whether the interval excludes zero, and $|\Delta|\le0.02$ (MATCH); SIGN+CI if the sign and
+verdict agree but $|\Delta|>0.02$; MISMATCH otherwise.
+
+\subsection{Leakage: grouped versus random splits}\label{sec:leak}
+\registered{part of the replication specification}. The controlled dermoscopy sweep was repeated with five random
+image-level splits instead of the grouped split, holding everything else fixed.
+
+\section{Results}
+\paragraph{Replication} The original ledger (before the bootstrap correction) had \sOneOrigMatch{} MATCH,
+\sOneOrigSignCI{} SIGN+CI and \sOneOrigMismatch{} MISMATCH among \sOneOrigN{} numbers. Re-checked with the regenerated
+runs and the corrected estimator, the counts are \sOneNewMatch{} MATCH, \sOneNewSignCI{} SIGN+CI and \sOneNewMismatch{}
+MISMATCH among \sOneNewN{} numbers (Table~\ref{tab:ledger}; the pilot's values are shown as point estimates only).
+The central pilot result replicates: in the controlled sweep, masking changes reversed-test AUROC by \sOneEOneZero{} at
+0\% overlap and by \sOneEOneHundred{} at 100\% overlap (location interaction \sOneEOneInter).
+\input{tables/ledger.tex}
+\paragraph{The mismatches} With the corrected estimator the ledger has \sOneNewMismatch{} mismatches (originally
+\sOneOrigMismatch). (i) E1, masking at 25\% overlap: the pilot's interval excluded zero, the corrected one includes it
+(the harm starts later than the pilot said, at 50\%). (ii) E4, the occlusion control at 0\% and 100\% overlap: the
+pilot's small positive effects are no longer significant; the conclusion --- occlusion by the mask does not harm --- is
+unchanged (Stage~2). (iii) E12, the overlap-contrast trap: null in the pilot, clearly non-null in the replication
+(Stage~3 explains why this design was abandoned). (iv) One HAM-only stratum of the hair trap. None of them affects the
+central claims.
+\begin{figure}[H]\centering\includegraphics[width=\linewidth]{figures/pilot_sweep.pdf}
+\caption{The pilot's question, regenerated: reversed-test (left) and correlated-test (right) AUROC of the main arms as
+the ruler moves into the lesion (ISIC 2018, DINOv2 @518). Masking helps most when the ruler lies outside the lesion
+and falls below ERM once it overlaps it; the masked model's correlated-test AUROC rises with overlap, which is the
+shortcut it now relies on.}\label{fig:pilotsweep}\end{figure}
+
+\paragraph{Leakage} \input{tables/leakage_text.tex}
+\input{tables/leakage.tex}
+
+\subsection{Consequences of the bootstrap correction}\label{sec:correction}
+Across \sOneCorrRows{} regenerated intervals, the corrected intervals are wider by a median factor of
+\sOneCorrMedian{} (interquartile range \sOneCorrQlo--\sOneCorrQhi; Figure~\ref{fig:width}); \sOneCorrLost{} intervals
+that excluded zero no longer do and \sOneCorrGained{} that included zero now exclude it; \sOneCorrEstDiff{} regenerated
+point estimates moved by more than 0.03 (largest \sOneCorrMaxDiff, in the capsule synthetic sweeps, whose split was
+re-dealt when the cohort was rebuilt; Stage~4). The claims that
+changed are listed in Stage~4 and in \texttt{results/bootstrap\_correction/sweeps\_umte\_old\_vs\_new.md}.
+\begin{figure}[H]\centering\includegraphics[width=0.62\linewidth]{figures/width_ratio.pdf}
+\caption{Width of the corrected interval divided by the width of the original one, for every regenerated interval.}
+\label{fig:width}\end{figure}
+\begin{figure}[H]\centering\includegraphics[width=\linewidth]{figures/ruler_examples.pdf}
+\caption{The controlled dermoscopy sweep: the same ISIC 2018 image with the synthetic ruler at 0, 50 and 100\% overlap
+with the lesion (\textcolor{roigreen}{green}: lesion mask). ISIC images CC BY-NC 4.0.}\label{fig:ruler}\end{figure}
+
+\section{What failed or changed}
+\begin{itemize}[leftmargin=*]\itemsep1pt
+\item \textbf{Bootstrap flaw (found in the third review round).} The inherited estimator understated uncertainty
+whenever seeds share test images. All runs were regenerated and every interval recomputed; claims that lost support are
+listed in Stage~4.
+\item \textbf{Three pilot mismatches}, above; the E12 design failure is discussed in Stage~3.
+\item \textbf{Rebuild on new hardware.} All data were re-downloaded and every derived object rebuilt on a different GPU;
+the lesion U-Net was retrained, which changed hair-trap membership by about 3\%. Two gaps in the reproduction recipe
+(\texttt{Makefile}) were found and fixed.
+\item \textbf{Commit times are not independent proof} of pre-registration order (above).
+\end{itemize}
+
+\section{Conclusion}
+Shortcut artifacts are a clinical safety problem, and ROI masking --- the usual defence --- rests on an untested
+assumption about where the shortcut lives. The pilot suggested that masking reverses from helpful to harmful as the
+artifact moves into the lesion; an independent re-implementation reproduced it. The protocol --- trap environments,
+frozen foundation-model features, grouped splits, pre-registration and a crossed bootstrap --- is fixed here and used
+unchanged in every later stage. \textbf{Supported:} the pilot's central sweep result and most of its numbers
+replicate. \textbf{Not supported:} the pilot's null overlap-contrast result (E12); the original, narrower intervals.
+
+\section{Questions for the supervisor}
+\begin{enumerate}\itemsep1pt
+\item Is the reversed-environment AUROC the right primary metric for the thesis, or should the thesis lead with a
+clinical metric (sensitivity at a fixed specificity, Stage~5)?
+\item How should the thesis present the bootstrap correction: as a methods footnote, or as a contribution (it affects
+any study that averages several training seeds on one test set)?
+\item Is it acceptable that pre-registrations before the last rounds carry only local commit times?
+\end{enumerate}
+
+\section{Next stage}
+Stage~2 returns to the controlled dermoscopy sweep and asks \emph{why} masking reverses: it separates occlusion, lost
+context and retention of the artifact with dedicated experiments (occlusion control, mask dilation, counterfactual
+sensitivity, lesion-size strata), repeats the sweep in ultrasound, capsule endoscopy and chest radiography, and shows
+all of it with the corrected intervals.
+
+\bibliographystyle{plainnat}
+\bibliography{../common/references}
+\end{document}

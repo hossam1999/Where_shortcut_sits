@@ -1,0 +1,21 @@
+\begin{table}[H]\centering\small
+\caption{The pilot experiments (specification: \texttt{docs/REPLICATION\_SPEC.md}).}\label{tab:pilot}
+\begin{tabular}{lp{13cm}}\toprule
+Exp. & What it tests \\\midrule
+E1 & controlled ruler sweep, DINOv2@518: mask $-$ ERM at 0--100\% overlap; location interaction \\
+E2 & the same at 224\,px (DINOv2) and with the dermatology model DermLIP \\
+E3 & appearance randomisation (colour, opacity, ticks, scale of the ruler) \\
+E4 & occlusion control: ruler present but uncorrelated with the label (50/50) \\
+E5 & mask dilation: restoring ruler pixels around the lesion (retention) \\
+E6 & same-head counterfactual sensitivity $|\Delta p|$ to inserting the ruler \\
+E7 & lesion-size strata (artifact-to-lesion area ratio) \\
+E8 & oracle inpainting and a prediction-consistency repair \\
+E9 & bridge: group-balanced training, DFR, GroupDRO, paired LEACE at 100\% overlap \\
+E10 & hair decodability from the embedding; paired LEACE on real hair \\
+E11 & atlas of real artifacts (hair, ink, vignetting) in ISIC 2019 / HAM10000; vignetting trap \\
+E12 & overlap-contrast trap: in-lesion versus out-of-lesion hair, no artifact-free group \\
+E13 & real hair traps (Trap A in-lesion, Trap B out-of-lesion, shared hair-free group), ISIC 2019 \\
+E14 & area-ratio strata of the real hair trap \\
+E15 & E13 with DermLIP \\
+\bottomrule\end{tabular}
+\end{table}

@@ -38,12 +38,36 @@ def result_files(roots):
             yield f
 
 
+def json_records(txt):
+    """Number sets of every JSON object whose own scalar values include an interval (ci95_lo / ci95_hi)."""
+    import json
+    try:
+        j = json.loads(txt)
+    except ValueError:
+        return []
+    recs = []
+
+    def walk(v):
+        if isinstance(v, dict):
+            sc = {round(float(x), 3) for x in v.values() if isinstance(x, (int, float)) and not isinstance(x, bool)}
+            if {"ci95_lo", "ci95_hi"} <= set(v) and sc:
+                recs.append(sc)
+            for x in v.values():
+                walk(x)
+        elif isinstance(v, list):
+            for x in v:
+                walk(x)
+    walk(j)
+    return recs
+
+
 def lines_of(roots):
     out = []
     for f in result_files(roots):
         txt = f.read_text(errors="ignore")
         if f.suffix == ".json":
             txt = re.sub(r"\[\s*([^\]]*?)\s*\]", lambda m: "[" + " ".join(m.group(1).split()) + "]", txt)
+            out.extend(json_records(txt))  # an estimate and its interval are one record even when pretty-printed
         for line in txt.splitlines():
             ns = set()
             for m in NUM.findall(line):

@@ -1,0 +1,24 @@
+% Shared preamble of the six stage reports (stages/README.md). Colours and notation are identical in every report.
+\documentclass[11pt,a4paper]{article}
+\usepackage[margin=2.2cm]{geometry}
+\usepackage{amsmath,amssymb,booktabs,graphicx,xcolor,float,caption,subcaption,enumitem,longtable,array}
+\usepackage[round]{natbib}
+\usepackage[hidelinks]{hyperref}
+\usepackage{fancyhdr}
+\setlength{\emergencystretch}{2em}
+\setlength{\parskip}{3pt}
+\definecolor{roigreen}{RGB}{0,160,0}
+\definecolor{artred}{RGB}{220,0,0}
+\definecolor{maskblue}{RGB}{31,119,180}
+\definecolor{ermgrey}{RGB}{110,110,110}
+\definecolor{supported}{RGB}{0,120,0}
+\definecolor{notsupported}{RGB}{190,0,0}
+\newcommand{\ok}{\textcolor{supported}{\textbf{supported}}}
+\newcommand{\no}{\textcolor{notsupported}{\textbf{not supported}}}
+\newcommand{\mixed}{\textcolor{orange!80!black}{\textbf{partly supported}}}
+\newcommand{\roi}{\textcolor{roigreen}{ROI}}
+\newcommand{\na}{\textit{n/a}}
+\newcommand{\registered}[1]{\textsf{registered before results (#1)}}
+\newcommand{\posthoc}[1]{\textsf{post hoc (#1)}}
+\pagestyle{fancy}\fancyhf{}\rhead{\small Where the Shortcut Sits --- stage reports}\lfoot{\small\leftmark}\rfoot{\small\thepage}
+\newcommand{\stagebox}[1]{\noindent\colorbox{gray!12}{\parbox{\dimexpr\linewidth-2\fboxsep}{\small #1}}\par\medskip}
