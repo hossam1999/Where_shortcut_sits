@@ -12,3 +12,7 @@ results/**/predictions*.csv.gz
 !logs/
 audit_local/
 figures_local/
+
+# round 4: local visual checks and smoke runs (never committed)
+results/round4/_local_examples/
+results/round4/_smoke/
