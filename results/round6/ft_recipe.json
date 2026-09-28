@@ -1,0 +1,107 @@
+{
+  "runs": [
+    {
+      "arch": "convnext_tiny.fb_in22k_ft_in1k",
+      "lr": 3e-05,
+      "epochs": 8,
+      "val_auroc": 0.8489135158626685,
+      "seed": 42,
+      "arm": "erm"
+    },
+    {
+      "arch": "convnext_tiny.fb_in22k_ft_in1k",
+      "lr": 3e-05,
+      "epochs": 20,
+      "val_auroc": 0.841641315370129,
+      "seed": 42,
+      "arm": "erm"
+    },
+    {
+      "arch": "convnext_tiny.fb_in22k_ft_in1k",
+      "lr": 0.0001,
+      "epochs": 8,
+      "val_auroc": 0.8653628857018687,
+      "seed": 42,
+      "arm": "erm"
+    },
+    {
+      "arch": "convnext_tiny.fb_in22k_ft_in1k",
+      "lr": 0.0001,
+      "epochs": 20,
+      "val_auroc": 0.8646675358539764,
+      "seed": 42,
+      "arm": "erm"
+    },
+    {
+      "arch": "resnet50",
+      "lr": 3e-05,
+      "epochs": 8,
+      "val_auroc": 0.6579385774301028,
+      "seed": 42,
+      "arm": "erm"
+    },
+    {
+      "arch": "resnet50",
+      "lr": 3e-05,
+      "epochs": 20,
+      "val_auroc": 0.7227437346081413,
+      "seed": 42,
+      "arm": "erm"
+    },
+    {
+      "arch": "resnet50",
+      "lr": 0.0001,
+      "epochs": 8,
+      "val_auroc": 0.723142112125163,
+      "seed": 42,
+      "arm": "erm"
+    },
+    {
+      "arch": "resnet50",
+      "lr": 0.0001,
+      "epochs": 20,
+      "val_auroc": 0.7809358250036216,
+      "seed": 42,
+      "arm": "erm"
+    },
+    {
+      "arch": "vit_base_patch14_dinov2.lvd142m",
+      "lr": 3e-05,
+      "epochs": 8,
+      "val_auroc": 0.838338403592641,
+      "seed": 42,
+      "arm": "erm"
+    },
+    {
+      "arch": "vit_base_patch14_dinov2.lvd142m",
+      "lr": 3e-05,
+      "epochs": 20,
+      "val_auroc": 0.8495943792553963,
+      "seed": 42,
+      "arm": "erm"
+    },
+    {
+      "arch": "vit_base_patch14_dinov2.lvd142m",
+      "lr": 0.0001,
+      "epochs": 8,
+      "val_auroc": 0.7151455888744025,
+      "seed": 42,
+      "arm": "erm"
+    },
+    {
+      "arch": "vit_base_patch14_dinov2.lvd142m",
+      "lr": 0.0001,
+      "epochs": 20,
+      "val_auroc": 0.8042083152252643,
+      "seed": 42,
+      "arm": "erm"
+    }
+  ],
+  "choice": {
+    "arch": "convnext_tiny.fb_in22k_ft_in1k",
+    "lr": 0.0001,
+    "epochs": 8,
+    "val_auroc": 0.8653628857018687
+  },
+  "tie_break": "highest validation AUROC; ties keep the earlier registered grid order (architecture, then learning rate, then epochs)"
+}
