@@ -18,6 +18,9 @@ Layout of each stage: `stageN.tex`, `stageN.pdf`, `figures/`, `tables/` (generat
 quoted in the prose as a macro), `make_stageN.py`. Shared files are in `common/` (`preamble.tex`, `notation.tex`,
 `references.bib`, `stagelib.py`).
 
+`combined/full_report.pdf` joins the six stages into one document (one section per stage, an overview and an overall
+conclusion); `combined/make_combined.py` assembles it from the stage sources.
+
 Build everything and run the number audit:
 
 ```bash

@@ -24,6 +24,10 @@ for d in stages/stage1_* stages/stage2_* stages/stage3_* stages/stage4_* stages/
   (cd "$d" && compile "$d" "$n") || { echo "!! $n.tex failed (see /tmp/${n}_latex.txt)"; status=1; }
   [ -f "$d/$n.pdf" ] && echo "   $(pdfinfo "$d/$n.pdf" | awk '/Pages/{print $2}') pages"
 done
+echo "== combined full report"
+python stages/combined/make_combined.py || status=1
+(cd stages/combined && compile stages/combined full_report) || { echo "!! full_report.tex failed"; status=1; }
+[ -f stages/combined/full_report.pdf ] && echo "   $(pdfinfo stages/combined/full_report.pdf | awk '/Pages/{print $2}') pages"
 echo "== number audit (stage reports and paper)"
 python scripts/verify/audit_numbers_final.py --docs all || status=1
 exit $status
