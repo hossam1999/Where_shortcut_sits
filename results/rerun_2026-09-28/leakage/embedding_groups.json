@@ -1,0 +1,26 @@
+{
+ "thyroid": {
+  "tau": 0.8,
+  "n_images": 3493,
+  "groups_old": 3455,
+  "groups_emb": 3081,
+  "largest_group_share": 0.045805897509304326,
+  "embedding_edges": 1473
+ },
+ "ovary": {
+  "tau": 0.8,
+  "n_images": 1202,
+  "groups_old": 1059,
+  "groups_emb": 969,
+  "largest_group_share": 0.020798668885191347,
+  "embedding_edges": 193
+ },
+ "capsule": {
+  "tau": 0.93,
+  "n_images": 5481,
+  "groups_old": 137,
+  "groups_emb": 135,
+  "largest_group_share": 0.03667214012041598,
+  "embedding_edges": 139
+ }
+}

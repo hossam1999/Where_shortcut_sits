@@ -1,0 +1,12 @@
+method,auc,cross_group,auc_in_roi_artifact
+balanced,0.767,0.731,0.754
+dfr,0.703,0.64,0.721
+erm,0.77,0.697,0.754
+jtt,0.734,0.715,0.719
+mask,0.785,0.631,0.808
+mask_balanced,0.779,0.68,0.806
+mask_dfr,0.738,0.596,0.753
+mte,0.778,0.618,0.803
+mte_balanced,0.77,0.669,0.807
+mte_protect,0.782,0.667,0.818
+mte_protect_balanced,0.768,0.71,0.813

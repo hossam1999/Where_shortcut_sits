@@ -1,0 +1,17 @@
+{
+  "method": "mask",
+  "baseline": "erm",
+  "env": "test_rev",
+  "estimand": "crossover_set1_minus_set2",
+  "delta_mean_bootstrap": 0.2631293585407377,
+  "ci95_lo": 0.2175719657357393,
+  "ci95_hi": 0.30714360585334466,
+  "n_boot_valid": 10000,
+  "bootstrap_seed_clusters_per_rep": 5,
+  "seed_delta_mean": 0.26314063731513804,
+  "seed_delta_sd": 0.018646169181864476,
+  "seed_deltas_json": "[0.260114128470294, 0.27671880085343004, 0.23189491064824758, 0.27532811854843603, 0.2716472280552823]",
+  "ci_excludes_zero": true,
+  "p_boot_two_sided": 0.0001,
+  "estimator": "crossed cluster x image (Poisson) bootstrap"
+}

@@ -1,0 +1,2 @@
+method,baseline,env,lo,hi,estimand,delta_mean_bootstrap,ci95_lo,ci95_hi,n_boot_valid,bootstrap_seed_clusters_per_rep,seed_delta_mean,seed_delta_sd,seed_deltas_json,ci_excludes_zero,p_boot_two_sided,estimator
+mask,erm,test_rev,0.0,1.0,mean_seed_specific_interaction,0.05213052941455624,0.02110199031599158,0.08378862828713575,10000,5,0.05218109715796428,0.008444475931973304,"[0.03912756113681426, 0.05072703238598808, 0.06014540647719757, 0.051718440185062775, 0.05918704560475874]",True,0.0008,crossed cluster x image (Poisson) bootstrap

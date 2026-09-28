@@ -1,0 +1,97 @@
+{
+ "X1_crossover": {
+  "seed_delta_mean": 0.2497092873464645,
+  "ci95_lo": 0.174400747113378,
+  "ci95_hi": 0.32713487928533663,
+  "p_boot_two_sided": 0.0001
+ },
+ "X1_supported": true,
+ "gate": {
+  "gate_min_per_cell": 50,
+  "A0_pos": 53,
+  "A0_neg": 1954,
+  "trapA_A1_pos": 79,
+  "trapA_A1_neg": 2057,
+  "trapB_A1_pos": 231,
+  "trapB_A1_neg": 18685,
+  "gate_met": true,
+  "n_images": 32997,
+  "n_patients": 2056,
+  "n_melanoma": 583
+ },
+ "auc": [
+  {
+   "trap": "trapA",
+   "method": "erm",
+   "env": "clean",
+   "auc": 0.6544456460864023
+  },
+  {
+   "trap": "trapA",
+   "method": "erm",
+   "env": "test_corr",
+   "auc": 0.8411973918197985
+  },
+  {
+   "trap": "trapA",
+   "method": "erm",
+   "env": "test_rev",
+   "auc": 0.4496872072289885
+  },
+  {
+   "trap": "trapA",
+   "method": "mask",
+   "env": "clean",
+   "auc": 0.681823448755335
+  },
+  {
+   "trap": "trapA",
+   "method": "mask",
+   "env": "test_corr",
+   "auc": 0.9096884673648159
+  },
+  {
+   "trap": "trapA",
+   "method": "mask",
+   "env": "test_rev",
+   "auc": 0.3856855752667049
+  },
+  {
+   "trap": "trapB",
+   "method": "erm",
+   "env": "clean",
+   "auc": 0.7445863347559916
+  },
+  {
+   "trap": "trapB",
+   "method": "erm",
+   "env": "test_corr",
+   "auc": 0.9184596876440757
+  },
+  {
+   "trap": "trapB",
+   "method": "erm",
+   "env": "test_rev",
+   "auc": 0.5332433910987188
+  },
+  {
+   "trap": "trapB",
+   "method": "mask",
+   "env": "clean",
+   "auc": 0.7495302330970819
+  },
+  {
+   "trap": "trapB",
+   "method": "mask",
+   "env": "test_corr",
+   "auc": 0.788275847164592
+  },
+  {
+   "trap": "trapB",
+   "method": "mask",
+   "env": "test_rev",
+   "auc": 0.7189510464828998
+  }
+ ],
+ "n_test_rev_images": 22794
+}

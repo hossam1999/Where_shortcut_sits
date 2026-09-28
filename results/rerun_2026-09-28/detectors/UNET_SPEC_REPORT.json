@@ -1,0 +1,12 @@
+{
+  "heldout_dice_mean": 0.8857240469900197,
+  "heldout_dice_median": 0.9277312847391586,
+  "n_heldout": 494,
+  "arch": "Ronneberger U-Net 64-1024 (BN)",
+  "input": 256,
+  "epochs": 40,
+  "train": "ISIC 2018 Task 1 only",
+  "ham_dice_mean": 0.8948355541990061,
+  "ham_dice_median": 0.9470006689970762,
+  "n_ham": 10015
+}

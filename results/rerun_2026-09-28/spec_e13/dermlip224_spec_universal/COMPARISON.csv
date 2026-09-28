@@ -1,0 +1,5 @@
+trap,arm,clean_exp,clean_got,corr_got,rev_exp,rev_got,delta_exp,ci_exp,delta_got,ci_got,verdict
+trapA,erm,0.845,0.801,0.917,0.677,0.665,,,,,
+trapA,mask,0.8,0.735,0.884,0.608,0.561,-0.069,"[-0.088, -0.051]",-0.104,"[-0.143, -0.067]",SIGN+CI match
+trapA,balanced,0.858,0.836,0.875,0.803,0.811,0.126,"[0.115, 0.138]",0.146,"[+0.122, +0.170]",MATCH
+trapA,dfr,0.827,0.802,0.835,0.792,0.782,0.114,"[0.091, 0.138]",0.116,"[+0.090, +0.145]",MATCH

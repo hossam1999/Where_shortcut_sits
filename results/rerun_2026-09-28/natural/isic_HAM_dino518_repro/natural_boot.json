@@ -1,0 +1,79 @@
+{
+ "P(a|y=1)": 0.274,
+ "P(a|y=0)": 0.184,
+ "hard | mask-erm": [
+  0.05,
+  0.03,
+  0.07
+ ],
+ "hard | mte-mask": [
+  0.02,
+  0.013,
+  0.027
+ ],
+ "hard | mte_protect-mask": [
+  -0.042,
+  -0.054,
+  -0.031
+ ],
+ "hard | balanced-mask": [
+  -0.018,
+  -0.041,
+  0.007
+ ],
+ "hard | mte_balanced-mask": [
+  0.06,
+  0.05,
+  0.07
+ ],
+ "easy | mask-erm": [
+  0.004,
+  -0.019,
+  0.027
+ ],
+ "easy | mte-mask": [
+  0.007,
+  0.001,
+  0.013
+ ],
+ "easy | mte_protect-mask": [
+  0.022,
+  0.01,
+  0.036
+ ],
+ "easy | balanced-mask": [
+  -0.029,
+  -0.054,
+  -0.005
+ ],
+ "easy | mte_balanced-mask": [
+  -0.012,
+  -0.026,
+  0.002
+ ],
+ "all | mask-erm": [
+  0.031,
+  0.017,
+  0.045
+ ],
+ "all | mte-mask": [
+  0.013,
+  0.009,
+  0.017
+ ],
+ "all | mte_protect-mask": [
+  -0.006,
+  -0.016,
+  0.004
+ ],
+ "all | balanced-mask": [
+  -0.032,
+  -0.049,
+  -0.013
+ ],
+ "all | mte_balanced-mask": [
+  0.018,
+  0.009,
+  0.028
+ ]
+}

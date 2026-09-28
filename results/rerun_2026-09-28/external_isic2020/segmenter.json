@@ -1,0 +1,9 @@
+{
+ "n_val": 2582,
+ "pixel_iou_mean": 0.6009707869091198,
+ "tau_pred_hair_px": 200,
+ "hair_free_balanced_accuracy": 0.9291528460863929,
+ "hair_free_rate_true": 0.032532920216886134,
+ "hair_free_rate_pred": 0.121998450813323,
+ "accuracy_best_tau": 0.9500387296669248
+}

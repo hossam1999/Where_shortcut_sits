@@ -10,3 +10,5 @@ results/**/predictions*.csv.gz
 # LaTeX build logs
 *.log
 !logs/
+audit_local/
+figures_local/

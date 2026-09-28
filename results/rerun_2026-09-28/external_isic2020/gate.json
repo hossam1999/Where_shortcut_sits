@@ -1,0 +1,13 @@
+{
+ "gate_min_per_cell": 50,
+ "A0_pos": 53,
+ "A0_neg": 1954,
+ "trapA_A1_pos": 79,
+ "trapA_A1_neg": 2057,
+ "trapB_A1_pos": 231,
+ "trapB_A1_neg": 18685,
+ "gate_met": true,
+ "n_images": 32997,
+ "n_patients": 2056,
+ "n_melanoma": 583
+}
