@@ -119,6 +119,8 @@ def main():
         (root / "agreement" / name).mkdir(parents=True, exist_ok=True)
         (root / "agreement" / name / "bias.json").write_text(json.dumps(corr, indent=2))
     df = pd.DataFrame(rows)
+    if df.empty:
+        df = pd.DataFrame(columns=["cohort", "source", "cell", "y", "n", "error_rate"])
     df.to_csv(root / "bias.csv", index=False)
     print(df.head(20).to_string(index=False) if len(df) else "no analysed sources")
 

@@ -236,11 +236,14 @@ def analyse(smoke: bool):
            "p": None, "note": "descriptive; not in the Holm family"}
     hard = ((te.y == 1) & (te.artifact_present == 1)) | ((te.y == 0) & (te.artifact_present == 0))
     q = te[hard & te.method.isin(["mask", "erm"])]
-    point, arr = X.replicates(X._pair_terms(q, "mask", "erm", "clean", "seed"), 2000 if smoke else 10000, 20260928)
-    est = float(np.mean(list(point.values())))
-    lo, hi = np.percentile(arr, [2.5, 97.5])
-    ft1 = {"id": "FT1", "estimate": est, "ci95_lo": float(lo), "ci95_hi": float(hi),
-           "p": C.one_sided_p(arr, "less"), "direction": "mask-erm hard AUROC < 0"}
+    ft1 = {"id": "FT1", "p": None, "direction": "mask-erm hard AUROC < 0",
+           "note": "mask and erm predictions are required"}
+    if {"mask", "erm"} <= set(q.method):
+        point, arr = X.replicates(X._pair_terms(q, "mask", "erm", "clean", "seed"), 2000 if smoke else 10000, 20260928)
+        est = float(np.mean(list(point.values())))
+        lo, hi = np.percentile(arr, [2.5, 97.5])
+        ft1 = {"id": "FT1", "estimate": est, "ci95_lo": float(lo), "ci95_hi": float(hi),
+               "p": C.one_sided_p(arr, "less"), "direction": "mask-erm hard AUROC < 0"}
     op_rows = []
     ft2 = {"id": "FT2", "note": "mask and erm predictions with both envs are required"}
     ft3 = {"id": "FT3"}

@@ -65,11 +65,13 @@ def main():
         lines.append(C.R4.md_table(pd.read_csv(sp)))
         lines.append("")
     lines.append("## Differential error and attenuation (A3)")
-    if (root / "bias.csv").exists():
-        b = pd.read_csv(root / "bias.csv")
-        flag = b[b.cell.astype(str).str.startswith(("diff_y1_minus_y0", "e_A", "e_B"))] if "cell" in b else b
-        lines.append(C.R4.md_table(flag))
-        lines.append("")
+    bp = root / "bias.csv"
+    if bp.exists() and bp.stat().st_size > 0:
+        b = pd.read_csv(bp)
+        if len(b):
+            flag = b[b.cell.astype(str).str.startswith(("diff_y1_minus_y0", "e_A", "e_B"))] if "cell" in b else b
+            lines.append(C.R4.md_table(flag))
+            lines.append("")
     for name in C.COHORTS:
         bj = root / "agreement" / name / "bias.json"
         aj = root / "agreement" / name / "agreement.json"
