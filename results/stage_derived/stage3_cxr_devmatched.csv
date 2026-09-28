@@ -1,0 +1,4 @@
+trap,mask_minus_erm
+trapA,0.089
+trapB,0.042
+crossover,-0.047

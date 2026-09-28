@@ -1,0 +1,14 @@
+\begin{table}[H]\centering\scriptsize
+\caption{Sensitivity of the crossover to the definition of the artifact label (registered before running): only large detections, stricter location thresholds, and for capsule a Trap~B that also requires debris to cover less than 5\% of the lesion box.}\label{tab:labsens}
+\begin{tabular}{lccc}\toprule
+Cohort & Artifact-label definition & Artifact images A / B & Crossover \\\midrule
+Thyroid & main & 1150 / 326 & $+0.239$ [$+0.196, +0.280$] \\
+Thyroid & large markers ($\ge50$ px) & 1083 / 274 & $+0.244$ [$+0.199, +0.289$] \\
+Thyroid & strict location ($r\ge0.7$ / $r<0.05$) & 919 / 298 & $+0.212$ [$+0.164, +0.259$] \\
+Ovary & main & 617 / 194 & $+0.170$ [$+0.087, +0.252$] \\
+Ovary & large markers ($\ge50$ px) & 609 / 183 & $+0.188$ [$+0.108, +0.266$] \\
+Ovary & strict location ($r\ge0.7$ / $r<0.05$) & 571 / 186 & $+0.196$ [$+0.117, +0.277$] \\
+Capsule & main & 816 / 1240 & $+0.377$ [$+0.327, +0.426$] \\
+Capsule & strict Trap B (lesion coverage $<5\%$) & 816 / 373 & $+0.255$ [$+0.153, +0.349$] \\
+\bottomrule\end{tabular}
+\end{table}

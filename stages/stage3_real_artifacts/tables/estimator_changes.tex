@@ -1,0 +1,15 @@
+\begin{table}[H]\centering\scriptsize
+\caption{Contrasts of the real-artifact traps whose verdict depends on the estimator.}\label{tab:estchanges}
+\begin{tabular}{p{4.2cm}p{5.2cm}p{3.3cm}p{2.6cm}}\toprule
+Result & Contrast & Crossed estimate [95\% CI] & Verdict vs per-seed estimator \\\midrule
+thyroid/\allowbreak{}dino518\_main & trapB /\allowbreak{} dfr /\allowbreak{} clean /\allowbreak{} dfr /\allowbreak{} erm & $+0.053$ [$+0.002, +0.105$] & now excludes 0 \\
+thyroid/\allowbreak{}dino518\_main & trapB /\allowbreak{} leace\_paired /\allowbreak{} clean /\allowbreak{} leace\_paired /\allowbreak{} erm & $+0.008$ [$-0.001, +0.018$] & no longer excludes 0 \\
+thyroid/\allowbreak{}medsiglip448\_main & trapA /\allowbreak{} inpaint /\allowbreak{} clean /\allowbreak{} inpaint /\allowbreak{} erm & $+0.015$ [$+0.003, +0.025$] & now excludes 0 \\
+thyroid/\allowbreak{}convnext384\_universal & trapA /\allowbreak{} mask /\allowbreak{} clean /\allowbreak{} mask /\allowbreak{} erm & $+0.021$ [$-0.000, +0.041$] & no longer excludes 0 \\
+thyroid/\allowbreak{}convnext384\_universal & trapB /\allowbreak{} balanced /\allowbreak{} clean /\allowbreak{} balanced /\allowbreak{} erm & $+0.039$ [$-0.002, +0.080$] & no longer excludes 0 \\
+thyroid/\allowbreak{}convnext384\_universal & trapB /\allowbreak{} dfr /\allowbreak{} clean /\allowbreak{} dfr /\allowbreak{} erm & $+0.052$ [$-0.001, +0.103$] & no longer excludes 0 \\
+ovary/\allowbreak{}dino518\_main & trapB /\allowbreak{} dfr /\allowbreak{} clean /\allowbreak{} dfr /\allowbreak{} erm & $+0.035$ [$-0.018, +0.089$] & no longer excludes 0 \\
+ovary/\allowbreak{}dino518\_main & trapB /\allowbreak{} leace\_paired /\allowbreak{} clean /\allowbreak{} leace\_paired /\allowbreak{} erm & $+0.008$ [$-0.000, +0.015$] & no longer excludes 0 \\
+capsule/\allowbreak{}dino518\_main & trapB /\allowbreak{} leace\_paired /\allowbreak{} test\_rev /\allowbreak{} leace\_paired /\allowbreak{} erm & $+0.010$ [$+0.001, +0.024$] & now excludes 0 \\
+\bottomrule\end{tabular}
+\end{table}

@@ -1,0 +1,14 @@
+\begin{table}[H]\centering\scriptsize
+\caption{The pilot contrasts whose verdict (interval excludes 0 or not) depends on the estimator. Every other contrast keeps its verdict.}\label{tab:estchanges}
+\begin{tabular}{p{4.2cm}p{5.2cm}p{3.3cm}p{2.6cm}}\toprule
+Result & Contrast & Crossed estimate [95\% CI] & Verdict vs per-seed estimator \\\midrule
+synthetic/\allowbreak{}isic2018/\allowbreak{}dino518\_ruler\_fixed\_corr\_main & 0.25 /\allowbreak{} mask /\allowbreak{} erm /\allowbreak{} test\_rev & $-0.059$ [$-0.127, +0.008$] & no longer excludes 0 \\
+synthetic/\allowbreak{}isic2018/\allowbreak{}dino518\_ruler\_fixed\_occlusion\_occlusion & 0.0 /\allowbreak{} mask /\allowbreak{} erm /\allowbreak{} test\_uncorr & $+0.036$ [$-0.016, +0.086$] & no longer excludes 0 \\
+synthetic/\allowbreak{}isic2018/\allowbreak{}dino518\_ruler\_fixed\_occlusion\_occlusion & 0.5 /\allowbreak{} mask /\allowbreak{} erm /\allowbreak{} test\_uncorr & $+0.041$ [$-0.010, +0.090$] & no longer excludes 0 \\
+synthetic/\allowbreak{}isic2018/\allowbreak{}dino518\_ruler\_fixed\_occlusion\_occlusion & 0.75 /\allowbreak{} mask /\allowbreak{} erm /\allowbreak{} test\_uncorr & $+0.037$ [$-0.013, +0.086$] & no longer excludes 0 \\
+synthetic/\allowbreak{}isic2018/\allowbreak{}dino518\_ruler\_fixed\_occlusion\_occlusion & 1.0 /\allowbreak{} mask /\allowbreak{} erm /\allowbreak{} test\_uncorr & $+0.039$ [$-0.010, +0.091$] & no longer excludes 0 \\
+synthetic/\allowbreak{}isic2018/\allowbreak{}dino224\_ruler\_fixed\_corr\_main & 0.25 /\allowbreak{} mask /\allowbreak{} erm /\allowbreak{} test\_rev & $-0.049$ [$-0.117, +0.018$] & no longer excludes 0 \\
+spec\_e13/\allowbreak{}dino518\_spec & trapA /\allowbreak{} mask /\allowbreak{} clean /\allowbreak{} all /\allowbreak{} mask /\allowbreak{} erm & $-0.023$ [$-0.045, -0.001$] & now excludes 0 \\
+spec\_e13/\allowbreak{}dermlip224\_spec & trapB /\allowbreak{} leace\_unpaired /\allowbreak{} clean /\allowbreak{} all /\allowbreak{} leace\_unpaired /\allowbreak{} erm & $-0.019$ [$-0.046, +0.007$] & no longer excludes 0 \\
+\bottomrule\end{tabular}
+\end{table}

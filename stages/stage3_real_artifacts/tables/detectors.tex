@@ -1,5 +1,5 @@
 \begin{table}[H]\centering\scriptsize
-\caption{Validity of the automatic masks that define artifact presence and location. Visual audits: \texttt{docs/ARTIFACT\_MASK\_AUDIT.md} (by the analysis agent, not a clinician; Stage~6 reports the blinded image audit prepared for a clinician).}\label{tab:det}
+\caption{Validity of the automatic masks that define artifact presence and location. Visual audits: \texttt{docs/ARTIFACT\_MASK\_AUDIT.md} and \texttt{docs/THYROID\_MARKER\_AUDIT.md} (visual audits during the analysis, not by a clinician).}\label{tab:det}
 \begin{tabular}{p{3.0cm}p{3.0cm}p{3.8cm}p{4.6cm}}\toprule
 Mask & Source & Check & Result \\\midrule
 ISIC 2019 lesion masks (BCN, MSK) & U-Net trained on ISIC 2018 Task 1 & held-out Dice (mean) / Dice vs HAM manual masks & 0.886 / 0.895 \\

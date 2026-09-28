@@ -1,22 +1,10 @@
-\begin{table}[H]\centering\scriptsize
-\caption{The pre-specified 16-test primary family (Trap~A, reversed test unless stated), crossed bootstrap, two-sided $p$, Holm over all 16 tests. P1 is this stage's claim; P2--P4 concern the remedies of Stage~6.}\label{tab:primary}
-\resizebox{\linewidth}{!}{\begin{tabular}{lccccc}\toprule
-Family & Cohort & Estimate [95\% CI] & $p$ & $p$ (Holm, 16) & Supported \\\midrule
-P1 location crossover & ISIC hair (DINOv2) & $+0.147$ [$+0.111, +0.185$] & 0.0001 & 0.0016 & \ok \\
-P1 location crossover & Thyroid (DINOv2) & $+0.239$ [$+0.196, +0.280$] & 0.0001 & 0.0016 & \ok \\
-P1 location crossover & Capsule (DINOv2) & $+0.377$ [$+0.327, +0.426$] & 0.0001 & 0.0016 & \ok \\
-P1 location crossover & Ovary (DINOv2) & $+0.170$ [$+0.087, +0.252$] & 0.0001 & 0.0016 & \ok \\
-P2 U-MtE (protected) > mask & ISIC hair & $+0.042$ [$+0.024, +0.058$] & 0.0001 & 0.0016 & \ok \\
-P2 U-MtE (protected) > mask & Thyroid & $+0.283$ [$+0.237, +0.329$] & 0.0001 & 0.0016 & \ok \\
-P2 U-MtE (protected) > mask & Capsule & $-0.006$ [$-0.018, +0.006$] & 0.2946 & 0.3486 & \no \\
-P2 U-MtE (protected) > mask & Ovary & $+0.043$ [$+0.023, +0.065$] & 0.0001 & 0.0016 & \ok \\
-P3 erase > augment & ISIC hair & $+0.035$ [$+0.017, +0.055$] & 0.0002 & 0.0016 & \ok \\
-P3 erase > augment & Thyroid & $+0.215$ [$+0.189, +0.244$] & 0.0001 & 0.0016 & \ok \\
-P3 erase > augment & Capsule & $-0.139$ [$-0.158, -0.120$] & 0.0001 & 0.0016 & \no{} (opposite) \\
-P3 erase > augment & Ovary & $+0.035$ [$+0.003, +0.067$] & 0.0326 & 0.1304 & \no \\
-P4 U-MtE+balanced > balanced & ISIC hair & $-0.028$ [$-0.064, +0.007$] & 0.1162 & 0.3486 & \no \\
-P4 U-MtE+balanced > balanced & Thyroid & $+0.110$ [$+0.079, +0.142$] & 0.0001 & 0.0016 & \ok \\
-P4 U-MtE+balanced > balanced & Capsule & $+0.079$ [$+0.042, +0.115$] & 0.0002 & 0.0016 & \ok \\
-P4 U-MtE+balanced > balanced & Ovary & $+0.031$ [$-0.014, +0.077$] & 0.1730 & 0.3486 & \no \\
-\bottomrule\end{tabular}}
+\begin{table}[H]\centering\small
+\caption{The four pre-specified location tests (P1: crossover $>0$), crossed bootstrap, two-sided bootstrap $p$ (floored at $10^{-4}$), Holm-adjusted over the four cohorts.}\label{tab:primary}
+\begin{tabular}{lcccc}\toprule
+Cohort (DINOv2) & Crossover [95\% CI] & $p$ & $p$ (Holm, 4) & Supported \\\midrule
+ISIC hair (DINOv2) & $+0.147$ [$+0.111, +0.185$] & 0.0001 & 0.0004 & \ok \\
+Thyroid (DINOv2) & $+0.239$ [$+0.196, +0.280$] & 0.0001 & 0.0004 & \ok \\
+Capsule (DINOv2) & $+0.377$ [$+0.327, +0.426$] & 0.0001 & 0.0004 & \ok \\
+Ovary (DINOv2) & $+0.170$ [$+0.087, +0.252$] & 0.0001 & 0.0004 & \ok \\
+\bottomrule\end{tabular}
 \end{table}

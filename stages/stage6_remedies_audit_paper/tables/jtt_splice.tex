@@ -1,0 +1,40 @@
+{\scriptsize
+\begin{longtable}{lccccc}
+\caption{Published baselines: JTT (label-free error upweighting) and SPLINCE (faithful whitened implementation of the covariance-preserving concept projection, needs artifact labels), beside U-MtE (mean over seeds).}\label{tab:jtt}\\\toprule
+Cohort (Trap A) & Arm & clean & correlated & reversed & min(rev, corr) \\\midrule
+\endfirsthead
+\toprule Cohort (Trap A) & Arm & clean & correlated & reversed & min(rev, corr) \\\midrule
+\endhead
+\bottomrule
+\endlastfoot
+Thyroid & JTT & 0.629 & 0.829 & 0.417 & 0.417 \\
+Thyroid & mask & 0.689 & 0.908 & 0.398 & 0.398 \\
+Thyroid & mask+JTT & 0.699 & 0.888 & 0.455 & 0.455 \\
+Thyroid & U-MtE & 0.729 & 0.824 & 0.622 & 0.622 \\
+Thyroid & U-MtE+JTT & 0.629 & 0.848 & 0.363 & 0.363 \\
+Thyroid & balanced & 0.717 & 0.757 & 0.677 & 0.677 \\
+Thyroid & mask+SPLINCE & 0.603 & 0.599 & 0.610 & 0.599 \\
+Thyroid & U-MtE+bal. & 0.798 & 0.804 & 0.787 & 0.787 \\
+Thyroid & U-MtE prot. & 0.728 & 0.769 & 0.682 & 0.682 \\
+Thyroid & SPLINCE & 0.577 & 0.565 & 0.587 & 0.565 \\
+Capsule & JTT & 0.786 & 0.928 & 0.596 & 0.596 \\
+Capsule & mask & 0.860 & 0.972 & 0.665 & 0.665 \\
+Capsule & mask+JTT & 0.878 & 0.956 & 0.760 & 0.760 \\
+Capsule & U-MtE & 0.815 & 0.972 & 0.539 & 0.539 \\
+Capsule & U-MtE+JTT & 0.881 & 0.945 & 0.787 & 0.787 \\
+Capsule & balanced & 0.847 & 0.916 & 0.760 & 0.760 \\
+Capsule & mask+SPLINCE & 0.786 & 0.715 & 0.852 & 0.715 \\
+Capsule & U-MtE+bal. & 0.899 & 0.939 & 0.839 & 0.839 \\
+Capsule & U-MtE prot. & 0.855 & 0.970 & 0.659 & 0.659 \\
+Capsule & SPLINCE & 0.741 & 0.668 & 0.788 & 0.668 \\
+Dermoscopy hair & JTT & 0.745 & 0.898 & 0.564 & 0.564 \\
+Dermoscopy hair & mask & 0.712 & 0.916 & 0.454 & 0.454 \\
+Dermoscopy hair & mask+JTT & 0.711 & 0.880 & 0.509 & 0.509 \\
+Dermoscopy hair & U-MtE & 0.735 & 0.913 & 0.506 & 0.506 \\
+Dermoscopy hair & U-MtE+JTT & 0.729 & 0.885 & 0.541 & 0.541 \\
+Dermoscopy hair & balanced & 0.785 & 0.850 & 0.722 & 0.722 \\
+Dermoscopy hair & mask+SPLINCE & 0.598 & 0.572 & 0.621 & 0.572 \\
+Dermoscopy hair & U-MtE+bal. & 0.778 & 0.860 & 0.695 & 0.695 \\
+Dermoscopy hair & U-MtE prot. & 0.718 & 0.904 & 0.502 & 0.502 \\
+Dermoscopy hair & SPLINCE & 0.600 & 0.575 & 0.637 & 0.575 \\
+\end{longtable}}

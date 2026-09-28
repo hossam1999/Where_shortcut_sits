@@ -1,11 +1,13 @@
 \begin{table}[H]\centering\scriptsize
-\caption{Experiments of this stage. Commit times come from this machine and are not independent proof of order.}\label{tab:exp}
+\caption{Experiments of this stage and their registration documents (\texttt{docs/PREREGISTRATION\_<name>.md}). Commit times are set by the committing machine and are not independent proof of order.}\label{tab:exp}
 \begin{tabular}{p{3.1cm}p{2.1cm}p{2.4cm}p{3.2cm}p{3.3cm}}\toprule
 Experiment & Status & Registration & First commit (local time) & Support criterion \\\midrule
+Zero-shot vision--language scores, Z1 & \mixed{} registered (descriptive); crossover test post hoc & TEXT\_\allowbreak{}PROMPT & \texttt{7877e8c}, 2026-09-27 12:21 & correlated $-$ reversed gap reported \\
 Natural test sets, N3 (hard pairs) & \ok{} registered & NATURAL & \texttt{74bd243}, 2026-09-27 09:39 & mask $-$ ERM $<0$ on hard pairs \\
 Operating points S1--S3 & \ok{} registered & REVIEW2 (R3) & \texttt{29cd0da}, 2026-09-27 18:56 & ``masking lowers sensitivity'' only if S1 and $\ge3$ of OP2--OP5 \\
 Thyroid subgroup, $n=$\sFiveNConf{} (S3) & \mixed{} registered test in a post hoc subgroup & REVIEW2 (R3) & \texttt{29cd0da}, 2026-09-27 18:56 & sensitivity loss in the subgroup, CI $<0$ \\
-Crossed CIs for the subgroup (R6) & \ok{} registered & REVIEW3 (R6) & \texttt{85da735}, 2026-09-27 23:43 & report corrected CI \\
+Crossed CIs for the subgroup (R6) & \ok{} registered & REVIEW3 (R6) & \texttt{85da735}, 2026-09-27 23:43 & report the crossed CI \\
+Fine-tuned hair model and literature comparison (R4) & \ok{} registered & REVIEW2 (R4) & \texttt{29cd0da}, 2026-09-27 18:56 & crossover CI $>0$; comparison descriptive \\
 Encoder scale (S/B/L) & \ok{} registered & SCALE & \texttt{13303b0}, 2026-09-27 14:13 & crossover CI $>0$ at every scale \\
 Fine-tuned networks & \ok{} registered & FINETUNE & \texttt{7c8b466}, 2026-09-27 07:06 & crossover CI $>0$ (secondary) \\
 DermLIP hair traps & \ok{} registered & ISIC2019\_\allowbreak{}TRAPS & \texttt{76e25d4}, 2026-09-26 13:14 & crossover CI $>0$ \\

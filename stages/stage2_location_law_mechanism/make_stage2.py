@@ -245,13 +245,14 @@ def registrations():
         ["Chest tube sweep (RAD-DINO)", "\\ok{} registered", "CXR\\_DEVICE\\_TRAPS", L.reg(docs["Cxr"]),
          "interaction CI $>0$"],
         ["Chest tube sweep (DINOv2)", "\\no{} post hoc", "---", "---", "descriptive only"],
-        ["Regeneration with the crossed bootstrap (A1)", "\\ok{} registered", "FINAL (A1)", L.reg(docs["Final"]),
-         "a claim whose new CI includes 0 is rewritten"],
+        ["Crossed-bootstrap intervals for every sweep (A1)", "\\ok{} registered", "FINAL (A1)", L.reg(docs["Final"]),
+         "a claim is stated only if its crossed CI excludes 0"],
     ]
     rows = [r[:2] + [r[2].replace("\\_", "\\_\\allowbreak{}")] + r[3:] for r in rows]
     L.table(T / "experiments.tex", ["Experiment", "Status", "Registration", "First commit (local time)", "Support criterion"],
-            rows, "Experiments of this stage: registration status, the commit that first contains the registration, and "
-            "what was stated in advance to count as support. Commit times come from this machine and are not "
+            rows, "Experiments of this stage: registration status, the registration document "
+            "(\\texttt{docs/PREREGISTRATION\\_<name>.md} or the replication specification), the commit that first contains it, and "
+            "what was stated in advance to count as support. Commit times are set by the committing machine and are not "
             "independent proof of order.", "tab:exp", align=L.EXP_ALIGN, size="\\scriptsize")
 
 
@@ -294,9 +295,73 @@ def examples():
     fig.savefig(F / "sweep_examples.pdf", dpi=150)
 
 
+OTHER_ARMS = [("mask", "masking"), ("inpaint", "oracle inpainting"), ("balanced", "group-balanced"), ("dfr", "DFR"),
+              ("leace", "paired LEACE")]
+
+
+def other_arms():
+    """Every baseline arm in every other-modality sweep, at no and at full overlap, plus balancing's interaction."""
+    rows = []
+    for lab, d in OTHER.items():
+        first = True
+        e0, e1 = L.syn_auc(d, "erm", 0.0, "test_rev"), L.syn_auc(d, "erm", 1.0, "test_rev")
+        c0 = L.syn_auc(d, "erm", 0.0, "clean")
+        rows.append([lab, "ERM (AUROC: clean; reversed)", f"{L.f3(c0)}; {L.f3(e0)}", f"{L.f3(L.syn_auc(d, 'erm', 1.0, 'clean'))}; {L.f3(e1)}", "---"])
+        for a, alab in OTHER_ARMS:
+            r0, r1 = L.syn_boot(d, a, 0.0), L.syn_boot(d, a, 1.0)
+            if r0 is None and r1 is None:
+                continue
+            rows.append(["", alab + " $-$ ERM", L.ci_row(r0), L.ci_row(r1), L.ci_row(L.syn_inter(d, a))])
+    L.table(T / "other_arms.tex", ["Sweep", "Arm", "$r=0$", "$r=1$", "Location interaction"], rows,
+            "All baseline arms in the controlled sweeps of the other modalities: ERM's clean and reversed AUROC and each "
+            "arm's change in reversed-test AUROC versus ERM at no and at full overlap (crossed CIs). The last column is the "
+            "arm's own location interaction ($[\\cdot]_{r=0}-[\\cdot]_{r=1}$); an arm that does not depend on where the "
+            "artifact sits has an interaction near zero.", "tab:otherarms", align="p{2.6cm}p{3.2cm}ccc",
+            size="\\scriptsize", long=True)
+    for lab, d in OTHER.items():
+        k = L.Macros.clean(lab.replace(",", "").replace(" ", ""))
+        M.add(f"{k}BalInter", L.ci_row(L.syn_inter(d, "balanced")))
+    M.add("DermBalInter", L.ci_row(L.syn_inter(MAIN, "balanced")))
+    M.add("DermInpInter", L.ci_row(L.syn_inter(MAIN, "inpaint")))
+
+
+def dose_figure_all():
+    plt = L.plot_style()
+    panels = [("Dermoscopy ruler, DINOv2", MAIN), ("Dermoscopy ruler, DermLIP", DERM)] + list(OTHER.items())
+    fig, axes = plt.subplots(2, 5, figsize=(10.5, 4.6), sharey=True)
+    axes = axes.ravel()
+    for ax, (lab, d) in zip(axes, panels):
+        b = L.csv(f"{d}/bootstrap_vs_erm.csv")
+        if b is None:
+            ax.set_title(lab + " (n/a)", fontsize=7); continue
+        for arm, col in (("mask", L.MASK_BLUE), ("balanced", "#2ca02c"), ("inpaint", "#9467bd")):
+            q = b[(b.method_a == arm) & (b.env == "test_rev")].sort_values("overlap")
+            if q.empty:
+                continue
+            ax.plot(q.overlap, q.seed_delta_mean, color=col, marker="o", ms=2.5, label=arm)
+            ax.fill_between(q.overlap, q.ci95_lo, q.ci95_hi, color=col, alpha=0.18)
+        ax.axhline(0, color="k", lw=0.6); ax.set_title(lab, fontsize=7); ax.set_xlabel("overlap $r$", fontsize=7)
+    for ax in axes[len(panels):]:
+        ax.axis("off")
+    axes[0].set_ylabel("$\\Delta$ reversed AUROC vs ERM"); axes[5].set_ylabel("$\\Delta$ reversed AUROC vs ERM")
+    axes[0].legend(frameon=False, fontsize=7)
+    fig.tight_layout()
+    fig.savefig(F / "dose_response_all.pdf")
+
+
+def estimator():
+    r = L.estimator_check(["synthetic/thyroid", "synthetic/ovary", "synthetic/capsule", "synthetic/nih_ptx"],
+                          T / "estimator_check.tex", "tab:estcheck",
+                          "The sweeps of the other modalities under the per-seed and the crossed estimator (same predictions; "
+                          "baseline arms only).", changes_path=T / "estimator_changes.tex", changes_label="tab:estchanges",
+                          changes_caption="Contrasts of the other-modality sweeps whose verdict depends on the estimator.")
+    if r:
+        M.add("EstN", r["n"]); M.add("EstLost", r["lost"]); M.add("EstGained", r["gained"]); M.add("EstMed", f"{r['median']:.2f}")
+
+
 def main():
     main_sweep(); replications(); occlusion(); dilation(); counterfactual(); tertiles(); other_sweeps(); dose_figure(); cf_figure()
-    text_numbers(); registrations()
+    text_numbers(); registrations(); other_arms(); dose_figure_all(); estimator()
     try:
         examples()
     except Exception as e:  # data not on this machine -> figure missing, reported

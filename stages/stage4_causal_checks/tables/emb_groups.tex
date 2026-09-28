@@ -1,0 +1,9 @@
+\begin{table}[H]\centering\scriptsize
+\caption{Stricter leakage groups for the cohorts without patient identifiers: images joined whenever their (mean-centred) DINOv2 embeddings have cosine $\ge\tau$, united with the existing groups; $\tau$ is the most aggressive grid value that keeps the largest group below 5\% of the cohort (chosen without labels).}\label{tab:emb}
+\resizebox{\linewidth}{!}{\begin{tabular}{lccccc}\toprule
+Cohort & Leakage groups & cosine $\tau$ & largest group & Crossover, pHash groups & Crossover, embedding groups \\\midrule
+Thyroid & 3,455 $\to$ 3,081 & 0.80 & 4.6\% & $+0.239$ [$+0.196, +0.280$] & $+0.235$ [$+0.193, +0.275$] \\
+Ovary & 1,059 $\to$ 969 & 0.80 & 2.1\% & $+0.170$ [$+0.087, +0.252$] & $+0.157$ [$+0.053, +0.255$] \\
+Capsule & 137 $\to$ 135 & 0.93 & 3.7\% & $+0.377$ [$+0.327, +0.426$] & $+0.353$ [$+0.296, +0.410$] \\
+\bottomrule\end{tabular}}
+\end{table}

@@ -1,0 +1,10 @@
+\begin{table}[H]\centering\scriptsize
+\caption{Zero-shot vision--language scores (no training: cosine to a positive minus a negative class prompt) on the trap test environments, unmasked and masked (crossed CIs). The gap shows the untrained score is already swayed by the artifact; the crossover shows that masking changes it according to the location law.}\label{tab:zs}
+\resizebox{\linewidth}{!}{\begin{tabular}{lcccccc}\toprule
+Cohort & Model & Zero-shot clean AUROC (Trap A) & Correlated $-$ reversed gap & mask effect, Trap A & mask effect, Trap B & Crossover \\\midrule
+Thyroid & MedSigLIP & 0.451 & $+0.072$ & $+0.017$ [$-0.011, +0.045$] & $+0.120$ [$+0.078, +0.162$] & $+0.103$ [$+0.064, +0.143$] \\
+Ovary & MedSigLIP & 0.623 & $-0.126$ & $-0.235$ [$-0.289, -0.180$] & $-0.054$ [$-0.135, +0.030$] & $+0.181$ [$+0.103, +0.261$] \\
+Capsule & MedSigLIP & 0.631 & $-0.402$ & $+0.004$ [$-0.021, +0.029$] & $+0.049$ [$+0.001, +0.098$] & $+0.045$ [$+0.001, +0.090$] \\
+Dermoscopy hair & DermLIP & 0.697 & $+0.082$ & $-0.079$ [$-0.114, -0.044$] & $-0.039$ [$-0.070, -0.008$] & $+0.040$ [$+0.021, +0.058$] \\
+\bottomrule\end{tabular}}
+\end{table}

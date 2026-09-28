@@ -1,0 +1,78 @@
+analysis,cohort,contrast,estimate
+LaMa inpainting (oracle masks),thyroid,lama-mask,0.025
+LaMa inpainting (oracle masks),thyroid,mask_lama-mask,0.226
+LaMa inpainting (oracle masks),thyroid,mte_protect-mask_lama,-0.009
+LaMa inpainting (oracle masks),thyroid,mte_balanced-mask_lama,0.162
+LaMa inpainting (oracle masks),thyroid,lama-erm,0.136
+LaMa inpainting (oracle masks),ovary,lama-mask,0.027
+LaMa inpainting (oracle masks),ovary,mask_lama-mask,0.123
+LaMa inpainting (oracle masks),ovary,mte_protect-mask_lama,-0.08
+LaMa inpainting (oracle masks),ovary,mte_balanced-mask_lama,0.067
+LaMa inpainting (oracle masks),ovary,lama-erm,0.158
+LaMa inpainting (oracle masks),isic,lama-mask,0.145
+LaMa inpainting (oracle masks),isic,mask_lama-mask,0.127
+LaMa inpainting (oracle masks),isic,mte_protect-mask_lama,-0.086
+LaMa inpainting (oracle masks),isic,mte_balanced-mask_lama,0.123
+LaMa inpainting (oracle masks),isic,lama-erm,0.107
+text-prompted erasure,thyroid,mask_text_erase-mask,0.005
+text-prompted erasure,thyroid,mte-mask,0.204
+text-prompted erasure,thyroid,mask_text_erase_balanced-balanced,0.056
+text-prompted erasure,ovary,mask_text_erase-mask,0.008
+text-prompted erasure,ovary,mte-mask,0.215
+text-prompted erasure,ovary,mask_text_erase_balanced-balanced,-0.01
+text-prompted erasure,capsule,mask_text_erase-mask,0.001
+text-prompted erasure,capsule,mte-mask,-0.236
+text-prompted erasure,capsule,mask_text_erase_balanced-balanced,0.066
+text-prompted erasure,hair (DermLIP),mask_text_erase-mask,0.004
+text-prompted erasure,hair (DermLIP),mte-mask,-0.076
+text-prompted erasure,hair (DermLIP),mask_text_erase_balanced-balanced,-0.112
+SLAS,hair,tok_mask-tok_erm,0.03
+SLAS,hair,mts-tok_mask,0.022
+SLAS,hair,slas-tok_erm,0.008
+SLAS,hair,mts_oracle-tok_mask,0.015
+SLAS,hair,mts_balanced-tok_balanced,0.051
+SLAS,thyroid,tok_mask-tok_erm,0.059
+SLAS,thyroid,mts-tok_mask,0.081
+SLAS,thyroid,slas-tok_erm,0.007
+SLAS,thyroid,mts_oracle-tok_mask,0.047
+SLAS,thyroid,mts_balanced-tok_balanced,0.07
+erasure + DFR (U10),thyroid,mte_dfr-dfr,0.101
+erasure + DFR (U10),thyroid,mte_dfr-mask_dfr,0.007
+erasure + DFR (U10),thyroid,mask_dfr-dfr,0.095
+erasure + DFR (U10),capsule,mte_dfr-dfr,0.08
+erasure + DFR (U10),capsule,mte_dfr-mask_dfr,0.0
+erasure + DFR (U10),capsule,mask_dfr-dfr,0.08
+erasure + DFR (U10),hair,mte_dfr-dfr,-0.039
+erasure + DFR (U10),hair,mte_dfr-mask_dfr,0.014
+erasure + DFR (U10),hair,mask_dfr-dfr,-0.053
+pseudo-group balancing (U8),thyroid,umte_pbal reversed AUROC,0.663
+pseudo-group balancing (U8),thyroid,mte reversed AUROC,0.622
+pseudo-group balancing (U8),thyroid,pbal reversed AUROC,0.409
+pseudo-group balancing (U8),thyroid,erm reversed AUROC,0.289
+pseudo-group balancing (U8),hair,umte_pbal reversed AUROC,0.51
+pseudo-group balancing (U8),hair,mte reversed AUROC,0.506
+pseudo-group balancing (U8),hair,pbal reversed AUROC,0.498
+pseudo-group balancing (U8),hair,erm reversed AUROC,0.491
+"chest drains, RAD-DINO",drains,mte-mask,0.029
+"chest drains, RAD-DINO",drains,mte_protect-mask,0.03
+"chest drains, RAD-DINO",drains,mte-mte_aug,0.031
+"chest drains, RAD-DINO",drains,mte-jtt,0.094
+"chest drains, RAD-DINO",drains,mte_balanced-balanced,-0.079
+location-adaptive selection (U13),thyroid,auto-mask,0.395
+location-adaptive selection (U13),thyroid,auto-dfr,0.057
+location-adaptive selection (U13),capsule,auto-mask,0.168
+location-adaptive selection (U13),capsule,auto-dfr,0.047
+location-adaptive selection (U13),hair,auto-mask,0.251
+location-adaptive selection (U13),hair,auto-dfr,-0.038
+location-adaptive selection (U13),chest drains,auto-mask,0.299
+location-adaptive selection (U13),chest drains,auto-dfr,-0.144
+split-validation selection (U14),thyroid,auto-mask,0.398
+split-validation selection (U14),thyroid,auto-dfr,0.06
+split-validation selection (U14),capsule,auto-mask,0.187
+split-validation selection (U14),capsule,auto-dfr,0.066
+split-validation selection (U14),ovary,auto-mask,0.17
+split-validation selection (U14),ovary,auto-dfr,-0.007
+split-validation selection (U14),hair,auto-mask,0.234
+split-validation selection (U14),hair,auto-dfr,-0.055
+split-validation selection (U14),chest drains,auto-mask,0.417
+split-validation selection (U14),chest drains,auto-dfr,-0.026

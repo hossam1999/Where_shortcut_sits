@@ -202,3 +202,73 @@ def report_missing(stage: str):
         print(f"[{stage}] missing result files ({len(set(MISSING))}):")
         for m in sorted(set(MISSING)):
             print("   ", m)
+
+
+# ------------------------------------------------------------------------------------------------ estimator check
+REMEDY_KEYS = r"(?:^|[|_])(?:u?mte|u?i2e|splice|jtt|protect|pbal|aug|cons|post|text|prevcal|lama|auto|insert)"
+
+
+def estimator_check(prefixes, path: Path, label: str, caption: str, include_remedies: bool = False, extra=None,
+                    changes_path: Path | None = None, changes_label: str = "", changes_caption: str = ""):
+    """Per-seed (pilot) versus crossed bootstrap intervals for the analyses of one stage.
+
+    Reads results/bootstrap_correction/sweeps_umte_old_vs_new.csv (both estimators on the same predictions), keeps the
+    rows whose result file starts with one of `prefixes` (and, unless include_remedies, drops remedy arms), writes a
+    summary table and returns summary numbers. Only counts, ratios and verdict changes are printed; no per-seed interval
+    is reproduced."""
+    f = ROOT / "results" / "bootstrap_correction" / "sweeps_umte_old_vs_new.csv"
+    if not f.exists():
+        MISSING.append(str(f.relative_to(ROOT)))
+        return None
+    d = pd.read_csv(f)
+    keep = np.zeros(len(d), bool)
+    for p in prefixes:
+        keep |= d.file.str.startswith(p).to_numpy()
+    d = d[keep].copy()
+    if extra is not None:
+        d = d[extra(d)]
+    if not include_remedies:
+        d = d[~d.key.str.contains(REMEDY_KEYS, regex=True)]
+    d["group"] = d.file.str.split("/").str[:2].str.join("/").str.replace(".csv", "", regex=False).str.replace(".json", "", regex=False)
+    rows = []
+    for g, q in d.groupby("group", sort=True):
+        rows.append([tex_escape(g).replace("/", "/\\allowbreak{}"), len(q), int((q.old_excludes_0 & ~q.new_excludes_0).sum()),
+                     int((~q.old_excludes_0 & q.new_excludes_0).sum()), f"{q.width_ratio.median():.2f}"])
+    rows.append(["\\textbf{all}", len(d), int((d.old_excludes_0 & ~d.new_excludes_0).sum()),
+                 int((~d.old_excludes_0 & d.new_excludes_0).sum()), f"{d.width_ratio.median():.2f}"])
+    table(path, ["Result group", "Intervals", "Excluded 0 only with the per-seed estimator", "Excluded 0 only with the crossed estimator",
+                 "Median width ratio (crossed / per-seed)"], rows, caption, label,
+          align="p{5.0cm}p{1.4cm}p{2.6cm}p{2.6cm}p{2.4cm}", size="\\scriptsize")
+    if changes_path is not None:
+        ch = d[d.verdict_changed].copy()
+        crows = [[tex_escape(r.file.rsplit("/", 1)[0]).replace("/", "/\\allowbreak{}"),
+                  tex_escape(r.key.replace("|", " / ")).replace("/", "/\\allowbreak{}"),
+                  ci(r.new_est, r.new_lo, r.new_hi), "no longer excludes 0" if r.old_excludes_0 else "now excludes 0"]
+                 for r in ch.itertuples()]
+        table(changes_path, ["Result", "Contrast", "Crossed estimate [95\\% CI]", "Verdict vs per-seed estimator"],
+              crows or [["none", "", "", ""]], changes_caption, changes_label, align="p{4.2cm}p{5.2cm}p{3.3cm}p{2.6cm}",
+              size="\\scriptsize")
+    return {"n": len(d), "lost": int((d.old_excludes_0 & ~d.new_excludes_0).sum()),
+            "gained": int((~d.old_excludes_0 & d.new_excludes_0).sum()), "median": float(d.width_ratio.median()),
+            "q25": float(d.width_ratio.quantile(.25)), "q75": float(d.width_ratio.quantile(.75)), "df": d}
+
+
+# ------------------------------------------------------------------------------------------------ derived summaries
+DERIVED = ROOT / "results" / "stage_derived"
+
+
+def derived(name: str, df: "pd.DataFrame") -> "pd.DataFrame":
+    """Write a summary computed by a stage generator from existing result files (means over seeds, point estimates of
+    runs whose per-image predictions were not saved) to results/stage_derived/<name>.csv, so that every number a report
+    prints can be traced to a file. No interval is ever written here."""
+    DERIVED.mkdir(parents=True, exist_ok=True)
+    df.to_csv(DERIVED / f"{name}.csv", index=False)
+    return df
+
+
+def auc_means(d: str, root: Path = NEW, method_col: str = "method"):
+    m = csv(f"{d}/metrics_per_seed.csv", root)
+    if m is None:
+        return None
+    keys = [k for k in ("trap", method_col, "env") if k in m.columns]
+    return m.groupby(keys).auc.mean().round(3).reset_index()

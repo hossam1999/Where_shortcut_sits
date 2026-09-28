@@ -91,7 +91,7 @@ def matched():
             M.add(f"MOneHolm{KEY[c]}", f"{q.p_holm:.3f}")
     L.table(T / "matched.tex", ["Cohort", "Crossover, all images", "matched (0.2 SD)", "matched (0.05 SD)", "M1 (Holm, 3)"],
             rows, "Crossover before and after covariate matching (reversed-test AUROC, crossed 95\\% CIs). The 0.05 SD "
-            "calliper is the stricter sensitivity analysis of the third review (R7).", "tab:match", size="\\scriptsize",
+            "calliper is a stricter, registered sensitivity analysis (R7).", "tab:match", size="\\scriptsize",
             resize=True)
 
 
@@ -162,62 +162,102 @@ def transplant():
     M.add("NNThreePos", sum(r is not None and r["ci95_lo"] > 0 for r in n3s))
 
 
-def correction():
-    d = L.csv("bootstrap_correction/sweeps_umte_old_vs_new.csv", root=L.OLD)
-    if d is None:
+def transplant_details():
+    """T2-T4 of the transplant: AUROCs at the in-ROI location, same-head |dp|, balanced interaction (point values)."""
+    t = L.csv("review2/R2_transplant.csv")
+    if t is None:
         return
-    M.add("CRows", len(d)); M.add("CChanged", int(d.verdict_changed.sum()))
-    M.add("CLost", int((d.old_excludes_0 & ~d.new_excludes_0).sum())); M.add("CGained", int((~d.old_excludes_0 & d.new_excludes_0).sum()))
-    M.add("CMedian", f"{d.width_ratio.median():.2f}"); M.add("CQlo", f"{d.width_ratio.quantile(.25):.2f}")
-    M.add("CQhi", f"{d.width_ratio.quantile(.75):.2f}"); M.add("CEstDiff", int((d.est_diff.abs() > 0.03).sum()))
-    d["top"] = d.file.str.split("/").str[0]
-    g = d.groupby("top").agg(n=("key", "size"), lost=("verdict_changed", lambda s: int((s & d.loc[s.index, "old_excludes_0"]).sum())),
-                             gained=("verdict_changed", lambda s: int((s & ~d.loc[s.index, "old_excludes_0"]).sum())),
-                             est=("est_diff", lambda s: int((s.abs() > 0.03).sum())), mx=("est_diff", lambda s: s.abs().max()),
-                             wr=("width_ratio", "median"))
-    L.table(T / "correction_by_source.tex", ["Result group", "Intervals", "Lost significance", "Gained", "$|\\Delta|$ estimate $>0.03$",
-                                             "max $|\\Delta|$ estimate", "median width ratio"],
-            [[L.tex_escape(k), str(r.n), str(r.lost), str(r.gained), str(r.est), L.f3(r.mx), f"{r.wr:.2f}"] for k, r in g.iterrows()],
-            "Old versus corrected intervals by result group (every regenerated interval with an archived counterpart; "
-            "\\texttt{results/bootstrap\\_correction/sweeps\\_umte\\_old\\_vs\\_new.md}).", "tab:corr", size="\\scriptsize",
-            resize=True)
-    v = d[d.verdict_changed]
-    k = v[v.key.str.contains(r"\|mask\||mask-erm|mask - ERM|^mask\|", regex=True) |
-          v.file.str.contains("PRIMARY|adhoc|natural|finetune|review2|E14|E12|SUMMARY|T3_cross|X3|location_interaction")]
-    brk = lambda x: L.tex_escape(x).replace("/", "/\\allowbreak{}").replace("\\_", "\\_\\allowbreak{}")
-    rows = [[brk(r.file.replace("/bootstrap_vs_erm.csv", "").replace("/paired_deltas.csv", "")),
-             brk(r.key.replace("|", " | ")), L.ci(r.new_est, r.new_lo, r.new_hi),
-             "lost" if r.old_excludes_0 else "gained"] for r in k.itertuples()]
-    L.table(T / "correction_claims.tex", ["Result", "Row", "Corrected estimate [95\\% CI]", "Significance"], rows,
-            "Verdict changes among intervals that concern masking, the primary family, natural test sets, fine-tuning and "
-            "the transplant. Only the corrected interval is shown; the archived interval is in the comparison file.",
-            "tab:corrclaims", align="p{4.6cm}p{5.2cm}p{3.4cm}c", size="\\scriptsize")
-    M.add("CClaims", len(rows))
-    pn, po = L.csv("PRIMARY_CLAIMS.csv"), L.csv("PRIMARY_CLAIMS.csv", root=L.OLD)
-    for tag, x in (("PrimNew", pn), ("PrimOld", po)):
-        if x is not None:
-            M.add(tag, int(((x.p_holm < 0.05) & (x.estimate > 0)).sum()))
-    # capsule synthetic cohort re-dealt (reproducibility): archived counterfactual images found in the new test set
-    try:
-        o = pd.read_csv(L.OLD / "synthetic/capsule/dino518_debris_corr_main/counterfactual_per_image.csv.gz", usecols=["image_id"])
-        n = pd.read_csv(L.NEW / "synthetic/capsule/dino518_debris_corr_main/predictions.csv.gz", usecols=["image_id", "env"])
-        so, sn = set(o.image_id), set(n[n.env == "test_rev"].image_id)
-        M.add("CapOld", len(so)); M.add("CapCommon", len(so & sn)); M.add("CapNewTest", len(sn))
-        cap = d[d.file.str.startswith("synthetic/capsule")]
-        M.add("CapMaxDiff", L.f3(cap.est_diff.abs().max()))
-    except Exception as e:  # noqa: BLE001
-        print("capsule overlap:", e)
-    width_fig(d)
+    rows = []
+    for r in t.itertuples():
+        k = KEY[r.cohort]
+        rows.append([r.cohort, str(int(r.n_images)), f"{L.f3(r.auc_erm_test_corr_in)} / {L.f3(r.auc_erm_test_rev_in)}",
+                     f"{L.f3(r.auc_mask_test_corr_in)} / {L.f3(r.auc_mask_test_rev_in)}",
+                     f"{L.f3(r.auc_mask_test_corr_out)} / {L.f3(r.auc_mask_test_rev_out)}",
+                     f"{L.f3(r.cf_absdp_erm_in)} / {L.f3(r.cf_absdp_mask_in)}", L.f3(r.cf_absdp_mask_out)])
+        M.add(f"DpErmIn{k}", L.f3(r.cf_absdp_erm_in)); M.add(f"DpMaskIn{k}", L.f3(r.cf_absdp_mask_in))
+        M.add(f"MaskCleanIn{k}", L.f3(r.auc_mask_clean_in)); M.add(f"ErmCleanIn{k}", L.f3(r.auc_erm_clean_in))
+        M.add(f"MaskRevOut{k}", L.f3(r.auc_mask_test_rev_out)); M.add(f"MaskCorrOut{k}", L.f3(r.auc_mask_test_corr_out))
+        M.add(f"MaskCleanOut{k}", L.f3(r.auc_mask_clean_out)); M.add(f"NRecip{k}", int(r.n_images))
+    L.table(T / "transplant_detail.tex", ["Cohort", "Recipients", "ERM in: corr / rev", "mask in: corr / rev",
+                                          "mask out: corr / rev", "$|\\Delta p|$ in: ERM / mask", "$|\\Delta p|$ out: mask"], rows,
+            "Transplant, per location: correlated and reversed AUROC of ERM and of the masked model, and the same-head "
+            "counterfactual sensitivity to the pasted artifact (T3). Outside the ROI the masked model's correlated and "
+            "reversed AUROC coincide and $|\\Delta p|=0$: the pasted artifact is gone.", "tab:txdet",
+            size="\\scriptsize", resize=True)
 
 
-def width_fig(d):
-    plt = L.plot_style()
-    fig, ax = plt.subplots(figsize=(4.8, 2.6))
-    ax.scatter((d.old_hi - d.old_lo), (d.new_hi - d.new_lo), s=4, alpha=0.4, color=L.MASK_BLUE)
-    m = float(max((d.old_hi - d.old_lo).max(), (d.new_hi - d.new_lo).max()))
-    ax.plot([0, m], [0, m], "k--", lw=0.7)
-    ax.set_xlabel("width, archived interval"); ax.set_ylabel("width, corrected interval")
-    fig.savefig(F / "width_scatter.pdf")
+def rebuild():
+    """R0: reproduction of the four primary crossovers after re-downloading all data and rebuilding every derived object
+    on a second machine (archived point estimate vs rebuilt crossover with crossed CI)."""
+    r = L.csv("review2/R0_R1_crossovers.csv")
+    o = L.csv("review2/R0_R1_crossovers.csv", root=L.OLD)
+    rows = []
+    for c in COH:
+        q = r[(r.cohort == c) & (r.run == "repro")]
+        oq = o[(o.cohort == c) & (o.run == "repro")] if o is not None else None
+        arch = None if oq is None or oq.empty else float(oq.archived.iloc[0])
+        rows.append([c, L.s3(arch), L.ci_row(q.iloc[0].rename({"crossover": "seed_delta_mean"})) if len(q) else "\\na",
+                     L.f3(None if arch is None else abs(float(q.crossover.iloc[0]) - arch))])
+    L.table(T / "rebuild.tex", ["Cohort", "First build (point)", "Rebuilt data, second machine", "$|\\Delta|$"], rows,
+            "Reproduction of the four crossovers after every dataset was re-downloaded and every derived object (lesion "
+            "U-Net, detectors, probe, groups, caches) rebuilt on a second machine (registered criterion: same sign, CI "
+            "excluding 0, $|\\Delta|\\le0.03$).", "tab:rebuild")
+
+
+SENS = [("Thyroid", "main", "thyroid/dino518_main"), ("Thyroid", "large markers ($\\ge50$ px)", "thyroid/dino518_sens_px50"),
+        ("Thyroid", "strict location ($r\\ge0.7$ / $r<0.05$)", "thyroid/dino518_sens_strictloc"),
+        ("Ovary", "main", "ovary/dino518_main"), ("Ovary", "large markers ($\\ge50$ px)", "ovary/dino518_sens_px50"),
+        ("Ovary", "strict location ($r\\ge0.7$ / $r<0.05$)", "ovary/dino518_sens_strictloc"),
+        ("Capsule", "main", "capsule/dino518_main"), ("Capsule", "strict Trap B (lesion coverage $<5\\%$)", "capsule/dino518_sens_strictB")]
+
+
+def robustness():
+    rows = []
+    for c, lab, d in SENS:
+        x = L.js(f"{d}/T3_crossover.json")
+        cnt = L.csv(f"{d}/counts.csv")
+        n = "\\na" if cnt is None else f"{int(cnt[cnt.trap == 'trapA'][['A1_Y0', 'A1_Y1']].sum(axis=1).iloc[0])} / {int(cnt[cnt.trap == 'trapB'][['A1_Y0', 'A1_Y1']].sum(axis=1).iloc[0])}"
+        rows.append([c, lab, n, L.ci_row(x)])
+        M.add(f"Sens{L.Macros.clean(d.split('/')[1])}{c}", L.ci_row(x))
+    L.table(T / "label_sens.tex", ["Cohort", "Artifact-label definition", "Artifact images A / B", "Crossover"], rows,
+            "Sensitivity of the crossover to the definition of the artifact label (registered before running): only "
+            "large detections, stricter location thresholds, and for capsule a Trap~B that also requires debris to "
+            "cover less than 5\\% of the lesion box.", "tab:labsens", size="\\scriptsize")
+    j = L.js("leakage/embedding_groups.json", root=L.OLD)
+    rows = []
+    for c, key in (("Thyroid", "thyroid"), ("Ovary", "ovary"), ("Capsule", "capsule")):
+        x0 = L.js(f"{key}/dino518_main/T3_crossover.json"); x1 = L.js(f"{key}/dino518_emb_groups/T3_crossover.json")
+        g = (j or {}).get(key, {})
+        rows.append([c, f"{g.get('groups_old', 0):,} $\\to$ {g.get('groups_emb', 0):,}", f"{g.get('tau', float('nan')):.2f}",
+                     f"{100 * g.get('largest_group_share', float('nan')):.1f}\\%", L.ci_row(x0), L.ci_row(x1)])
+        M.add(f"Emb{c}", L.ci_row(x1))
+    L.table(T / "emb_groups.tex", ["Cohort", "Leakage groups", "cosine $\\tau$", "largest group", "Crossover, pHash groups",
+                                   "Crossover, embedding groups"], rows,
+            "Stricter leakage groups for the cohorts without patient identifiers: images joined whenever their "
+            "(mean-centred) DINOv2 embeddings have cosine $\\ge\\tau$, united with the existing groups; $\\tau$ is the most "
+            "aggressive grid value that keeps the largest group below 5\\% of the cohort (chosen without labels).",
+            "tab:emb", size="\\scriptsize", resize=True)
+
+
+def estimator():
+    r = L.estimator_check(["thyroid/dino518_matched", "ovary/dino518_matched", "capsule/dino518_matched",
+                           "spec_e13/dino518_matched", "thyroid/dino518_emb_groups", "ovary/dino518_emb_groups",
+                           "capsule/dino518_emb_groups", "thyroid/dino518_sens", "ovary/dino518_sens", "capsule/dino518_sens",
+                           "review2/transplant", "thyroid/dino518_repro", "ovary/dino518_repro", "capsule/dino518_repro",
+                           "spec_e13/dino518_repro"],
+                          T / "estimator_check.tex", "tab:estcheck",
+                          "The analyses of this stage under the per-seed and the crossed estimator (same predictions; "
+                          "baseline arms only).", changes_path=T / "estimator_changes.tex", changes_label="tab:estchanges",
+                          changes_caption="Contrasts of this stage whose verdict depends on the estimator.")
+    if r:
+        M.add("EstN", r["n"]); M.add("EstLost", r["lost"]); M.add("EstGained", r["gained"]); M.add("EstMed", f"{r['median']:.2f}")
+        plt = L.plot_style(); d = r["df"]
+        fig, ax = plt.subplots(figsize=(4.8, 2.6))
+        ax.scatter((d.old_hi - d.old_lo), (d.new_hi - d.new_lo), s=5, alpha=0.5, color=L.MASK_BLUE)
+        m = float(max((d.old_hi - d.old_lo).max(), (d.new_hi - d.new_lo).max()))
+        ax.plot([0, m], [0, m], "k--", lw=0.7)
+        ax.set_xlabel("width, per-seed interval"); ax.set_ylabel("width, crossed interval")
+        fig.savefig(F / "width_scatter.pdf")
 
 
 def transplant_figure():
@@ -250,19 +290,24 @@ def registrations():
              "artifact $-$ neutral interaction CI $>0$"],
             ["Regression-adjusted crossover, A2", "\\ok{} registered", "FINAL (A2)", L.reg(docs["Final"]),
              "adjusted crossover CI $>0$, Holm over 3"],
-            ["Crossed bootstrap everywhere, A1", "\\ok{} registered", "FINAL (A1)", L.reg(docs["Final"]),
-             "rewrite claims whose CI now includes 0"],
+            ["Artifact-label sensitivity", "\\ok{} registered", "SENSITIVITY\\_ARTIFACT\\_LABELS",
+             L.reg("docs/SENSITIVITY_ARTIFACT_LABELS.md"), "crossover keeps sign and CI $>0$ in every variant"],
+            ["Embedding-based leakage groups", "\\ok{} registered", "EMBEDDING\\_GROUPS", L.reg("docs/PREREGISTRATION_EMBEDDING_GROUPS.md"),
+             "same sign and CI verdict as with pHash groups"],
+            ["Rebuild on a second machine, R0", "\\ok{} registered", "REVIEW2 (R0)", L.reg(docs["Rev2"]),
+             "same sign, CI $>0$, $|\\Delta|\\le0.03$"],
             ["Capsule matched analysis", "\\no{} descriptive", "REVIEW2 (R1)", L.reg(docs["Rev2"]),
              "infeasible under the registered rule"]]
     rows = [r[:2] + [r[2].replace("\\_", "\\_\\allowbreak{}")] + r[3:] for r in rows]
     L.table(T / "experiments.tex", ["Experiment", "Status", "Registration", "First commit (local time)", "Support criterion"],
-            rows, "Experiments of this stage. Commit times come from this machine and are not independent proof of order; "
-            "the final registration was additionally pushed to GitHub before the runs.", "tab:exp", align=L.EXP_ALIGN,
+            rows, "Experiments of this stage and their registration documents (\\texttt{docs/PREREGISTRATION\\_<name>.md} or "
+            "\\texttt{docs/<name>.md}). Commit times are set by the committing machine and are not independent proof of order; "
+            "the REVIEW2, REVIEW3 and FINAL registrations were also pushed to GitHub before their runs.", "tab:exp", align=L.EXP_ALIGN,
             size="\\scriptsize")
 
 
 def main():
-    balance(); matched(); a2(); transplant(); correction(); transplant_figure(); registrations()
+    balance(); matched(); a2(); transplant(); transplant_details(); rebuild(); robustness(); estimator(); transplant_figure(); registrations()
     M.write(T / "numbers.tex")
     L.report_missing("stage4")
 

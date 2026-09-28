@@ -1,0 +1,6 @@
+cohort,model,auroc,source
+Thyroid (TNCD official split),"ResNet-18, cross-entropy (fine-tuned)",0.773,gong2022acl
+Thyroid (TNCD official split),"DenseNet-121, cross-entropy (fine-tuned)",0.78,gong2022acl
+Thyroid (TNCD official split),"ConvNeXt-T, cross-entropy (fine-tuned)",0.784,gong2022acl
+Thyroid (TNCD official split),"ResNet-18, adaptive curriculum (fine-tuned)",0.799,gong2022acl
+Thyroid (TNCD official split),"DINOv2 ViT-B/14 frozen + linear head, ERM (rebuilt run)",0.735,this work

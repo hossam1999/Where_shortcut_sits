@@ -1,0 +1,16 @@
+\begin{table}[H]\centering\scriptsize
+\caption{Real chest drains (NIH ChestX-ray14 pneumothorax, 29,687 images, patient-grouped folds; drains lie inside the lungs, so this is an in-ROI trap only). AUROC, mean over 5 folds; \textbf{point estimates, not re-estimated} with the crossed bootstrap (per-image predictions were not saved).}\label{tab:drains}
+\begin{tabular}{lcccc}\toprule
+Encoder & Arm & clean & correlated & reversed \\\midrule
+RAD-DINO & ERM & 0.886 & 0.948 & 0.191 \\
+ & lung masking & 0.870 & 0.949 & 0.239 \\
+ & group-balanced & 0.853 & 0.870 & 0.538 \\
+ & DFR & 0.800 & 0.738 & 0.683 \\
+ & masking + DFR & 0.801 & 0.770 & 0.646 \\
+DINOv2 & ERM & 0.823 & 0.922 & 0.280 \\
+ & lung masking & 0.834 & 0.932 & 0.292 \\
+ & group-balanced & 0.781 & 0.841 & 0.399 \\
+ & DFR & 0.770 & 0.808 & 0.549 \\
+ & masking + DFR & 0.788 & 0.827 & 0.566 \\
+\bottomrule\end{tabular}
+\end{table}

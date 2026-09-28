@@ -1,0 +1,5 @@
+family,cohort,estimate,p,p_holm4
+P1 location crossover,ISIC hair (DINOv2),0.1474504004676915,0.0001,0.0004
+P1 location crossover,Thyroid (DINOv2),0.2385752065741104,0.0001,0.0004
+P1 location crossover,Capsule (DINOv2),0.3767533432268978,0.0001,0.0004
+P1 location crossover,Ovary (DINOv2),0.1698994907632317,0.0001,0.0004

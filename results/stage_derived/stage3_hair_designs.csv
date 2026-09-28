@@ -1,0 +1,7 @@
+design,quantity,estimate
+recon,mask_minus_erm_trapA,0.012
+recon,mask_minus_erm_trapB,0.178
+recon,crossover,0.166
+metamatched,mask_minus_erm_trapA,0.03
+metamatched,mask_minus_erm_trapB,0.199
+metamatched,crossover,0.169

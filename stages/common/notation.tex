@@ -1,14 +1,15 @@
-% Shared notation (every stage report inputs this file).
+% Shared notation. Each stage defines \notY, \notA, \notROI, \notCross, \notCI and \notExtra before \input-ing this
+% file, so that a report only names the cohorts and quantities it has already introduced.
 \section*{Notation}
 \begin{tabular}{p{3.2cm}p{11.8cm}}
-$Y\in\{0,1\}$ & diagnosis (1 = melanoma / malignant / solid-component tumour / erosion). \\
-$A\in\{0,1\}$ & artifact present (hair, sonographer caliper, capsule debris, chest tube). \\
-ROI & region of interest (lesion, nodule, tumour, lesion box, lungs); drawn in \textcolor{roigreen}{green}; artifacts in \textcolor{artred}{red}. \\
-$r$ & overlap $|\text{artifact}\cap\text{ROI}|/|\text{artifact}|$. Trap~A: $r\ge0.5$ (in-ROI); Trap~B: $r<0.1$ (out-of-ROI). \\
-Environments & training and correlated test $P(A{=}1\mid Y{=}1)=0.9$, $P(A{=}1\mid Y{=}0)=0.1$; reversed test 0.1/0.9; clean test: artifact independent of $Y$ (real traps: half of each class; sweeps: absent). \\
+$Y\in\{0,1\}$ & diagnosis: \notY. \\
+$A\in\{0,1\}$ & artifact present: \notA. \\
+ROI & region of interest: \notROI; drawn in \textcolor{roigreen}{green}; artifacts in \textcolor{artred}{red}. \\
+$r$ & overlap $|\text{artifact}\cap\text{ROI}|/|\text{artifact}|$. Trap~A: $r\ge0.5$ (artifact in the ROI); Trap~B: $r<0.1$ (outside). \\
+Environments & training and correlated test $P(A{=}1\mid Y{=}1)=0.9$, $P(A{=}1\mid Y{=}0)=0.1$; reversed test 0.1/0.9; clean test: artifact independent of $Y$ (real artifacts: half of each class) or absent (synthetic artifacts). \\
 ERM, mask & linear head on the frozen features of the original image / of the ROI-masked image. \\
-Crossover & $[\text{mask}-\text{ERM}]_{\text{out}}-[\text{mask}-\text{ERM}]_{\text{in}}$ of reversed-test AUROC (real traps: Trap~B $-$ Trap~A; sweeps and transplant: location interaction on the same images). \\
-CI & 95\% crossed seed$\times$image bootstrap interval (Stage~1, Sec.~\ref{sec:bootstrap}); every interval in these reports uses it. \\
-$|\Delta p|$ & same-head counterfactual sensitivity: change of the predicted probability when the artifact is inserted. \\
-SMD & standardised mean difference between two groups. \\
+Crossover & \notCross \\
+CI & \notCI \\
+$|\Delta p|$ & same-head counterfactual sensitivity: change of the predicted probability when the artifact is inserted into the same image. \\
+\notExtra
 \end{tabular}

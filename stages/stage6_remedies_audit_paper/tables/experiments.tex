@@ -1,12 +1,20 @@
 \begin{table}[H]\centering\scriptsize
-\caption{Experiments of this stage. Commit times come from this machine and are not independent proof of order.}\label{tab:exp}
+\caption{Experiments of this stage and their registration documents (\texttt{docs/PREREGISTRATION\_<name>.md} or \texttt{docs/<name>.md}). Commit times are set by the committing machine and are not independent proof of order.}\label{tab:exp}
 \begin{tabular}{p{3.1cm}p{2.1cm}p{2.4cm}p{3.2cm}p{3.3cm}}\toprule
 Experiment & Status & Registration & First commit (local time) & Support criterion \\\midrule
-U-MtE and variants (P2--P4) & \ok{} registered & UNIVERSAL\_\allowbreak{}I2E & \texttt{ee95f10}, 2026-09-26 20:14 & Holm $p<0.05$, estimate $>0$ \\
+U-I2E / U-MtE, protection, balancing, U7--U14 & \ok{} registered (with amendments before each run) & UNIVERSAL\_\allowbreak{}I2E & \texttt{ee95f10}, 2026-09-26 20:14 & per claim, CI; no gaming (clean loss $\le0.02$, corr $\ge$ rev $-0.02$) \\
+Remedy tests P2--P4 in the 16-test family & \mixed{} tests registered; family grouped post hoc & STATISTICAL\_\allowbreak{}PLAN & \texttt{4e9d44c}, 2026-09-27 09:37 & Holm $p<0.05$, estimate $>0$ \\
 Erasure-rank ablation & \ok{} registered & UMTE\_\allowbreak{}ABLATION & \texttt{30f19c8}, 2026-09-27 14:15 & descriptive \\
-16-test primary family & \no{} grouped after the individual results & STATISTICAL\_\allowbreak{}PLAN & \texttt{4e9d44c}, 2026-09-27 09:37 & Holm over 16 \\
-Natural-data remedies & \ok{} registered & REVIEW2 & \texttt{29cd0da}, 2026-09-27 18:56 & descriptive (decision guide) \\
-Image audit (prepared, not run) & \ok{} registered & FINAL (Part B) & \texttt{c45d482}, 2026-09-28 00:35 & precision, recall, location agreement, $\kappa$ \\
-External validation X1 & \ok{} registered & FINAL (A4) & \texttt{c45d482}, 2026-09-28 00:35 & gate, then crossover CI $>0$ \\
+Encoder size (S2) & \ok{} registered & SCALE & \texttt{13303b0}, 2026-09-27 14:13 & protected U-MtE $>$ mask, CI \\
+LaMa inpainting & \ok{} registered & INPAINT\_\allowbreak{}LAMA & \texttt{715b790}, 2026-09-27 09:41 & reported with CI, no direction \\
+Text-prompted erasure (V1--V3) & \ok{} registered & TEXT\_\allowbreak{}PROMPT & \texttt{7877e8c}, 2026-09-27 12:21 & V1: text erasure $>$ mask \\
+SLAS (S0--S6) & \mixed{} registration and localisation result share a commit & SLAS & \texttt{2d1ba20}, 2026-09-26 23:33 & S1: mask-then-suppress $>$ token masking \\
+Chest drains (D1--D5) & \ok{} registered & CXR\_\allowbreak{}DRAIN & \texttt{3d0cffc}, 2026-09-27 03:29 & U-MtE $>$ mask, CI \\
+Fine-tuning F1--F3 & \ok{} registered & FINETUNE & \texttt{7c8b466}, 2026-09-27 07:06 & mte\_ft $>$ mask, CI \\
+Fine-tune, then erase & \ok{} registered & FT\_\allowbreak{}ERASE & \texttt{8ac7a7d}, 2026-09-27 14:20 & mte\_post $>$ mask\_post \\
+Erase while fine-tuning (G1--G4) & \ok{} registered (amendments before running) & FT\_\allowbreak{}UMTE & \texttt{b7d7077}, 2026-09-27 14:52 & umte(\_cons)\_ft $>$ mask for both architectures \\
+Leakage: embedding groups (P2--P4) & \ok{} registered & EMBEDDING\_\allowbreak{}GROUPS & \texttt{b0eda23}, 2026-09-27 13:55 & same sign and CI verdict \\
+Natural data (N1, N2, N4) & \ok{} registered & NATURAL & \texttt{74bd243}, 2026-09-27 09:39 & protected U-MtE $\ge$ mask \\
+Clinician image audit (prepared) & \ok{} registered & FINAL (Part B) & \texttt{c45d482}, 2026-09-28 00:35 & precision, recall, location agreement, $\kappa$ \\
 \bottomrule\end{tabular}
 \end{table}

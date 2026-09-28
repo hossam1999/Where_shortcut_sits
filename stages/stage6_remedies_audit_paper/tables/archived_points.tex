@@ -1,0 +1,87 @@
+{\scriptsize
+\begin{longtable}{p{4.0cm}p{3.6cm}p{5.2cm}c}
+\caption{Remedy analyses whose per-image predictions were not saved, so their intervals could not be re-estimated with the crossed bootstrap: \textbf{point estimates only}.}\label{tab:archived}\\\toprule
+Analysis & Cohort / run & Contrast (Trap A, reversed) & Point estimate \\\midrule
+\endfirsthead
+\toprule Analysis & Cohort / run & Contrast (Trap A, reversed) & Point estimate \\\midrule
+\endhead
+\bottomrule
+\endlastfoot
+LaMa inpainting (oracle masks) & thyroid & lama $-$ mask & $+0.025$ \\
+ & thyroid & mask\_lama $-$ mask & $+0.226$ \\
+ & thyroid & mte\_protect $-$ mask\_lama & $-0.009$ \\
+ & thyroid & mte\_balanced $-$ mask\_lama & $+0.162$ \\
+ & thyroid & lama $-$ erm & $+0.136$ \\
+ & ovary & lama $-$ mask & $+0.027$ \\
+ & ovary & mask\_lama $-$ mask & $+0.123$ \\
+ & ovary & mte\_protect $-$ mask\_lama & $-0.080$ \\
+ & ovary & mte\_balanced $-$ mask\_lama & $+0.067$ \\
+ & ovary & lama $-$ erm & $+0.158$ \\
+ & isic & lama $-$ mask & $+0.145$ \\
+ & isic & mask\_lama $-$ mask & $+0.127$ \\
+ & isic & mte\_protect $-$ mask\_lama & $-0.086$ \\
+ & isic & mte\_balanced $-$ mask\_lama & $+0.123$ \\
+ & isic & lama $-$ erm & $+0.107$ \\
+text-prompted erasure & thyroid & mask\_text\_erase $-$ mask & $+0.005$ \\
+ & thyroid & mte $-$ mask & $+0.204$ \\
+ & thyroid & mask\_text\_erase\_balanced $-$ balanced & $+0.056$ \\
+ & ovary & mask\_text\_erase $-$ mask & $+0.008$ \\
+ & ovary & mte $-$ mask & $+0.215$ \\
+ & ovary & mask\_text\_erase\_balanced $-$ balanced & $-0.010$ \\
+ & capsule & mask\_text\_erase $-$ mask & $+0.001$ \\
+ & capsule & mte $-$ mask & $-0.236$ \\
+ & capsule & mask\_text\_erase\_balanced $-$ balanced & $+0.066$ \\
+ & hair (DermLIP) & mask\_text\_erase $-$ mask & $+0.004$ \\
+ & hair (DermLIP) & mte $-$ mask & $-0.076$ \\
+ & hair (DermLIP) & mask\_text\_erase\_balanced $-$ balanced & $-0.112$ \\
+SLAS & hair & tok\_mask $-$ tok\_erm & $+0.030$ \\
+ & hair & mts $-$ tok\_mask & $+0.022$ \\
+ & hair & slas $-$ tok\_erm & $+0.008$ \\
+ & hair & mts\_oracle $-$ tok\_mask & $+0.015$ \\
+ & hair & mts\_balanced $-$ tok\_balanced & $+0.051$ \\
+ & thyroid & tok\_mask $-$ tok\_erm & $+0.059$ \\
+ & thyroid & mts $-$ tok\_mask & $+0.081$ \\
+ & thyroid & slas $-$ tok\_erm & $+0.007$ \\
+ & thyroid & mts\_oracle $-$ tok\_mask & $+0.047$ \\
+ & thyroid & mts\_balanced $-$ tok\_balanced & $+0.070$ \\
+erasure + DFR (U10) & thyroid & mte\_dfr $-$ dfr & $+0.101$ \\
+ & thyroid & mte\_dfr $-$ mask\_dfr & $+0.007$ \\
+ & thyroid & mask\_dfr $-$ dfr & $+0.095$ \\
+ & capsule & mte\_dfr $-$ dfr & $+0.080$ \\
+ & capsule & mte\_dfr $-$ mask\_dfr & $+0.000$ \\
+ & capsule & mask\_dfr $-$ dfr & $+0.080$ \\
+ & hair & mte\_dfr $-$ dfr & $-0.039$ \\
+ & hair & mte\_dfr $-$ mask\_dfr & $+0.014$ \\
+ & hair & mask\_dfr $-$ dfr & $-0.053$ \\
+pseudo-group balancing (U8) & thyroid & umte\_pbal reversed AUROC & 0.663 \\
+ & thyroid & mte reversed AUROC & 0.622 \\
+ & thyroid & pbal reversed AUROC & 0.409 \\
+ & thyroid & erm reversed AUROC & 0.289 \\
+ & hair & umte\_pbal reversed AUROC & 0.510 \\
+ & hair & mte reversed AUROC & 0.506 \\
+ & hair & pbal reversed AUROC & 0.498 \\
+ & hair & erm reversed AUROC & 0.491 \\
+chest drains, RAD-DINO & drains & mte $-$ mask & $+0.029$ \\
+ & drains & mte\_protect $-$ mask & $+0.030$ \\
+ & drains & mte $-$ mte\_aug & $+0.031$ \\
+ & drains & mte $-$ jtt & $+0.094$ \\
+ & drains & mte\_balanced $-$ balanced & $-0.079$ \\
+location-adaptive selection (U13) & thyroid & auto $-$ mask & $+0.395$ \\
+ & thyroid & auto $-$ dfr & $+0.057$ \\
+ & capsule & auto $-$ mask & $+0.168$ \\
+ & capsule & auto $-$ dfr & $+0.047$ \\
+ & hair & auto $-$ mask & $+0.251$ \\
+ & hair & auto $-$ dfr & $-0.038$ \\
+ & chest drains & auto $-$ mask & $+0.299$ \\
+ & chest drains & auto $-$ dfr & $-0.144$ \\
+split-validation selection (U14) & thyroid & auto $-$ mask & $+0.398$ \\
+ & thyroid & auto $-$ dfr & $+0.060$ \\
+ & capsule & auto $-$ mask & $+0.187$ \\
+ & capsule & auto $-$ dfr & $+0.066$ \\
+ & ovary & auto $-$ mask & $+0.170$ \\
+ & ovary & auto $-$ dfr & $-0.007$ \\
+ & hair & auto $-$ mask & $+0.234$ \\
+ & hair & auto $-$ dfr & $-0.055$ \\
+ & chest drains & auto $-$ mask & $+0.417$ \\
+ & chest drains & auto $-$ dfr & $-0.026$ \\
+\end{longtable}}

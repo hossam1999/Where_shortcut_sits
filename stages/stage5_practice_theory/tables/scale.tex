@@ -1,0 +1,15 @@
+\begin{table}[H]\centering\scriptsize
+\caption{Encoder scale (DINOv2 ViT-S/14 21\,M, ViT-B/14 86\,M, ViT-L/14 304\,M parameters): ERM's shortcut gap in the in-ROI trap and the crossover.}\label{tab:scale}
+\begin{tabular}{lcccc}\toprule
+Cohort & DINOv2 & ERM clean AUROC (Trap A) & ERM gap corr $-$ rev (Trap A) & Crossover \\\midrule
+Thyroid & ViT-S/14 & 0.629 & 0.537 & $+0.247$ [$+0.205, +0.288$] \\
+Thyroid & ViT-B/14 & 0.608 & 0.590 & $+0.239$ [$+0.196, +0.280$] \\
+Thyroid & ViT-L/14 & 0.601 & 0.622 & $+0.263$ [$+0.218, +0.307$] \\
+Ovary & ViT-S/14 & 0.698 & 0.320 & $+0.296$ [$+0.208, +0.384$] \\
+Ovary & ViT-B/14 & 0.635 & 0.413 & $+0.170$ [$+0.087, +0.252$] \\
+Ovary & ViT-L/14 & 0.608 & 0.564 & $+0.207$ [$+0.127, +0.286$] \\
+Capsule & ViT-S/14 & 0.803 & 0.363 & $+0.370$ [$+0.325, +0.415$] \\
+Capsule & ViT-B/14 & 0.796 & 0.360 & $+0.377$ [$+0.327, +0.426$] \\
+Capsule & ViT-L/14 & 0.820 & 0.347 & $+0.417$ [$+0.369, +0.464$] \\
+\bottomrule\end{tabular}
+\end{table}

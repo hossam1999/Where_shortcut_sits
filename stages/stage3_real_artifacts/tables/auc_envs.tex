@@ -1,0 +1,42 @@
+{\scriptsize
+\begin{longtable}{lccccc}
+\caption{AUROC of ERM, masking, balancing and DFR in the three test environments (DINOv2, mean over 5 seeds). A large correlated$-$reversed gap is reliance on the artifact.}\label{tab:aucenv}\\\toprule
+Cohort & Trap & Arm & clean & correlated & reversed \\\midrule
+\endfirsthead
+\toprule Cohort & Trap & Arm & clean & correlated & reversed \\\midrule
+\endhead
+\bottomrule
+\endlastfoot
+Dermoscopy hair & Trap A & erm & 0.734 & 0.920 & 0.510 \\
+ & Trap A & mask & 0.712 & 0.917 & 0.460 \\
+ & Trap A & balanced & 0.785 & 0.850 & 0.722 \\
+ & Trap A & dfr & 0.715 & 0.740 & 0.705 \\
+ & Trap B & erm & 0.716 & 0.894 & 0.510 \\
+ & Trap B & mask & 0.701 & 0.795 & 0.608 \\
+ & Trap B & balanced & 0.752 & 0.800 & 0.714 \\
+ & Trap B & dfr & 0.683 & 0.669 & 0.706 \\
+Thyroid calipers & Trap A & erm & 0.608 & 0.879 & 0.289 \\
+ & Trap A & mask & 0.689 & 0.908 & 0.398 \\
+ & Trap A & balanced & 0.717 & 0.757 & 0.677 \\
+ & Trap A & dfr & 0.708 & 0.669 & 0.752 \\
+ & Trap B & erm & 0.600 & 0.789 & 0.405 \\
+ & Trap B & mask & 0.767 & 0.785 & 0.752 \\
+ & Trap B & balanced & 0.657 & 0.660 & 0.659 \\
+ & Trap B & dfr & 0.653 & 0.582 & 0.716 \\
+Ovarian calipers & Trap A & erm & 0.635 & 0.826 & 0.413 \\
+ & Trap A & mask & 0.690 & 0.828 & 0.545 \\
+ & Trap A & balanced & 0.710 & 0.725 & 0.703 \\
+ & Trap A & dfr & 0.708 & 0.689 & 0.723 \\
+ & Trap B & erm & 0.636 & 0.815 & 0.423 \\
+ & Trap B & mask & 0.733 & 0.752 & 0.725 \\
+ & Trap B & balanced & 0.694 & 0.710 & 0.679 \\
+ & Trap B & dfr & 0.671 & 0.632 & 0.701 \\
+Capsule debris & Trap A & erm & 0.796 & 0.941 & 0.581 \\
+ & Trap A & mask & 0.860 & 0.972 & 0.665 \\
+ & Trap A & balanced & 0.847 & 0.916 & 0.760 \\
+ & Trap A & dfr & 0.842 & 0.866 & 0.816 \\
+ & Trap B & erm & 0.714 & 0.922 & 0.429 \\
+ & Trap B & mask & 0.932 & 0.962 & 0.890 \\
+ & Trap B & balanced & 0.784 & 0.879 & 0.673 \\
+ & Trap B & dfr & 0.762 & 0.819 & 0.716 \\
+\end{longtable}}

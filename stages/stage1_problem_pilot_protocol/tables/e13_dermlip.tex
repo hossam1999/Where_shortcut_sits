@@ -1,0 +1,13 @@
+\begin{table}[H]\centering\scriptsize
+\caption{Real hair traps (DermLIP@224; E13/E15): AUROC in the three test environments (mean over 5 seeds) and change in reversed-test AUROC versus ERM (crossed 95\% CI). Trap A: hair on the lesion; Trap B: hair beside it; both share the hair-free group.}\label{tab:e13dermlip}
+\resizebox{\linewidth}{!}{\begin{tabular}{p{3.2cm}cccc}\toprule
+Arm & Trap A: clean / corr / rev & Trap A: $\Delta$ rev vs ERM & Trap B: clean / corr / rev & Trap B: $\Delta$ rev vs ERM \\\midrule
+ERM & 0.801 / 0.917 / 0.665 & --- & \na & \na \\
+ROI masking & 0.735 / 0.884 / 0.561 & $-0.104$ [$-0.143, -0.067$] & \na & \na \\
+oracle inpainting of hair & \na & \na & \na & \na \\
+group-balanced & 0.836 / 0.875 / 0.811 & $+0.146$ [$+0.122, +0.170$] & \na & \na \\
+DFR & 0.802 / 0.835 / 0.782 & $+0.116$ [$+0.090, +0.145$] & \na & \na \\
+paired LEACE & 0.814 / 0.917 / 0.699 & $+0.034$ [$+0.026, +0.042$] & \na & \na \\
+unpaired LEACE (image-level $A$) & 0.756 / 0.648 / 0.868 & $+0.203$ [$+0.165, +0.243$] & \na & \na \\
+\bottomrule\end{tabular}}
+\end{table}

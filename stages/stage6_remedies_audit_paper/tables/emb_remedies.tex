@@ -1,0 +1,15 @@
+\begin{table}[H]\centering\scriptsize
+\caption{The remedy tests re-run with the stricter embedding-based leakage groups (cohorts without patient identifiers).}\label{tab:embrem}
+\begin{tabular}{lccc}\toprule
+Cohort & Test & With embedding-based leakage groups & CI $>0$ \\\midrule
+Thyroid & P2 U-MtE (protected) > mask & $+0.251$ [$+0.215, +0.284$] & yes \\
+Thyroid & P3 erase > augment & $+0.192$ [$+0.160, +0.223$] & yes \\
+Thyroid & P4 U-MtE+balanced > balanced & $+0.152$ [$+0.127, +0.177$] & yes \\
+Ovary & P2 U-MtE (protected) > mask & $+0.051$ [$+0.020, +0.079$] & yes \\
+Ovary & P3 erase > augment & $+0.024$ [$-0.014, +0.062$] & \textbf{no} \\
+Ovary & P4 U-MtE+balanced > balanced & $+0.038$ [$-0.005, +0.081$] & \textbf{no} \\
+Capsule & P2 U-MtE (protected) > mask & $-0.006$ [$-0.022, +0.014$] & \textbf{no} \\
+Capsule & P3 erase > augment & $-0.128$ [$-0.158, -0.098$] & \textbf{no} \\
+Capsule & P4 U-MtE+balanced > balanced & $+0.101$ [$+0.071, +0.132$] & yes \\
+\bottomrule\end{tabular}
+\end{table}

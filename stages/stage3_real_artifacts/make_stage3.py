@@ -24,7 +24,10 @@ RUNS = [("Dermoscopy hair", "isic", "DINOv2", "spec_e13/dino518_spec", "spec"),
         ("Thyroid calipers", "thyroid", "MedSigLIP", "thyroid/medsiglip448_main", "real"),
         ("Ovarian calipers", "ovary", "DINOv2", "ovary/dino518_main", "real"),
         ("Capsule debris", "capsule", "DINOv2", "capsule/dino518_main", "real"),
-        ("Capsule debris", "capsule", "MedSigLIP", "capsule/medsiglip448_main", "real")]
+        ("Capsule debris", "capsule", "MedSigLIP", "capsule/medsiglip448_main", "real"),
+        ("Thyroid calipers", "thyroid", "ConvNeXt", "thyroid/convnext384_universal", "real"),
+        ("Ovarian calipers", "ovary", "MedSigLIP", "ovary/medsiglip448_universal", "real"),
+        ("Capsule debris", "capsule", "ConvNeXt", "capsule/convnext384_universal", "real")]
 
 
 def boot(d, kind, trap, arm="mask", env="test_rev"):
@@ -53,7 +56,7 @@ def cohort_table():
                      "lesion: HAM manual / U-Net"),
             "thyroid": ("TN3K ultrasound, TNCD labels", "malignant vs benign nodule", "calipers (rule detector)",
                         "nodule (manual)"),
-            "ovary": ("MMOTU 2D ultrasound", "malignant vs benign tumour", "calipers (rule detector)", "tumour (manual)"),
+            "ovary": ("MMOTU 2D ultrasound", "solid-component vs cystic tumour", "calipers (rule detector)", "tumour (manual)"),
             "capsule": ("SEE-AI capsule endoscopy", "erosion vs polyp-like lesion", "debris (patch probe)",
                         "lesion box (expert)")}
     rows, seen = [], set()
@@ -163,30 +166,30 @@ def detectors():
                          L.tex_escape(r[2]), L.tex_escape(r[3]).replace("~", "$\\sim$")])
     L.table(T / "detectors.tex", ["Mask", "Source", "Check", "Result"], rows,
             "Validity of the automatic masks that define artifact presence and location. Visual audits: "
-            "\\texttt{docs/ARTIFACT\\_MASK\\_AUDIT.md} (by the analysis agent, not a clinician; Stage~6 reports the "
-            "blinded image audit prepared for a clinician).", "tab:det", align="p{3.0cm}p{3.0cm}p{3.8cm}p{4.6cm}",
+            "\\texttt{docs/ARTIFACT\\_MASK\\_AUDIT.md} and \\texttt{docs/THYROID\\_MARKER\\_AUDIT.md} (visual audits during the "
+            "analysis, not by a clinician).", "tab:det", align="p{3.0cm}p{3.0cm}p{3.8cm}p{4.6cm}",
             size="\\scriptsize")
 
 
 def primary():
+    """The four pre-specified location tests (P1), Holm over the four."""
     d = L.csv("PRIMARY_CLAIMS.csv")
     rows = []
     if d is not None:
+        d = d[d.family.str.startswith("P1")].copy()
+        order = np.argsort(d.p.to_numpy()); m = len(d); adj = np.empty(m); run = 0.0
+        for k, i in enumerate(order):
+            run = max(run, min(1.0, (m - k) * d.p.to_numpy()[i])); adj[i] = run
+        d["p_holm4"] = adj
+        L.derived("stage3_p1_holm4", d[["family", "cohort", "estimate", "p", "p_holm4"]])
         for r in d.itertuples():
-            ok = bool(r._10) if hasattr(r, "_10") else bool(getattr(r, "supported_holm_0_05", False))
-            sup = "\\ok" if (r.p_holm < 0.05 and r.estimate > 0) else ("\\no{} (opposite)" if r.p_holm < 0.05 else "\\no")
-            rows.append([L.tex_escape(r.family), L.tex_escape(r.cohort), L.ci(r.estimate, r.ci95_lo, r.ci95_hi),
-                         f"{r.p:.4f}", f"{r.p_holm:.4f}", sup])
-        n_ok = int(((d.p_holm < 0.05) & (d.estimate > 0)).sum())
-        M.add("NPrimary", len(d)); M.add("NPrimaryOK", n_ok)
-        M.add("NPOneOK", int(((d.p_holm < 0.05) & (d.estimate > 0) & d.family.str.startswith("P1")).sum()))
-        for r in d.itertuples():
-            M.add(f"P{L.Macros.clean(r.family.split()[0] + r.cohort.split()[0])}", L.ci(r.estimate, r.ci95_lo, r.ci95_hi))
-            M.add(f"PHolm{L.Macros.clean(r.family.split()[0] + r.cohort.split()[0])}", f"{r.p_holm:.4f}")
-    L.table(T / "primary.tex", ["Family", "Cohort", "Estimate [95\\% CI]", "$p$", "$p$ (Holm, 16)", "Supported"],
-            rows or [["\\na"] * 6], "The pre-specified 16-test primary family (Trap~A, reversed test unless stated), "
-            "crossed bootstrap, two-sided $p$, Holm over all 16 tests. P1 is this stage's claim; P2--P4 concern the "
-            "remedies of Stage~6.", "tab:primary", size="\\scriptsize", resize=True)
+            sup = "\\ok" if (r.p_holm4 < 0.05 and r.estimate > 0) else "\\no"
+            rows.append([L.tex_escape(r.cohort), L.ci(r.estimate, r.ci95_lo, r.ci95_hi), f"{r.p:.4f}", f"{r.p_holm4:.4f}", sup])
+        M.add("NPOne", len(d)); M.add("NPOneOK", int(((d.p_holm4 < 0.05) & (d.estimate > 0)).sum()))
+        M.add("PMax", f"{d.p.max():.4f}")
+    L.table(T / "primary.tex", ["Cohort (DINOv2)", "Crossover [95\\% CI]", "$p$", "$p$ (Holm, 4)", "Supported"],
+            rows or [["\\na"] * 5], "The four pre-specified location tests (P1: crossover $>0$), crossed bootstrap, "
+            "two-sided bootstrap $p$ (floored at $10^{-4}$), Holm-adjusted over the four cohorts.", "tab:primary")
 
 
 def cxr():
@@ -224,17 +227,17 @@ def registrations():
             ["Capsule debris traps", "\\ok{} registered", "CAPSULE\\_TRAPS", L.reg(docs["Cap"]), "crossover CI $>0$"],
             ["Chest-radiograph device traps", "\\ok{} registered", "CXR\\_DEVICE\\_TRAPS", L.reg(docs["Cxr"]),
              "crossover CI $>0$"],
-            ["E12 overlap-contrast trap", "\\mixed{} pilot design, replicated", "REPLICATION\\_SPEC", L.reg(docs["Rep"]),
-             "null (pilot result)"],
-            ["16-test primary family (Holm)", "\\no{} grouped after the individual results", "STATISTICAL\\_PLAN",
+            ["Location tests P1 (four cohorts, Holm)", "\\mixed{} each test registered; Holm grouping post hoc", "STATISTICAL\\_PLAN",
              L.reg(docs["Stat"]), "Holm $p<0.05$, positive estimate"],
-            ["Regeneration with the crossed bootstrap", "\\ok{} registered", "FINAL (A1)", L.reg(docs["Final"]),
-             "claims whose CI now includes 0 are rewritten"]]
+            ["Chest drains (NIH)", "\\ok{} registered", "CXR\\_DRAIN", L.reg("docs/PREREGISTRATION_CXR_DRAIN.md"),
+             "mask $-$ ERM reported with CI, no direction"],
+            ["Crossed-bootstrap intervals (A1)", "\\ok{} registered", "FINAL (A1)", L.reg(docs["Final"]),
+             "a claim is stated only if its crossed CI excludes 0"]]
     rows = [r[:2] + [r[2].replace("\\_", "\\_\\allowbreak{}")] + r[3:] for r in rows]
     L.table(T / "experiments.tex", ["Experiment", "Status", "Registration", "First commit (local time)", "Support criterion"],
-            rows, "Experiments of this stage with registration status, first commit of the registration and the "
-            "support criterion stated in advance. Commit times come from this machine and are not independent proof "
-            "of order.", "tab:exp", align=L.EXP_ALIGN, size="\\scriptsize")
+            rows, "Experiments of this stage with registration status, the registration document "
+            "(\\texttt{docs/PREREGISTRATION\\_<name>.md}), its first commit and the support criterion stated in advance. "
+            "Commit times are set by the committing machine and are not independent proof of order.", "tab:exp", align=L.EXP_ALIGN, size="\\scriptsize")
 
 
 def forest():
@@ -279,9 +282,131 @@ def examples():
             M.add(f"ExR{L.Macros.clean(r.cohort + r.cell)}", L.f3(float(r.overlap_r)))
 
 
+BASE_ARMS = [("mask", "masking"), ("inpaint", "oracle inpainting"), ("balanced", "group-balanced"), ("dfr", "DFR"),
+             ("leace_paired", "paired LEACE"), ("leace_unpaired", "unpaired LEACE"), ("prevcal", "prevalence calibration")]
+DINO_RUNS = [("Dermoscopy hair", "spec_e13/dino518_spec", "spec"), ("Thyroid calipers", "thyroid/dino518_main", "real"),
+             ("Ovarian calipers", "ovary/dino518_main", "real"), ("Capsule debris", "capsule/dino518_main", "real")]
+
+
+def all_arms():
+    """Every baseline arm in both traps (DINOv2) and the AUROCs of ERM and masking in the three environments."""
+    rows, aucrows = [], []
+    for lab, d, kind in DINO_RUNS:
+        first = True
+        for a, alab in BASE_ARMS:
+            ra, rb = boot(d, kind, "trapA", a), boot(d, kind, "trapB", a)
+            if ra is None and rb is None:
+                continue
+            rows.append([lab if first else "", alab, L.ci_row(ra), L.ci_row(rb)]); first = False
+            k = L.Macros.clean(lab.split()[0] + a)
+            M.add(f"ArmA{k}", L.ci_row(ra)); M.add(f"ArmB{k}", L.ci_row(rb))
+            M.add(f"ArmCleanA{k}", L.ci_row(boot(d, kind, "trapA", a, "clean")))
+        am = L.auc_means(d)
+        if am is not None:
+            for trap in ("trapA", "trapB"):
+                for meth in ("erm", "mask", "balanced", "dfr"):
+                    q = am[(am.trap == trap) & (am.method == meth)].set_index("env").auc
+                    if q.empty:
+                        continue
+                    aucrows.append({"cohort": lab, "trap": trap, "method": meth, "clean": q.get("clean"),
+                                    "test_corr": q.get("test_corr"), "test_rev": q.get("test_rev")})
+    L.table(T / "all_arms.tex", ["Cohort", "Arm $-$ ERM", "Trap A (in ROI)", "Trap B (outside)"], rows,
+            "Every baseline arm in the real-artifact traps (DINOv2 @518, 5 seeds $\\times$ 5 folds): change in "
+            "reversed-test AUROC versus ERM, crossed 95\\% CIs. Inpainting needs the artifact mask; balancing, DFR, "
+            "unpaired LEACE and prevalence calibration need image-level artifact labels (prevalence calibration also at "
+            "test time).", "tab:allarms", align="p{2.6cm}p{3.4cm}p{4.0cm}p{4.0cm}", size="\\scriptsize", long=True)
+    if aucrows:
+        df = L.derived("stage3_auc_means", pd.DataFrame(aucrows))
+        t = [[r.cohort if r.method == "erm" and r.trap == "trapA" else "", r.trap.replace("trap", "Trap "), r.method,
+              L.f3(r.clean), L.f3(r.test_corr), L.f3(r.test_rev)] for r in df.itertuples()]
+        L.table(T / "auc_envs.tex", ["Cohort", "Trap", "Arm", "clean", "correlated", "reversed"], t,
+                "AUROC of ERM, masking, balancing and DFR in the three test environments (DINOv2, mean over 5 seeds). A "
+                "large correlated$-$reversed gap is reliance on the artifact.", "tab:aucenv", size="\\scriptsize", long=True)
+        for r in df.itertuples():
+            k = L.Macros.clean(r.cohort.split()[0] + r.trap + r.method)
+            M.add(f"Auc{k}Corr", L.f3(r.test_corr)); M.add(f"Auc{k}Rev", L.f3(r.test_rev)); M.add(f"Auc{k}Clean", L.f3(r.clean))
+
+
+def hair_correlates():
+    """What carries the hair shortcut: metadata of the hair groups, the pixel share of the ERM gap, and two archived
+    sensitivity designs (author-independent reconstruction, metadata-matched traps; point estimates only)."""
+    age = pd.read_csv(L.OLD / "analysis" / "trap_metadata_age.csv")
+    sex = pd.read_csv(L.OLD / "analysis" / "trap_metadata_sex.csv")
+    site = pd.read_csv(L.OLD / "analysis" / "trap_metadata_site.csv")
+    rows = []
+    for src in ("HAM", "BCN", "MSK"):
+        for g, lab in (("free", "hair-free"), ("trapA", "Trap A (on lesion)"), ("trapB", "Trap B (beside)")):
+            a = age[(age.source == src) & (age.group_A == g)].age_approx
+            f = sex[(sex.source == src) & (sex.group_A == g)].female
+            st = site[(site.source == src) & (site.group_A == g)]
+            rows.append([src if g == "free" else "", lab, f"{float(a.iloc[0]):.1f}", f"{float(f.iloc[0]):.2f}",
+                         f"{float(st['head/neck'].iloc[0]):.2f}", f"{float(st['lower extremity'].iloc[0]):.2f}"])
+    L.table(T / "hair_meta.tex", ["Source", "Group", "Mean age", "Share female", "Share head/neck", "Share lower extremity"],
+            rows, "Patient and site metadata of the hair groups (ISIC 2019): hair presence and location go with age, sex "
+            "and body site.", "tab:hairmeta", size="\\scriptsize")
+    ps = pd.read_csv(L.OLD / "analysis" / "trap_pixel_share_dinov2_b14_518.csv")
+    g = ps.groupby("trap").pixel_share_of_gap.mean()
+    L.derived("stage3_pixel_share", g.round(3).reset_index())
+    M.add("PixShareA", f"{g['trapA'] * 100:.0f}"); M.add("PixShareB", f"{g['trapB'] * 100:.0f}")
+    out = []
+    for tag, d in (("recon", "real/isic2019/dino518_main"), ("metamatched", "real/isic2019/dino518_matched")):
+        b = pd.read_csv(L.OLD / d / "bootstrap_vs_erm.csv"); x = pd.read_csv(L.OLD / d / "crossover_B_minus_A.csv")
+        for trap in ("trapA", "trapB"):
+            q = b[(b.trap == trap) & (b.arm == "mask") & (b.env == "test_rev") & (b.source == "all")]
+            out.append({"design": tag, "quantity": f"mask_minus_erm_{trap}", "estimate": round(float(q.seed_delta_mean.iloc[0]), 3)})
+        out.append({"design": tag, "quantity": "crossover", "estimate": round(float(x[x.arm == "mask"].seed_delta_mean.iloc[0]), 3)})
+    df = L.derived("stage3_hair_designs", pd.DataFrame(out))
+    for r in df.itertuples():
+        M.add(f"Hd{L.Macros.clean(r.design + r.quantity)}", L.s3(r.estimate))
+
+
+def cxr_extra():
+    """Chest drains (NIH, NEATX labels) with both backbones and the device-matched follow-up (point estimates)."""
+    out = []
+    for bb, d in (("RAD-DINO", "cxr_drain/raddino518_universal"), ("DINOv2", "cxr_drain/dino518_universal")):
+        m = pd.read_csv(L.OLD / d / "metrics_per_seed.csv")
+        g = m.groupby(["method", "env"]).auc.mean().unstack()
+        for meth in ("erm", "mask", "balanced", "dfr", "mask_dfr"):
+            out.append({"backbone": bb, "method": meth, "clean": round(g.loc[meth, "clean"], 3),
+                        "test_corr": round(g.loc[meth, "test_corr"], 3), "test_rev": round(g.loc[meth, "test_rev"], 3)})
+    df = L.derived("stage3_drains", pd.DataFrame(out))
+    names = {"erm": "ERM", "mask": "lung masking", "balanced": "group-balanced", "dfr": "DFR", "mask_dfr": "masking + DFR"}
+    rows = [[r.backbone if r.method == "erm" else "", names[r.method], L.f3(r.clean), L.f3(r.test_corr), L.f3(r.test_rev)]
+            for r in df.itertuples()]
+    L.table(T / "drains.tex", ["Encoder", "Arm", "clean", "correlated", "reversed"], rows,
+            "Real chest drains (NIH ChestX-ray14 pneumothorax, 29,687 images, patient-grouped folds; drains lie inside the "
+            "lungs, so this is an in-ROI trap only). AUROC, mean over 5 folds; \\textbf{point estimates, not re-estimated} "
+            "with the crossed bootstrap (per-image predictions were not saved).", "tab:drains", size="\\scriptsize")
+    for r in df.itertuples():
+        k = L.Macros.clean(r.backbone + r.method)
+        M.add(f"Dr{k}Rev", L.f3(r.test_rev)); M.add(f"Dr{k}Clean", L.f3(r.clean))
+    res = {}
+    for trap in ("trapA", "trapB"):
+        m = pd.read_csv(L.OLD / "cxr_traps" / "raddino518_devmatched" / "Infiltration" / trap / "metrics_per_seed.csv")
+        m = m[m.env == "test_rev"].pivot_table(index="seed", columns="method", values="auc")
+        res[trap] = float((m["mask"] - m["erm"]).mean())
+    dm = L.derived("stage3_cxr_devmatched", pd.DataFrame([{"trap": k, "mask_minus_erm": round(v, 3)} for k, v in res.items()] +
+                                                         [{"trap": "crossover", "mask_minus_erm": round(res["trapB"] - res["trapA"], 3)}]))
+    for r in dm.itertuples():
+        M.add(f"Dm{L.Macros.clean(r.trap)}", L.s3(r.mask_minus_erm))
+
+
+def estimator():
+    r = L.estimator_check(["thyroid/dino518_main", "thyroid/medsiglip448_main", "ovary/dino518_main", "capsule/dino518_main",
+                           "capsule/medsiglip448_main", "thyroid/convnext384_universal", "capsule/convnext384_universal",
+                           "ovary/medsiglip448_universal"],
+                          T / "estimator_check.tex", "tab:estcheck",
+                          "Real-artifact traps of the new cohorts under the per-seed and the crossed estimator (same "
+                          "predictions; baseline arms only).", changes_path=T / "estimator_changes.tex",
+                          changes_label="tab:estchanges",
+                          changes_caption="Contrasts of the real-artifact traps whose verdict depends on the estimator.")
+    if r:
+        M.add("EstN", r["n"]); M.add("EstLost", r["lost"]); M.add("EstGained", r["gained"]); M.add("EstMed", f"{r['median']:.2f}")
+
+
 def main():
     cohort_table(); trap_table(); source_strata(); area_ratio(); e12(); detectors(); primary(); cxr(); registrations()
-    forest(); examples()
+    forest(); examples(); all_arms(); hair_correlates(); cxr_extra(); estimator()
     M.write(T / "numbers.tex")
     L.report_missing("stage3")
 

@@ -1,0 +1,10 @@
+\begin{table}[H]\centering\scriptsize
+\caption{Transplant, per location: correlated and reversed AUROC of ERM and of the masked model, and the same-head counterfactual sensitivity to the pasted artifact (T3). Outside the ROI the masked model's correlated and reversed AUROC coincide and $|\Delta p|=0$: the pasted artifact is gone.}\label{tab:txdet}
+\resizebox{\linewidth}{!}{\begin{tabular}{lcccccc}\toprule
+Cohort & Recipients & ERM in: corr / rev & mask in: corr / rev & mask out: corr / rev & $|\Delta p|$ in: ERM / mask & $|\Delta p|$ out: mask \\\midrule
+ISIC hair & 860 & 0.904 / 0.454 & 0.842 / 0.379 & 0.716 / 0.716 & 0.340 / 0.297 & 0.000 \\
+Thyroid & 1800 & 0.851 / 0.487 & 0.906 / 0.559 & 0.846 / 0.846 & 0.206 / 0.271 & 0.000 \\
+Ovary & 348 & 0.771 / 0.657 & 0.825 / 0.647 & 0.750 / 0.750 & 0.037 / 0.116 & 0.000 \\
+Capsule & 340 & 0.906 / 0.508 & 0.956 / 0.333 & 0.914 / 0.914 & 0.238 / 0.551 & 0.000 \\
+\bottomrule\end{tabular}}
+\end{table}

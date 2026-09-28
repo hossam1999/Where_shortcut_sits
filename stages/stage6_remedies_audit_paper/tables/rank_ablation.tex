@@ -1,0 +1,13 @@
+\begin{table}[H]\centering\scriptsize
+\caption{Erasure-rank ablation (DINOv2, Trap A): reversed-AUROC difference to masking (mean over seeds) for the energy rule (share of held-out overlay-shift energy removed; cap 64) and for fixed ranks $k$.}\label{tab:rank}
+\begin{tabular}{lccccc}\toprule
+Erased rank & Thyroid U-MtE & Ovary U-MtE & Ovary protected & Capsule U-MtE & Capsule protected \\\midrule
+energy 0.50 & $+0.190$ & $-0.003$ & $+0.033$ & $-0.067$ & $-0.006$ \\
+energy 0.90 (main) & $+0.224$ & $+0.020$ & $+0.043$ & $-0.126$ & $-0.006$ \\
+energy 0.99 & $+0.224$ & $+0.020$ & $+0.043$ & $-0.126$ & $-0.006$ \\
+$k=1$ & $+0.068$ & $+0.010$ & $+0.009$ & $+0.001$ & $+0.000$ \\
+$k=4$ & $+0.056$ & $-0.038$ & $+0.015$ & $-0.010$ & $-0.003$ \\
+$k=16$ & $+0.183$ & $-0.011$ & $+0.020$ & $-0.058$ & $-0.009$ \\
+$k=64$ & $+0.224$ & $+0.020$ & $+0.043$ & $-0.126$ & $-0.006$ \\
+\bottomrule\end{tabular}
+\end{table}

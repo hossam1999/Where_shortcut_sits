@@ -1,180 +1,393 @@
 \input{../common/preamble.tex}
 \input{tables/numbers.tex}
-\title{\textbf{Stage 6 --- Remedies, label audit, external validation and the paper}\\[3pt]\large Where the Shortcut Sits: supervisor meeting 6 of 6}
+\newcommand{\notY}{1 = melanoma, malignant nodule, tumour with a solid component, erosion, pneumothorax}
+\newcommand{\notA}{a real artifact (hair, caliper, debris, drain) or a synthetic one in the controlled sweeps}
+\newcommand{\notROI}{lesion, nodule, tumour, union of expert lesion boxes, lungs}
+\newcommand{\notCross}{$[\text{mask}-\text{ERM}]_{\text{outside}}-[\text{mask}-\text{ERM}]_{\text{inside}}$ of reversed-test AUROC.}
+\newcommand{\notCI}{95\% crossed seed$\times$image bootstrap interval (Stage~1); analyses whose per-image predictions were not saved are shown as point estimates and marked.}
+\newcommand{\notExtra}{U-MtE & mask-then-erase: ROI masking followed by erasure of the feature subspace along which \emph{generic} synthetic overlays move masked images (Sec.~\ref{sec:method}). \\ min(rev, corr) & robustness summary: the lower of reversed and correlated AUROC; an arm that flips the shortcut (correlated $<$ reversed $-0.02$) is marked $^\dagger$. \\}
+\title{\textbf{Stage 6 --- What to do instead of masking, and the state of the thesis}\\[3pt]\large Where the Shortcut Sits: progress report 6}
 \author{}
-\date{Report generated from the repository on \today}
+\date{}
 \begin{document}
 \maketitle
-\stagebox{\textbf{In one sentence.} What to do instead of masking depends on what carries the shortcut: annotation-free
-erasure (U-MtE) repairs overlays that carry it in their pixels, label-based reweighting is needed when it is carried by
-correlates, and no remedy improves on masking uniformly on unaltered data; the image audit that validates our artifact
-labels is prepared for a clinician but not yet done; the dermoscopy result replicates on new patients; and the paper,
-with every number traced to the regenerated results, is ready for the supervisor's review.}
+\stagebox{\textbf{In one sentence.} What to use instead of masking depends on what carries the shortcut: an
+annotation-free mask-then-erase method (U-MtE) repairs artifacts that carry the shortcut in their own pixels (calipers:
+thyroid Trap~A \sSixRemThyroidmte{} versus ERM, masking \sSixRemThyroidmask), needs a disease-protection step when the
+artifact resembles the pathology (capsule debris), and cannot help when the shortcut is carried by correlates of the
+artifact (hair, chest drains), where only label-based reweighting works; with image-level artifact labels, U-MtE with
+balancing or masking with DFR is the most robust choice; for fully fine-tuned networks erasure must happen during
+training; and no remedy improves on masking uniformly on unaltered data. The thesis manuscript, its number audit, the
+CLAIM checklist and a blinded clinician audit package are ready; the audit itself has not been performed.}
 \input{../common/notation.tex}
 
-\section{Where we are}
-Stages~1--5 established the location law, its mechanism, its causal checks and its clinical consequences. This last
-meeting covers what the thesis recommends in practice (the decision guide and the remedy tests of the primary family),
-the evidence still missing (a clinician's audit of the automatic artifact labels), the external validation that was
-feasible, the limitations, and the state of the paper: its structure, its number audit, the CLAIM checklist and draft
-submission statements.
+\tableofcontents
+\clearpage
 
-\section{Question}
+\section{Where this stage starts}
+Stages~1--5 established that ROI masking removes an artifact outside the ROI and concentrates the model on one inside
+it; that this is caused by location, not by which images carry the artifact; that it matters on unaltered data and at
+clinical operating points; and that a two-parameter model explains it. They also showed three facts that shape any
+remedy: label-based methods (balancing, DFR) fix both locations but need image-level artifact labels; removing the
+artifact's pixels fails when the artifact resembles the disease (capsule debris); and some shortcuts are carried by
+correlates of the artifact rather than its pixels (hair, drains). This stage asks what a practitioner should do instead
+of masking, and reports the state of the thesis.
+
+\section{Questions}
 \begin{enumerate}[label=\textbf{Q6\alph*},leftmargin=*]\itemsep1pt
-\item Which remedy should replace or complement masking, and does any of them transfer to unaltered data?
-\item How reliable are the automatic artifact labels that define ``inside'' and ``outside'' --- and how will a clinician
-check them?
-\item Does the main result hold on new patients from a different collection?
-\item Is the paper ready to submit, and what must the author still decide?
+\item Can an in-ROI shortcut be removed from frozen foundation-model features \emph{without} any artifact annotation ---
+no artifact example, mask or label, only the ROI mask that masking already uses?
+\item When does such a remedy fail, and which alternative fits which regime?
+\item Can the same be done for networks fine-tuned end to end?
+\item Does any remedy transfer to unaltered test data?
+\item How will the automatic artifact labels be validated by a clinician, and what remains before submission?
 \end{enumerate}
-\paragraph{Design decisions} The remedies were demoted from a headline method to a \emph{decision guide} after the
-second review: they are tested in the primary family, but the paper's claim is the location law, not a new method. The
-image audit is \emph{blind} (neutral identifiers, cells hidden) and stratified by label so that precision and recall
-can be estimated per location cell. External validation was run only if a pre-registered gate held (direct download,
-licence, patient identifiers, masks, cell counts); datasets that need an agreement were listed, not used.
 
-\section{Methods}
-\paragraph{Remedies} ROI masking; U-MtE (mask-then-erase: after masking, erase from the frozen features the subspace
-along which \emph{generic} synthetic overlays move the representation of masked images; no artifact annotation);
-U-MtE protected (label directions protected from erasure); group balancing and DFR (need image-level artifact labels);
-U-MtE with balancing. Primary tests: P2 (protected U-MtE $>$ mask), P3 (erasure $>$ augmentation with the same
-overlays), P4 (U-MtE with balancing $>$ balancing), Trap~A, Holm over the 16-test family.
-\paragraph{Image audit (Part B)} \sSixAuditN{} images: \sSixAuditCohorts{} cohorts $\times$ 3 cells (artifact inside the
-ROI, outside it, artifact-free, by our automatic labels) $\times$ 20 (10 positive, 10 negative diagnosis), fixed seed,
-the 518-px images the models saw. Each image and its overlay (ROI outline, automatic artifact mask) have a neutral
-identifier; the reviewer fills artifact presence, location, mask correctness and ROI correctness in
-\texttt{audit/review\_sheet.csv}. The key is kept outside the repository and fixed by its SHA-256
-(\sSixAuditHash); \texttt{audit/analyse\_audit.py} computes precision, recall, location agreement, ROI correctness and,
-with a second reviewer, Cohen's $\kappa$, and writes Table~\ref{tab:audit} of this report.
-\paragraph{External validation (A4)} ISIC 2020 \citep{rotemberg2021isic2020}: lesion masks from the existing U-Net
-(trained on ISIC 2018 only); hair/ruler masks from a segmenter trained only on the ISIC 2019 masks and frozen before
-any ISIC 2020 image was scored (hair-free balanced accuracy \sSixSegBA, pixel IoU \sSixSegIoU); the ISIC 2019 trap
-protocol unchanged with patient-disjoint folds.
+\section{Method: from insert-then-erase to U-MtE}\label{sec:method}
+\paragraph{Idea} Masking leaves exactly one thing to remove: what lies inside the ROI and is not disease. If we knew
+the directions in feature space along which an artifact moves an image, we could project them out. The method estimates
+those directions by \emph{inserting} artifacts into images and measuring how the features change.
+\paragraph{Evolution}
+\begin{enumerate}[leftmargin=*]\itemsep1pt
+\item \textbf{Insert-then-erase (I2E).} Paste artifact \emph{templates} (e.g.\ real hair strands cut from other images)
+into training images, collect the paired feature differences (with minus without), take the subspace $U_k$ holding 90\%
+of their held-out energy (cap 64 directions), and erase it: $x\mapsto x-U_kU_k^\top(x-\mu)$; a logistic head is trained on
+the erased features. Works, but needs examples of the artifact.
+\item \textbf{Mask-then-erase (MtE).} Estimate the subspace on \emph{masked} images (insert, then mask), so that erasure
+targets exactly what masking leaves; the head is trained and tested on masked, erased features.
+\item \textbf{U-MtE (universal).} Replace the templates by one \emph{generic} procedural overlay library --- thin strokes,
+thick bands, solid and translucent patches, blobs, dashed lines, small glyphs; random colour (half grey), opacity,
+width and position, half centred in the ROI (Figure~\ref{fig:overlays}) --- used \emph{unchanged} for every artifact,
+dataset and modality. It contains no ruler, no caliper and no hair. U-MtE needs no artifact example, mask or label; only
+the ROI mask.
+\item \textbf{Disease protection.} If the erased subspace overlaps the disease direction, erasure removes disease
+evidence. Protection estimates label directions $W$ on the \emph{artifact-free} training images and erases
+$\mathrm{orth}\big((I-WW^\top)U_k\big)$, which leaves every protected direction untouched ($w^\top P(x)=w^\top x$). It
+needs diagnosis labels of artifact-free images (which any training set has) and no artifact label.
+\item \textbf{U-MtE with balancing.} When image-level artifact labels exist, the head is group-balanced.
+\end{enumerate}
+\paragraph{Why it should work (theory of Stage~5)} Erasure sets the effective artifact signal $\tilde A$ to zero but scales
+the disease signal by $1-\rho^2$, where $\rho$ is the overlap between the erased subspace and the disease direction. It
+therefore beats in-ROI masking unless $\rho$ is large --- which is the case when the artifact resembles the disease, and
+which protection forces to zero along the protected directions. Overlay \emph{augmentation} with the same overlays only
+decorrelates the label from the generated overlays, not from the real artifact; erasure removes the whole subspace of
+``foreign overlay'' changes, which contains the real artifact's direction when both move the representation in shared
+ways. The theory therefore predicts erase $\gg$ augment for overlay-like artifacts.
+\begin{figure}[H]\centering\includegraphics[width=0.9\linewidth]{figures/overlays.pdf}
+\caption{The generic overlay library (the same for every modality) drawn on an ovarian ultrasound image (MMOTU, CC BY
+4.0; green: ROI). Overlays are inserted, then the image is masked, to estimate the subspace that U-MtE erases.}
+\label{fig:overlays}\end{figure}
+\paragraph{Baselines} JTT \citep{liu2021jtt} (label-free: up-weight the training errors of an ERM model); SPLINCE
+\citep{splice2025} (covariance-preserving linear concept removal with artifact labels; faithful whitened implementation,
+verified against the paper's theorem); LEACE (Stages~1 and 3); LaMa inpainting \citep{suvorov2022lama} of the artifact
+pixels (needs artifact masks); text-prompted erasure with vision--language models (the artifact direction from a text
+description, \citealp{chuang2023debiasing}); SLAS, a few-shot patch-token artifact localiser (5--50 annotated images);
+pseudo-group balancing with groups inferred by an overlay detector; erasure followed by DFR; and two validation-driven
+selectors that pick, per fold, the candidate with the best worst-group validation score.
+\paragraph{Fine-tuned networks} \texttt{mte\_ft}: masked images with and without a generic overlay, plus a penalty on the
+distance of their normalised penultimate features; \texttt{umte\_ft} (erase-while-fine-tuning): a running overlay-shift
+subspace is estimated on the network's own features and projected out before the head at every step, plus the
+invariance penalty; \texttt{cons\_ft}: prediction consistency with and without an overlay; \texttt{umte\_cons\_ft}: all
+three; \texttt{mte\_post}: fine-tune like masking, then apply U-MtE to the penultimate features.
+\paragraph{Tool} Both methods are packaged for any backbone: \texttt{python -m wtss.umte fit/embed} (images and ROI masks
+only) and \texttt{python -m wtss.slas fit/embed} (a few annotated images).
 
 \section{Experiments}
 \input{tables/experiments.tex}
+Every remedy analysis was registered before it was run (\texttt{docs/PREREGISTRATION\_UNIVERSAL\_I2E.md} and its
+amendments U7--U14; fine-tuning in \texttt{PREREGISTRATION\_FT\_ERASE.md} and \texttt{PREREGISTRATION\_FT\_UMTE.md}; the
+rank ablation, LaMa, text prompts, SLAS and the chest drains in their own documents). Every outcome is reported whichever
+way it went.
 
 \section{Results}
-\subsection{Remedies and the decision guide}
-Table~\ref{tab:rem} and Figure~\ref{fig:rem} compare the remedies in the in-ROI trap. Where the artifact carries the
-shortcut in its pixels (calipers), U-MtE, which needs no annotation, repairs most of what masking leaves (thyroid
-\sSixRemThyroidmte{} versus ERM, masking \sSixRemThyroidmask); with image-level artifact labels, U-MtE with balancing is
-best (\sSixRemThyroidmtebalanced). Where the shortcut is carried by correlates of the artifact (dermoscopic hair), no
-pixel-level method helps (U-MtE \sSixRemDermoscopymte) and reweighting is required (balancing \sSixRemDermoscopybalanced,
-DFR \sSixRemDermoscopydfr). Where the artifact resembles the disease (capsule debris versus erosion fibrin), unprotected
-erasure removes disease evidence (\sSixRemCapsulemte), protection repairs this (\sSixRemCapsulemteprotect), and
-label-based methods are best (\sSixRemCapsulemtebalanced). In the primary family, \sSixNRemOK{} of \sSixNRem{} remedy
-tests are supported after Holm correction (Table~\ref{tab:primrem}).
+\subsection{Remedies in the real traps}
+Figure~\ref{fig:rem} and Table~\ref{tab:rem} (DINOv2, Trap~A); Table~\ref{tab:remall} gives every arm, both traps and
+three encoder families.
+\begin{itemize}[leftmargin=*]\itemsep1pt
+\item \textbf{Calipers (pixel-carried).} Without any annotation, U-MtE repairs most of what masking leaves in thyroid
+(\sSixRemThyroidmte{} versus ERM; masking \sSixRemThyroidmask), with MedSigLIP (\sSixRAThyroidMedSigLIPmte) and with ConvNeXt
+(\sSixRAThyroidConvNeXtmte), and in the ovary with MedSigLIP (\sSixRAOvarianMedSigLIPmte). With DINOv2 in the ovary its gain
+is small (\sSixRemOvarianmte; protected \sSixRemOvarianmteprotect).
+\item \textbf{Debris (pathology-like).} Unprotected U-MtE \emph{lowers} capsule performance (\sSixRemCapsulemte; MedSigLIP
+\sSixRACapsuleMedSigLIPmte): debris resembles erosion fibrin, so the overlay subspace overlaps the disease. Protection
+repairs this (\sSixRemCapsulemteprotect) but does not beat masking; label-based methods are best.
+\item \textbf{Hair (correlate-carried).} No pixel-level method helps much (U-MtE \sSixRemDermoscopymte{} versus ERM, i.e.\
+\sSixSchairmtemask{} over masking); balancing (\sSixRemDermoscopybalanced) and DFR (\sSixRemDermoscopydfr) are required.
+\item \textbf{Outside the ROI} (Trap~B) U-MtE neither helps nor harms relative to masking --- masking has already removed
+the artifact.
+\end{itemize}
 \input{tables/remedies.tex}
 \begin{figure}[H]\centering\includegraphics[width=0.9\linewidth]{figures/remedies.pdf}
-\caption{Remedies in the in-ROI trap (change in reversed AUROC versus ERM, crossed 95\% CIs).}\label{fig:rem}\end{figure}
-\input{tables/primary_remedies.tex}
-\paragraph{On unaltered data no remedy transfers uniformly} On the natural test sets (Table~\ref{tab:natrem}), of
-\sSixNatRemN{} remedy--test-set comparisons with masking, \sSixNatRemPos{} favour the remedy and \sSixNatRemNeg{}
-favour masking; the rest are not significant. The decision guide therefore tells the reader which remedy fits which
-regime and how to diagnose the regime (oracle artifact removal on a few annotated images; the theory's fitted
-artifact--disease overlap), not which method to use everywhere.
-\input{tables/natural_remedies.tex}
-\begin{table}[H]\centering\scriptsize
-\caption{The decision guide (paper, Sec.~``What carries the shortcut decides the fix'').}\label{tab:guide}
-\begin{tabular}{p{3.4cm}p{3.6cm}p{4.2cm}p{3.6cm}}\toprule
-Regime & Example & Recommended & Diagnostic \\\midrule
-Overlay carries the shortcut in its pixels & calipers, rulers, tubes & mask, then U-MtE (no labels) or U-MtE with balancing (labels) & oracle removal of the artifact recovers most of the gap \\
-Artifact resembles the pathology & capsule debris vs.\ fibrin & mask plus DFR; protected erasure if no labels & large fitted artifact--disease overlap \\
-Shortcut carried by correlates & dermoscopic hair, chest drains & DFR or group balancing (labels needed) & oracle removal recovers little \\
-Encoder ignores the out-of-ROI artifact & chest tube with RAD-DINO & masking unnecessary & reversed $\approx$ clean AUROC at no overlap \\
-\bottomrule\end{tabular}
-\end{table}
+\caption{Remedies in the in-ROI trap (change in reversed AUROC versus ERM, DINOv2, crossed 95\% CIs).}\label{fig:rem}\end{figure}
+\input{tables/remedies_all.tex}
 
-\subsection{The image audit}
-The package is in \texttt{audit/} (Figure~\ref{fig:ex6} shows the kind of image the reviewer sees; the audit images
-themselves are not reproduced here, to keep the review blind). Licence decisions per dataset are in
-Table~\ref{tab:lic}: images whose redistribution is not confirmed are kept outside the repository and regenerated from the
-original data by the sampling script. Reviewed rows so far: \sSixAuditRated{} of \sSixAuditN.
+\subsection{Which model is most robust?}
+A reversed-test gain can come from inverting the shortcut rather than removing it. Table~\ref{tab:rob} therefore reports
+$\min$(reversed, correlated) AUROC. With image-level artifact labels, U-MtE with balancing is the most robust model for
+thyroid with all three encoders (e.g.\ \sSixRobThyroidDINOvTwomtebalanced{} with DINOv2) and for the ovary with MedSigLIP
+(\sSixRobOvarianMedSigLIPmtebalanced); masking with DFR is best for capsule (\sSixRobCapsuleDINOvTwomaskdfr) and the DINOv2
+ovary (\sSixRobOvarianDINOvTwomaskdfr); plain balancing for hair (\sSixRobDermoscopyDINOvTwobalanced) and DFR for chest
+drains (\sSixRobChestRADDINOdfr). DFR and masking + DFR over-correct on thyroid: their correlated AUROC falls below the
+reversed one (marked $^\dagger$). Without artifact labels, protected U-MtE is the most robust label-free arm for thyroid; for
+capsule the best label-free choice is U-MtE combined with JTT (Table~\ref{tab:jtt}).
+\input{tables/robustness.tex}
+
+\subsection{The 16-test primary family}
+Table~\ref{tab:primall}. The four location tests (P1) and twelve remedy tests --- protected U-MtE $>$ mask (P2), erase $>$
+augment with the same overlays (P3), U-MtE+balancing $>$ balancing (P4), in each of the four cohorts --- were grouped
+into one Holm family after the individual results were known (conservative bookkeeping, not a pre-registered family).
+\sSixNPrimOK{} of \sSixNPrim{} are supported: all four P1; P2 in hair, thyroid and ovary (not capsule); P3 in hair and
+thyroid (capsule significant in the opposite direction; ovary not after Holm); P4 in thyroid and capsule.
+\input{tables/primary_all.tex}
+
+\subsection{Remedies in the controlled sweeps}
+Tables~\ref{tab:swrem} and~\ref{tab:swisic}. With DINOv2 and RAD-DINO, U-MtE beats masking at full overlap in every modality sweep
+(thyroid \sSixSwthyroiddinoFiveOneEightUmte, capsule \sSixSwcapsuledinoFiveOneEightUmte, chest tube
+\sSixSwcxrraddinoFiveOneEightUmte).
+With MedSigLIP it fails on both the synthetic caliper and the synthetic debris; protection turns the debris failure into
+a gain (\sSixSwcapsulemedsiglipProt) but not the caliper failure (\sSixSwthyroidmedsiglipProt). U-MtE with balancing beats
+masking in every sweep and has no positive location interaction (dermoscopy: \sSixSwIsicBalInter, against masking's large
+positive one). On the dermoscopy ruler, the insert-then-erase precursor on unmasked features helps
+(\sSixSwIsicUitwoe) while plain U-MtE does not (\sSixSwIsicUmte): with the
+synthetic ruler, the subspace estimated from generic overlays evidently misses the direction of the retained ruler, and
+only the balanced variant repairs it.
+\input{tables/sweeps_remedies.tex}
+\input{tables/sweeps_isic.tex}
+
+\subsection{Erasure versus augmentation, protection, and other contrasts}
+Table~\ref{tab:supp}. The \emph{same} overlays used as training augmentation instead of for erasure gain almost nothing
+over masking (Table~\ref{tab:remall}, ``same overlays as augmentation''), while erasure gains \sSixScthyroidMedSigLIPmtemteaug{}
+over augmentation with MedSigLIP and \sSixScthyroidConvNeXtmtemteaug{} with ConvNeXt on thyroid: it is the subspace
+estimation, not exposure to overlays, that helps. Protection is a safety net: it costs nothing on hair
+(\sSixSchairmteprotectmte), helps thyroid (\sSixScthyroidmteprotectmte) and removes the capsule failure (protected
+$-$ mask \sSixSccapsulemteprotectmask{} versus unprotected \sSixSccapsulemtemask).
+\input{tables/supp_contrasts.tex}
+
+\subsection{How many directions must be erased?}
+Table~\ref{tab:rank}. On thyroid the gain is robust for every setting that erases $\ge16$ directions or $\ge50\%$ of the
+overlay-shift energy; one to four directions recover only a third of it --- the overlay shift is multi-dimensional. In these
+cohorts the 90\% rule reaches the cap of 64 directions. Unprotected erasure harms capsule more the more directions it
+removes, as the theory's $\rho$ predicts; the protected variant never harms capsule and helps the ovary at every rank.
+\input{tables/rank_ablation.tex}
+
+\subsection{Encoder size}
+Table~\ref{tab:scalerem}. Protected U-MtE beats masking in thyroid and ovary at every DINOv2 size; on capsule protection
+is less complete with ViT-L.
+\input{tables/scale_remedy.tex}
+
+\subsection{Published baselines and alternatives}
+Table~\ref{tab:jtt} (crossed intervals available) and Table~\ref{tab:archived} (point estimates of analyses whose predictions were not
+saved).
+\begin{itemize}[leftmargin=*]\itemsep1pt
+\item \textbf{JTT} (label-free): U-MtE beats it on thyroid (\sSixScthyroidmtejtt) and ovary (\sSixScovarymtejtt); JTT wins
+on hair ($\min$(rev, corr) \sSixBlDermoscopyjtt{} versus \sSixBlDermoscopymte); on capsule U-MtE+JTT is the most robust
+label-free combination (\sSixBlCapsuleumtejtt).
+\item \textbf{SPLINCE} (needs artifact labels): the faithful implementation removes much disease signal (clean AUROC
+\sSixBlCleanThyroidsplice{} on thyroid) and still inverts the shortcut on capsule; U-MtE with balancing is more robust
+on thyroid, capsule and hair (\sSixBlThyroidmtebalanced{} versus \sSixBlThyroidsplice; \sSixBlCapsulemtebalanced{} versus
+\sSixBlCapsulesplice; \sSixBlDermoscopymtebalanced{} versus \sSixBlDermoscopysplice).
+\item \textbf{LaMa inpainting} of the detected artifact pixels, followed by masking, is a strong baseline that needs artifact
+masks; protected U-MtE matches it on thyroid without masks and is below it on ovary and hair; U-MtE with balancing beats
+it everywhere.
+\item \textbf{Text-prompted erasure} with MedSigLIP and DermLIP is a near no-op ($\le$ \sSixArtextpromptedovarymasktexterasemask{}
+over masking): the text-space artifact direction does not coincide with the image-space direction along which the artifact
+moves the representation.
+\item \textbf{SLAS} localises hair from a few annotated images, but the gain it enables is capped by what hair pixels carry:
+removing \emph{every} real hair patch (an oracle) gains only \sSixArSLAShairmtsoracletokmask{} over token-level masking.
+\item \textbf{Pseudo-group balancing} from an overlay detector helps on thyroid (reversed \sSixArpseudogroupthyroidumtepbalreversedAUROC{}
+versus \sSixArpseudogroupthyroidmtereversedAUROC{} for U-MtE) and not on hair, where the detector cannot see hair.
+\item \textbf{Erasure + DFR} adds at most about 0.01 over masking + DFR: once a group-robust head is used, masking does the rest.
+\item \textbf{Validation-driven selectors} beat masking in every cohort and are within about 0.02 of the best candidate, but
+neither is uniformly best; admitting DFR as a candidate fixes chest drains and makes the choice noisier elsewhere.
+\item \textbf{Chest drains}: U-MtE gains only about 0.03 over masking with RAD-DINO and nothing with DINOv2; DFR is best.
+\end{itemize}
+\input{tables/jtt_splice.tex}
+\input{tables/archived_points.tex}
+
+\subsection{Robustness of the remedy tests to leakage groups}
+Table~\ref{tab:embrem}. With the stricter embedding-based groups of Stage~4, the thyroid remedy tests are unchanged; in the
+ovary, erase $>$ augment (P3) and U-MtE+balancing $>$ balancing (P4) lose significance: ``erase beats augment'' is robust in
+thyroid and hair but fragile in the ovary.
+\input{tables/emb_remedies.tex}
+
+\subsection{Fully fine-tuned networks}
+Table~\ref{tab:ftrem}. Applying U-MtE \emph{after} fine-tuning does nothing (\sSixFtThyroidResNetFiveZeroMtePost): unconstrained
+fine-tuning builds a task-specific caliper feature that generic overlays do not move. Remedies must act \emph{during} training.
+Each component alone works for only one architecture on thyroid (invariance for ResNet-50, \sSixFtThyroidResNetFiveZeroMteFt;
+prediction consistency for ViT-S, \sSixFtThyroidViTSOneSixConsFt). Combining projection, invariance and consistency
+(\texttt{umte\_cons\_ft}, registered before it was run) improves on fine-tuned masking for both: ResNet-50
+\sSixFtThyroidResNetFiveZeroUmteConsFt, ViT-S \sSixFtThyroidViTSOneSixUmteConsFt{} --- without any artifact annotation. It fails
+on capsule (\sSixFtCapsuleResNetFiveZeroUmteConsFt), the pathology-like regime, and is not significant on the ovary
+(\sSixFtOvaryResNetFiveZeroUmteConsFt{} with 15 clusters), where the fine-tuned network barely learns the task.
+\input{tables/ft_remedies.tex}
+
+\subsection{Unaltered data}
+Table~\ref{tab:natrem}. On the natural test sets, of \sSixNatRemN{} remedy--test-set comparisons with masking (all pairs),
+\sSixNatRemPos{} favour the remedy and \sSixNatRemNeg{} favour masking; the rest are not significant. Protected U-MtE is
+slightly \emph{worse} than masking on the natural thyroid split (the registered claims N1 and N2 were not supported). The
+remedies repair the constructed shortcut of the traps; on data where the shortcut is weak, they mostly cost a little.
+\input{tables/natural_remedies.tex}
+
+\subsection{The decision guide}
+\begin{table}[H]\centering\scriptsize
+\caption{What carries the shortcut decides the fix.}\label{tab:guide}
+\begin{tabular}{p{3.4cm}p{3.4cm}p{4.4cm}p{3.8cm}}\toprule
+Regime & Example & Recommended & How to diagnose it \\\midrule
+Artifact outside the ROI & calipers or rulers beside the lesion & ROI masking & measure the overlap $r$ of detected artifacts \\
+In-ROI, shortcut in the artifact's pixels & calipers, rulers, synthetic tubes & mask, then U-MtE (no labels) or U-MtE with balancing (labels); LaMa if artifact masks exist & oracle removal of the artifact recovers most of the gap \\
+In-ROI, artifact resembles the pathology & capsule debris versus fibrin & protected U-MtE (no labels); masking + DFR (labels) & large fitted artifact--disease overlap; unprotected erasure lowers clean AUROC \\
+Shortcut carried by correlates & dermoscopic hair, chest drains & DFR or group balancing (labels); JTT without labels & oracle removal recovers little \\
+Encoder ignores the out-of-ROI artifact & chest tube with RAD-DINO & masking unnecessary outside & reversed $\approx$ clean AUROC at no overlap \\
+Fully fine-tuned network & ResNet-50, ViT-S & erase while fine-tuning (projection + invariance + consistency) & post hoc erasure is null \\
+\bottomrule\end{tabular}\end{table}
+No row claims an improvement on unaltered data: the guide tells a practitioner which method fits which regime and how to
+diagnose the regime, not which method to use everywhere.
+
+\section{Validating the artifact labels: the clinician audit}
+Every trap depends on automatic artifact labels (a rule-based caliper detector, a debris probe, published semi-automatic
+hair masks) that have so far been checked only visually by a non-clinician. A blinded audit package is ready in
+\texttt{audit/}:
+\begin{itemize}[leftmargin=*]\itemsep1pt
+\item \textbf{Sample.} \sSixAuditN{} images: \sSixAuditCohorts{} cohorts $\times$ 3 cells (artifact inside the ROI,
+outside it, artifact-free, by the automatic labels) $\times$ 20 (10 positive, 10 negative diagnosis), fixed seed, the
+518-px images the models saw.
+\item \textbf{Blinding.} Every image and its overlay (ROI outline, automatic artifact mask) carry a neutral identifier;
+the key is kept outside the repository and fixed in advance by its SHA-256 (\sSixAuditHash).
+\item \textbf{Task} (about 30--40\,s per image, 2.5\,h in total): artifact present?, location relative to the ROI?, is the
+red mask correct?, is the green ROI correct? The sheet is \texttt{audit/review\_sheet.csv}.
+\item \textbf{Analysis.} \texttt{audit/analyse\_audit.py} computes precision and recall of the automatic labels, location
+agreement, ROI correctness and, with a second reviewer, Cohen's $\kappa$, and writes Table~\ref{tab:audit}.
+\item \textbf{Licences} (Table~\ref{tab:lic}). Images whose redistribution is not confirmed (TN3K thyroid images; overlays
+that draw the ISIC 2019 hair masks) are regenerated locally from the original data by the sampling script instead of
+being committed.
+\end{itemize}
+Rated so far: \sSixAuditRated{} of \sSixAuditN.
 \input{tables/audit_results.tex}
 \input{tables/licences.tex}
 
-\subsection{External validation on new patients}
-The search is recorded in \texttt{stages/EXTERNAL\_VALIDATION\_SEARCH.md}. ISIC 2020 met every condition: direct
-download, CC BY-NC licence, patient identifiers, masks producible by our frozen models, and the cell-count gate
-(hair-free melanomas \sSixExtAZeropos, Trap~A melanomas \sSixExttrapAAOnepos, Trap~B melanomas \sSixExttrapBAOnepos; every
-cell at least 50). On \sSixExtImages{} images of \sSixExtPatients{} patients the crossover is \sSixExtX: masking harms
-with hair on the lesion (\sSixExttrapA) and helps with hair beside it (\sSixExttrapB) (Table~\ref{tab:ext}). Thyroid
-cohorts with patient identifiers either lack nodule masks (ThyUS2Path) or require an agreement (TN-SCUI 2020; Stanford
-AIMI) and were not used.
-\input{tables/external.tex}
-\begin{figure}[H]\centering\includegraphics[width=0.85\linewidth]{figures/external_examples.pdf}
-\caption{ISIC 2020 images from the external traps (CC BY-NC 4.0), with the lesion outline from the frozen U-Net
-(\textcolor{roigreen}{green}); predicted hair/ruler masks are not drawn. Selection: a random image among the top quartile
-of predicted hair/ruler area in each artifact cell (seed 20260928); any hair-free image.}\label{fig:ex6}\end{figure}
-
-\subsection{The paper}
-\paragraph{Title} \emph{\sSixTitle}. Target: \emph{Medical Image Analysis}. Main text \sSixPagesMain{} pages
-(review format), supplement \sSixPagesSupplement{} pages; abstract \sSixAbstractWords{} words (limit 250).
-\paragraph{Structure} Introduction; data and setup; the location law (controlled, real, transplant, matched, A2,
-replication including ISIC 2020, chest-radiograph boundary); mechanism; theory (held-out prediction); consequences on
-unaltered data (operating points, the post hoc thyroid subgroup labelled as exploratory confirmation); the decision
-guide; robustness; discussion (including ``why this is not obvious'' and eight limitations).
-\paragraph{Number audit} Every interval in the main text and supplement (the \verb|\input| tree of \texttt{main.tex}
-and \texttt{supplement.tex}) must match an interval of a regenerated, crossed-bootstrap result file together with its
-estimate; every other three-decimal number must occur in a result file. Result: \sSixAuditIntervals{} intervals and
-\sSixAuditNumbers{} numbers checked, \sSixAuditFailed{} failed to trace.
-\paragraph{CLAIM 2024} \sSixClaimN{} items: \sSixClaimYes{} yes, \sSixClaimPartial{} partial, \sSixClaimNo{} no,
-\sSixClaimNA{} not applicable (partial or no: items \sSixClaimPartialItems; checklist in the supplement). The
-remaining gaps are acquisition protocols the dataset providers did not release, the absence of external ultrasound and
-capsule cohorts, and the clinician audit.
+\section{The thesis manuscript}
+\paragraph{Title} \emph{\sSixTitle}. Target: \emph{Medical Image Analysis}. Main text \sSixPagesMain{} pages (review
+format), supplement \sSixPagesSupplement{} pages; abstract \sSixAbstractWords{} words (limit 250). An earlier version
+centred on U-MtE in NeurIPS format exists (\texttt{paper\_neurips/}) but is not the current manuscript.
+\paragraph{Structure} Introduction; data and setup; the location law (controlled, real, transplant, matched, adjusted,
+replication including new patients, chest-radiograph boundary); mechanism; theory (held-out prediction); consequences on
+unaltered data (operating points; the thyroid subgroup labelled as exploratory confirmation); the decision guide;
+robustness; discussion with limitations. U-MtE, its ablations and the remedy results are in the supplement, with the
+registration table, the operating points of every cohort, the literature comparison, the covariate balance and the CLAIM
+checklist.
+\paragraph{Why U-MtE is not the headline} It repairs the constructed shortcut in the traps and fails to transfer uniformly
+to unaltered data (above). The finding that holds everywhere is the location law; the remedies are best presented as a
+decision guide.
+\paragraph{Number audit} Every interval in the main text and supplement must match an interval of a result file produced
+with the crossed bootstrap, together with its estimate; every other three-decimal number must occur in a result file.
+Result: \sSixAuditIntervals{} intervals and \sSixAuditNumbers{} numbers checked, \sSixAuditFailed{} failed to trace. The six
+progress reports are checked the same way.
+\paragraph{CLAIM 2024} \citep{tejani2024claim} \sSixClaimN{} items: \sSixClaimYes{} yes, \sSixClaimPartial{} partial,
+\sSixClaimNo{} no, \sSixClaimNA{} not applicable (partial or no: items \sSixClaimPartialItems). The remaining gaps are
+acquisition protocols the providers did not release, the absence of external ultrasound and capsule cohorts, and the
+clinician audit.
+\paragraph{Related work and novelty} The closest prior work is the dermoscopy debiasing literature
+\citep{bissoto2020debiasing,bissoto2023tts,nauta2022uncovering}, linear concept erasure \citep{belrose2023leace,ravfogel2020inlp},
+covariance-preserving erasure \citep{splice2025} and biased-prompt projection \citep{chuang2023debiasing}. What is new: the
+overlap as the controlled variable and the location law across modalities; the causal and theoretical account; generic
+overlays used to \emph{estimate} a nuisance subspace rather than as augmentation; and the ordering mask-then-erase. Disease
+protection is an adaptation of covariance-preserving projection and is presented as such.
 
 \subsection{Draft submission statements (for the author to confirm)}
-\paragraph{Data availability} All datasets are public: ISIC 2018 and 2019 challenge data and ISIC 2020 (CC BY-NC 4.0),
-HAM10000 lesion masks (CC BY-NC 4.0), the published ISIC 2019 hair/ruler masks, TN3K with TNCD labels, MMOTU (CC BY
-4.0), SEE-AI and its expert contamination masks (CC BY 4.0), NIH ChestX-ray14 and RANZCR-CLiP (competition terms).
-Derived masks, cohort files and all result files are in the repository; images are not redistributed where the
-licence does not allow it.
-\paragraph{Code availability} Code, pre-registrations with their commit history, result files and the scripts that
-regenerate every table, figure and number are in the public GitHub repository (\texttt{hossam1999/\allowbreak Where\_\allowbreak shortcut\_\allowbreak sits}).
-\paragraph{Ethics} Retrospective analysis of public, de-identified datasets released by their providers for research;
-no new data were collected and no patient was contacted. The author should confirm with the institution whether a
-formal waiver is required.
-\paragraph{Use of AI assistance} The experiments, analysis code, reports and parts of the manuscript text were
-produced with the assistance of an AI system (Claude, Anthropic) working under the author's direction; the author
-designed the study, reviewed every result and is responsible for the content. The wording should follow the journal's
-policy on generative-AI disclosure.
+\paragraph{Data availability} All datasets are public: ISIC 2018, 2019 and 2020 (CC BY-NC 4.0), HAM10000 lesion masks
+(CC BY-NC 4.0), the published ISIC 2019 hair/ruler masks, TN3K with TNCD labels, MMOTU (CC BY 4.0), SEE-AI and its expert
+contamination masks (CC BY 4.0), NIH ChestX-ray14 and RANZCR-CLiP (competition terms). Derived masks, cohort files and all
+result files are in the repository; images are not redistributed where the licence does not allow it.
+\paragraph{Code availability} Code, registrations with their commit history, result files and the scripts that regenerate
+every table, figure and number are in the public repository.
+\paragraph{Ethics} Retrospective analysis of public, de-identified datasets released for research; no new data were
+collected and no patient was contacted. Whether a formal waiver is needed must be confirmed with the institution.
+\paragraph{Use of AI assistance} The experiments, analysis code, reports and parts of the manuscript text were produced
+with the assistance of an AI system (Claude, Anthropic) working under the author's direction; the author designed the
+study, reviewed every result and is responsible for the content. The wording should follow the journal's policy on
+generative-AI disclosure.
+
+\section{Limitations of the work as a whole}
+\begin{enumerate}[leftmargin=*]\itemsep1pt
+\item Artifact labels come from detectors and a probe, audited visually by a non-clinician; the clinician audit is pending.
+\item Three cohorts publish no patient identifiers; near-duplicate and embedding grouping are proxies.
+\item Reversed environments are constructed by subsampling; natural test sets carry weak shortcuts.
+\item Frozen linear probes are below published fine-tuned models in absolute performance (thyroid).
+\item External validation exists for dermoscopy only.
+\item The theory is fitted per model and cannot see correlate-carried shortcuts.
+\item Disease protection needs diagnosis labels of artifact-free images; balanced variants need image-level artifact labels.
+\item Some analyses (chest-radiograph devices and drains, LaMa, text prompts, SLAS, selectors) could not be re-estimated with
+the crossed bootstrap and are reported as point estimates.
+\item Commit times of registrations are machine-set; only the registrations pushed to GitHub before running carry an
+external time stamp.
+\end{enumerate}
 
 \section{What failed or changed}
 \begin{itemize}[leftmargin=*]\itemsep1pt
-\item \textbf{The clinician audit has not been done.} The package is ready; until it is, artifact-label validity rests
-on the analysis agent's visual audit (Stage~3).
-\item \textbf{No remedy transfers uniformly} to unaltered data; U-MtE was demoted from headline method to one option of
-the decision guide. Three remedy tests of the primary family changed with the corrected bootstrap (Stage~4).
-\item \textbf{External validation is dermoscopy only}; no thyroid cohort met the gate without an agreement or missing
-masks.
-\item \textbf{Chest-radiograph device and drain runs, LaMa inpainting and template erasure} could not be regenerated;
-they appear as point estimates labelled ``not re-estimated''.
-\item \textbf{Figures committed before the licence check} (\texttt{report/figures/data\_thyroid.png},
-\texttt{report/figures/data\_isic.png}) conflict with the licence rule and need the author's decision.
+\item \textbf{No remedy transfers uniformly to unaltered data}; protected U-MtE did not meet its natural-data claims.
+\item \textbf{U-MtE fails for pathology-like artifacts} without protection, and for correlate-carried shortcuts at all.
+\item \textbf{Plain U-MtE failed on the dermoscopy ruler and on both MedSigLIP sweeps}; protection fixed only the debris one.
+\item \textbf{Post hoc erasure on fine-tuned networks is null}; single-component fine-tuning remedies transfer to one
+architecture only.
+\item \textbf{Text-prompted erasure is a near no-op.}
+\item \textbf{Erase $>$ augment is fragile in the ovary} (not significant after Holm, and not with embedding groups).
+\item \textbf{The clinician audit has not been done.}
+\item \textbf{Two committed figures} (\texttt{report/figures/data\_thyroid.png}, \texttt{data\_isic.png}) predate the licence
+check and conflict with it; they need a decision.
 \end{itemize}
 
+\section{Anticipated questions}
+\paragraph{Why erase instead of simply augmenting with the overlays?} Augmentation teaches the head that the \emph{generated}
+overlays are uninformative; the real artifact is a different pattern and keeps its association. Erasure removes the whole
+subspace in which foreign overlays move the representation, which also contains the real artifact's direction when the
+two share it. The ablation (erase $\gg$ augment on thyroid with three encoders) confirms this.
+\paragraph{Why generic overlays and not artifact templates?} Templates need examples of the artifact, and an artifact
+detector to find them; the aim is a method that needs only what masking needs. Templates do help when available (the
+insert-then-erase precursor), but the generic library works for calipers in every encoder family without any artifact
+example.
+\paragraph{Why does U-MtE fail on capsule, and why does protection fix it only partly?} Debris and erosion fibrin share
+colour and texture, so the overlay subspace overlaps the disease ($\rho$ large). Protection keeps the label directions
+estimated on artifact-free images, which removes the damage; it cannot create evidence that masking and erasure together
+removed, so it only reaches masking's level.
+\paragraph{Why does nothing pixel-based help for hair?} Because most of the hair shortcut is not in the hair pixels (Stage~3:
+oracle removal of every hair patch gains little). A method that removes pixels or pixel-induced directions cannot remove an
+association carried by age, sex and body site.
+\paragraph{Why is fine-tune-then-erase null but erase-while-fine-tuning not?} After unconstrained fine-tuning on correlated
+data the network encodes the caliper along task-specific directions that generic overlays do not move; estimating the
+overlay subspace on the network's own features \emph{during} training, and requiring overlay-invariant features and
+predictions, stops that feature from forming.
+\paragraph{If no remedy helps on unaltered data, what is the practical contribution?} The practical contribution is the
+diagnosis: know where the artifacts sit, do not rely on masking when they sit inside the ROI, and pick the remedy by what
+carries the shortcut. On data with a strong in-ROI shortcut --- the situation the traps construct and the thyroid operating
+points show --- the right remedy makes a large difference.
+\paragraph{Why keep SLAS and text prompts if they do little?} Both were registered; negative results tell a reader which
+modern alternatives do not solve the problem, and SLAS's oracle ceiling is itself evidence that hair is correlate-carried.
+
 \section{Conclusion}
-\textbf{Supported.} A decision guide grounded in what carries the shortcut; external replication of the dermoscopy
-crossover on new patients; a paper whose every interval traces to the corrected results. \textbf{Qualified.} The
-remedies help in the trap environments but none transfers uniformly to unaltered data. \textbf{Not yet available.} A
-clinician's audit of the artifact labels; external validation in ultrasound and capsule endoscopy.
+\textbf{Supported.} For frozen foundation-model features, U-MtE removes in-ROI shortcuts carried by distinct overlays
+without artifact annotation (thyroid with three encoder families and three sizes; ovary with MedSigLIP); erasure beats
+augmentation with the same overlays; protection makes it safe for pathology-like artifacts; with image-level labels, U-MtE
+with balancing or masking with DFR is the most robust choice. For fine-tuned networks, erasing while fine-tuning works on
+thyroid for both architectures. \textbf{Qualified.} No remedy improves on masking uniformly on unaltered data; the remedies
+are therefore a decision guide, not a headline method. \textbf{Not supported.} U-MtE for correlate-carried shortcuts;
+post hoc erasure after fine-tuning; text-prompted erasure. \textbf{Not yet available.} A clinician's audit of the artifact
+labels; external validation in ultrasound and capsule endoscopy.
 
 \section{Questions for the supervisor}
 \begin{enumerate}\itemsep1pt
-\item Who should perform the image audit (two dermatologists and a sonographer?), and should it be completed before
-submission?
-\item Should the remedies stay in the paper as a decision guide, or move entirely to a second paper?
-\item Is \emph{Medical Image Analysis} the right target, given the methodological emphasis, or would a clinical-AI venue
-suit the operating-point results better?
+\item Should the remedies stay in the thesis as a decision guide within the main work, or form a separate chapter (or a
+second paper) with U-MtE as its contribution?
+\item Who should perform the image audit (a dermatologist, a sonographer and a gastroenterologist?), and must it be
+completed before submission?
+\item Is \emph{Medical Image Analysis} the right target, or would a clinical-AI venue suit the operating-point results better?
 \item Are the draft data-availability, ethics and AI-assistance statements acceptable to the institution?
 \end{enumerate}
 
-\section{Next stage}
-Before submission: (i) run the clinician audit and replace Table~\ref{tab:audit} with the audit analysis script
-(\texttt{audit/\allowbreak analyse\_\allowbreak audit.py}); (ii) decide on the figures that conflict with the licence rule; (iii) confirm the
-submission statements; (iv) obtain the supervisor's decisions above; (v) push the final registration record and tag the
-submitted version.
+\section{Remaining work before submission}
+(i) Run the clinician audit and replace Table~\ref{tab:audit} with the output of \texttt{audit/analyse\_audit.py};
+(ii) decide on the two figures that conflict with the licence rule; (iii) confirm the submission statements; (iv) settle
+the supervisor's decisions above; (v) deposit a snapshot of the repository with its registrations and tag the submitted
+version.
 
 \bibliographystyle{plainnat}
 \bibliography{../common/references}

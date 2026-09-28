@@ -1,5 +1,5 @@
 \begin{table}[H]\centering\scriptsize
-\caption{Experiments of this stage: registration status, the commit that first contains the registration, and what was stated in advance to count as support. Commit times come from this machine and are not independent proof of order.}\label{tab:exp}
+\caption{Experiments of this stage: registration status, the registration document (\texttt{docs/PREREGISTRATION\_<name>.md} or the replication specification), the commit that first contains it, and what was stated in advance to count as support. Commit times are set by the committing machine and are not independent proof of order.}\label{tab:exp}
 \begin{tabular}{p{3.1cm}p{2.1cm}p{2.4cm}p{3.2cm}p{3.3cm}}\toprule
 Experiment & Status & Registration & First commit (local time) & Support criterion \\\midrule
 Controlled dermoscopy sweep (E1) & \ok{} registered & REPLICATION\_\allowbreak{}SPEC & \texttt{2699d51}, 2026-09-26 15:47 & interaction CI $>0$; mask$-$ERM CI $>0$ at 0\% and $<0$ at 100\% \\
@@ -13,6 +13,6 @@ Ovarian caliper sweep & \ok{} registered & OVARY\_\allowbreak{}TRAPS & \texttt{2
 Capsule debris sweep & \ok{} registered & CAPSULE\_\allowbreak{}TRAPS & \texttt{fcbf8d9}, 2026-09-27 00:40 & interaction CI $>0$ \\
 Chest tube sweep (RAD-DINO) & \ok{} registered & CXR\_\allowbreak{}DEVICE\_\allowbreak{}TRAPS & \texttt{4d1a924}, 2026-09-26 18:07 & interaction CI $>0$ \\
 Chest tube sweep (DINOv2) & \no{} post hoc & --- & --- & descriptive only \\
-Regeneration with the crossed bootstrap (A1) & \ok{} registered & FINAL (A1) & \texttt{c45d482}, 2026-09-28 00:35 & a claim whose new CI includes 0 is rewritten \\
+Crossed-bootstrap intervals for every sweep (A1) & \ok{} registered & FINAL (A1) & \texttt{c45d482}, 2026-09-28 00:35 & a claim is stated only if its crossed CI excludes 0 \\
 \bottomrule\end{tabular}
 \end{table}

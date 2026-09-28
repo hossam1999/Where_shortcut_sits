@@ -1,0 +1,11 @@
+\begin{table}[H]\centering\scriptsize
+\caption{Absolute performance: the frozen encoder with a linear head against published fine-tuned CNNs on the same patient-disjoint split.}\label{tab:lit}
+\begin{tabular}{lcc}\toprule
+Model (thyroid, official TNCD test split) & AUROC & Source \\\midrule
+ResNet-18, cross-entropy (fine-tuned) & 0.773 & \citet{gong2022acl} \\
+DenseNet-121, cross-entropy (fine-tuned) & 0.780 & \citet{gong2022acl} \\
+ConvNeXt-T, cross-entropy (fine-tuned) & 0.784 & \citet{gong2022acl} \\
+ResNet-18, adaptive curriculum (fine-tuned) & 0.799 & \citet{gong2022acl} \\
+DINOv2 ViT-B/14 frozen + linear head, ERM (rebuilt run) & 0.735 & this work \\
+\bottomrule\end{tabular}
+\end{table}

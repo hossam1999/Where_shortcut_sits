@@ -48,9 +48,9 @@ def clinical():
     rows = []
     if d is not None:
         for t in d.test.unique():
-            for arm in ("erm", "mask"):
+            for arm in ("erm", "mask", "balanced"):
                 r = d[(d.test == t) & (d.arm == arm)].iloc[0]
-                rows.append([L.tex_escape(t) if arm == "erm" else "", arm.upper() if arm == "erm" else "mask",
+                rows.append([L.tex_escape(t) if arm == "erm" else "", {"erm": "ERM", "mask": "mask", "balanced": "balanced"}[arm],
                              L.f3(r.AUROC_mean), L.f3(r.AUPRC_mean), L.f3(r.Brier_mean), L.f3(r.ECE_mean), L.f3(r.Sens_mean),
                              L.f3(r.Spec_mean)])
         th = d[d.test.str.startswith("Thyroid")]
@@ -292,12 +292,16 @@ def registrations():
             "Final": "docs/PREREGISTRATION_FINAL.md", "Isic": "docs/PREREGISTRATION_ISIC2019_TRAPS.md"}
     for k, doc in docs.items():
         M.add(f"Reg{k}", L.reg(doc))
-    rows = [["Natural test sets, N3 (hard pairs)", "\\ok{} registered", "NATURAL", L.reg(docs["Nat"]), "mask $-$ ERM $<0$ on hard pairs"],
+    rows = [["Zero-shot vision--language scores, Z1", "\\mixed{} registered (descriptive); crossover test post hoc", "TEXT\\_PROMPT",
+             L.reg("docs/PREREGISTRATION_TEXT_PROMPT.md"), "correlated $-$ reversed gap reported"],
+            ["Natural test sets, N3 (hard pairs)", "\\ok{} registered", "NATURAL", L.reg(docs["Nat"]), "mask $-$ ERM $<0$ on hard pairs"],
             ["Operating points S1--S3", "\\ok{} registered", "REVIEW2 (R3)", L.reg(docs["Rev2"]),
              "``masking lowers sensitivity'' only if S1 and $\\ge3$ of OP2--OP5"],
             ["Thyroid subgroup, $n=$\\sFiveNConf{} (S3)", "\\mixed{} registered test in a post hoc subgroup", "REVIEW2 (R3)",
              L.reg(docs["Rev2"]), "sensitivity loss in the subgroup, CI $<0$"],
-            ["Crossed CIs for the subgroup (R6)", "\\ok{} registered", "REVIEW3 (R6)", L.reg(docs["Rev3"]), "report corrected CI"],
+            ["Crossed CIs for the subgroup (R6)", "\\ok{} registered", "REVIEW3 (R6)", L.reg(docs["Rev3"]), "report the crossed CI"],
+            ["Fine-tuned hair model and literature comparison (R4)", "\\ok{} registered", "REVIEW2 (R4)", L.reg(docs["Rev2"]),
+             "crossover CI $>0$; comparison descriptive"],
             ["Encoder scale (S/B/L)", "\\ok{} registered", "SCALE", L.reg(docs["Scale"]), "crossover CI $>0$ at every scale"],
             ["Fine-tuned networks", "\\ok{} registered", "FINETUNE", L.reg(docs["Ft"]), "crossover CI $>0$ (secondary)"],
             ["DermLIP hair traps", "\\ok{} registered", "ISIC2019\\_TRAPS", L.reg(docs["Isic"]), "crossover CI $>0$"],
@@ -306,12 +310,115 @@ def registrations():
             ["External validation, X1 (ISIC 2020)", "\\ok{} registered", "FINAL (A4)", L.reg(docs["Final"]), "gate, then crossover CI $>0$"]]
     rows = [r[:2] + [r[2].replace("\\_", "\\_\\allowbreak{}")] + r[3:] for r in rows]
     L.table(T / "experiments.tex", ["Experiment", "Status", "Registration", "First commit (local time)", "Support criterion"],
-            rows, "Experiments of this stage. Commit times come from this machine and are not independent proof of order.",
+            rows, "Experiments of this stage and their registration documents (\\texttt{docs/PREREGISTRATION\\_<name>.md}). "
+            "Commit times are set by the committing machine and are not independent proof of order.",
             "tab:exp", align=L.EXP_ALIGN, size="\\scriptsize")
+
+
+def zero_shot():
+    b = L.js("zero_shot/boot.json"); s_ = L.csv("zero_shot/summary.csv")
+    rows = []
+    names = {"medsiglip448": "MedSigLIP", "dermlip224": "DermLIP"}
+    for bb, coh, lab in (("medsiglip448", "thyroid", "Thyroid"), ("medsiglip448", "ovary", "Ovary"),
+                         ("medsiglip448", "capsule", "Capsule"), ("dermlip224", "isic", "Dermoscopy hair")):
+        g = lambda t, m: s_[(s_.backbone == bb) & (s_.cohort == coh) & (s_.trap == t) & (s_.method == m)].iloc[0]
+        za = g("trapA", "zs")
+        x = b.get(f"{bb}|{coh}|crossover (zs_mask-zs)_B-(zs_mask-zs)_A")
+        a = b.get(f"{bb}|{coh}|trapA|zs_mask-zs"); bb_ = b.get(f"{bb}|{coh}|trapB|zs_mask-zs")
+        rows.append([lab, names[bb], L.f3(za.clean), L.s3(za.corr_minus_rev), L.ci_row(ci3(a)), L.ci_row(ci3(bb_)), L.ci_row(ci3(x))])
+        k = L.Macros.clean(coh)
+        M.add(f"Zs{k}", L.ci_row(ci3(x))); M.add(f"ZsGap{k}", L.s3(za.corr_minus_rev)); M.add(f"ZsClean{k}", L.f3(za.clean))
+    L.table(T / "zero_shot.tex", ["Cohort", "Model", "Zero-shot clean AUROC (Trap A)", "Correlated $-$ reversed gap",
+                                  "mask effect, Trap A", "mask effect, Trap B", "Crossover"], rows,
+            "Zero-shot vision--language scores (no training: cosine to a positive minus a negative class prompt) on the "
+            "trap test environments, unmasked and masked (crossed CIs). The gap shows the untrained score is already swayed "
+            "by the artifact; the crossover shows that masking changes it according to the location law.", "tab:zs",
+            size="\\scriptsize", resize=True)
+
+
+def ft_detail():
+    rows = []
+    for lab, d in (("Dermoscopy hair, ResNet-50", "finetune/isic/resnet50"), ("Thyroid, ResNet-50", "finetune/thyroid/resnet50"),
+                   ("Thyroid, ViT-S/16", "finetune/thyroid/vit_small_patch16_224.augreg_in21k_ft_in1k"),
+                   ("Capsule, ResNet-50", "finetune/capsule/resnet50"), ("Ovary, ResNet-50 (15 clusters)", "finetune/ovary/resnet50_power")):
+        p = L.csv(f"{d}/paired_deltas.csv")
+        if p is None:
+            continue
+        g = lambda t, a, r: p[(p.trap == t) & (p.arm == a) & (p.ref == r)]
+        cell = lambda q: L.ci_row(q.iloc[0]) if len(q) else "\\na"
+        rows.append([lab, cell(g("trapA", "mask", "erm")), cell(g("trapB", "mask", "erm")),
+                     cell(g("trapA", "mask_balanced", "balanced"))])
+        k = L.Macros.clean(lab.split(",")[0] + lab.split(",")[1].split("(")[0])
+        M.add(f"FtA{k}", cell(g("trapA", "mask", "erm"))); M.add(f"FtB{k}", cell(g("trapB", "mask", "erm")))
+    L.table(T / "ft_detail.tex", ["Fine-tuned network", "mask $-$ ERM, Trap A", "mask $-$ ERM, Trap B",
+                                  "mask+balanced $-$ balanced, Trap A"], rows,
+            "End-to-end fine-tuned networks (ImageNet initialisation, 224\\,px, 8 epochs; folds as bootstrap clusters): "
+            "effect of masking per trap (crossed CIs).", "tab:ftdet", size="\\scriptsize")
+
+
+def scale_gap():
+    sc = L.csv("scale/scale_compare.csv")
+    if sc is None:
+        return
+    rows = [[r.cohort.capitalize(), r.backbone, L.f3(r.erm_clean), L.f3(r.erm_gap), L.ci(r.cross, r.cross_lo, r.cross_hi)]
+            for r in sc.itertuples()]
+    L.table(T / "scale.tex", ["Cohort", "DINOv2", "ERM clean AUROC (Trap A)", "ERM gap corr $-$ rev (Trap A)", "Crossover"],
+            rows, "Encoder scale (DINOv2 ViT-S/14 21\\,M, ViT-B/14 86\\,M, ViT-L/14 304\\,M parameters): ERM's shortcut gap in "
+            "the in-ROI trap and the crossover.", "tab:scale", size="\\scriptsize")
+    for r in sc.itertuples():
+        k = L.Macros.clean(r.cohort + r.backbone.split("/")[0])
+        M.add(f"Gap{k}", L.f3(r.erm_gap))
+
+
+def literature():
+    d = L.csv("review2/literature.csv")
+    if d is None:
+        return
+    rows = [[L.tex_escape(r.model), f"{r.auroc:.3f}", "\\citet{gong2022acl}" if r.source == "gong2022acl" else "this work"]
+            for r in d.itertuples()]
+    L.derived("stage5_literature", d.assign(auroc=d.auroc.round(3)))
+    L.table(T / "literature.tex", ["Model (thyroid, official TNCD test split)", "AUROC", "Source"], rows,
+            "Absolute performance: the frozen encoder with a linear head against published fine-tuned CNNs on the same "
+            "patient-disjoint split.", "tab:lit", size="\\scriptsize")
+    M.add("LitOurs", f"{d[d.source != 'gong2022acl'].auroc.iloc[0]:.3f}")
+
+
+def natural_balanced():
+    for lab, k in NAT:
+        b = L.js(f"natural/{k}_dino518_repro/natural_boot.json")
+        if b is None:
+            continue
+        kk = L.Macros.clean(k)
+        for part in ("all", "hard"):
+            M.add(f"NatBal{kk}{part}", L.ci_row(ci3(b.get(f"{part} | balanced-mask"))))
+
+
+def theory_sim():
+    d = pd.read_csv(L.OLD / "theory" / "theory_sim.csv")
+    md = float((d.sim - d.theory).abs().max())
+    L.derived("stage5_theory_sim", pd.DataFrame([{"n_settings": len(d), "max_abs_sim_minus_theory": round(md, 3)}]))
+    M.add("SimN", len(d)); M.add("SimMax", f"{md:.3f}")
+    r4 = pd.read_csv(L.OLD / "review2" / "R4_finetune.csv")
+    q = r4[r4.run.eq("review2") & r4.cohort.eq("ovary")].iloc[0]
+    M.add("OvFtCleanA", f"{q.erm_clean_trapA:.2f}"); M.add("OvFtCleanB", f"{q.erm_clean_trapB:.2f}")
+
+
+def estimator():
+    r = L.estimator_check(["natural/", "finetune/", "thyroid/dinos518_scale", "thyroid/dinol518_scale", "ovary/dinos518_scale",
+                           "ovary/dinol518_scale", "capsule/dinos518_scale", "capsule/dinol518_scale", "spec_e13/dinos518_spec_scale",
+                           "spec_e13/dinol518_spec_scale", "zero_shot/"],
+                          T / "estimator_check.tex", "tab:estcheck",
+                          "The analyses of this stage under the per-seed and the crossed estimator (same predictions; "
+                          "baseline arms only).", changes_path=T / "estimator_changes.tex", changes_label="tab:estchanges",
+                          changes_caption="Contrasts of this stage whose verdict depends on the estimator.",
+                          extra=lambda d: ~d.key.str.contains("mte|umte|protect", regex=True))
+    if r:
+        M.add("EstN", r["n"]); M.add("EstLost", r["lost"]); M.add("EstGained", r["gained"]); M.add("EstMed", f"{r['median']:.2f}")
 
 
 def main():
     natural(); clinical(); op(); breadth(); breadth_counts(); external(); dermlip(); theory(); figures(); registrations()
+    zero_shot(); ft_detail(); scale_gap(); literature(); natural_balanced(); theory_sim(); estimator()
     M.write(T / "numbers.tex")
     L.report_missing("stage5")
 
