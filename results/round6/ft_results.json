@@ -1,0 +1,149 @@
+{
+  "recipe": {
+    "arch": "convnext_tiny.fb_in22k_ft_in1k",
+    "lr": 0.0001,
+    "epochs": 8,
+    "val_auroc": 0.8653628857018687
+  },
+  "FT0": {
+    "id": "FT0",
+    "estimate": 0.7685005829073625,
+    "benchmark": 0.773,
+    "verdict": "below benchmark",
+    "p": null,
+    "note": "descriptive; not in the Holm family"
+  },
+  "FT1": {
+    "id": "FT1",
+    "estimate": -0.1022645578720345,
+    "ci95_lo": -0.17817863105382578,
+    "ci95_hi": -0.026056600084635357,
+    "p": 0.004,
+    "direction": "mask-erm hard AUROC < 0",
+    "p_holm": 0.004,
+    "verdict": "SUPPORTED"
+  },
+  "FT2": {
+    "id": "FT2",
+    "n_ops_ci_below_0": 4,
+    "n_ops": 4,
+    "estimate": 4,
+    "p": 0.0005,
+    "direction": "sensitivity CI < 0 at >= 3 of OP2-OP5",
+    "ops": [
+      {
+        "op": "OP2_spec0.80",
+        "delta": -0.3762711864406781,
+        "ci95_lo": -0.462069660734149,
+        "ci95_hi": -0.29733766476233153
+      },
+      {
+        "op": "OP3_spec0.90",
+        "delta": -0.3237288135593221,
+        "ci95_lo": -0.41901692881898156,
+        "ci95_hi": -0.22844503356728715
+      },
+      {
+        "op": "OP4_sens0.80",
+        "delta": -0.3601694915254238,
+        "ci95_lo": -0.439174486270231,
+        "ci95_hi": -0.2565628054740958
+      },
+      {
+        "op": "OP5_sens0.90",
+        "delta": -0.24237288135593227,
+        "ci95_lo": -0.3448318965517241,
+        "ci95_hi": -0.16201836917562734
+      }
+    ],
+    "p_holm": 0.0015,
+    "verdict": "SUPPORTED"
+  },
+  "FT3": {
+    "id": "FT3",
+    "estimate": -0.5205128205128206,
+    "ci95_lo": -0.6416776315789473,
+    "ci95_hi": -0.38156650071123765,
+    "p": 0.0005,
+    "direction": "OP2 sensitivity among in-ROI-caliper malignancies, mask-erm < 0",
+    "p_holm": 0.0015,
+    "verdict": "SUPPORTED"
+  },
+  "FT4": {
+    "id": "FT4",
+    "ran": true,
+    "estimate": 0.18738743540065037,
+    "ci95_lo": 0.11132902260150139,
+    "ci95_hi": 0.2682408896938206,
+    "p": 0.0001,
+    "direction": "thyroid trap crossover > 0",
+    "n_clusters": 10,
+    "p_holm": 0.0004,
+    "verdict": "SUPPORTED"
+  },
+  "contrasts": [
+    {
+      "subset": "hard",
+      "contrast": "mask-erm",
+      "estimate": -0.1022645578720345,
+      "ci95_lo": -0.17817863105382578,
+      "ci95_hi": -0.026056600084635357
+    },
+    {
+      "subset": "hard",
+      "contrast": "balanced-mask",
+      "estimate": 0.08824586628324944,
+      "ci95_lo": 0.01861392160183858,
+      "ci95_hi": 0.1584994908634258
+    },
+    {
+      "subset": "hard",
+      "contrast": "mask_balanced-mask",
+      "estimate": -0.016474958063743127,
+      "ci95_lo": -0.05769038166689359,
+      "ci95_hi": 0.01930170394840819
+    },
+    {
+      "subset": "easy",
+      "contrast": "mask-erm",
+      "estimate": 0.016579191108366743,
+      "ci95_lo": -0.03209736270753513,
+      "ci95_hi": 0.06540698303745264
+    },
+    {
+      "subset": "easy",
+      "contrast": "balanced-mask",
+      "estimate": -0.03981167026860137,
+      "ci95_lo": -0.09742540199589422,
+      "ci95_hi": 0.015607837200712345
+    },
+    {
+      "subset": "easy",
+      "contrast": "mask_balanced-mask",
+      "estimate": -0.013623031799938245,
+      "ci95_lo": -0.03057148544537275,
+      "ci95_hi": 0.004391036179427896
+    },
+    {
+      "subset": "all",
+      "contrast": "mask-erm",
+      "estimate": -0.023807281858129303,
+      "ci95_lo": -0.0636424948413116,
+      "ci95_hi": 0.015736401841199767
+    },
+    {
+      "subset": "all",
+      "contrast": "balanced-mask",
+      "estimate": 0.0024134606761724966,
+      "ci95_lo": -0.03914261299652656,
+      "ci95_hi": 0.04426412829320895
+    },
+    {
+      "subset": "all",
+      "contrast": "mask_balanced-mask",
+      "estimate": -0.015661151466236235,
+      "ci95_lo": -0.03283275804855525,
+      "ci95_hi": 0.0006841516357924191
+    }
+  ]
+}

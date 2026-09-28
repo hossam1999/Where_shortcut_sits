@@ -1,0 +1,19 @@
+{
+  "ran": true,
+  "gate": {
+    "trapA": true,
+    "trapB": true
+  },
+  "original": {
+    "path": "results/rerun_2026-09-28/capsule/dino518_main/T3_crossover.json",
+    "estimate": 0.3767533432268978,
+    "ci95_lo": 0.3267289257854225,
+    "ci95_hi": 0.4258013029504009
+  },
+  "estimate": 0.3767533432268978,
+  "ci95_lo": 0.3274048085447414,
+  "ci95_hi": 0.42502718372708076,
+  "p_greater": 0.0001,
+  "p_two_sided": 0.0001,
+  "n_boot": 10000
+}

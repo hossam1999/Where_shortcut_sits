@@ -1,0 +1,31 @@
+{
+  "cohort": "capsule",
+  "capsule_excluded_expert_labelled": 0,
+  "capsule_iou": {
+    "all": {
+      "estimate": 0.0,
+      "ci95_lo": 0.0,
+      "ci95_hi": 0.0,
+      "n": 29,
+      "n_boot": 2000
+    },
+    "y0": {
+      "estimate": 0.0,
+      "ci95_lo": 0.0,
+      "ci95_hi": 0.0,
+      "n": 8,
+      "n_boot": 2000
+    },
+    "y1": {
+      "estimate": 0.0,
+      "ci95_lo": 0.0,
+      "ci95_hi": 0.0,
+      "n": 21,
+      "n_boot": 2000
+    }
+  },
+  "informative_sources": [],
+  "gates": {
+    "Mendeley_vmxhn95j8z": "not_feasible"
+  }
+}

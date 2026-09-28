@@ -1,0 +1,13 @@
+{
+  "gate": {
+    "trapA": true,
+    "trapB": false
+  },
+  "original": {
+    "path": "results/rerun_2026-09-28/thyroid/dino518_main/T3_crossover.json",
+    "estimate": 0.2385752065741104,
+    "ci95_lo": 0.19636384706884946,
+    "ci95_hi": 0.2803443292065414
+  },
+  "ran": false
+}

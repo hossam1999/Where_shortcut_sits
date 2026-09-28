@@ -1,0 +1,111 @@
+{
+  "cohort": "ovary",
+  "busclean_kappa": {
+    "all": {
+      "estimate": 0.09846646147170873,
+      "ci95_lo": 0.056716939874824596,
+      "ci95_hi": 0.1394728003685184,
+      "n": 1198,
+      "n_boot": 2000
+    },
+    "y0": {
+      "estimate": 0.14142205756625845,
+      "ci95_lo": 0.07872700857685923,
+      "ci95_hi": 0.20830313155002195,
+      "n": 618,
+      "n_boot": 2000
+    },
+    "y1": {
+      "estimate": 0.056780595369349714,
+      "ci95_lo": 0.0039374199279251015,
+      "ci95_hi": 0.11424086382779217,
+      "n": 580,
+      "n_boot": 2000
+    }
+  },
+  "busclean_location": {
+    "all": {
+      "estimate": 0.8121059268600253,
+      "ci95_lo": 0.7843631778058008,
+      "ci95_hi": 0.8398802017654475,
+      "n": 793,
+      "n_boot": 2000
+    },
+    "y0": {
+      "estimate": 0.823943661971831,
+      "ci95_lo": 0.7887323943661971,
+      "ci95_hi": 0.8591549295774648,
+      "n": 426,
+      "n_boot": 2000
+    },
+    "y1": {
+      "estimate": 0.7983651226158038,
+      "ci95_lo": 0.7547683923705722,
+      "ci95_hi": 0.8392370572207084,
+      "n": 367,
+      "n_boot": 2000
+    }
+  },
+  "busclean_positive_rate_on_caliper_free": 0.9051724137931034,
+  "medgemma_kappa": {
+    "all": {
+      "estimate": 0.19427568636533707,
+      "ci95_lo": 0.1475854980345875,
+      "ci95_hi": 0.24660393048846677,
+      "n": 1198,
+      "n_boot": 2000
+    },
+    "y0": {
+      "estimate": 0.29396719298843904,
+      "ci95_lo": 0.21896801545909386,
+      "ci95_hi": 0.37460308090782274,
+      "n": 618,
+      "n_boot": 2000
+    },
+    "y1": {
+      "estimate": 0.0954326030449308,
+      "ci95_lo": 0.042312049968070455,
+      "ci95_hi": 0.15270339417634884,
+      "n": 580,
+      "n_boot": 2000
+    }
+  },
+  "medgemma_location": {
+    "all": {
+      "estimate": 0.442643391521197,
+      "ci95_lo": 0.4077306733167082,
+      "ci95_hi": 0.4763092269326683,
+      "n": 802,
+      "n_boot": 2000
+    },
+    "y0": {
+      "estimate": 0.4369158878504673,
+      "ci95_lo": 0.3901869158878505,
+      "ci95_hi": 0.48130841121495327,
+      "n": 428,
+      "n_boot": 2000
+    },
+    "y1": {
+      "estimate": 0.44919786096256686,
+      "ci95_lo": 0.3983957219251337,
+      "ci95_hi": 0.5,
+      "n": 374,
+      "n_boot": 2000
+    }
+  },
+  "informative": {
+    "BUSClean": {
+      "status": "invalid",
+      "reason": "positive on more than half of the caliper-free images: it detects on-screen annotation, not calipers (validity guard, Amendment 2)"
+    },
+    "MedGemma": {
+      "status": "pending_human",
+      "reason": "only one model labeller is available; judged against the blinded rating (A4/A4b) with the same threshold (Amendment 2)"
+    }
+  },
+  "informative_sources": [],
+  "gates": {
+    "BUSClean": "analysed",
+    "MedGemma": "analysed"
+  }
+}
