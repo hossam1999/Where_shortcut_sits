@@ -181,12 +181,14 @@ def fmt_ci(est, lo, hi) -> str:
 
 def original_crossover(cohort: str) -> dict:
     rel = {
-        "isic": ROOT / "results" / "spec_e13" / "dino518_spec" / "C3_crossover.json",
+        "isic": R4.REF_ROOT / "spec_e13" / "dino518_spec" / "SUMMARY.json",
         "thyroid": R4.REF_ROOT / "thyroid" / "dino518_main" / "T3_crossover.json",
         "capsule": R4.REF_ROOT / "capsule" / "dino518_main" / "T3_crossover.json",
         "ovary": R4.REF_ROOT / "ovary" / "dino518_main" / "T3_crossover.json",
     }[cohort]
     d = json.loads(rel.read_text())
+    if cohort == "isic":  # crossed-bootstrap crossover of the regenerated run (Stage 3, P1)
+        d = d["crossover_B_minus_A_mask"]
     return {"path": str(rel.relative_to(ROOT)), "estimate": d.get("seed_delta_mean", d.get("estimate")),
             "ci95_lo": d["ci95_lo"], "ci95_hi": d["ci95_hi"]}
 
@@ -210,3 +212,51 @@ def cohort_frame(name: str):
     c["image_id"] = c.image_id.astype(str)
     info["c"] = c
     return info
+
+def draw_contour(rgb, roi):
+    """RGB image with a 2-px green contour of the ROI boundary and nothing else (no automatic artifact mask)."""
+    from PIL import Image
+    arr = np.array(Image.fromarray(np.asarray(rgb)).convert("RGB"))
+    m = np.asarray(roi) > 0
+    inner = m.copy()
+    inner[1:] &= m[:-1]; inner[:-1] &= m[1:]; inner[:, 1:] &= m[:, :-1]; inner[:, :-1] &= m[:, 1:]
+    b = m & ~inner
+    b2 = b.copy()
+    b2[1:] |= b[:-1]; b2[:-1] |= b[1:]; b2[:, 1:] |= b[:, :-1]; b2[:, :-1] |= b[:, 1:]
+    arr[b2] = (0, 180, 0)
+    return Image.fromarray(arr)
+
+
+MEDGEMMA_ID = "google/medgemma-1.5-4b-it"
+CALIPER_PROMPTS = {
+    "presence": "This is an ultrasound image. Are there caliper or measurement marks overlaid on it (small plus signs, "
+                "small crosses, or dotted measurement lines)? Answer only yes or no.",
+    "location": "The green contour outlines the {roi}. Is any caliper or measurement mark (a small plus sign or cross) "
+                "inside the green contour? Answer only yes or no.",
+}
+
+
+def medgemma_token_present() -> bool:
+    if os.environ.get("HF_TOKEN") or os.environ.get("HUGGING_FACE_HUB_TOKEN"):
+        return True
+    return (Path.home() / ".cache" / "huggingface" / "token").exists()
+
+
+class MedGemma:
+    """Local MedGemma 1.5 4B-it, greedy decoding, max 3 new tokens, answer parsed as yes / no / missing."""
+
+    def __init__(self):
+        import torch
+        from transformers import AutoModelForImageTextToText, AutoProcessor
+        self.torch = torch
+        self.processor = AutoProcessor.from_pretrained(MEDGEMMA_ID)
+        self.model = AutoModelForImageTextToText.from_pretrained(MEDGEMMA_ID, torch_dtype=torch.bfloat16, device_map="cuda")
+
+    def ask(self, img, prompt: str) -> str:
+        messages = [{"role": "user", "content": [{"type": "image"}, {"type": "text", "text": prompt}]}]
+        text = self.processor.apply_chat_template(messages, add_generation_prompt=True)
+        batch = self.processor(text=text, images=img.convert("RGB"), return_tensors="pt").to(self.model.device)
+        with self.torch.inference_mode():
+            out = self.model.generate(**batch, max_new_tokens=3, do_sample=False)
+        ans = self.processor.decode(out[0, batch["input_ids"].shape[-1]:], skip_special_tokens=True).strip().lower()
+        return "yes" if ans.startswith("yes") else "no" if ans.startswith("no") else "missing"

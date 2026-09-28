@@ -64,18 +64,31 @@ def main():
     if sp.exists():
         lines.append(C.R4.md_table(pd.read_csv(sp)))
         lines.append("")
-    lines.append("## Differential error")
+    lines.append("## Differential error and attenuation (A3)")
     if (root / "bias.csv").exists():
         b = pd.read_csv(root / "bias.csv")
-        flag = b[b.cell == "diff_y1_minus_y0"] if "cell" in b else b
+        flag = b[b.cell.astype(str).str.startswith(("diff_y1_minus_y0", "e_A", "e_B"))] if "cell" in b else b
         lines.append(C.R4.md_table(flag))
         lines.append("")
+    for name in C.COHORTS:
+        bj = root / "agreement" / name / "bias.json"
+        aj = root / "agreement" / name / "agreement.json"
+        if aj.exists():
+            inf = json.loads(aj.read_text()).get("informative")
+            if inf:
+                lines.append(f"- {name}: model labellers {json.dumps(inf, default=float)}")
+        if bj.exists():
+            lines.append(f"- {name}: corrected crossover by source {bj.read_text().strip()}")
+    lines.append("")
     lines.append("## Part B")
     ft = root / "ft_SUMMARY.md"
     if ft.exists():
         lines.append(ft.read_text())
     lines.append("")
     lines.append("## Rating")
+    rr = root / "rating" / "rating_report.json"
+    if rr.exists():
+        lines.append("```json"); lines.append(rr.read_text().strip()); lines.append("```")
     st = root / "rating" / "medgemma_status.json"
     if st.exists():
         lines.append(st.read_text())

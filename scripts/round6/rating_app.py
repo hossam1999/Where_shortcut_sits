@@ -1,6 +1,8 @@
 """A4 — local blinded rating tool. Binds 127.0.0.1:8765 only.
 
-  python scripts/round6/rating_app.py --pass 1
+  python scripts/round6/rating_app.py --pass 1                 # the 240-image audit package (audit/review_sheet.csv)
+  python scripts/round6/rating_app.py --pass 1 --sheet a4b     # the A4b caliper sample (presence and location only)
+  python scripts/round6/rating_app.py --pass 1 --check         # check every image file and exit (no port is bound)
 Open with: ssh -p $VAST_TCP_PORT_22 -L 8765:127.0.0.1:8765 root@$PUBLIC_IPADDR
 then http://localhost:8765
 """
@@ -18,13 +20,14 @@ import numpy as np
 import pandas as pd
 
 ROOT = Path(__file__).resolve().parents[2]
-SHEET = ROOT / "audit" / "review_sheet.csv"
+SHEETS = {"main": ROOT / "audit" / "review_sheet.csv", "a4b": ROOT / "results" / "round6" / "a4b_review_sheet.csv"}
 OUT = ROOT / "results" / "round6" / "rating"
 PASS_SEED = {1: 20260928, 2: 20261005}
+SHEET_NAME = "main"
 
 
-def load_order(pass_n: int) -> pd.DataFrame:
-    s = pd.read_csv(SHEET)
+def load_order(pass_n: int, sheet: str = "main") -> pd.DataFrame:
+    s = pd.read_csv(SHEETS[sheet])
     rng = np.random.default_rng(PASS_SEED[pass_n])
     order = rng.permutation(len(s))
     s = s.iloc[order].reset_index(drop=True)
@@ -34,7 +37,7 @@ def load_order(pass_n: int) -> pd.DataFrame:
 
 def answers_path(pass_n: int) -> Path:
     OUT.mkdir(parents=True, exist_ok=True)
-    return OUT / f"pass{pass_n}.csv"
+    return OUT / (f"pass{pass_n}.csv" if SHEET_NAME == "main" else f"a4b_pass{pass_n}.csv")
 
 
 def read_answers(pass_n: int) -> dict:
@@ -84,16 +87,17 @@ button {{ font-size: 16px; padding: 8px 14px; margin-right: 8px; }}
 
 def form_fields(step, prev):
     if step == 1:
-        pairs = [("artifact_present", "Artifact present?"), ("artifact_location", "Where is it? (in / out / unsure)")]
+        pairs = [("artifact_present", "Artifact present?"), ("artifact_location", "Where is it relative to the lesion, nodule or tumour (outlined in green when shown)? (inside / outside / both / absent / unsure)")]
     else:
         pairs = [("mask_correct", "Is the artifact mask correct?"), ("roi_mask_correct", "Is the ROI mask correct?")]
     blocks = []
     for name, label in pairs:
         cur = html.escape(str(prev.get(name, "")))
-        opts = "".join(f'<option {"selected" if cur==o else ""}>{o}</option>' for o in ("", "yes", "no", "unsure"))
+        opts = "".join(f'<option value="{o}" {"selected" if cur==o else ""}>{o}</option>' for o in ("", "yes", "no", "unsure"))
         if name == "artifact_location":
-            opts = "".join(f'<option {"selected" if cur==o else ""}>{o}</option>' for o in ("", "in", "out", "unsure", "absent"))
-        blocks.append(f"<p><label>{label} <select name={name}>{opts}</select></label></p>")
+            opts = "".join(f'<option value="{o}" {"selected" if cur==o else ""}>{o}</option>'
+                           for o in ("", "inside", "outside", "both", "absent", "unsure"))
+        blocks.append(f"<p><label>{label} <select name={name} required>{opts}</select></label></p>")
     return "".join(blocks)
 
 
@@ -125,7 +129,8 @@ class Handler(BaseHTTPRequestHandler):
             self._img(q.get("pos", ["0"])[0], q.get("which", ["raw"])[0])
             return
         done = read_answers(self.pass_n)
-        pending = [i for i, r in self.sheet.iterrows() if r.audit_id not in done or not done[r.audit_id].get("mask_correct")]
+        key = "artifact_present" if SHEET_NAME == "a4b" else "mask_correct"
+        pending = [i for i, r in self.sheet.iterrows() if r.audit_id not in done or not done[r.audit_id].get(key)]
         # an image is finished only after step 2 (mask_correct saved)
         if not pending:
             body = f"<h1>Pass {self.pass_n} complete</h1><p>{len(done)} answers in {answers_path(self.pass_n)}</p>"
@@ -134,7 +139,9 @@ class Handler(BaseHTTPRequestHandler):
             row = self.sheet.iloc[pos]
             prev = done.get(row.audit_id, {})
             step = 1 if not prev.get("artifact_present") else 2
-            which = "raw" if step == 1 else "overlay"
+            # step 1 shows the ROI outline for the location question: the A4b overlay has the outline only; for the
+            # main package the raw image is shown first, as in audit/README.md
+            which = ("overlay" if SHEET_NAME == "a4b" else "raw") if step == 1 else "overlay"
             body = PAGE.format(pass_n=self.pass_n, done=len(done), n=len(self.sheet), step=step, aid=html.escape(row.audit_id),
                                pos=pos, which=which, fields=form_fields(step, prev), notes=html.escape(str(prev.get("notes", ""))))
         data = body.encode()
@@ -167,11 +174,20 @@ class Handler(BaseHTTPRequestHandler):
 def main():
     ap = argparse.ArgumentParser()
     ap.add_argument("--pass", dest="pass_n", type=int, choices=(1, 2), default=1)
+    ap.add_argument("--sheet", choices=("main", "a4b"), default="main")
     ap.add_argument("--smoke", action="store_true", help="build the sheet order and exit; do not bind a port")
+    ap.add_argument("--check", action="store_true", help="check that every image file exists and exit; no port is bound")
     a = ap.parse_args()
-    sheet = load_order(a.pass_n)
-    if a.smoke:
-        print(json.dumps({"pass": a.pass_n, "n": len(sheet), "first": sheet.audit_id.iloc[0], "seed": PASS_SEED[a.pass_n]}))
+    global SHEET_NAME
+    SHEET_NAME = a.sheet
+    if not SHEETS[a.sheet].exists():
+        raise SystemExit(f"missing {SHEETS[a.sheet]}" + (" (run scripts/round6/a4b_sample.py)" if a.sheet == "a4b" else ""))
+    sheet = load_order(a.pass_n, a.sheet)
+    if a.smoke or a.check:
+        missing = [f for f in list(sheet.image_file) + list(sheet.overlay_file) if not (ROOT / f).exists()]
+        print(json.dumps({"sheet": a.sheet, "pass": a.pass_n, "n": len(sheet), "missing_files": len(missing),
+                          "first_missing": missing[:3], "seed": PASS_SEED[a.pass_n],
+                          "hint": "regenerate audit_local/ with python audit/make_audit_sample.py" if missing else ""}))
         return
     Handler.sheet = sheet
     Handler.pass_n = a.pass_n

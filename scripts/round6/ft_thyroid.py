@@ -154,6 +154,8 @@ def traps(smoke: bool):
         cmd = [sys.executable, str(C.ROOT / "scripts" / "run_finetune_spec.py"),
                "--cohort", "thyroid", "--arch", choice["arch"], "--lr", str(choice["lr"]),
                "--epochs", epochs, "--arms", "erm", "mask", "--env_seed", s, "--tag", tag, "--folds", *folds]
+        if model_kwargs(choice["arch"]):
+            cmd += ["--img_size", str(model_kwargs(choice["arch"])["img_size"])]
         C.log(traps=" ".join(cmd))
         subprocess.check_call(cmd, cwd=str(C.ROOT))
 

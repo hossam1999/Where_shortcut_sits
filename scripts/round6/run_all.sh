@@ -31,6 +31,7 @@ skip_if() {
 run pytest -m pytest -q tests
 
 skip_if "$ROOT/coverage.csv" A0_sources scripts/round6/sources.py $S
+skip_if "$ROOT/matches/ovary_medgemma.csv" A0_medgemma scripts/round6/medgemma_cohort.py $S
 if [ "$SMOKE" = 0 ] && [ -f results/round6/coverage.csv ]; then
   git add results/round6/sources.json results/round6/coverage.csv results/round6/coverage.json results/round6/matches &&
     git commit -q -m "Round 6 A0: source licences and coverage, committed before the remaining analyses." &&
@@ -53,10 +54,15 @@ done
 skip_if "$ROOT/clean_traps/SUMMARY.csv" A2_summary scripts/round6/clean_traps.py --summary $S
 skip_if "$ROOT/bias.csv" A3_bias scripts/round6/bias_analysis.py $S
 
-run A4_rating_check scripts/round6/rating_app.py --pass 1 $S
+run A4_rating_check scripts/round6/rating_app.py --pass 1 --check  # builds the order and checks every image file; never binds a port
 run A4_medgemma scripts/round6/medgemma_audit.py $S
 run A4_analyse scripts/round6/analyse_rating.py $S
 skip_if "$ROOT/a4b_KEY_SHA256.txt" A4b scripts/round6/a4b_sample.py $S
+if [ "$SMOKE" = 0 ] && [ -f results/round6/a4b_KEY_SHA256.txt ]; then
+  git add results/round6/a4b_KEY_SHA256.txt results/round6/a4b_review_sheet.csv &&
+    git commit -q -m "Round 6 A4b: blind caliper sample, key SHA-256 committed before any rating." &&
+    echo "=== A4b key hash committed" || echo "!!! could not commit the A4b key hash"
+fi
 
 skip_if "$ROOT/ft_natural/predictions.csv.gz" B2_natural scripts/round6/ft_thyroid.py --natural $S
 run B2_traps scripts/round6/ft_thyroid.py --traps $S

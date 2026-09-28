@@ -97,3 +97,14 @@ Y, bootstrap CIs, the differential-error flag, e_A + e_B and the corrected cross
 ## Final
 `results/round6/SUMMARY.md` (Part A: sources and coverage, agreement tables, cleaned-trap crossovers with Holm,
 differential-error flags, e_A + e_B; Part B: ft_SUMMARY), `python -m pytest -q tests`, commit, push.
+
+## Additions from the pre-run review (Amendment 2)
+- `scripts/round6/medgemma_cohort.py` runs MedGemma on every non-gap thyroid and ovary image (presence on the plain
+  image, location on a contour-only image) → `results/round6/matches/{thyroid,ovary}_medgemma.csv`; `run_all.sh` runs
+  it right after A0. `label_agreement.py` applies the informativeness rule, the BUSClean validity guard and the
+  like-for-like 518-px rule; model labellers enter A2 only when informative.
+- `run_all.sh` never starts the rating server (`rating_app.py --check` only verifies the image files).
+- Rating, later: `python scripts/round6/rating_app.py --pass 1` (and `--sheet a4b` for the caliper sample); pass 2
+  at least 7 days later. Then `bash scripts/round6/after_rating.sh` scores the rating (keys checked against their
+  committed SHA-256) and re-runs A1–A3 for thyroid and ovary.
+- `run_finetune_spec.py --img_size 224` is passed automatically when the DINOv2 ViT is the chosen recipe.

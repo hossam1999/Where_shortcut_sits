@@ -59,3 +59,25 @@ def test_model_kwargs_only_for_dinov2():
     assert "vit_base_patch14_dinov2.lvd142m" in text
     assert "img_size" in text
     assert "convnext_tiny.fb_in22k_ft_in1k" in text
+
+
+def test_draw_contour_marks_only_the_boundary():
+    rgb = np.zeros((20, 20, 3), np.uint8)
+    roi = np.zeros((20, 20), np.uint8)
+    roi[5:15, 5:15] = 1
+    out = np.asarray(C.draw_contour(rgb, roi))
+    green = (out[..., 1] == 180) & (out[..., 0] == 0)
+    assert green[5, 5] and green[14, 10] and not green[10, 10] and not green[0, 0]
+
+
+def test_rater_cell_and_multiclass_kappa():
+    ar = importlib.util.spec_from_file_location("ar6", Path(__file__).resolve().parents[1] / "scripts" / "round6" / "analyse_rating.py")
+    mod = importlib.util.module_from_spec(ar)
+    ar.loader.exec_module(mod)
+    assert mod.rater_cell("no", "") == "artifact_free"
+    assert mod.rater_cell("yes", "inside") == "trapA"
+    assert mod.rater_cell("yes", "outside") == "trapB"
+    assert mod.rater_cell("yes", "both") == "mid"
+    assert mod.rater_cell("unsure", "inside") == "missing"
+    cats = ("inside", "outside", "both", "absent")
+    assert abs(mod.kappa_multi(["inside", "outside", "absent"], ["inside", "outside", "absent"], cats) - 1) < 1e-9

@@ -113,3 +113,28 @@ labellers. Changes:
    stratified sample of 150 thyroid and 150 ovary images (50 per cell, 25 per diagnosis; fixed seed; blind key hashed
    and committed before rating) is added to the rating tool for presence and location of calipers only. If the author
    does not rate it, this is reported.
+
+## Amendment 2 (2026-09-28, before any analysis of this round; after reviewing the implementation)
+Reason: a code review before the first run found places where the implementation did not yet do what A0–A4 register,
+and places where the registration left a rule implicit. No data of this round had been analysed. Changes:
+1. **MedGemma on the caliper cohorts** (A1, as registered): every thyroid and ovary image outside the gap (1–14
+   detected marker pixels) is asked the presence prompt on the plain image and the location prompt on the image with
+   only the green ROI contour. Our automatic marker mask is never shown to a model labeller (this also applies to the
+   240-image audit, where the location question uses a contour-only image, not the review overlay).
+2. **BUSClean validity guard**: if BUSClean is positive on more than half of our caliper-free images, it detects
+   on-screen annotation rather than calipers; it is then reported as invalid for calipers and not used.
+3. **Only one model labeller available**: the A1 rule (κ ≥ 0.40 against the images on which the two other labels
+   agree) needs two other labels. If only one model labeller is usable for a cohort, its informativeness is judged
+   against the author's blinded rating (A4/A4b) with the same threshold, and A2 for that cohort is re-run after the
+   rating (`scripts/round6/after_rating.sh`).
+4. **Like-for-like overlap for ISIC** (A1): r is recomputed at 518 px with our hair mask and each lesion mask (ours,
+   IMA++), and hair masks (ours, Kabir) are compared inside our lesion mask. A source's location class is used for a
+   contradiction only where our own 518-px class agrees with our registered cell; other images are
+   resolution-ambiguous and count as unverified. IMA++ Dice is also reported by lesion-mask source (HAM manual vs U-Net).
+5. **Capsule frames whose own label is an expert mask** (22 frames of Stage 3) are excluded from the capsule
+   comparison, because it would compare expert with expert.
+6. **A3**: the differential-error flag is evaluated within each trap (Trap A, Trap B), as "by trap and diagnosis"
+   registers; e_A, e_B and the corrected crossover are reported per source; the correction applies to the original
+   Stage 3 crossover (the one the measured errors refer to), not to the cleaned crossover of A2.
+7. **Reference crossover for ISIC**: the crossed-bootstrap estimate of the regenerated run (Stage 3), as for the
+   other cohorts.

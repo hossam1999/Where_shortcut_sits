@@ -346,7 +346,7 @@ def match_capsule(cohort: pd.DataFrame, smoke: bool) -> tuple[pd.DataFrame, dict
         return pd.DataFrame(columns=["image_id", "mask_path", "hamming"]), {"polarity": pol, "n_train_excluded_pool": int(len(tr)),
                                                                             "n_heldout_pool": int(len(te)), "matched": 0}
     # cohort hashes already stored
-    coh = cohort[["image_id", "phash_hex"]].dropna()
+    coh = cohort[["image_id", "phash_hex"]].dropna()  # cohort keeps mask_src for the expert-label exclusion
     coh_bits = np.array([imagehash.hex_to_hash(h).hash.astype(np.uint8).ravel() for h in coh.phash_hex])
     coh_h = np.zeros(len(coh_bits), np.uint64)
     for s in range(64):
@@ -370,6 +370,10 @@ def match_capsule(cohort: pd.DataFrame, smoke: bool) -> tuple[pd.DataFrame, dict
             "n_excluded_probe_train": int(hit.excluded_probe_train.sum()) if len(hit) else 0}
     if len(hit):
         hit = hit[~hit.excluded_probe_train].drop(columns=["excluded_probe_train"])
+        if "mask_src" in cohort.columns:  # frames whose own label is an expert mask: expert vs expert, excluded
+            exp = set(cohort.loc[cohort.mask_src.astype(str) == "expert", "image_id"].astype(str))
+            info["n_excluded_expert_labelled"] = int(hit.image_id.astype(str).isin(exp).sum())
+            hit = hit[~hit.image_id.astype(str).isin(exp)]
     return hit, info
 
 
@@ -377,10 +381,14 @@ def _bus_one(job):
     name, image_id = job
     import sys as _sys
     _sys.path.insert(0, str(C.EXT / "bus-cleaning"))
-    from modules.artifacts import detect_anno, enhance_image
+    import modules.artifacts as A
+    from modules.artifacts import enhance_image
+    # prefer BUSClean's caliper detector; detect_anno may find text annotations, which the validity guard in
+    # label_agreement.py then catches (positive on most caliper-free images -> invalid for calipers)
+    detect = next((getattr(A, n) for n in ("detect_calipers", "detect_caliper", "find_calipers") if hasattr(A, n)), A.detect_anno)
     info = _bus_one.cache[name]
     rgb, roi, _ = info.get(str(image_id))
-    boxes = detect_anno(enhance_image(Image.fromarray(np.asarray(rgb))), False)
+    boxes = detect(enhance_image(Image.fromarray(np.asarray(rgb))), False)
     present = len(boxes) > 0
     inside = False
     if present and roi is not None:

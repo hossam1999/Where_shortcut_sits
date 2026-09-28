@@ -38,6 +38,8 @@ def main():
     ap.add_argument("--lr", type=float, default=1e-4)
     ap.add_argument("--traps", nargs="+", default=["trapA", "trapB"])
     ap.add_argument("--tag", default="", help="output suffix (keeps new runs apart from archived result folders)")
+    ap.add_argument("--img_size", type=int, default=None,
+                    help="timm img_size for ViTs whose default resolution differs from the 224-px input (round 6)")
     ap.add_argument("--env_seed", type=int, default=42,
                     help="split seed of the spec environments; folds of seed s != 42 get cluster id 10*s + fold (power extension)")
     a = ap.parse_args()
@@ -67,7 +69,8 @@ def main():
             for arm in a.arms:
                 if done is not None and ((done.trap == trap) & (done.seed == cid) & (done.method == arm)).any():
                     continue
-                res = train_eval(arm, E, render, arch=a.arch, epochs=a.epochs, seed=cid, lr=a.lr, device=torch.device("cuda"), workers=6)
+                res = train_eval(arm, E, render, arch=a.arch, epochs=a.epochs, seed=cid, lr=a.lr, device=torch.device("cuda"), workers=6,
+                                 model_kwargs={"img_size": a.img_size} if a.img_size else None)
                 meta = {"cohort": a.cohort, "backbone": f"ft_{a.arch}", "trap": trap, "seed": cid, "method": arm}
                 msg = []
                 for key, (clf, thr, d) in res.items():
