@@ -184,6 +184,8 @@ def run_spec(envs: Dict, cache, backend_name: str, out_dir: Path, feat_dir: Path
     pos = {k: j for j, k in enumerate(pool)}
     need = {"erm", "mask"} | ({"inpaint"} if {"inpaint", "leace_paired"} & set(arms) else set()) | ({"insert"} if any(a.startswith(("i2e", "insert", "umte", "pbal")) for a in arms) else set()) | \
         ({"mask_insert"} if any(a.startswith(("mte", "umte", "pbal")) for a in arms) else set())
+    xc = extra_ctx or {}
+    need = need | set(xc.get("extra_views", ()))  # extra rendered views (docs/PREREGISTRATION_ROUND4.md, R8)
     from ..backbones import Backend  # noqa: F401
     def _covered(f):  # a cached view is usable only if it contains every image of this pool
         if not f.exists():
@@ -193,6 +195,7 @@ def run_spec(envs: Dict, cache, backend_name: str, out_dir: Path, feat_dir: Path
     cached = all(_covered(feat_dir / (f"{v}{insert_tag}.npz" if v in ("insert", "mask_insert") else f"{v}.npz")) for v in need)
     backend = None if cached else load_backend(backend_name, device)
     rend = make_renderers(cache, BACKEND_SIZE[backend_name], donors, insert_fn)
+    rend.update(xc.get("extra_renderers", {}))
     fname = lambda v: f"{v}{insert_tag}.npz" if v in ("insert", "mask_insert") else f"{v}.npz"
     V = {v: extract_view(backend, pool, rend[v], feat_dir / fname(v), device, batch_size, workers, desc=v)
          for v in sorted(need)}
