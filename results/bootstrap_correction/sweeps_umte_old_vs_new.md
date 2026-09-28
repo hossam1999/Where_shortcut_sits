@@ -2,8 +2,8 @@
 
 Old: archived runs, per-seed bootstrap (images resampled independently within each seed). New: regenerated runs (results/rerun_2026-09-28/), crossed seed x image bootstrap. Verdict = CI excludes zero.
 
-- rows compared: 2454; verdict changed: 178 (lost significance: 146, gained: 32)
-- median width ratio new/old: 1.55 (IQR 1.33--1.74)
+- rows compared: 2466; verdict changed: 179 (lost significance: 147, gained: 32)
+- median width ratio new/old: 1.56 (IQR 1.34--1.74)
 - point estimates differing by more than 0.03: 160
 
 ## Verdict changes
@@ -13,6 +13,7 @@ Old: archived runs, per-seed bootstrap (images resampled independently within ea
 | PRIMARY_CLAIMS.csv | P2 U-MtE (protected) > mask|Capsule | -0.010 [-0.021, -0.001] | -0.006 [-0.018, +0.006] | lost |
 | PRIMARY_CLAIMS.csv | P4 U-MtE+balanced > balanced|Ovary | +0.028 [+0.000, +0.057] | +0.031 [-0.014, +0.077] | lost |
 | adhoc_bootstraps.json | sweep|capsule_dino518|r=1.0|umte_balanced-balanced | +0.047 [+0.004, +0.091] | +0.057 [-0.008, +0.121] | lost |
+| zero_shot/boot.json | medsiglip448|ovary|trapB|zs_mask-zs | -0.054 [-0.094, -0.014] | -0.054 [-0.135, +0.030] | lost |
 | thyroid/dino518_universal/bootstrap_vs_erm.csv | trapB|dfr|clean|dfr|erm | +0.027 [-0.007, +0.062] | +0.053 [+0.002, +0.105] | gained |
 | thyroid/dino518_main/bootstrap_vs_erm.csv | trapB|prevcal|clean|prevcal|erm | -0.041 [-0.071, -0.012] | -0.032 [-0.084, +0.021] | lost |
 | thyroid/dino518_main/bootstrap_vs_erm.csv | trapB|dfr|clean|dfr|erm | +0.027 [-0.007, +0.062] | +0.053 [+0.002, +0.105] | gained |
@@ -258,6 +259,18 @@ Old: archived runs, per-seed bootstrap (images resampled independently within ea
 | analysis/E14_area_ratio.json | T1 | -0.043 [-0.066, -0.021] | -0.057 [-0.095, -0.022] | 1.63 |
 | analysis/E14_area_ratio.json | T2 | -0.033 [-0.055, -0.012] | -0.046 [-0.082, -0.013] | 1.62 |
 | analysis/E14_area_ratio.json | T3 | -0.026 [-0.044, -0.007] | -0.037 [-0.071, -0.005] | 1.80 |
+| zero_shot/boot.json | medsiglip448|thyroid|crossover (zs_mask-zs)_B-(zs_mask-zs)_A | +0.103 [+0.079, +0.127] | +0.103 [+0.064, +0.143] | 1.65 |
+| zero_shot/boot.json | medsiglip448|thyroid|trapA|zs_mask-zs | +0.013 [-0.001, +0.028] | +0.017 [-0.011, +0.045] | 1.93 |
+| zero_shot/boot.json | medsiglip448|thyroid|trapB|zs_mask-zs | +0.116 [+0.097, +0.136] | +0.120 [+0.078, +0.162] | 2.15 |
+| zero_shot/boot.json | medsiglip448|capsule|crossover (zs_mask-zs)_B-(zs_mask-zs)_A | +0.049 [+0.024, +0.076] | +0.045 [+0.001, +0.090] | 1.71 |
+| zero_shot/boot.json | medsiglip448|capsule|trapA|zs_mask-zs | +0.007 [-0.006, +0.020] | +0.004 [-0.021, +0.029] | 1.92 |
+| zero_shot/boot.json | medsiglip448|capsule|trapB|zs_mask-zs | +0.056 [+0.034, +0.079] | +0.049 [+0.001, +0.098] | 2.16 |
+| zero_shot/boot.json | medsiglip448|ovary|crossover (zs_mask-zs)_B-(zs_mask-zs)_A | +0.181 [+0.135, +0.228] | +0.181 [+0.103, +0.261] | 1.70 |
+| zero_shot/boot.json | medsiglip448|ovary|trapA|zs_mask-zs | -0.235 [-0.260, -0.208] | -0.235 [-0.289, -0.180] | 2.10 |
+| zero_shot/boot.json | medsiglip448|ovary|trapB|zs_mask-zs | -0.054 [-0.094, -0.014] | -0.054 [-0.135, +0.030] | 2.06 |
+| zero_shot/boot.json | dermlip224|isic|crossover (zs_mask-zs)_B-(zs_mask-zs)_A | +0.051 [+0.031, +0.071] | +0.040 [+0.021, +0.058] | 0.93 |
+| zero_shot/boot.json | dermlip224|isic|trapA|zs_mask-zs | -0.078 [-0.093, -0.063] | -0.079 [-0.114, -0.044] | 2.33 |
+| zero_shot/boot.json | dermlip224|isic|trapB|zs_mask-zs | -0.027 [-0.040, -0.014] | -0.039 [-0.070, -0.008] | 2.38 |
 | thyroid/dino518_repro/bootstrap_vs_erm.csv | trapA|mask|test_rev|mask|erm | +0.109 [+0.095, +0.123] | +0.109 [+0.085, +0.133] | 1.76 |
 | thyroid/dino518_repro/bootstrap_vs_erm.csv | trapA|mask|clean|mask|erm | +0.081 [+0.070, +0.091] | +0.081 [+0.062, +0.100] | 1.80 |
 | thyroid/dino518_repro/bootstrap_vs_erm.csv | trapB|mask|test_rev|mask|erm | +0.348 [+0.325, +0.370] | +0.348 [+0.307, +0.388] | 1.78 |

@@ -1,0 +1,181 @@
+\input{../common/preamble.tex}
+\input{tables/numbers.tex}
+\title{\textbf{Stage 6 --- Remedies, label audit, external validation and the paper}\\[3pt]\large Where the Shortcut Sits: supervisor meeting 6 of 6}
+\author{}
+\date{Report generated from the repository on \today}
+\begin{document}
+\maketitle
+\stagebox{\textbf{In one sentence.} What to do instead of masking depends on what carries the shortcut: annotation-free
+erasure (U-MtE) repairs overlays that carry it in their pixels, label-based reweighting is needed when it is carried by
+correlates, and no remedy improves on masking uniformly on unaltered data; the image audit that validates our artifact
+labels is prepared for a clinician but not yet done; the dermoscopy result replicates on new patients; and the paper,
+with every number traced to the regenerated results, is ready for the supervisor's review.}
+\input{../common/notation.tex}
+
+\section{Where we are}
+Stages~1--5 established the location law, its mechanism, its causal checks and its clinical consequences. This last
+meeting covers what the thesis recommends in practice (the decision guide and the remedy tests of the primary family),
+the evidence still missing (a clinician's audit of the automatic artifact labels), the external validation that was
+feasible, the limitations, and the state of the paper: its structure, its number audit, the CLAIM checklist and draft
+submission statements.
+
+\section{Question}
+\begin{enumerate}[label=\textbf{Q6\alph*},leftmargin=*]\itemsep1pt
+\item Which remedy should replace or complement masking, and does any of them transfer to unaltered data?
+\item How reliable are the automatic artifact labels that define ``inside'' and ``outside'' --- and how will a clinician
+check them?
+\item Does the main result hold on new patients from a different collection?
+\item Is the paper ready to submit, and what must the author still decide?
+\end{enumerate}
+\paragraph{Design decisions} The remedies were demoted from a headline method to a \emph{decision guide} after the
+second review: they are tested in the primary family, but the paper's claim is the location law, not a new method. The
+image audit is \emph{blind} (neutral identifiers, cells hidden) and stratified by label so that precision and recall
+can be estimated per location cell. External validation was run only if a pre-registered gate held (direct download,
+licence, patient identifiers, masks, cell counts); datasets that need an agreement were listed, not used.
+
+\section{Methods}
+\paragraph{Remedies} ROI masking; U-MtE (mask-then-erase: after masking, erase from the frozen features the subspace
+along which \emph{generic} synthetic overlays move the representation of masked images; no artifact annotation);
+U-MtE protected (label directions protected from erasure); group balancing and DFR (need image-level artifact labels);
+U-MtE with balancing. Primary tests: P2 (protected U-MtE $>$ mask), P3 (erasure $>$ augmentation with the same
+overlays), P4 (U-MtE with balancing $>$ balancing), Trap~A, Holm over the 16-test family.
+\paragraph{Image audit (Part B)} \sSixAuditN{} images: \sSixAuditCohorts{} cohorts $\times$ 3 cells (artifact inside the
+ROI, outside it, artifact-free, by our automatic labels) $\times$ 20 (10 positive, 10 negative diagnosis), fixed seed,
+the 518-px images the models saw. Each image and its overlay (ROI outline, automatic artifact mask) have a neutral
+identifier; the reviewer fills artifact presence, location, mask correctness and ROI correctness in
+\texttt{audit/review\_sheet.csv}. The key is kept outside the repository and fixed by its SHA-256
+(\sSixAuditHash); \texttt{audit/analyse\_audit.py} computes precision, recall, location agreement, ROI correctness and,
+with a second reviewer, Cohen's $\kappa$, and writes Table~\ref{tab:audit} of this report.
+\paragraph{External validation (A4)} ISIC 2020 \citep{rotemberg2021isic2020}: lesion masks from the existing U-Net
+(trained on ISIC 2018 only); hair/ruler masks from a segmenter trained only on the ISIC 2019 masks and frozen before
+any ISIC 2020 image was scored (hair-free balanced accuracy \sSixSegBA, pixel IoU \sSixSegIoU); the ISIC 2019 trap
+protocol unchanged with patient-disjoint folds.
+
+\section{Experiments}
+\input{tables/experiments.tex}
+
+\section{Results}
+\subsection{Remedies and the decision guide}
+Table~\ref{tab:rem} and Figure~\ref{fig:rem} compare the remedies in the in-ROI trap. Where the artifact carries the
+shortcut in its pixels (calipers), U-MtE, which needs no annotation, repairs most of what masking leaves (thyroid
+\sSixRemThyroidmte{} versus ERM, masking \sSixRemThyroidmask); with image-level artifact labels, U-MtE with balancing is
+best (\sSixRemThyroidmtebalanced). Where the shortcut is carried by correlates of the artifact (dermoscopic hair), no
+pixel-level method helps (U-MtE \sSixRemDermoscopymte) and reweighting is required (balancing \sSixRemDermoscopybalanced,
+DFR \sSixRemDermoscopydfr). Where the artifact resembles the disease (capsule debris versus erosion fibrin), unprotected
+erasure removes disease evidence (\sSixRemCapsulemte), protection repairs this (\sSixRemCapsulemteprotect), and
+label-based methods are best (\sSixRemCapsulemtebalanced). In the primary family, \sSixNRemOK{} of \sSixNRem{} remedy
+tests are supported after Holm correction (Table~\ref{tab:primrem}).
+\input{tables/remedies.tex}
+\begin{figure}[H]\centering\includegraphics[width=0.9\linewidth]{figures/remedies.pdf}
+\caption{Remedies in the in-ROI trap (change in reversed AUROC versus ERM, crossed 95\% CIs).}\label{fig:rem}\end{figure}
+\input{tables/primary_remedies.tex}
+\paragraph{On unaltered data no remedy transfers uniformly} On the natural test sets (Table~\ref{tab:natrem}), of
+\sSixNatRemN{} remedy--test-set comparisons with masking, \sSixNatRemPos{} favour the remedy and \sSixNatRemNeg{}
+favour masking; the rest are not significant. The decision guide therefore tells the reader which remedy fits which
+regime and how to diagnose the regime (oracle artifact removal on a few annotated images; the theory's fitted
+artifact--disease overlap), not which method to use everywhere.
+\input{tables/natural_remedies.tex}
+\begin{table}[H]\centering\scriptsize
+\caption{The decision guide (paper, Sec.~``What carries the shortcut decides the fix'').}\label{tab:guide}
+\begin{tabular}{p{3.4cm}p{3.6cm}p{4.2cm}p{3.6cm}}\toprule
+Regime & Example & Recommended & Diagnostic \\\midrule
+Overlay carries the shortcut in its pixels & calipers, rulers, tubes & mask, then U-MtE (no labels) or U-MtE with balancing (labels) & oracle removal of the artifact recovers most of the gap \\
+Artifact resembles the pathology & capsule debris vs.\ fibrin & mask plus DFR; protected erasure if no labels & large fitted artifact--disease overlap \\
+Shortcut carried by correlates & dermoscopic hair, chest drains & DFR or group balancing (labels needed) & oracle removal recovers little \\
+Encoder ignores the out-of-ROI artifact & chest tube with RAD-DINO & masking unnecessary & reversed $\approx$ clean AUROC at no overlap \\
+\bottomrule\end{tabular}
+\end{table}
+
+\subsection{The image audit}
+The package is in \texttt{audit/} (Figure~\ref{fig:ex6} shows the kind of image the reviewer sees; the audit images
+themselves are not reproduced here, to keep the review blind). Licence decisions per dataset are in
+Table~\ref{tab:lic}: images whose redistribution is not confirmed are kept outside the repository and regenerated from the
+original data by the sampling script. Reviewed rows so far: \sSixAuditRated{} of \sSixAuditN.
+\input{tables/audit_results.tex}
+\input{tables/licences.tex}
+
+\subsection{External validation on new patients}
+The search is recorded in \texttt{stages/EXTERNAL\_VALIDATION\_SEARCH.md}. ISIC 2020 met every condition: direct
+download, CC BY-NC licence, patient identifiers, masks producible by our frozen models, and the cell-count gate
+(hair-free melanomas \sSixExtAZeropos, Trap~A melanomas \sSixExttrapAAOnepos, Trap~B melanomas \sSixExttrapBAOnepos; every
+cell at least 50). On \sSixExtImages{} images of \sSixExtPatients{} patients the crossover is \sSixExtX: masking harms
+with hair on the lesion (\sSixExttrapA) and helps with hair beside it (\sSixExttrapB) (Table~\ref{tab:ext}). Thyroid
+cohorts with patient identifiers either lack nodule masks (ThyUS2Path) or require an agreement (TN-SCUI 2020; Stanford
+AIMI) and were not used.
+\input{tables/external.tex}
+\begin{figure}[H]\centering\includegraphics[width=0.85\linewidth]{figures/external_examples.pdf}
+\caption{ISIC 2020 images from the external traps (CC BY-NC 4.0), with the lesion outline from the frozen U-Net
+(\textcolor{roigreen}{green}); predicted hair/ruler masks are not drawn. Selection: a random image among the top quartile
+of predicted hair/ruler area in each artifact cell (seed 20260928); any hair-free image.}\label{fig:ex6}\end{figure}
+
+\subsection{The paper}
+\paragraph{Title} \emph{\sSixTitle}. Target: \emph{Medical Image Analysis}. Main text \sSixPagesMain{} pages
+(review format), supplement \sSixPagesSupplement{} pages; abstract \sSixAbstractWords{} words (limit 250).
+\paragraph{Structure} Introduction; data and setup; the location law (controlled, real, transplant, matched, A2,
+replication including ISIC 2020, chest-radiograph boundary); mechanism; theory (held-out prediction); consequences on
+unaltered data (operating points, the post hoc thyroid subgroup labelled as exploratory confirmation); the decision
+guide; robustness; discussion (including ``why this is not obvious'' and eight limitations).
+\paragraph{Number audit} Every interval in the main text and supplement (the \verb|\input| tree of \texttt{main.tex}
+and \texttt{supplement.tex}) must match an interval of a regenerated, crossed-bootstrap result file together with its
+estimate; every other three-decimal number must occur in a result file. Result: \sSixAuditIntervals{} intervals and
+\sSixAuditNumbers{} numbers checked, \sSixAuditFailed{} failed to trace.
+\paragraph{CLAIM 2024} \sSixClaimN{} items: \sSixClaimYes{} yes, \sSixClaimPartial{} partial, \sSixClaimNo{} no,
+\sSixClaimNA{} not applicable (partial or no: items \sSixClaimPartialItems; checklist in the supplement). The
+remaining gaps are acquisition protocols the dataset providers did not release, the absence of external ultrasound and
+capsule cohorts, and the clinician audit.
+
+\subsection{Draft submission statements (for the author to confirm)}
+\paragraph{Data availability} All datasets are public: ISIC 2018 and 2019 challenge data and ISIC 2020 (CC BY-NC 4.0),
+HAM10000 lesion masks (CC BY-NC 4.0), the published ISIC 2019 hair/ruler masks, TN3K with TNCD labels, MMOTU (CC BY
+4.0), SEE-AI and its expert contamination masks (CC BY 4.0), NIH ChestX-ray14 and RANZCR-CLiP (competition terms).
+Derived masks, cohort files and all result files are in the repository; images are not redistributed where the
+licence does not allow it.
+\paragraph{Code availability} Code, pre-registrations with their commit history, result files and the scripts that
+regenerate every table, figure and number are in the public GitHub repository (\texttt{hossam1999/\allowbreak Where\_\allowbreak shortcut\_\allowbreak sits}).
+\paragraph{Ethics} Retrospective analysis of public, de-identified datasets released by their providers for research;
+no new data were collected and no patient was contacted. The author should confirm with the institution whether a
+formal waiver is required.
+\paragraph{Use of AI assistance} The experiments, analysis code, reports and parts of the manuscript text were
+produced with the assistance of an AI system (Claude, Anthropic) working under the author's direction; the author
+designed the study, reviewed every result and is responsible for the content. The wording should follow the journal's
+policy on generative-AI disclosure.
+
+\section{What failed or changed}
+\begin{itemize}[leftmargin=*]\itemsep1pt
+\item \textbf{The clinician audit has not been done.} The package is ready; until it is, artifact-label validity rests
+on the analysis agent's visual audit (Stage~3).
+\item \textbf{No remedy transfers uniformly} to unaltered data; U-MtE was demoted from headline method to one option of
+the decision guide. Three remedy tests of the primary family changed with the corrected bootstrap (Stage~4).
+\item \textbf{External validation is dermoscopy only}; no thyroid cohort met the gate without an agreement or missing
+masks.
+\item \textbf{Chest-radiograph device and drain runs, LaMa inpainting and template erasure} could not be regenerated;
+they appear as point estimates labelled ``not re-estimated''.
+\item \textbf{Figures committed before the licence check} (\texttt{report/figures/data\_thyroid.png},
+\texttt{report/figures/data\_isic.png}) conflict with the licence rule and need the author's decision.
+\end{itemize}
+
+\section{Conclusion}
+\textbf{Supported.} A decision guide grounded in what carries the shortcut; external replication of the dermoscopy
+crossover on new patients; a paper whose every interval traces to the corrected results. \textbf{Qualified.} The
+remedies help in the trap environments but none transfers uniformly to unaltered data. \textbf{Not yet available.} A
+clinician's audit of the artifact labels; external validation in ultrasound and capsule endoscopy.
+
+\section{Questions for the supervisor}
+\begin{enumerate}\itemsep1pt
+\item Who should perform the image audit (two dermatologists and a sonographer?), and should it be completed before
+submission?
+\item Should the remedies stay in the paper as a decision guide, or move entirely to a second paper?
+\item Is \emph{Medical Image Analysis} the right target, given the methodological emphasis, or would a clinical-AI venue
+suit the operating-point results better?
+\item Are the draft data-availability, ethics and AI-assistance statements acceptable to the institution?
+\end{enumerate}
+
+\section{Next stage}
+Before submission: (i) run the clinician audit and replace Table~\ref{tab:audit} with the audit analysis script
+(\texttt{audit/\allowbreak analyse\_\allowbreak audit.py}); (ii) decide on the figures that conflict with the licence rule; (iii) confirm the
+submission statements; (iv) obtain the supervisor's decisions above; (v) push the final registration record and tag the
+submitted version.
+
+\bibliographystyle{plainnat}
+\bibliography{../common/references}
+\end{document}

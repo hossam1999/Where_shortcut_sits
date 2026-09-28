@@ -44,11 +44,11 @@ No. & Item & Answer & Where / comment \\\midrule\endhead
 27 & Ensembling techniques & NA & No ensembles. \\
 \multicolumn{4}{l}{\emph{Methods --- evaluation}}\\
 28 & Metrics of model performance & Yes & Reversed, correlated and clean AUROC; location crossover; AUPRC, Brier, ECE, sensitivity/specificity (M Setup, Consequences on unaltered data). \\
-29 & Statistical measures of significance and uncertainty & Yes & Crossed seed$\times$image bootstrap for headline claims, per-seed bootstrap elsewhere (S15); Holm per family (M Setup; S1). \\
+29 & Statistical measures of significance and uncertainty & Yes & Crossed seed$\times$image bootstrap for every interval, from regenerated runs (S15; old-versus-new comparison in the repository); Holm per family (M Setup; S1). \\
 30 & Robustness or sensitivity analysis & Yes & Label definitions, leakage grouping, covariate matching, rebuild on new hardware (M Robustness). \\
 31 & Methods for explainability or interpretability & Yes & Same-head counterfactual sensitivity to inserting the artifact (M Mechanism). \\
 32 & Evaluation on internal data & Yes & All traps and sweeps. \\
-33 & Testing on external data & Partial & ISIC leave-one-hospital-out; no external cohort for ultrasound or capsule endoscopy (M Limitations; S3). \\
+33 & Testing on external data & Partial & Dermoscopy: new patients from ISIC 2020 under a pre-registered gate (patient-disjoint folds) and ISIC leave-one-hospital-out; no external cohort for ultrasound or capsule endoscopy (M Limitations; S3). \\
 34 & Clinical trial registration & NA & Retrospective; analysis pre-registrations in the repository (S1). \\
 \multicolumn{4}{l}{\emph{Results}}\\
 35 & Numbers of patients or examinations included and excluded & Yes & Image counts per cohort, trap cell and transplant feasibility; patients where identifiers exist (M Data; S11). \\

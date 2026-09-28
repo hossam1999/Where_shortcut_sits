@@ -1,0 +1,12 @@
+\begin{table}[H]\centering\scriptsize
+\caption{Experiments of this stage. Commit times come from this machine and are not independent proof of order.}\label{tab:exp}
+\begin{tabular}{p{3.1cm}p{2.1cm}p{2.4cm}p{3.2cm}p{3.3cm}}\toprule
+Experiment & Status & Registration & First commit (local time) & Support criterion \\\midrule
+U-MtE and variants (P2--P4) & \ok{} registered & UNIVERSAL\_\allowbreak{}I2E & \texttt{ee95f10}, 2026-09-26 20:14 & Holm $p<0.05$, estimate $>0$ \\
+Erasure-rank ablation & \ok{} registered & UMTE\_\allowbreak{}ABLATION & \texttt{30f19c8}, 2026-09-27 14:15 & descriptive \\
+16-test primary family & \no{} grouped after the individual results & STATISTICAL\_\allowbreak{}PLAN & \texttt{4e9d44c}, 2026-09-27 09:37 & Holm over 16 \\
+Natural-data remedies & \ok{} registered & REVIEW2 & \texttt{29cd0da}, 2026-09-27 18:56 & descriptive (decision guide) \\
+Image audit (prepared, not run) & \ok{} registered & FINAL (Part B) & \texttt{c45d482}, 2026-09-28 00:35 & precision, recall, location agreement, $\kappa$ \\
+External validation X1 & \ok{} registered & FINAL (A4) & \texttt{c45d482}, 2026-09-28 00:35 & gate, then crossover CI $>0$ \\
+\bottomrule\end{tabular}
+\end{table}
