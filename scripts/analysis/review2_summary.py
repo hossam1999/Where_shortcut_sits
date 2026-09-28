@@ -164,6 +164,8 @@ def r4():
                            "finetune|thyroid_vit_s|crossover mask-erm (B-A)": ("thyroid", "vit_small_patch16_224.augreg_in21k_ft_in1k"),
                            "finetune|capsule_resnet50|crossover mask-erm (B-A)": ("capsule", "resnet50"),
                            "finetune|ovary_resnet50|crossover mask-erm (B-A)": ("ovary", "resnet50")}.items():
+        if key not in adhoc:  # run without saved predictions cannot be regenerated (withdrawn, A1 rule)
+            continue
         v = adhoc[key]
         rows.append({"cohort": c, "arch": arch, "clusters": 5, "run": "archived", "crossover": v[0], "ci95_lo": v[1],
                      "ci95_hi": v[2], "p_boot_two_sided": np.nan})

@@ -109,13 +109,14 @@ def texts():
         "therefore reported as descriptive, and its location evidence rests on the transplant.%"])
     rep = [f"{NAME[c]} {cx('real-trap crossover (repro)', c)}" for c in COH]
     write("repro_text", [
-        "Every primary crossover reproduces within the pre-registered tolerance of 0.03 (archived $+0.145$, $+0.230$, "
-        "$+0.170$, $+0.368$; rebuilt, crossed CIs: " + "; ".join(rep) + ").%"])
+        "Every primary crossover reproduces the archived point estimate within the pre-registered tolerance of 0.03 "
+        "(rebuilt, crossed CIs: " + "; ".join(rep) + ").%"])
     ft = pd.read_csv(R2 / "R4_finetune.csv")
-    fh = get("fine-tuned crossover (ResNet-50)", "ISIC hair")
+    fx = pd.read_csv(paths.RESULTS / "finetune" / "ft_crossovers.csv").set_index("run")  # regenerated, crossed
+    fc = lambda k: ci(fx.loc[k].seed_delta_mean, fx.loc[k].ci95_lo, fx.loc[k].ci95_hi)
     write("ft_text", [
-        f"(crossover of a fine-tuned ResNet-50: hair {ci(fh.estimate, fh.crossed_lo, fh.crossed_hi)}; capsule $+0.584$ "
-        "[$+0.469, +0.691$]; thyroid ViT-S $+0.168$ [$+0.074, +0.265$], ResNet-50 $+0.057$ [$-0.021, +0.130$]). "
+        f"(crossover of a fine-tuned ResNet-50: hair {fc('Dermoscopy hair, ResNet-50')}; capsule {fc('Capsule, ResNet-50')}; "
+        f"thyroid ViT-S {fc('Thyroid, ViT-S')}, ResNet-50 {fc('Thyroid, ResNet-50')}). "
         "The fine-tuned ovary network did not learn the task (ERM clean AUROC "
         f"{ft[(ft.cohort == 'ovary') & (ft.arch == 'resnet50_power')].iloc[0].erm_clean_trapA:.2f} and "
         f"{ft[(ft.cohort == 'ovary') & (ft.arch == 'resnet50_power')].iloc[0].erm_clean_trapB:.2f} in Trap~A and B, "
@@ -216,12 +217,16 @@ def supp_tables():
           "neutral interaction is below one quarter of the artifact's.}"]
     write("paste_edge", L, "review3")
     c = C[C.orig_lo.notna()].copy()
+    # the original (per-seed) intervals are not printed (docs/PREREGISTRATION_FINAL.md, A1); they are listed in
+    # results/bootstrap_correction/sweeps_umte_old_vs_new.md
+    c["verdict_changed"] = ((c.orig_lo > 0) | (c.orig_hi < 0)) != c.crossed_excludes_zero.astype(bool)
     L = ["\\begin{center}\\scriptsize\\resizebox{\\linewidth}{!}{\\begin{tabular}{llccc}\\toprule",
-         "Claim & Cohort / test set & Per-seed bootstrap (original) & Crossed seed$\\times$image bootstrap & Width ratio \\\\\\midrule"]
+         "Claim & Cohort / test set & Crossed seed$\\times$image bootstrap & Width relative to the original & Verdict changed \\\\\\midrule"]
     for r in c.itertuples():
-        L.append(f"{r.claim.replace('_', chr(92) + '_')} & {r.cohort} & {ci(r.orig_estimate, r.orig_lo, r.orig_hi)} & {ci(r.estimate, r.crossed_lo, r.crossed_hi)}"
-                 f"{'' if r.crossed_excludes_zero else '$^*$'} & {r.width_ratio:.2f} \\\\")
-    L += ["\\bottomrule\\end{tabular}}\\end{center}", "{\\footnotesize $^*$Crossed CI includes zero.}"]
+        L.append(f"{r.claim.replace('_', chr(92) + '_')} & {r.cohort} & {ci(r.estimate, r.crossed_lo, r.crossed_hi)}"
+                 f"{'' if r.crossed_excludes_zero else '$^*$'} & {r.width_ratio:.2f} & {'yes' if r.verdict_changed else 'no'} \\\\")
+    L += ["\\bottomrule\\end{tabular}}\\end{center}", "{\\footnotesize $^*$Crossed CI includes zero. The original intervals are "
+          "listed in \\texttt{results/bootstrap\\_correction/sweeps\\_umte\\_old\\_vs\\_new.md}.}"]
     write("crossed", L, "review3")
 
 

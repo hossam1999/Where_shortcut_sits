@@ -26,7 +26,14 @@ def main():
     fig, axes = plt.subplots(1, len(RUNS), figsize=(13, 2.7), sharey=False)
     rows = []
     for ax, (title, rel) in zip(axes, RUNS):
-        p = pd.read_csv(S / rel / "counterfactual_per_image.csv.gz")
+        f = S / rel / "counterfactual_per_image.csv.gz"
+        if not f.exists() and rel.endswith("_universal"):  # regenerated runs: main (ERM, mask) + proposed (U-MtE arms)
+            base = rel[:-len("_universal")]
+            m = pd.read_csv(S / f"{base}_main" / "counterfactual_per_image.csv.gz")
+            q = pd.read_csv(S / f"{base}_proposed" / "counterfactual_per_image.csv.gz")
+            p = pd.concat([m, q[~q.method.isin(m.method.unique())]], ignore_index=True)
+        else:
+            p = pd.read_csv(f)
         s = p.groupby(["method", "overlap", "seed"]).abs_delta_p.mean().reset_index()
         for arm, lab, c, ls in ARMS:
             q = s[s.method == arm]

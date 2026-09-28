@@ -14,10 +14,10 @@ perceptual hash (and, for capsule, blocks of 100 consecutive frames). As a pre-r
 united these groups with connected components of mean-centred DINOv2 embeddings at the most aggressive cosine
 threshold that keeps every group below 5\% of the cohort (thyroid: 3,455 $\to$ 3,081 groups, $\tau=0.80$; ovary:
 1,059 $\to$ 969, $\tau=0.80$; capsule: 137 $\to$ 135, $\tau=0.93$) and re-ran all primary contrasts. Eleven of twelve
-keep their sign and significance: the location crossover is $+0.235$ [$+0.211, +0.259$] (thyroid), $+0.157$
-[$+0.080, +0.235$] (ovary) and $+0.394$ [$+0.359, +0.430$] (capsule), and protected U-MtE still beats masking on
-thyroid ($+0.251$ [$+0.219, +0.279$]) and ovary ($+0.047$ [$+0.020, +0.072$]). The exception is the small ovary
-advantage of erasure over augmentation, which loses significance ($+0.020$ [$-0.011, +0.053$]). Embedding grouping
+keep their sign and significance: the location crossover is $+0.235$ [$+0.193, +0.275$] (thyroid), $+0.157$
+[$+0.053, +0.255$] (ovary) and $+0.353$ [$+0.296, +0.410$] (capsule), and protected U-MtE still beats masking on
+thyroid ($+0.251$ [$+0.215, +0.284$]) and ovary ($+0.051$ [$+0.020, +0.079$]). The exception is the small ovary
+advantage of erasure over augmentation, which loses significance ($+0.024$ [$-0.014, +0.062$]). Embedding grouping
 removes visually near-identical images of one patient or session; it cannot exclude differently looking images of
 the same patient.
 

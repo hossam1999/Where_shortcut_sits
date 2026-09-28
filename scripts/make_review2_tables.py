@@ -172,11 +172,16 @@ def registry_table():
 
 
 def op_all_table():
+    fc = paths.RESULTS / "final_op" / "operating_points_crossed_all.csv"  # regenerated, crossed bootstrap (mask - ERM)
     f = R / "operating_points.csv"
-    if not f.exists():
+    if fc.exists():
+        d = pd.read_csv(fc).rename(columns={"crossed_lo": "ci95_lo", "crossed_hi": "ci95_hi"})
+        q = d[d.metric.isin(["sens", "sens_conflict", "spec"])]
+    elif f.exists():
+        d = pd.read_csv(f)
+        q = d[(d.arm == "mask") & (d.ref == "erm") & d.metric.isin(["sens", "sens_conflict", "spec"])]
+    else:
         return
-    d = pd.read_csv(f)
-    q = d[(d.arm == "mask") & (d.ref == "erm") & d.metric.isin(["sens", "sens_conflict", "spec"])]
     names = {"thyroid": "Thyroid", "isic_BCN": "ISIC, BCN held out", "isic_HAM": "ISIC, HAM held out",
              "isic_MSK": "ISIC, MSK held out", "capsule": "Capsule"}
     L = ["\\begin{center}\\scriptsize", "\\begin{tabular}{llccc}\\toprule",

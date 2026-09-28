@@ -9,6 +9,20 @@ and matched traps and from the unaltered test data, not from the transplant. The
 whether the mask also removes disease context, which the linear-Gaussian account makes explicit and which differs
 between modalities (harm in dermoscopy, small gains in ultrasound and capsule endoscopy).
 
+\paragraph{Why this is not obvious} That a mask cannot remove what it keeps sounds self-evident; four findings show
+that the consequences are not. First, masking does not merely leave an in-ROI artifact in place: it makes the model
+rely on it \emph{more}. On the same images, inserting the ruler inside the lesion changes the masked model's prediction
+about twice as much as ERM's (mean $|\Delta p|$ 0.491 versus 0.235 at full overlap; Sec.~\ref{sec:mech}), because
+masking removes the competing evidence around it. Second, the consequence is clinical and measurable on data as
+collected: on the patient-disjoint thyroid split, masking lowers sensitivity at every validation-fixed operating point,
+most for malignant nodules that carry a caliper. Third, the size of the effect is predictable before it is observed:
+fitted only to clean and correlated performance, a two-parameter account predicts held-out reversed AUROC with less
+than half the error of the natural heuristic (0.052 versus 0.129), and it anticipates the one encoder without a hair
+gap. Fourth, the neutral-paste control shows that the artifact's appearance is not what matters: \emph{any}
+label-correlated pattern inside the ROI survives masking (52--92\% of the transplant effect), so the problem cannot be
+solved by recognising particular artifacts. Together these turn an intuition into a decision rule: where the shortcut
+sits, and what carries it, decides whether masking helps and what to use instead (Sec.~\ref{sec:guide}).
+
 \paragraph{Why this matters clinically} On the patient-disjoint official thyroid test split the in-ROI caliper is
 associated with benign nodules; masking keeps it and removes competing evidence, and the malignant nodules that carry a
 caliper are then missed more often at every operating point we examined. An ROI-masked model can therefore look
@@ -23,8 +37,9 @@ robustness by the minimum of correlated and reversed AUROC.
 \paragraph{Limitations}
 (i) \emph{Artifact labels.} Calipers are segmented by a rule-based detector and capsule debris by a patch-token probe
 (IoU 0.62 against expert masks); hair masks are published semi-automatic masks. Our visual audits were carried out by
-the analysis team, not by clinicians; an expert audit with two independent raters and inter-rater agreement is
-prepared (blinded kit and scoring script in the repository) but not yet done. Label errors dilute the constructed
+the analysis team, not by clinicians; a blinded audit of 240 images (four cohorts, three location cells, neutral
+identifiers; review sheet and scoring script in the repository) is prepared for two independent clinical raters but
+not yet done. Label errors dilute the constructed
 correlation and should bias effects toward zero, and stricter label definitions strengthen rather than weaken the
 results (Sec.~\ref{sec:robustness}); the transplant experiment does not depend on the artifact-free group being
 perfectly clean because the transplanted instance is identical at both locations.
@@ -34,11 +49,13 @@ leaves 11 of 12 primary estimates unchanged); the official TN3K/TNCD test split 
 patient-disjoint. The one open cohort we found with patient identifiers, pathology labels and real calipers
 (ThyUS2Path; 842 patients) has no nodule masks and uses a scanner interface on which our frozen caliper detector
 fires on interface elements; external validation on it requires a transferred nodule segmentation and a re-validated
-detector and is left for future work.
+detector and is left for future work. For dermoscopy, external validation on new patients was possible and was run under
+a pre-registered cell-count gate (ISIC 2020, patient-disjoint folds, hair masks from a segmenter trained only on
+ISIC 2019): the crossover replicates ($+0.250$ [$+0.174, +0.327$]).
 (iii) \emph{Constructed shifts.} Reversed environments are constructed by subsampling; real deployment shifts are
 less extreme, which is why we report the unaltered test distributions separately.
 (iv) \emph{Absolute performance.} Frozen encoders with linear heads are below the best published fine-tuned models on
-the one cohort with a directly comparable benchmark (official TNCD split: 0.736 AUROC versus 0.773--0.784 for
+the one cohort with a directly comparable benchmark (official TNCD split: 0.735 AUROC versus 0.773--0.784 for
 fine-tuned CNNs with cross-entropy and up to 0.799 with curriculum learning, \citealp{gong2022acl}). The law
 replicates with end-to-end fine-tuned networks in three of four cohorts; on ovarian ultrasound the fine-tuned ResNet-50
 barely learns the task and shows no significant crossover (Sec.~\ref{sec:replication}). The other cohorts' binary
@@ -47,12 +64,15 @@ tasks have no published benchmark on the same split (Supplement~S10).
 the shortcut through correlates. The linear-Gaussian account is fitted per model and cannot anticipate a shortcut
 carried by correlates that the clean and correlated environments do not expose.
 (vi) \emph{Uncertainty and balance.} The original per-seed bootstrap understated CIs where seeds share test
-images; headline claims use a crossed bootstrap, but the controlled sweeps and the mitigation analyses of the
-supplement keep per-seed CIs, which are up to about twice too narrow. Matching left within-label standardised
+images. Every interval in this paper comes from regenerated runs with a crossed seed$\times$image bootstrap (median
+width 1.55 times the original); claims whose interval now includes zero were rewritten, and the few archived runs
+whose per-image predictions were not kept (chest-radiograph devices and drains, LaMa inpainting, template erasure) are
+reported as point estimates only. Matching left within-label standardised
 differences of up to 0.19 for some covariates. (vii) \emph{Transplant.} Pasted patterns, including neutral tissue,
 become learnable shortcuts; the transplant establishes location dependence on fixed images, not the size of real
 artifacts' effects in their natural context (for hair, whose natural shortcut is carried mostly by correlates, the
 difference is large). (viii) \emph{Pre-registration.} Every registration is committed before its outcome results (registry with commit hashes
 and times in Supplement~S1); commit times are set by the committing machine, so only the registrations of the second
 review round carry an external (GitHub push) time stamp, and the 16-test primary family was assembled after the
-individual results.
+individual results. The final round (regression-adjusted matching, external validation) was registered and pushed
+before its runs.

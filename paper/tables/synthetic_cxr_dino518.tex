@@ -1,0 +1,20 @@
+\begin{table*}\scriptsize
+\caption{Synthetic tube, NIH ChestX-ray14 pneumothorax, DINOv2 @518}
+\label{tab:synthetic_cxr_dino518}
+\resizebox{\textwidth}{!}{\begin{tabular}{lllllllllll}
+\toprule
+Method & Needs & clean@0 & rev@0 & clean@50 & rev@50 & clean@100 & rev@100 & Δrev@0 & Δrev@50 & Δrev@100 \\
+\midrule
+ERM & — & 0.859 & 0.629 & 0.849 & 0.454 & 0.852 & 0.410 &  &  &  \\
+ROI masking & ROI mask (train+test) & 0.883 & 0.883 & 0.864 & 0.441 & 0.867 & 0.327 & +0.254 [+0.230, +0.278] & -0.013 [-0.041, +0.014] & -0.083 [-0.112, -0.057] \\
+Inpainting (oracle) & artifact pixels (train+test) & 0.860 & 0.855 & 0.859 & 0.851 & 0.861 & 0.851 & +0.225 [+0.204, +0.247] & +0.398 [+0.370, +0.425] & +0.442 [+0.413, +0.470] \\
+Group-balanced & image-level A (train) & 0.853 & 0.858 & 0.851 & 0.853 & 0.851 & 0.852 & +0.229 [+0.206, +0.251] & +0.399 [+0.372, +0.427] & +0.442 [+0.414, +0.470] \\
+DFR & image-level A (val) & 0.841 & 0.848 & 0.843 & 0.844 & 0.842 & 0.842 & +0.218 [+0.197, +0.240] & +0.390 [+0.364, +0.417] & +0.433 [+0.406, +0.460] \\
+LEACE (paired, oracle renders) & paired renders (train) & 0.862 & 0.862 & 0.861 & 0.861 & 0.862 & 0.862 & +0.233 [+0.212, +0.255] & +0.407 [+0.380, +0.435] & +0.452 [+0.424, +0.481] \\
+Insert-then-erase (artifact templates) & artifact templates & 0.855 & 0.854 & 0.854 & 0.853 & 0.853 & 0.850 & +0.225 [+0.204, +0.247] & +0.399 [+0.371, +0.426] & +0.440 [+0.412, +0.469] \\
+Insert-then-erase + balanced (artifact templates) & artifact templates + A (train) & 0.846 & 0.846 & 0.846 & 0.846 & 0.845 & 0.844 & +0.217 [+0.195, +0.239] & +0.392 [+0.365, +0.420] & +0.435 [+0.405, +0.464] \\
+Insert-then-erase rank-1 (ablation) & artifact templates & 0.851 & 0.831 & 0.862 & 0.857 & 0.866 & 0.825 & +0.202 [+0.180, +0.225] & +0.403 [+0.377, +0.430] & +0.416 [+0.390, +0.442] \\
+Insertion augmentation & artifact templates & 0.869 & 0.758 & 0.866 & 0.639 & 0.867 & 0.598 & +0.129 [+0.115, +0.142] & +0.185 [+0.169, +0.201] & +0.188 [+0.172, +0.206] \\
+\bottomrule
+\end{tabular}}
+\end{table*}

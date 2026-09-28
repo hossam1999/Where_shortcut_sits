@@ -1,10 +1,10 @@
 \section*{S7. Backbone scale}
 Replacing DINOv2 ViT-B/14 (86\,M parameters) by ViT-S/14 (21\,M) or ViT-L/14 (304\,M), with everything else fixed
 (pre-registered), the location crossover is positive in all nine cohort--size combinations (ViT-S / ViT-B / ViT-L:
-thyroid $+0.244$ / $+0.230$ / $+0.271$; ovary $+0.298$ / $+0.170$ / $+0.202$; capsule $+0.370$ / $+0.368$ /
-$+0.408$; every CI excludes zero), and protected U-MtE beats masking on thyroid and ovary at every size (ViT-S
-$+0.181$ [$+0.146, +0.218$] and $+0.103$ [$+0.078, +0.128$]; ViT-L $+0.222$ [$+0.195, +0.256$] and $+0.060$
-[$+0.043, +0.077$]). Larger models exploit the in-ROI shortcut \emph{more}: the ERM correlated--reversed gap grows
-from 0.547 to 0.621 (thyroid) and from 0.319 to 0.570 (ovary) between ViT-S and ViT-L, so scale does not remove it.
-On capsule, disease protection is less complete with ViT-L ($-0.040$ [$-0.046, -0.035$] versus masking).
+thyroid $+0.247$ / $+0.239$ / $+0.263$; ovary $+0.296$ / $+0.170$ / $+0.207$; capsule $+0.370$ / $+0.377$ /
+$+0.417$; every CI excludes zero), and protected U-MtE beats masking on thyroid and ovary at every size (ViT-S
+$+0.225$ [$+0.168, +0.276$] and $+0.103$ [$+0.074, +0.134$]; ViT-L $+0.274$ [$+0.243, +0.306$] and $+0.060$
+[$+0.037, +0.084$]). Larger models exploit the in-ROI shortcut \emph{more}: the ERM correlated--reversed gap grows
+from 0.537 to 0.622 (thyroid) and from 0.320 to 0.564 (ovary) between ViT-S and ViT-L, so scale does not remove it.
+On capsule, disease protection is less complete with ViT-L ($-0.044$ [$-0.056, -0.032$] versus masking).
 

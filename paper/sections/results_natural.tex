@@ -16,9 +16,12 @@ each seed's validation split at five operating points and compared test sensitiv
 masking lowers sensitivity at all five operating points, each with a CI excluding zero, for example from
 \input{tables/review2_op_inline}. Specificity rises correspondingly, so part of the change is a shift of the score distribution; but the loss is
 concentrated where the shortcut conflicts with the label: among the malignant nodules that carry an in-ROI caliper,
-at a validation specificity of 0.80 sensitivity falls by \input{tables/review2_op_conflict}. This subgroup was
-defined after the first unaltered-data analysis (where its AUROC harm was found); the operating-point test in it was
-registered before the numbers were computed. The pre-registered decision rule
+at a validation specificity of 0.80 sensitivity falls by \input{tables/review2_op_conflict}. \emph{Registration
+status: a pre-registered test inside a post hoc subgroup (exploratory confirmation).} The subgroup (the 78 malignant
+nodules of the official test split that carry an in-ROI caliper; the same 78 in every seed) was defined after the
+first unaltered-data analysis, where its AUROC harm was found; the operating-point test in it was registered before
+the operating points were computed. It is not part of the 16-test primary family, and its size and post hoc definition
+limit its confirmatory weight. The pre-registered decision rule
 (loss at the maximal-balanced-accuracy threshold and at $\ge3$ of the four other operating points) is met. On capsule
 endoscopy, where masking improves AUROC overall, it lowers the sensitivity for erosions carrying debris on the lesion
 at the two high-sensitivity operating points (Supplement~S9).

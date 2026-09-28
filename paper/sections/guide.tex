@@ -12,15 +12,15 @@ linear-Gaussian account (Sec.~\ref{sec:theory}) explains each.
 debris and tubes. Masking removes an out-of-ROI copy and leaves an in-ROI copy. Without any
 artifact annotation, erasing from the frozen features the subspace along which \emph{generic} synthetic overlays move
 the representation of masked images (mask-then-erase, U-MtE; Supplement~S8) removes most of what masking leaves:
-thyroid $+0.222$ [$+0.197, +0.251$] over masking with DINOv2, $+0.204$ [$+0.174, +0.237$] with MedSigLIP and
-$+0.128$ [$+0.112, +0.145$] with a ConvNeXt, and erasure beats augmentation with the same overlays (thyroid $+0.207$
-[$+0.182, +0.235$]). With image-level artifact labels, group balancing on top of it is the most robust option
+thyroid $+0.224$ [$+0.195, +0.253$] over masking with DINOv2, $+0.246$ [$+0.224, +0.269$] with MedSigLIP and
+$+0.135$ [$+0.102, +0.168$] with a ConvNeXt, and erasure beats augmentation with the same overlays (thyroid $+0.215$
+[$+0.189, +0.244$]). With image-level artifact labels, group balancing on top of it is the most robust option
 (Table~\ref{m:tab:remedies}).
 
 \paragraph{(2) Artifacts that resemble the pathology} Capsule debris versus erosion fibrin. Any subspace estimated
 from artifact appearance also contains disease evidence ($\rho$ large in Sec.~\ref{sec:theory}); unprotected erasure
-is worse than masking ($-0.115$), protecting the label directions removes the failure but not the shortcut
-($-0.010$ [$-0.020, -0.001$]). With image-level artifact labels masking plus last-layer retraining is the most robust
+is worse than masking ($-0.126$ [$-0.146, -0.107$]), protecting the label directions removes the failure but not the shortcut
+($-0.006$ [$-0.018, +0.006$]). With image-level artifact labels masking plus last-layer retraining is the most robust
 option (0.88).
 
 \paragraph{(3) Shortcuts carried by correlates of the artifact} Dermoscopic hair co-varies with body site, age and

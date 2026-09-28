@@ -5,26 +5,33 @@
 \subsection{Controlled dermoscopy: the effect reverses with overlap}
 With a synthetic ruler whose overlap with the lesion is swept from 0 to 100\% (2,437 ISIC 2018 images, DINOv2
 ViT-B/14 at 518\,px, three seeds), ROI masking improves reversed-environment AUROC over ERM by $+0.184$
-[$+0.146, +0.224$] when the ruler lies outside the lesion and \emph{lowers} it by $-0.097$ [$-0.138, -0.056$],
-$-0.112$ [$-0.155, -0.068$] and $-0.129$ [$-0.170, -0.087$] at 50, 75 and 100\% overlap (location interaction
-$+0.313$ [$+0.272, +0.353$]; Table~\ref{tab:synthetic_isic_dino518}). The sign flip is reproduced at 224\,px and
+[$+0.117, +0.250$] when the ruler lies outside the lesion and \emph{lowers} it by $-0.097$ [$-0.164, -0.030$],
+$-0.111$ [$-0.181, -0.043$] and $-0.129$ [$-0.195, -0.064$] at 50, 75 and 100\% overlap (location interaction
+$+0.313$ [$+0.258, +0.370$]; Table~\ref{tab:synthetic_isic_dino518}); at 25\% overlap the change is not significant
+($-0.059$ [$-0.127, +0.008$]). The sign flip is reproduced at 224\,px and
 under randomised ruler colour, opacity, ticks and scale. At 0\% overlap the masked model's correlated and reversed
 AUROC coincide (0.849/0.849); at 100\% its correlated AUROC exceeds ERM's (0.961 vs 0.937): it uses the ruler
 \emph{more}. Synthetic calipers on thyroid nodules, synthetic debris on capsule lesions and synthetic calipers on
-ovarian tumours give the same pattern (location interactions $+0.432$ [$+0.377, +0.492$], $+0.205$
-[$+0.150, +0.259$]; ovary at full overlap $-0.197$ [$-0.292, -0.100$]; Fig.~\ref{fig:dose}).
+ovarian tumours give the same interaction (thyroid $+0.433$ [$+0.362, +0.507$], capsule $+0.228$
+[$+0.144, +0.324$], ovary $+0.238$ [$+0.144, +0.340$]; Fig.~\ref{fig:dose}); whether the lost benefit becomes harm
+depends on the setting (ovary at full overlap $-0.197$ [$-0.357, -0.035$]; thyroid $-0.030$ [$-0.105, +0.042$]).
 \input{tables/synthetic_isic_dino518}
 
 \subsection{Real artifacts in four diseases (pre-registered)}
 Each real trap pair shares one artifact-free group; Trap~A adds images whose artifact lies mostly inside the ROI
 ($r\ge0.5$), Trap~B images whose artifact lies outside it ($r<0.1$); five seeds of five-fold group-safe
 cross-validation. The crossover $[\text{mask}-\text{ERM}]_{\text{Trap B}}-[\text{mask}-\text{ERM}]_{\text{Trap A}}$ is
-positive and Holm-significant in all four cohorts: dermoscopic hair $+0.145$ [$+0.105, +0.181$], thyroid calipers
-$+0.230$ [$+0.204, +0.255$], ovarian calipers $+0.170$ [$+0.116, +0.224$] and capsule debris $+0.368$
-[$+0.340, +0.397$]. On dermoscopy masking \emph{harms} in-ROI ($-0.037$ [$-0.057, -0.019$], negative in all five
-seeds; BCN $-0.051$ [$-0.075, -0.027$]) and helps out of the ROI ($+0.107$ [$+0.078, +0.135$]). On thyroid, ovarian and
-capsule images in-ROI masking still helps, but far less than out of the ROI (thyroid $+0.111$ [$+0.097, +0.124$]
-versus $+0.341$ [$+0.320, +0.363$]; capsule $+0.096$ versus $+0.465$), and the masked Trap~A model still relies on the calipers (correlated 0.902 versus reversed 0.400). Because the
+positive and Holm-significant in all four cohorts: dermoscopic hair $+0.147$ [$+0.111, +0.185$], thyroid calipers
+$+0.239$ [$+0.196, +0.280$], ovarian calipers $+0.170$ [$+0.087, +0.252$] and capsule debris $+0.377$
+[$+0.327, +0.426$]. On dermoscopy masking \emph{harms} in-ROI ($-0.049$ [$-0.083, -0.018$], negative in all five
+seeds; BCN $-0.067$ [$-0.110, -0.025$]) and helps out of the ROI ($+0.098$ [$+0.060, +0.136$]). On thyroid, ovarian and
+capsule images in-ROI masking still helps, but far less than out of the ROI (thyroid $+0.109$ [$+0.085, +0.133$]
+versus $+0.348$ [$+0.307, +0.388$]; capsule $+0.084$ versus $+0.461$), and the masked Trap~A model still relies on the
+calipers (correlated 0.908 versus reversed 0.398). On new patients --- ISIC 2020, 32,997 images of 2,056 patients,
+patient-disjoint folds, hair masks from a segmenter trained only on ISIC 2019 and frozen before any ISIC 2020 image was
+scored --- the pre-registered external test reproduces the hair pattern: masking harms with hair on the lesion
+($-0.064$ [$-0.128, -0.002$]), helps with hair beside it ($+0.186$ [$+0.118, +0.249$]), crossover $+0.250$
+[$+0.174, +0.327$]. Because the
 artifact-bearing images of the two traps differ (next subsections), these crossovers describe the traps as built;
 their attribution to location rests on the matched traps for hair, thyroid and ovary and on the transplant for
 capsule, where matching is infeasible. What is universal in our data is therefore the \emph{gap}:
@@ -52,28 +59,32 @@ lesion or nodule size, artifact amount and acquisition covariates (age, sex, bod
 dermoscopy; image size and grey level for ultrasound; pre-registered), leaving everything else unchanged, and repeated
 it with a four times stricter calliper (full balance tables in Supplement~S11).
 \input{tables/review2_matched_text}
+A pre-registered doubly robust analysis on the matched samples---per-image placement values of the masked minus the
+ERM score regressed on the trap indicator, the label and every matching covariate within seed, with a crossed
+bootstrap---leaves the crossover unchanged: hair $+0.156$ [$+0.127, +0.187$], thyroid $+0.238$ [$+0.184, +0.291$],
+ovary $+0.165$ [$+0.056, +0.273$] (Holm $p=0.002$ each); residual imbalance after matching does not carry the effect.
 
 \subsection{Replication across encoders, training regimes and foundation models}\label{sec:replication}
-The crossover replicates with MedSigLIP (thyroid $+0.163$ [$+0.132, +0.194$], capsule $+0.332$ [$+0.296, +0.365$],
-ovary $+0.179$), a CNN (ConvNeXt-Base: thyroid $+0.284$ [$+0.253, +0.315$], capsule $+0.292$ [$+0.248, +0.337$]) and
+The crossover replicates with MedSigLIP (thyroid $+0.195$ [$+0.153, +0.238$], capsule $+0.335$ [$+0.286, +0.383$],
+ovary $+0.178$ [$+0.109, +0.248$]), a CNN (ConvNeXt-Base: thyroid $+0.275$ [$+0.231, +0.320$], capsule $+0.320$ [$+0.268, +0.372$]) and
 DINOv2 at three sizes (positive in all nine cohort--size combinations; Supplement~S7), and with end-to-end fine-tuning \input{tables/review2_ft_text}.
 Without any task training, the zero-shot scores of vision--language models are already swayed by artifacts, and
-masking changes them as the law predicts (MedSigLIP crossovers: thyroid $+0.103$ [$+0.079, +0.127$], capsule $+0.049$
-[$+0.024, +0.076$], ovary $+0.181$ [$+0.135, +0.228$]; DermLIP on hair $+0.051$ [$+0.031, +0.071$]); MedSigLIP's
+masking changes them as the law predicts (MedSigLIP crossovers: thyroid $+0.103$ [$+0.064, +0.143$], capsule $+0.045$
+[$+0.001, +0.090$], ovary $+0.181$ [$+0.103, +0.261$]; DermLIP on hair $+0.040$ [$+0.021, +0.058$]); MedSigLIP's
 zero-shot thyroid diagnosis itself is at chance (clean AUROC 0.45), so we use these scores only to show that the
 effect is a property of the representation.
 
 \paragraph{The one encoder without a hair gap} With the dermatology foundation model DermLIP and a trained linear
-head, masking harms at \emph{both} hair locations (Trap~A $-0.085$ [$-0.107, -0.063$], Trap~B $-0.087$
-[$-0.115, -0.060$]) and the hair crossover vanishes ($-0.002$ [$-0.033, +0.028$]), although the controlled ruler sweep
+head, masking harms at \emph{both} hair locations (Trap~A $-0.104$ [$-0.143, -0.067$], Trap~B $-0.090$
+[$-0.135, -0.046$]) and the hair crossover vanishes ($+0.014$ [$-0.037, +0.063$]), although the controlled ruler sweep
 reverses with DermLIP as with DINOv2 ($+0.161$ at no overlap, $-0.263$ to $-0.309$ at 25--100\%). Two measurements
-explain it. First, with DermLIP masking costs disease signal wherever the hair lies (clean AUROC $-0.060$
-[$-0.074, -0.045$] in Trap~A and $-0.081$ [$-0.098, -0.064$] in Trap~B): this encoder, trained on whole dermatology
+explain it. First, with DermLIP masking costs disease signal wherever the hair lies (clean AUROC $-0.066$
+[$-0.089, -0.043$] in Trap~A and $-0.063$ [$-0.094, -0.033$] in Trap~B): this encoder, trained on whole dermatology
 images, loses more from a masked background than DINOv2. Second, the pixel part of its hair shortcut is small in both
-traps (oracle hair inpainting $+0.044$ [$+0.034, +0.053$] and $+0.045$ [$+0.026, +0.059$]), whereas balancing, which
-also removes correlates, gains $+0.143$ and $+0.119$: masking removes little of the shortcut at either location, so
+traps (oracle hair inpainting $+0.033$ [$+0.025, +0.042$] and $+0.040$ [$+0.015, +0.064$]), whereas balancing, which
+also removes correlates, gains $+0.146$ and $+0.110$: masking removes little of the shortcut at either location, so
 there is no gap to find. The linear-Gaussian account fitted to DermLIP's clean and correlated AUROC anticipates this
-($-0.003$; Sec.~\ref{sec:theory}). The law describes what masking can remove; when the shortcut is carried by
+(predicted crossover $+0.013$, observed $+0.014$; Sec.~\ref{sec:theory}). The law describes what masking can remove; when the shortcut is carried by
 correlates and the encoder is fragile to masking, masking removes little at either location.
 
 \subsection{Chest radiography: a boundary case}

@@ -44,14 +44,16 @@ backbone (ViTs and CNNs) through a two-call API.
 \paragraph{U-MtE repairs what masking leaves behind}
 Without any artifact example, artifact mask or artifact label---it uses only the ROI mask that masking already
 requires---U-MtE improves reversed AUROC over masking in the in-ROI regime of
-every modality: thyroid calipers $+0.222$ [$+0.197, +0.251$] (DINOv2) and $+0.204$ [$+0.174, +0.237$] (MedSigLIP);
-dermoscopic hair $+0.052$ [$+0.044, +0.062$]; synthetic capsule debris $+0.081$ [$+0.050, +0.112$]; synthetic
-calipers $+0.278$ [$+0.232, +0.325$]; synthetic chest tubes $+0.134$ [$+0.120, +0.151$] (DINOv2 / RAD-DINO).
-With MedSigLIP the unbalanced method \emph{loses} to masking in both controlled sweeps (debris $-0.114$
-[$-0.147, -0.082$], calipers $-0.076$ [$-0.110, -0.043$]) although it wins on real thyroid calipers ($+0.204$);
-the balanced variant beats masking in all four controlled sweeps ($+0.193$ to $+0.471$) and has no location
-interaction in any of them. Disease protection turns the MedSigLIP debris failure into a gain ($+0.061$
-[$+0.032, +0.092$] over masking) but not the caliper one ($-0.041$ [$-0.089, -0.005$]).
+every modality: thyroid calipers $+0.224$ [$+0.195, +0.253$] (DINOv2) and $+0.246$ [$+0.224, +0.269$] (MedSigLIP);
+dermoscopic hair $+0.040$ [$+0.024, +0.056$]; synthetic capsule debris $+0.121$ [$+0.078, +0.170$]; synthetic
+calipers $+0.278$ [$+0.214, +0.344$]; synthetic chest tubes $+0.134$ [$+0.113, +0.156$] (DINOv2 / RAD-DINO).
+With MedSigLIP the unbalanced method \emph{loses} to masking in both controlled sweeps (debris $-0.190$
+[$-0.265, -0.120$], calipers $-0.076$ [$-0.120, -0.034$]) although it wins on real thyroid calipers ($+0.246$);
+the balanced variant beats masking at full overlap in all four controlled sweeps ($+0.211$ to $+0.470$) and has no
+significant location interaction in three of them (with MedSigLIP on capsule it gains \emph{more} at full overlap:
+interaction $-0.165$ [$-0.300, -0.025$]). Disease protection turns the MedSigLIP debris failure into a gain ($+0.114$
+[$+0.022, +0.238$] over masking at full overlap) and the caliper one into a non-significant difference ($-0.041$
+[$-0.095, +0.002$]).
 
 \paragraph{Sensitivity to the erasure rank} In a pre-registered ablation (Trap~A, DINOv2), the thyroid gain over masking
 is $+0.18$ to $+0.22$ for every setting that erases at least 16 directions (held-out energy 0.5--0.99, or fixed
@@ -63,17 +65,18 @@ the linear-Gaussian account (main paper) predicts.
 
 \paragraph{Erasure, not augmentation}
 Using the same generic overlays as training augmentation (overlaid copies of a random half of the training images,
-in the masked view) gains at most $+0.03$ over masking; erasing their subspace instead gains $+0.207$
-[$+0.182, +0.235$] (thyroid, DINOv2), $+0.177$ [$+0.148, +0.211$] (thyroid, MedSigLIP) and $+0.045$
-[$+0.037, +0.054$] (hair) more than augmentation. Under the stricter near-duplicate grouping
+in the masked view) gains at most $+0.03$ over masking; erasing their subspace instead gains $+0.215$
+[$+0.189, +0.244$] (thyroid, DINOv2), $+0.225$ [$+0.202, +0.247$] (thyroid, MedSigLIP) and $+0.035$
+[$+0.017, +0.055$] (hair) more than augmentation. Under the stricter near-duplicate grouping
 (main paper, stricter leakage grouping) the thyroid advantage is unchanged ($+0.192$) but the small ovary advantage
 ($+0.035$) loses significance, so we regard erase $>$ augment as established for thyroid and hair only.
 
 \paragraph{When the artifact resembles the disease}
-On real capsule debris U-MtE is worse than masking ($-0.115$): erosions carry yellow-white fibrin that resembles
-debris, and a subspace estimated from real-debris templates is worse still ($-0.395$). Disease protection removes
-the failure ($-0.010$ [$-0.020, -0.001$] generic, $-0.012$ [$-0.028, +0.003$] template) at a cost of at most
-$0.012$ where erasure already works (thyroid $-0.005$ [$-0.036, +0.024$], hair $-0.012$ [$-0.020, -0.003$]).
+On real capsule debris U-MtE is worse than masking ($-0.126$ [$-0.146, -0.107$]): erosions carry yellow-white fibrin
+that resembles debris, and a subspace estimated from real-debris templates is worse still ($-0.395$; archived run, not
+re-estimated). Disease protection removes the failure ($-0.006$ [$-0.018, +0.006$] generic; template variant $-0.012$,
+not re-estimated) at no cost where erasure already works (protected minus unprotected: thyroid $+0.059$
+[$+0.019, +0.096$], hair $+0.001$ [$-0.016, +0.017$]).
 
 \paragraph{With image-level artifact labels}
 Adding group balancing, U-MtE$_{\text{bal}}$ is the most robust model in thyroid ultrasound by the minimum of
@@ -81,14 +84,15 @@ correlated and reversed AUROC (0.788 DINOv2, 0.792 MedSigLIP; DFR 0.659 and 0.71
 masking plus last-layer retraining is higher (0.885 versus 0.857); on dermoscopic hair DFR alone is best (0.741)
 because most of the hair shortcut is not in the hair pixels (removing every hair patch with the oracle mask gains
 only $+0.015$). In both controlled sweeps the benefit of U-MtE$_{\text{bal}}$ no longer depends on location
-(interaction $-0.000$ [$-0.023, +0.023$] capsule; $-0.054$ [$-0.098, -0.004$] thyroid), whereas that of masking
-does ($+0.205$, $+0.432$).
-The capsule findings replicate with MedSigLIP (crossover $+0.332$ [$+0.296, +0.365$]; masking plus DFR 0.901).
-All thyroid and capsule findings replicate with a CNN (ConvNeXt-Base): crossovers $+0.284$ and $+0.292$; U-MtE $-$ mask $+0.128$ [$+0.112, +0.145$] and erase $-$ augment $+0.120$ [$+0.102, +0.139$] on thyroid.
+(interaction $+0.021$ [$-0.019, +0.061$] capsule; $-0.053$ [$-0.108, +0.003$] thyroid), whereas that of masking
+does ($+0.228$, $+0.433$).
+The capsule findings replicate with MedSigLIP (crossover $+0.335$ [$+0.286, +0.383$]; masking plus DFR 0.901).
+All thyroid and capsule findings replicate with a CNN (ConvNeXt-Base): crossovers $+0.275$ and $+0.320$; U-MtE $-$ mask $+0.135$ [$+0.102, +0.168$] and erase $-$ augment $+0.128$ [$+0.093, +0.161$] on thyroid.
 
 \paragraph{Label-free and erasure baselines}
-Among methods that need no artifact labels, U-MtE beats JTT \citep{liu2021jtt} by $+0.198$ [$+0.167, +0.231$]
-(thyroid), $+0.137$ [$+0.098, +0.179$] (ovary) and $+0.094$ [$+0.077, +0.109$] (chest drains, RAD-DINO; not with DINOv2, $-0.010$); JTT on the unmasked
+Among methods that need no artifact labels, U-MtE beats JTT \citep{liu2021jtt} by $+0.206$ [$+0.171, +0.241$]
+(thyroid), $+0.125$ [$+0.063, +0.189$] (ovary) and $+0.094$ (chest drains, RAD-DINO; archived run, not re-estimated;
+not with DINOv2, $-0.010$); JTT on the unmasked
 view is best on hair. Task-preserving concept removal (SPLINCE; \citealp{splice2025}), fitted with artifact labels in the whitened,
 minimal-distortion form of the original method, removes the artifact covariance at a large cost in disease signal
 (clean AUROC 0.56--0.78 versus 0.69--0.87 for masking) and still flips the shortcut on capsule endoscopy (reversed
@@ -100,8 +104,8 @@ the other. By min(reversed, correlated) U-MtE$_{\text{bal}}$ exceeds SPLINCE on 
 With vision--language backbones an artifact direction can be obtained from text alone (``a thyroid ultrasound image
 with measurement calipers'' minus ``a thyroid ultrasound image''; biased-prompt construction, \citealp{chuang2023debiasing}).
 Erasing that subspace after masking is a near no-op in every cohort ($+0.001$ to $+0.008$ over masking; MedSigLIP
-thyroid, ovary, capsule and DermLIP hair), whereas U-MtE with the same MedSigLIP features gains $+0.204$
-[$+0.174, +0.237$] (thyroid) and $+0.215$ [$+0.182, +0.246$] (ovary). The direction along which a described artifact
+thyroid, ovary, capsule and DermLIP hair), whereas U-MtE with the same MedSigLIP features gains $+0.246$
+[$+0.224, +0.269$] (thyroid) and $+0.210$ [$+0.167, +0.253$] (ovary). The direction along which a described artifact
 moves the \emph{text} embedding is not the direction along which the real artifact moves the \emph{image} embedding;
 synthetic insertions measure the latter directly.
 
@@ -114,33 +118,35 @@ better. A split-validation variant that admits DFR as a candidate is reported in
 
 \paragraph{Modern inpainting}
 Inpainting the detected caliper pixels with LaMa \citep{suvorov2022lama} and then masking is a strong baseline when
-artifact masks are available (thyroid $+0.226$ [$+0.213, +0.238$], ovary $+0.123$ [$+0.089, +0.155$] over masking).
-U-MtE$_{\text{protect}}$, which needs no artifact mask, matches it on thyroid ($-0.009$ [$-0.045, +0.023$]) and is
+artifact masks are available (thyroid $+0.226$, ovary $+0.123$ over masking; archived LaMa runs, intervals not
+re-estimated because their per-image predictions were not kept). U-MtE$_{\text{protect}}$, which needs no artifact
+mask, matches it on thyroid ($-0.009$, not re-estimated) and is
 below it on ovary ($-0.080$) and on dermoscopic hair, where published hair masks are available ($-0.086$); with
 image-level artifact labels, U-MtE$_{\text{bal}}$ exceeds it in all three ($+0.162$, $+0.067$, $+0.123$).
 
 \subsection*{S8.3 End-to-end fine-tuning and erase-while-fine-tuning}
 Fine-tuning ResNet-50 end-to-end (five folds) reproduces the frozen-backbone findings. Capsule: masking harms
-in-ROI ($-0.284$ [$-0.347, -0.226$]) and helps out-of-ROI ($+0.301$), crossover $+0.584$ [$+0.469, +0.691$].
-Thyroid: the crossover points the same way ($+0.057$ [$-0.021, +0.130$], five folds), and an end-to-end analogue of
+in-ROI ($-0.279$ [$-0.377, -0.185$]) and helps out-of-ROI ($+0.301$), crossover $+0.606$ [$+0.495, +0.716$].
+Thyroid: the crossover points the same way ($+0.063$ [$-0.022, +0.144$], five folds), and an end-to-end analogue of
 U-MtE---an invariance penalty between masked images with and without a generic overlay---improves on masking by
-$+0.143$ [$+0.099, +0.188$] without shortcut flipping (reversed 0.679, correlated 0.703), matching the best
+$+0.139$ [$+0.096, +0.184$] without shortcut flipping (reversed 0.679, correlated 0.703), matching the best
 label-using arm. It fails on capsule ($-0.021$), where the artifact resembles the pathology. Ovary (1,202 images)
 is underpowered: U-MtE end-to-end has the best reversed, correlated and clean AUROC, with CIs overlapping masking.
-A fine-tuned ViT-S reproduces the crossover on thyroid ($+0.168$ [$+0.074, +0.265$]), but the end-to-end U-MtE
-analogue does not improve on masking with this architecture ($+0.009$ [$-0.021, +0.040$]). Applying U-MtE post hoc to
-the penultimate features of the masked, fine-tuned ResNet-50 does not help either (pre-registered; $+0.004$
-[$+0.000, +0.012$] over the same features without erasure): after task training the shortcut is encoded along
+A fine-tuned ViT-S reproduces the crossover on thyroid ($+0.122$ [$+0.039, +0.211$]), but the end-to-end U-MtE
+analogue does not improve on masking with this architecture ($-0.000$ [$-0.026, +0.026$]). Applying U-MtE post hoc to
+the penultimate features of the masked, fine-tuned ResNet-50 does not help either (pre-registered; $-0.000$
+[$-0.001, +0.001$] over the same features without erasure): after task training the shortcut is encoded along
 task-specific directions that generic overlays do not move. For fully fine-tuned networks the subspace must be
 estimated and removed \emph{during} training. \emph{Erase-while-fine-tuning} (pre-registered; no artifact annotation)
 projects a running estimate of the overlay-shift subspace of the network's own penultimate features out before the
 head at every step and at test time, and adds feature invariance and prediction consistency between masked images with
-and without a generic overlay. On thyroid it improves on masking by $+0.157$ [$+0.114, +0.205$] with ResNet-50 and
-$+0.143$ [$+0.103, +0.187$] with ViT-S (reversed AUROC 0.693 and 0.608 vs 0.536 and 0.465), whereas each component
-alone works for only one architecture (projection + invariance: ResNet-50 $+0.160$ [$+0.114, +0.207$], ViT-S $+0.061$
-[$-0.005, +0.141$]; prediction consistency: ResNet-50 $+0.007$ [$-0.014, +0.029$], ViT-S $+0.062$ [$+0.031, +0.087$]).
+and without a generic overlay. On thyroid it improves on masking by $+0.195$ [$+0.153, +0.237$] with ResNet-50 and
+$+0.119$ [$+0.036, +0.198$] with ViT-S (reversed AUROC 0.693 and 0.608 vs 0.536 and 0.465), whereas each component
+alone works for only one architecture (projection + invariance: ResNet-50 $+0.186$ [$+0.144, +0.230$], ViT-S $+0.032$
+[$-0.093, +0.144$]; prediction consistency: ResNet-50 $+0.042$ [$+0.011, +0.074$], ViT-S $+0.061$ [$+0.036, +0.084$]; with the corrected
+bootstrap consistency alone is now significant for both, but smaller than the combination).
 With ResNet-50 the correlated AUROC falls slightly below the reversed one (0.661 vs 0.693), a mild over-correction.
-On ovary (ResNet-50) it is positive but not significant ($+0.094$ [$-0.011, +0.210$]; every fine-tuning contrast on this
-1,202-image cohort is underpowered), and on capsule, where debris resembles erosion fibrin, it fails ($-0.022$
-[$-0.046, +0.001$]), as does every annotation-free method.
+On ovary (ResNet-50) it is positive but not significant ($+0.045$ [$-0.036, +0.130$]; every fine-tuning contrast on this
+1,202-image cohort is underpowered), and on capsule, where debris resembles erosion fibrin, it fails ($-0.026$
+[$-0.056, +0.006$]), as does every annotation-free method.
 

@@ -16,13 +16,13 @@ Medical image classifiers exploit acquisition artifacts---hair, sonographer cali
 correlate with the diagnosis; the standard defence restricts the model to the region of interest (ROI). This
 defence depends on where the artifact sits. In pre-registered traps built from real artifacts in four diseases
 and three modalities, masking removes an out-of-ROI shortcut but leaves an in-ROI one largely intact (crossover $+0.15$
-to $+0.37$ reversed-test AUROC, all Holm-significant). Because images with in-ROI and out-of-ROI artifacts differ, we pasted the \emph{same} real artifact inside or
+to $+0.38$ reversed-test AUROC, all Holm-significant; $+0.25$ on new patients from ISIC 2020). Because images with in-ROI and out-of-ROI artifacts differ, we pasted the \emph{same} real artifact inside or
 outside the ROI of the \emph{same} images: masking removes the shortcut outside the ROI and keeps it inside (location
 interaction \input{tables/review2_abstract_transplant}); a neutral-tissue paste through the same masks behaves
 similarly, so what matters is where a label-correlated pattern sits. Covariate-matched traps agree. The law holds
 across encoder families and sizes, fine-tuned networks and zero-shot vision--language scores. A linear-Gaussian account explains when in-ROI masking helps a little
 and when it harms; fitted only to each model's clean and correlated performance, it matches held-out reversed-test
-AUROC with a mean absolute error of 0.039, against 0.108 for a symmetry heuristic. On the unaltered, patient-disjoint
+AUROC with a mean absolute error of 0.052, against 0.129 for a symmetry heuristic. On the unaltered, patient-disjoint
 thyroid test split, masking lowers AUROC on shortcut-conflicting cases and lowers sensitivity at all five
 pre-registered operating points, most for malignant nodules carrying a caliper. Which remedy works depends on what
 carries the shortcut, but none transfers uniformly to unaltered data. Audits of ROI-masked models should report artifact location and shortcut-conflicting performance. Code, pre-registrations and results are public.

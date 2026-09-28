@@ -138,13 +138,17 @@ overlap changes the masked head's prediction by \sTwoDpMaskFull{} on average and
 --- about \sTwoDpRatioFull{} times as much; the paired difference is \sTwoDpDiffFull{} (Table~\ref{tab:cf},
 Figure~\ref{fig:cf}). At 0\% overlap the masked head cannot see the ruler (\sTwoDpMaskZero) whereas ERM still reacts to
 it (\sTwoDpErmZero). This is the mechanism in one measurement: masking removes the competing evidence, the retained
-artifact becomes the most informative remaining feature, and the head leans on it. The counterfactual was saved for the
-dermoscopy sweep only; the other sweeps did not store per-image counterfactual scores, so this measurement is not
-replicated across modalities.
+artifact becomes the most informative remaining feature, and the head leans on it. Across the \sTwoCfN{} sweeps with
+saved counterfactual scores the masked head is significantly more sensitive at full overlap in \sTwoCfNPos:
+ovarian calipers (\sTwoCfMaskovaryDINOvTwo{} versus \sTwoCfErmovaryDINOvTwo; \sTwoCfovaryDINOvTwo) and capsule debris
+(\sTwoCfMaskcapsuleDINOvTwo{} versus \sTwoCfErmcapsuleDINOvTwo; \sTwoCfcapsuleDINOvTwo) besides the ruler. For thyroid
+calipers the two heads are equally sensitive (\sTwoCfthyroidDINOvTwo) --- ERM already relies heavily on a caliper
+inside the nodule --- and with RAD-DINO the masked head is \emph{less} sensitive to an in-lung tube
+(\sTwoCfchestRADDINO), the same boundary as in the sweep itself.
 \input{tables/counterfactual.tex}
 \begin{figure}[H]\centering\includegraphics[width=0.66\linewidth]{figures/counterfactual.pdf}
-\caption{Mean same-head sensitivity $|\Delta p|$ to inserting the ruler, masked model (solid) and ERM (dashed), by
-overlap (dermoscopy sweep).}\label{fig:cf}\end{figure}
+\caption{Mean same-head sensitivity $|\Delta p|$ to inserting the artifact: masked model per sweep (solid) and ERM
+for the dermoscopy sweep (dashed), by overlap.}\label{fig:cf}\end{figure}
 
 \paragraph{Lesion size} Table~\ref{tab:tert} splits the test set by lesion area. The ruler covers a median
 \sTwoRatioLarge{} of a large lesion's area, \sTwoRatioMedium{} of a medium and \sTwoRatioSmall{} of a small one. With
@@ -193,8 +197,8 @@ ROI''. With corrected intervals, the robust statement is the \emph{interaction} 
 harm at full overlap is significant in \sTwoNHarmFull{} of \sTwoNSweeps{} sweeps.
 \item \textbf{Chest radiography with RAD-DINO contradicts the law}, as a failure of its premise (above). It was
 registered as a confirmation and is reported as a boundary case.
-\item \textbf{The counterfactual was not saved for the non-dermoscopy sweeps}, so the mechanism measurement is
-dermoscopy-only.
+\item \textbf{The counterfactual mechanism holds in \sTwoCfNPos{} of \sTwoCfN{} sweeps}: not for thyroid calipers (equal
+sensitivity) and reversed for the chest tube with RAD-DINO.
 \item \textbf{The ovarian sweep has no significant benefit outside the ROI}, so its crossover rests on the harm side
 only.
 \end{itemize}
@@ -203,7 +207,8 @@ only.
 \textbf{Supported.} The location law in its interaction form (Q2a) holds in \sTwoNInterPos{} of \sTwoNSweeps{}
 controlled sweeps across five modalities and four encoders. The mechanism (Q2b) is retention: occlusion alone does not
 harm, harm follows the visibility of the artifact under dilation, and the masked head's same-image reliance on an
-in-ROI artifact is about \sTwoDpRatioFull{} times that of ERM (\sTwoDpDiffFull). \textbf{Qualified.} Harm at full
+in-ROI artifact is about \sTwoDpRatioFull{} times that of ERM for the ruler (\sTwoDpDiffFull) and significantly higher in
+\sTwoCfNPos{} of \sTwoCfN{} sweeps. \textbf{Qualified.} Harm at full
 overlap is setting-dependent; the lesion-size gradient is an ordering with two non-significant cells. \textbf{Not
 supported.} The law for an encoder that ignores the out-of-ROI artifact (chest tube, RAD-DINO). The practical reading
 is: masking removes what lies outside the ROI and concentrates the model on what lies inside; whether that helps depends
@@ -213,8 +218,9 @@ on where the shortcut sits.
 \begin{enumerate}\itemsep1pt
 \item Should the thesis state the law in its interaction form only (robust) and treat harm at full overlap as
 setting-dependent, or keep harm as the headline for dermoscopy, where it holds with every encoder?
-\item Is one modality (dermoscopy) enough for the counterfactual mechanism, or should the counterfactual be re-run for
-thyroid and capsule before submission (about one GPU-hour each)?
+\item The counterfactual mechanism holds in \sTwoCfNPos{} of \sTwoCfN{} sweeps. Is the thyroid result (the unmasked model is
+already as reliant on an in-nodule caliper as the masked one) best presented as a limitation of the mechanism or as a
+second route to the same outcome?
 \item Is it acceptable to present chest radiography with RAD-DINO as a boundary of the law rather than as a failed
 confirmation, given that it was registered as a confirmation?
 \end{enumerate}

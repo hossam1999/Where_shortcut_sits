@@ -1,0 +1,62 @@
+{
+ "medsiglip448|thyroid|crossover (zs_mask-zs)_B-(zs_mask-zs)_A": [
+  0.103,
+  0.064,
+  0.143
+ ],
+ "medsiglip448|thyroid|trapA|zs_mask-zs": [
+  0.017,
+  -0.011,
+  0.045
+ ],
+ "medsiglip448|thyroid|trapB|zs_mask-zs": [
+  0.12,
+  0.078,
+  0.162
+ ],
+ "medsiglip448|capsule|crossover (zs_mask-zs)_B-(zs_mask-zs)_A": [
+  0.045,
+  0.001,
+  0.09
+ ],
+ "medsiglip448|capsule|trapA|zs_mask-zs": [
+  0.004,
+  -0.021,
+  0.029
+ ],
+ "medsiglip448|capsule|trapB|zs_mask-zs": [
+  0.049,
+  0.001,
+  0.098
+ ],
+ "medsiglip448|ovary|crossover (zs_mask-zs)_B-(zs_mask-zs)_A": [
+  0.181,
+  0.103,
+  0.261
+ ],
+ "medsiglip448|ovary|trapA|zs_mask-zs": [
+  -0.235,
+  -0.289,
+  -0.18
+ ],
+ "medsiglip448|ovary|trapB|zs_mask-zs": [
+  -0.054,
+  -0.135,
+  0.03
+ ],
+ "dermlip224|isic|crossover (zs_mask-zs)_B-(zs_mask-zs)_A": [
+  0.04,
+  0.021,
+  0.058
+ ],
+ "dermlip224|isic|trapA|zs_mask-zs": [
+  -0.079,
+  -0.114,
+  -0.044
+ ],
+ "dermlip224|isic|trapB|zs_mask-zs": [
+  -0.039,
+  -0.07,
+  -0.008
+ ]
+}

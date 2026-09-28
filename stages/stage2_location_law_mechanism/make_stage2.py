@@ -184,6 +184,12 @@ def text_numbers():
         d = c[c.sweep.str.startswith("dermoscopy") & np.isclose(c.overlap, 1.0)]
         if len(d):
             M.add("DpRatioFull", f"{d.absdp_mask.iloc[0] / d.absdp_erm.iloc[0]:.1f}")
+        full = c[np.isclose(c.overlap, 1.0)]
+        for r in full.itertuples():
+            k = L.Macros.clean(r.sweep.split(" (")[0].split()[0] + r.sweep.split("(")[-1])
+            M.add(f"Cf{k}", L.ci(r.seed_delta_mean, r.ci95_lo, r.ci95_hi))
+            M.add(f"CfMask{k}", L.f3(r.absdp_mask)); M.add(f"CfErm{k}", L.f3(r.absdp_erm))
+        M.add("CfNPos", int((full.ci95_lo > 0).sum())); M.add("CfN", len(full))
     t = L.csv("final_mechanism/lesion_tertiles.csv")
     if t is not None:
         for tt in ("large", "medium", "small"):
