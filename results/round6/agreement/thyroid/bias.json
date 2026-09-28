@@ -1,22 +1,21 @@
 {
+  "cohort_flagged": true,
   "by_source": {
     "BUSClean": {
-      "note": "Differential error flagged; the cohort conclusion rests on A2. Correction not reported.",
       "e_A": 0.10608695652173913,
       "e_B": 0.05521472392638037,
-      "flagged": true
+      "n_A": 1150,
+      "n_B": 326,
+      "flagged": true,
+      "note": "Differential error flagged in this cohort; its conclusion rests on A2. Correction not reported."
     },
     "MedGemma": {
-      "c_obs": 0.2385752065741104,
-      "c_from": "original (Stage 3)",
       "e_A": 0.3521739130434783,
       "e_B": 0.26993865030674846,
       "n_A": 1150,
       "n_B": 326,
-      "corrected": 0.6313393445657796,
-      "ci95_lo": 0.5196358175062586,
-      "ci95_hi": 0.7418725843123622,
-      "note": "First-order attenuation (approximation); reported because differential error was not flagged."
+      "flagged": false,
+      "note": "Differential error flagged in this cohort; its conclusion rests on A2. Correction not reported."
     }
   }
 }

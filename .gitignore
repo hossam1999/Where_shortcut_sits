@@ -25,3 +25,4 @@ results/round5/_smoke/
 results/round6/_smoke/
 results/round6/_local/
 results/round6/logs/
+results/finetune/**/*_smoke/

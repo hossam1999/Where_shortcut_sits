@@ -1,6 +1,6 @@
 # Round 6
 
-Commit `2caabe604d6e150e6ab3d372c6e9422c0ed3dacb`. GPU: NVIDIA RTX PRO 4000 Blackwell.
+Commit `2caabe604d6e150e6ab3d372c6e9422c0ed3dacb`. GPU: NVIDIA RTX PRO 4000 Blackwell. Re-summarised from the saved tables at commit `26ce34e9f36a099467dd79132025a69427bd873f`.
 
 ## Sources and coverage
 | source | licence | matched | note |
@@ -473,8 +473,8 @@ Gate (Amendment 1): ≥200 analysed as registered, 50–199 descriptive only, <5
 |---|---|---|---|---|---|---|---|---|
 | isic | DermArtifactDB | diff_y1_minus_y0_trapA | diff | 4255 | 0.133 | 0.100 | 0.168 | True |
 | isic | DermArtifactDB | diff_y1_minus_y0_trapB | diff | 6995 | 0.166 | 0.134 | 0.198 | True |
-| isic | DermArtifactDB | e_A | all | 4255 | 0.000 | nan | nan | nan |
-| isic | DermArtifactDB | e_B | all | 6995 | 0.000 | nan | nan | nan |
+| isic | DermArtifactDB | e_A | all | 0 | nan | nan | nan | nan |
+| isic | DermArtifactDB | e_B | all | 0 | nan | nan | nan | nan |
 | isic | IMA++ | diff_y1_minus_y0_trapA | diff | 15 | 0.000 | 0.000 | 0.000 | False |
 | isic | IMA++ | diff_y1_minus_y0_trapB | diff | 158 | 0.046 | -0.041 | 0.208 | False |
 | isic | IMA++ | e_A | all | 15 | 0.000 | nan | nan | nan |
@@ -493,67 +493,63 @@ Gate (Amendment 1): ≥200 analysed as registered, 50–199 descriptive only, <5
 | thyroid | MedGemma | e_B | all | 326 | 0.270 | nan | nan | nan |
 
 - isic: corrected crossover by source {
+  "cohort_flagged": true,
   "by_source": {
     "DermArtifactDB": {
-      "note": "Differential error flagged; the cohort conclusion rests on A2. Correction not reported.",
-      "e_A": 0.0,
-      "e_B": 0.0,
-      "flagged": true
+      "e_A": NaN,
+      "e_B": NaN,
+      "n_A": 0,
+      "n_B": 0,
+      "flagged": true,
+      "note": "presence-only source: no location information, e_A and e_B not defined"
     },
     "IMA++": {
-      "c_obs": 0.1474504004676915,
-      "c_from": "original (Stage 3)",
       "e_A": 0.0,
       "e_B": 0.02531645569620253,
       "n_A": 15,
       "n_B": 158,
-      "corrected": 0.15128028099931987,
-      "ci95_lo": 0.11412840110195926,
-      "ci95_hi": 0.1901586601279685,
-      "note": "First-order attenuation (approximation); reported because differential error was not flagged."
+      "flagged": false,
+      "note": "Differential error flagged in this cohort; its conclusion rests on A2. Correction not reported."
     },
     "Kabir": {
-      "c_obs": 0.1474504004676915,
-      "c_from": "original (Stage 3)",
       "e_A": 0.0,
       "e_B": 0.004291845493562232,
       "n_A": 31,
       "n_B": 233,
-      "corrected": 0.14808596253867293,
-      "ci95_lo": 0.11171855326114422,
-      "ci95_hi": 0.18614341561304468,
-      "note": "First-order attenuation (approximation); reported because differential error was not flagged."
+      "flagged": false,
+      "note": "Differential error flagged in this cohort; its conclusion rests on A2. Correction not reported."
     }
   }
 }
 - thyroid: model labellers {"BUSClean": {"status": "informative", "kappa": 0.5045849877103421, "n": 2899}, "MedGemma": {"status": "informative", "kappa": 0.6536918491094588, "n": 2601}}
 - thyroid: corrected crossover by source {
+  "cohort_flagged": true,
   "by_source": {
     "BUSClean": {
-      "note": "Differential error flagged; the cohort conclusion rests on A2. Correction not reported.",
       "e_A": 0.10608695652173913,
       "e_B": 0.05521472392638037,
-      "flagged": true
+      "n_A": 1150,
+      "n_B": 326,
+      "flagged": true,
+      "note": "Differential error flagged in this cohort; its conclusion rests on A2. Correction not reported."
     },
     "MedGemma": {
-      "c_obs": 0.2385752065741104,
-      "c_from": "original (Stage 3)",
       "e_A": 0.3521739130434783,
       "e_B": 0.26993865030674846,
       "n_A": 1150,
       "n_B": 326,
-      "corrected": 0.6313393445657796,
-      "ci95_lo": 0.5196358175062586,
-      "ci95_hi": 0.7418725843123622,
-      "note": "First-order attenuation (approximation); reported because differential error was not flagged."
+      "flagged": false,
+      "note": "Differential error flagged in this cohort; its conclusion rests on A2. Correction not reported."
     }
   }
 }
 - capsule: corrected crossover by source {
+  "cohort_flagged": false,
   "by_source": {}
 }
 - ovary: model labellers {"BUSClean": {"status": "invalid", "reason": "positive on more than half of the caliper-free images: it detects on-screen annotation, not calipers (validity guard, Amendment 2)"}, "MedGemma": {"status": "pending_human", "reason": "only one model labeller is available; judged against the blinded rating (A4/A4b) with the same threshold (Amendment 2)"}}
 - ovary: corrected crossover by source {
+  "cohort_flagged": false,
   "by_source": {}
 }
 

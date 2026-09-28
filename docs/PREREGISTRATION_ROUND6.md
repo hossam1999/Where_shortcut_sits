@@ -147,3 +147,40 @@ rating tool, the raw image is shown next to the same image with only the green o
 (lesion mask, nodule or tumour mask, lesion boxes; never our automatic artifact mask), and the page states the cohort's
 artifact and region. Step 2 (mask questions) still shows the review overlay. Contour images are generated locally into
 the git-ignored `audit_local/contours/`. No rating had been saved.
+
+## Results (added after the run; the text above is unchanged)
+Coverage committed at `4c3263d`, recipe at `b13bcdb`, A4b key hash at `4b32a1f`, all before the steps that use them;
+results at `26ce34e`; write-up in Stage 8. The author's rating (A4, A4b) has not been done.
+
+- **A0.** Analysed: DermArtifactDB (20,519 ISIC images), IMA++ (241 after excluding 2,503 ISIC 2018 training images),
+  Kabir hair masks (485), BUSClean (thyroid 3,493; ovary 1,202), MedGemma (thyroid 3,492; ovary 1,198). Capsule masks:
+  29 frames after exclusions → not feasible.
+- **A1, dermoscopy.** Hair presence κ = 0.076 [0.070, 0.082]: our artifact-free cell is clean (97 % hair-free in
+  DermArtifactDB), but our masks exceed 30 hair pixels on 93 % of the images DermArtifactDB calls hair-free. Position:
+  IMA++ Dice 0.851 [0.830, 0.870], trap class agreement 0.841 [0.791, 0.887], opposite side 0/15 (Trap A) and 4/158
+  (Trap B); Kabir hair-mask Dice 0.618 [0.600, 0.637], opposite side 0/31 and 1/233. κ with Kabir is not informative
+  (our masks mark hair on all 485 images; presence agreement 97.3 %).
+- **A1, thyroid.** BUSClean passes the validity guard (5.2 % positive on caliper-free images); both labellers are
+  informative (κ 0.505 and 0.654 on the images where the other two labels agree). Presence κ with our detector: BUSClean
+  0.483 [0.456, 0.509], MedGemma 0.663 [0.638, 0.686].
+- **A1, ovary.** BUSClean invalid (positive on 90.5 % of caliper-free images). MedGemma κ with our detector 0.194
+  [0.148, 0.247]; its informativeness is judged against the rating (Amendment 2), pending.
+- **A2 (HA2).** Dermoscopy supported: 0.199 [0.164, 0.233] on uncontradicted labels vs 0.147 [0.111, 0.185] (Stage 3).
+  Thyroid: count gate not met (the registered rule removed 61 % of Trap A and 87 % of Trap B; cleaned Trap B has 29
+  benign and 14 malignant caliper images). Capsule and ovary: no image removed; the re-run reproduces Stage 3 and is not
+  evidence about the labels.
+- **A3.** Differential error flagged for dermoscopy (DermArtifactDB, both traps: +0.133 [+0.100, +0.168],
+  +0.166 [+0.134, +0.198]) and thyroid (BUSClean, Trap A: −0.163 [−0.229, −0.099]); by the registered rule their
+  conclusions rest on A2 and no attenuation correction is reported.
+- **Reporting correction after the run (no estimate changed).** `bias_analysis.py` had reported the correction per
+  source even when another source of the same cohort flagged differential error; A3 withholds it for the whole cohort,
+  and the tables were re-generated from the saved per-image files. e_A and e_B against DermArtifactDB (presence only) are
+  now undefined instead of 0.
+- **Part B.** Recipe ConvNeXt-T (IN-22k), lr 1e-4, 8 epochs (validation AUROC 0.865). FT0 0.769: below the benchmark
+  of 0.773. FT1 −0.102 [−0.178, −0.026], FT2 4 of 4 operating points, FT3 −0.521 [−0.642, −0.382], FT4 +0.187
+  [+0.111, +0.268]; all supported after Holm.
+- **Exploratory, not registered (decided after the results above).** Consensus view (an image is contradicted only
+  when BUSClean and MedGemma agree with each other against our cell): 2 % of caliper-free, 2 % of Trap A and 14 % of
+  Trap B thyroid images; of the 78 FT3 subgroup nodules none is contradicted by both and 36 are confirmed by both.
+  `scripts/round6/exploratory.sh` re-runs the thyroid traps under this view (E1) and FT3 in the confirmed nodules (E2);
+  their outputs go to `results/round6/exploratory/`.

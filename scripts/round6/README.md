@@ -108,3 +108,10 @@ differential-error flags, e_A + e_B; Part B: ft_SUMMARY), `python -m pytest -q t
   at least 7 days later. Then `bash scripts/round6/after_rating.sh` scores the rating (keys checked against their
   committed SHA-256) and re-runs A1–A3 for thyroid and ovary.
 - `run_finetune_spec.py --img_size 224` is passed automatically when the DINOv2 ViT is the chosen recipe.
+
+## Exploratory, not registered (added after the results were known)
+`bash scripts/round6/exploratory.sh` (CPU only): E1 re-runs the thyroid traps with the consensus rule
+(`clean_traps.py --cohort thyroid --rule consensus`: an image is removed only when BUSClean and MedGemma agree with each
+other against our cell), E2 computes FT3 in the subgroup nodules that both labellers confirm, for the fine-tuned model
+and the frozen Stage 5 probe (`ft_thyroid.py --exploratory`). Outputs go to `results/round6/exploratory/`; the
+registered tables never read them.

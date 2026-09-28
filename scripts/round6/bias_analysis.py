@@ -38,6 +38,8 @@ def _diff_flag(y, err):
 
 
 def _opposite_rate(cell, src, want_our, want_src):
+    if not src.isin(["trapA", "trapB"]).any():
+        return float("nan"), 0  # presence-only source (e.g. DermArtifactDB): it cannot place an artifact across the boundary
     m = (cell == want_our) & (src == want_src)
     base = cell == want_our
     known = src.isin(["trapA", "trapB", "mid", "artifact_free", "present"])
@@ -67,7 +69,8 @@ def main():
         c_obs, c_lo, c_hi, c_from = orig.get("estimate"), orig.get("ci95_lo"), orig.get("ci95_hi"), "original (Stage 3)"
         informative = json.loads((root / "agreement" / name / "agreement.json").read_text()).get("informative", {}) \
             if (root / "agreement" / name / "agreement.json").exists() else {}
-        per_source = {}
+        per_source, measured = {}, {}
+        cohort_flagged = False
         for source, col in SOURCE_CELLS.items():
             if col not in per.columns or gates.get((name, source)) != "analysed":
                 continue
@@ -99,23 +102,29 @@ def main():
             eb, nb = _opposite_rate(per.cell, src, "trapB", "trapA")
             rows.append({"cohort": name, "source": source, "cell": "e_A", "y": "all", "n": na, "error_rate": ea})
             rows.append({"cohort": name, "source": source, "cell": "e_B", "y": "all", "n": nb, "error_rate": eb})
+            measured[source] = (ea, eb, na, nb, flagged)
+            cohort_flagged = cohort_flagged or flagged
+        # A3 registers the correction "only for cohorts without flagged differential error": one flagged source
+        # withholds it for every source of the cohort (e_A and e_B are still reported)
+        for source, (ea, eb, na, nb, flagged) in measured.items():
+            base = {"e_A": ea, "e_B": eb, "n_A": na, "n_B": nb, "flagged": flagged}
             if not (np.isfinite(ea) and np.isfinite(eb)):
-                per_source[source] = {"note": "source has no location information for both traps", "e_A": ea, "e_B": eb}
-            elif flagged:
-                per_source[source] = {"note": "Differential error flagged; the cohort conclusion rests on A2. Correction not "
-                                              "reported.", "e_A": ea, "e_B": eb, "flagged": True}
+                per_source[source] = {**base, "note": "presence-only source: no location information, e_A and e_B not defined"}
+            elif cohort_flagged:
+                per_source[source] = {**base, "note": "Differential error flagged in this cohort; its conclusion rests on A2. "
+                                                      "Correction not reported."}
             elif c_obs is None:
-                per_source[source] = {"note": "no crossover", "e_A": ea, "e_B": eb}
+                per_source[source] = {**base, "note": "no crossover"}
+            elif 1 - ea - eb <= 0.05:
+                per_source[source] = {**base, "note": "1 - e_A - e_B <= 0.05; correction not reported"}
             else:
                 den = 1 - ea - eb
-                per_source[source] = ({"c_obs": c_obs, "c_from": c_from, "e_A": ea, "e_B": eb, "n_A": na, "n_B": nb,
-                                       "corrected": c_obs / den, "ci95_lo": None if c_lo is None else c_lo / den,
-                                       "ci95_hi": None if c_hi is None else c_hi / den,
-                                       "note": "First-order attenuation (approximation); reported because differential "
-                                               "error was not flagged."}
-                                      if den > 0.05 else {"note": "1 - e_A - e_B <= 0.05; correction not reported",
-                                                          "e_A": ea, "e_B": eb})
-        corr = {"by_source": per_source}
+                per_source[source] = {**base, "c_obs": c_obs, "c_from": c_from, "corrected": c_obs / den,
+                                      "ci95_lo": None if c_lo is None else c_lo / den,
+                                      "ci95_hi": None if c_hi is None else c_hi / den,
+                                      "note": "First-order attenuation (approximation); reported because no source of "
+                                              "this cohort flagged differential error."}
+        corr = {"cohort_flagged": cohort_flagged, "by_source": per_source}
         (root / "agreement" / name).mkdir(parents=True, exist_ok=True)
         (root / "agreement" / name / "bias.json").write_text(json.dumps(corr, indent=2))
     df = pd.DataFrame(rows)

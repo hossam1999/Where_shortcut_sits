@@ -32,7 +32,13 @@ def main():
     ap.add_argument("--smoke", action="store_true")
     a = ap.parse_args()
     root = C.out_root(a.smoke)
-    lines = ["# Round 6", "", f"Commit `{_commit()}`. GPU: {_gpu()}.", ""]
+    head = f"Commit `{_commit()}`. GPU: {_gpu()}."
+    old = root / "SUMMARY.md"
+    if _gpu() == "unknown" and old.exists():  # re-summarised from the tables on a machine without the GPU run
+        prev = next((ln for ln in old.read_text().splitlines() if ln.startswith("Commit `")), None)
+        if prev:
+            head = f"{prev.split(' Re-summarised')[0]} Re-summarised from the saved tables at commit `{_commit()}`."
+    lines = ["# Round 6", "", head, ""]
     lines.append("## Sources and coverage")
     src = root / "sources.json"
     if src.exists():

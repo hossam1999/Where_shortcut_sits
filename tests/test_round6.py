@@ -81,3 +81,36 @@ def test_rater_cell_and_multiclass_kappa():
     assert mod.rater_cell("unsure", "inside") == "missing"
     cats = ("inside", "outside", "both", "absent")
     assert abs(mod.kappa_multi(["inside", "outside", "absent"], ["inside", "outside", "absent"], cats) - 1) < 1e-9
+
+
+def test_presence_only_source_has_no_location_error():
+    import pandas as pd
+    ba = importlib.util.spec_from_file_location("ba6", Path(__file__).resolve().parents[1] / "scripts" / "round6" / "bias_analysis.py")
+    mod = importlib.util.module_from_spec(ba)
+    ba.loader.exec_module(mod)
+    ours = pd.Series(["trapA", "trapA", "trapB"])
+    e, n = mod._opposite_rate(ours, pd.Series(["present", "artifact_free", "present"]), "trapA", "trapB")
+    assert np.isnan(e) and n == 0  # DermArtifactDB-like source: e_A undefined, not 0
+    e, n = mod._opposite_rate(ours, pd.Series(["trapB", "trapA", "trapB"]), "trapA", "trapB")
+    assert e == 0.5 and n == 2
+
+
+def test_consensus_rule_needs_both_labellers():
+    import sys
+    import pandas as pd
+    sys.path.insert(0, str(Path(__file__).resolve().parents[1] / "scripts" / "round6"))
+    ct = importlib.util.spec_from_file_location("ct6", Path(__file__).resolve().parents[1] / "scripts" / "round6" / "clean_traps.py")
+    mod = importlib.util.module_from_spec(ct)
+    saved = sys.modules.get("common")
+    sys.modules["common"] = C  # round 4's scripts also have a module named common
+    try:
+        ct.loader.exec_module(mod)
+    finally:
+        if saved is not None:
+            sys.modules["common"] = saved
+    per = pd.DataFrame({"cell": ["trapA", "trapA", "trapB", "artifact_free"],
+                        "cell_bus": ["artifact_free", "trapB", "trapB", "trapA"],
+                        "cell_mg": ["trapB", "trapB", "artifact_free", "trapA"],
+                        "contradicted": [True, True, True, True]})
+    assert mod.contradicted(per, "consensus").tolist() == [False, True, False, True]
+    assert mod.contradicted(per, "registered").tolist() == [True, True, True, True]

@@ -1,5 +1,5 @@
 #!/usr/bin/env bash
-# Regenerate every stage report from the result files, compile the seven PDFs and run the number audit.
+# Regenerate every stage report from the result files, compile the eight PDFs and run the number audit.
 #   bash stages/build_all.sh
 # Needs: the Python environment of the repository (PYTHONPATH=src), a LaTeX engine (tectonic, or pdflatex + bibtex),
 # pdfinfo. Figures that need the raw images (example panels) are kept from the last run when the data are not on the
@@ -16,7 +16,7 @@ compile() {  # $1 = stage folder, $2 = stageN
   pdflatex -interaction=nonstopmode "$2.tex" >> "/tmp/${2}_latex.txt" 2>&1
   local rc=$?; rm -f "$2".{aux,bbl,blg,out,toc,log}; return $rc
 }
-for d in stages/stage1_* stages/stage2_* stages/stage3_* stages/stage4_* stages/stage5_* stages/stage6_* stages/stage7_*; do
+for d in stages/stage1_* stages/stage2_* stages/stage3_* stages/stage4_* stages/stage5_* stages/stage6_* stages/stage7_* stages/stage8_*; do
   n=$(basename "$d" | cut -d_ -f1)
   echo "== $n: tables and figures"
   python -W ignore "$d/make_$n.py" || { echo "!! make_$n.py failed"; status=1; }

@@ -1,34 +1,29 @@
 {
+  "cohort_flagged": true,
   "by_source": {
     "DermArtifactDB": {
-      "note": "Differential error flagged; the cohort conclusion rests on A2. Correction not reported.",
-      "e_A": 0.0,
-      "e_B": 0.0,
-      "flagged": true
+      "e_A": NaN,
+      "e_B": NaN,
+      "n_A": 0,
+      "n_B": 0,
+      "flagged": true,
+      "note": "presence-only source: no location information, e_A and e_B not defined"
     },
     "IMA++": {
-      "c_obs": 0.1474504004676915,
-      "c_from": "original (Stage 3)",
       "e_A": 0.0,
       "e_B": 0.02531645569620253,
       "n_A": 15,
       "n_B": 158,
-      "corrected": 0.15128028099931987,
-      "ci95_lo": 0.11412840110195926,
-      "ci95_hi": 0.1901586601279685,
-      "note": "First-order attenuation (approximation); reported because differential error was not flagged."
+      "flagged": false,
+      "note": "Differential error flagged in this cohort; its conclusion rests on A2. Correction not reported."
     },
     "Kabir": {
-      "c_obs": 0.1474504004676915,
-      "c_from": "original (Stage 3)",
       "e_A": 0.0,
       "e_B": 0.004291845493562232,
       "n_A": 31,
       "n_B": 233,
-      "corrected": 0.14808596253867293,
-      "ci95_lo": 0.11171855326114422,
-      "ci95_hi": 0.18614341561304468,
-      "note": "First-order attenuation (approximation); reported because differential error was not flagged."
+      "flagged": false,
+      "note": "Differential error flagged in this cohort; its conclusion rests on A2. Correction not reported."
     }
   }
 }

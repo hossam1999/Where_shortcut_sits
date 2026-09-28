@@ -1,0 +1,11 @@
+\begin{table}[H]\centering\scriptsize
+\caption{Part B: the chosen fine-tuned model on the official patient-disjoint thyroid split (5 seeds $\times$ 4 arms) and in the thyroid traps (10 bootstrap clusters). Crossed bootstrap; Holm over FT1--FT4.}\label{tab:ft}
+\begin{tabular}{lp{5.4cm}p{3.0cm}p{1.3cm}p{1.1cm}p{1.9cm}}\toprule
+ & Hypothesis & Estimate [95\% CI] & $p$ (one-sided) & Holm $p$ & Verdict \\\midrule
+FT0 & ERM test AUROC $\ge0.773$ (descriptive) & 0.769 & --- & --- & below benchmark \\
+FT1 & hard-pair AUROC, mask $-$ ERM $<0$ & $-0.102$ [$-0.178, -0.026$] & 0.0040 & 0.0040 & supported \\
+FT2 & sensitivity loss (CI $<0$) at $\ge3$ of OP2--OP5 & 4 of 4 & 0.0005 & 0.0015 & supported \\
+FT3 & OP2 sensitivity, malignant with in-ROI caliper, mask $-$ ERM $<0$ & $-0.521$ [$-0.642, -0.382$] & 0.0005 & 0.0015 & supported \\
+FT4 & thyroid trap crossover $>0$ & $+0.187$ [$+0.111, +0.268$] & 0.0001 & 0.0004 & supported \\
+\bottomrule\end{tabular}
+\end{table}

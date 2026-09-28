@@ -345,12 +345,48 @@ def _write_ft_summary(out: Path, rec: dict):
     (out / "ft_SUMMARY.md").write_text("\n".join(lines) + "\n")
 
 
+def exploratory(smoke: bool):
+    """Exploratory (not registered): FT3 in the malignant in-ROI-caliper nodules that both independent caliper
+    labellers confirm (BUSClean and MedGemma both place a caliper inside the nodule), and in the remaining ones.
+    Same predictions, thresholds and crossed bootstrap as FT3; the other nodules are only moved out of the subgroup."""
+    out = C.out_root(smoke)
+    per = pd.read_csv(out / "agreement" / "thyroid" / "per_image.csv")
+    confirmed = set(per.loc[(per.cell_bus == "trapA") & (per.cell_mg == "trapA"), "image_id"].astype(str))
+    N = _nisic()
+    models = {"finetuned_round6": pd.read_csv(out / "ft_natural" / "predictions.csv.gz")}
+    frozen = C.ROOT / "results" / "natural" / "thyroid_dino518_repro" / "predictions.csv.gz"  # Stage 5, frozen DINOv2
+    if frozen.exists():
+        models["frozen_stage5"] = pd.read_csv(frozen)
+    rec = {"note": "exploratory, not registered; decided after the round-6 label agreement was known",
+           "definition": "confirmed = BUSClean and MedGemma both place a caliper inside the nodule"}
+    for model, p in models.items():
+        p = p[p.method.isin(["mask", "erm"]) & p.env.isin(["clean", "val_groups"])].copy()
+        sub = (p.env == "clean") & (p.y == 1) & (p.artifact_present == 1)
+        ids = p.image_id.astype(str)
+        if not ids[sub].isin(confirmed).any():
+            raise SystemExit(f"{model}: no subgroup image id matches agreement/thyroid/per_image.csv; check the id format")
+        rec[model] = {}
+        for label, keep in (("confirmed_by_both", ids.isin(confirmed)), ("not_confirmed_by_both", ~ids.isin(confirmed))):
+            q = p.copy()
+            q.loc[sub & ~keep, "artifact_present"] = -1  # out of the subgroup; still counted in every other metric
+            rows = N.op_crossed(q, "mask", "erm", 20260928, hard_pos_a=1)
+            hit = next(r for r in rows if str(r["op"]).startswith("OP2") and r["metric"] == "sens_conflict")
+            rec[model][label] = {"n_nodules": int(q.loc[sub & keep, "image_id"].nunique()),
+                                 **{k: hit[k] for k in ("arm_value", "ref_value", "delta", "ci95_lo", "ci95_hi")}}
+            C.log(ft3=f"{model}/{label}", **rec[model][label])
+    dest = out / "exploratory"
+    dest.mkdir(parents=True, exist_ok=True)
+    (dest / "ft3_confirmed.json").write_text(json.dumps(rec, indent=2, default=float))
+    print(json.dumps(rec, indent=2, default=float))
+
+
 def main():
     ap = argparse.ArgumentParser()
     ap.add_argument("--select", action="store_true")
     ap.add_argument("--natural", action="store_true")
     ap.add_argument("--traps", action="store_true")
     ap.add_argument("--analyse", action="store_true")
+    ap.add_argument("--exploratory", action="store_true")
     ap.add_argument("--smoke", action="store_true")
     a = ap.parse_args()
     if a.select:
@@ -361,8 +397,10 @@ def main():
         traps(a.smoke)
     elif a.analyse:
         analyse(a.smoke)
+    elif a.exploratory:
+        exploratory(a.smoke)
     else:
-        ap.error("pass --select, --natural, --traps or --analyse")
+        ap.error("pass --select, --natural, --traps, --analyse or --exploratory")
 
 
 if __name__ == "__main__":

@@ -2,6 +2,10 @@
 
   python scripts/round6/clean_traps.py --cohort thyroid
   python scripts/round6/clean_traps.py --summary
+  python scripts/round6/clean_traps.py --cohort thyroid --rule consensus   # exploratory, not registered
+The consensus rule (exploratory, decided after the registered rule failed the thyroid count gate) removes an image
+only when the two model labellers place it in the same cell and that cell contradicts ours. Its output goes to
+results/round6/exploratory/consensus_traps/<cohort>/ and never into the registered tables.
 """
 from __future__ import annotations
 
@@ -22,29 +26,48 @@ from wtss.experiments.spec_traps import run_spec  # noqa: E402
 from wtss.stats import difference_of_deltas  # noqa: E402
 
 
-def cleaned_cohort(name: str, smoke: bool) -> tuple[pd.DataFrame, pd.DataFrame]:
+CONSENSUS_COLS = ("cell_bus", "cell_mg")
+
+
+def contradicted(per: pd.DataFrame, rule: str) -> pd.Series:
+    if rule == "registered":
+        return per.contradicted.astype(bool)
+    a, b = (per[k].astype(str) for k in CONSENSUS_COLS)
+    return pd.Series([x == y and C.contradicts(o, x) for o, x, y in zip(per.cell.astype(str), a, b)], index=per.index)
+
+
+def dest_of(name: str, smoke: bool, rule: str) -> Path:
+    if rule == "registered":
+        return C.out_root(smoke) / "clean_traps" / name
+    return C.out_root(smoke) / "exploratory" / "consensus_traps" / name
+
+
+def cleaned_cohort(name: str, smoke: bool, rule: str = "registered") -> tuple[pd.DataFrame, pd.DataFrame]:
     info = C.cohort_frame(name)
     c = info["c"]
     per_p = C.out_root(smoke) / "agreement" / name / "per_image.csv"
     if not per_p.exists():
         raise SystemExit(f"missing {per_p}; run label_agreement first")
     per = pd.read_csv(per_p)
+    if rule == "consensus" and not set(CONSENSUS_COLS) <= set(per.columns):
+        raise SystemExit(f"the consensus rule needs {CONSENSUS_COLS} in {per_p}")
     per["image_id"] = per.image_id.astype(str)
     c["image_id"] = c.image_id.astype(str)
-    keep_ids = set(per.loc[~per.contradicted.astype(bool), "image_id"])
+    keep_ids = set(per.loc[~contradicted(per, rule), "image_id"])
     out = c[c.image_id.isin(keep_ids)].reset_index(drop=True)
     if smoke:
         out = C.R4.smoke_subset(out, ("trapA", "trapB"), n=40)
     return info, out
 
 
-def _shares(per: pd.DataFrame) -> pd.DataFrame:
+def _shares(per: pd.DataFrame, rule: str = "registered") -> pd.DataFrame:
     rows = []
+    con = contradicted(per, rule)
     for cell, g in per.groupby("cell"):
         n = len(g)
         rows.append({"cell": cell, "n": n,
                      "verified": float(g.verified.mean()) if n else 0,
-                     "contradicted": float(g.contradicted.mean()) if n else 0,
+                     "contradicted": float(con[g.index].mean()) if n else 0,
                      "unverified": float(g.unverified.mean()) if n else 0})
     return pd.DataFrame(rows)
 
@@ -58,12 +81,12 @@ def _gate(counts: pd.DataFrame) -> dict:
     return ok
 
 
-def run_cohort(name: str, smoke: bool):
-    dest = C.out_root(smoke) / "clean_traps" / name
+def run_cohort(name: str, smoke: bool, rule: str = "registered"):
+    dest = dest_of(name, smoke, rule)
     dest.mkdir(parents=True, exist_ok=True)
-    info, c = cleaned_cohort(name, smoke)
+    info, c = cleaned_cohort(name, smoke, rule)
     per = pd.read_csv(C.out_root(smoke) / "agreement" / name / "per_image.csv")
-    shares = _shares(per)
+    shares = _shares(per, rule)
     shares.to_csv(dest / "shares.csv", index=False)
     seeds = (42,) if smoke else SEEDS
     envs = build_spec_envs(c, seeds=seeds, group_col=info["group_col"])
@@ -81,7 +104,8 @@ def run_cohort(name: str, smoke: bool):
             C.log(cohort=name, gate="failed", detail=gate)
             (dest / "crossover.json").write_text(json.dumps({"gate": gate, "original": orig, "ran": False}, indent=2))
             return
-        fdir = C.FEAT / ("_smoke" if smoke else "") / "clean_traps" / name / C.R4.BDIR
+        fdir = C.FEAT / ("_smoke" if smoke else "") / ("clean_traps" if rule == "registered" else "consensus_traps") \
+            / name / C.R4.BDIR
         fdir.mkdir(parents=True, exist_ok=True)
         pool = C.R4.pool_of(envs, traps)
         sources = {}
@@ -172,14 +196,15 @@ def main():
     ap.add_argument("--cohort", choices=C.COHORTS)
     ap.add_argument("--summary", action="store_true")
     ap.add_argument("--smoke", action="store_true")
+    ap.add_argument("--rule", choices=("registered", "consensus"), default="registered")
     a = ap.parse_args()
     if os_extract_only() and a.cohort:
-        run_cohort(a.cohort, a.smoke)
+        run_cohort(a.cohort, a.smoke, a.rule)
         return
     if a.summary:
         summary(a.smoke)
     elif a.cohort:
-        run_cohort(a.cohort, a.smoke)
+        run_cohort(a.cohort, a.smoke, a.rule)
     else:
         ap.error("pass --cohort or --summary")
 

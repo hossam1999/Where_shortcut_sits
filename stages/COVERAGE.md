@@ -54,6 +54,11 @@ back to earlier stages, never forward.
 | Round 4: ISIC 2019 → ISIC 2020 natural test, near-duplicate removal, operating points R10 | 7 | 5.3 |
 | Round 4: prospective theory test R11 | 7 | 5.5 |
 | Round 5 (`docs/PREREGISTRATION_ROUND5.md`, `results/round5/`): calibrated duplicate rule R12, cleaner hair groups R13 | 7 | 5.4 |
+| Round 6 (`docs/PREREGISTRATION_ROUND6.md`, `scripts/round6/`, `results/round6/`): sources, licences, coverage A0 | 8 | 5.1 |
+| Round 6: label agreement A1, traps on uncontradicted labels A2, differential error A3 (dermoscopy, thyroid, ovary, capsule) | 8 | 5.2–5.5 |
+| Round 6: exploratory consensus view of the caliper labellers (E1), registered subgroup labels | 8 | 5.3 |
+| Round 6: blinded rating tool and MedGemma audit answers (A4, A4b; rating not yet done) | 8 | 2, 6 |
+| Round 6: fine-tuned thyroid model, recipe B1, FT0–FT4, operating points, comparison with the frozen probe | 8 | 5.6 |
 
 Analyses whose per-image predictions were not saved (chest-radiograph devices and drains, LaMa, text prompts, SLAS,
 U8, U10, selectors, archived hair sensitivity designs) appear as point estimates labelled "not re-estimated"; their

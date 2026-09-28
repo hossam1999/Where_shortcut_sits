@@ -1,0 +1,18 @@
+\begin{table}[H]\centering\scriptsize
+\caption{Recipe selection on validation images only (B1); no test image was scored. The chosen recipe (bold) was committed before any final model was trained.}\label{tab:recipe}
+\begin{tabular}{lccc}\toprule
+Architecture & Learning rate & Epochs & Validation AUROC (ERM, seed 42) \\\midrule
+ConvNeXt-T (IN-22k) & 3e-5 & 8 & 0.849 \\
+ConvNeXt-T (IN-22k) & 3e-5 & 20 & 0.842 \\
+ConvNeXt-T (IN-22k) & 1e-4 & 8 & \textbf{0.865} \\
+ConvNeXt-T (IN-22k) & 1e-4 & 20 & 0.865 \\
+ResNet-50 & 3e-5 & 8 & 0.658 \\
+ResNet-50 & 3e-5 & 20 & 0.723 \\
+ResNet-50 & 1e-4 & 8 & 0.723 \\
+ResNet-50 & 1e-4 & 20 & 0.781 \\
+DINOv2 ViT-B/14 & 3e-5 & 8 & 0.838 \\
+DINOv2 ViT-B/14 & 3e-5 & 20 & 0.850 \\
+DINOv2 ViT-B/14 & 1e-4 & 8 & 0.715 \\
+DINOv2 ViT-B/14 & 1e-4 & 20 & 0.804 \\
+\bottomrule\end{tabular}
+\end{table}

@@ -123,8 +123,13 @@ def main():
                 orig = C.original_crossover(coh)
                 den = 1 - ea - eb
                 flagged = any(f["flagged"] for f in flags.values())
+                # A3: withheld for a cohort in which any source flagged differential error (bias_analysis.py)
+                bj = C.out_root(a.smoke) / "agreement" / coh / "bias.json"
+                other = bool(json.loads(bj.read_text()).get("cohort_flagged")) if bj.exists() else False
                 corr = ({"corrected": orig["estimate"] / den, "ci95_lo": orig["ci95_lo"] / den, "ci95_hi": orig["ci95_hi"] / den}
-                        if den > 0.05 and not flagged else {"note": "not reported (differential error flagged or 1-e_A-e_B <= 0.05)"})
+                        if den > 0.05 and not (flagged or other) else
+                        {"note": "not reported (differential error flagged in this cohort, by the rating or another "
+                                 "source, or 1-e_A-e_B <= 0.05)", "flagged_by_other_source": other})
                 rep.setdefault("bias", {})[coh] = {"e_A": ea, "e_B": eb, "differential": flags, "original": orig, **corr}
             human_cells.append(k[["audit_id", "cohort_name", "image_id", "our_cell", "rater_cell"]].assign(sheet=sheet))
         report[sheet] = rep

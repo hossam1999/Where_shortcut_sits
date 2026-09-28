@@ -1,0 +1,14 @@
+\begin{table}[H]\centering\scriptsize
+\caption{Experiments of this stage. \texttt{docs/PREREGISTRATION\_ROUND6.md} and its three amendments were committed before any analysis of this round; the coverage report (\sEightCommitCoverage), the fine-tune recipe (\sEightCommitRecipe) and the hash of the A4b key (\sEightCommitAfourb) were committed before the steps that use them. Commit times are set by the committing machine and are not independent proof of order.}\label{tab:exp}
+\begin{tabular}{p{3.8cm}p{3.4cm}p{2.8cm}p{5.0cm}}\toprule
+Experiment & Status & First commit (local time) & Support criterion \\\midrule
+A0 sources, licences, coverage & \registered{round 6}; coverage committed before A1 & \texttt{607900c}, 2026-09-28 14:27 & $\ge200$ matched images: analysed; 50--199: descriptive; $<50$: not feasible \\
+A1 agreement with independent sources & \registered{round 6} & \texttt{607900c}, 2026-09-28 14:27 & descriptive; a model labeller is used only if $\kappa\ge0.40$ (Amendment 2: validity guard) \\
+A2 traps on uncontradicted labels (HA2) & \registered{round 6}; primary of Part A & \texttt{607900c}, 2026-09-28 14:27 & crossover $>0$ in every cohort that passes the count gate (Holm) \\
+A3 differential error, attenuation & \registered{round 6} & \texttt{607900c}, 2026-09-28 14:27 & flag: $|e_{Y=1}-e_{Y=0}|>0.10$, CI excluding 0; correction only for unflagged cohorts \\
+A4 blinded rating by the author (A4b optional) & \registered{round 6}; not yet done & \texttt{607900c}, 2026-09-28 14:27 & intra-rater $\kappa$; error rates of our cells; judges a single model labeller (Amendment 2) \\
+B1 fine-tune recipe (validation only) & \registered{round 6}; choice committed before B2 & \texttt{607900c}, 2026-09-28 14:27 & highest validation AUROC of 12 recipes \\
+B2--B3 natural split and traps (FT0--FT4) & \registered{round 6} & \texttt{607900c}, 2026-09-28 14:27 & FT0 descriptive ($\ge0.773$); FT1--FT4 one-sided, Holm over four \\
+E1--E2 consensus labels & \posthoc{exploratory; decided after A1--A3 were known} & --- & descriptive; not a test \\
+\bottomrule\end{tabular}
+\end{table}

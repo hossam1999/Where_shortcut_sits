@@ -1,0 +1,12 @@
+\begin{table}[H]\centering\scriptsize
+\caption{The same analyses for the frozen probe of Stage~5 and for the fine-tuned model of this stage. The subgroup was post hoc for the probe and registered in advance for the fine-tuned model.}\label{tab:cmp}
+\begin{tabular}{p{5.6cm}p{4.2cm}p{4.2cm}}\toprule
+Quantity & Frozen DINOv2 ViT-B/14 probe (Stage~5) & Fine-tuned ConvNeXt-T (IN-22k) (this stage) \\\midrule
+ERM test AUROC & 0.735 & 0.769 \\
+Hard pairs, mask $-$ ERM & $-0.095$ [$-0.165, -0.022$] & $-0.102$ [$-0.178, -0.026$] \\
+OP2 sensitivity, mask $-$ ERM & $-0.202$ [$-0.300, -0.100$] & $-0.376$ [$-0.462, -0.297$] \\
+OP2 sensitivity, 78 malignant with in-ROI caliper & 0.549 $\to$ 0.177 & 0.744 $\to$ 0.223 \\
+\quad change & $-0.372$ [$-0.499, -0.236$] & $-0.521$ [$-0.642, -0.382$] \\
+Thyroid trap crossover & $+0.239$ [$+0.196, +0.280$] & $+0.187$ [$+0.111, +0.268$] \\
+\bottomrule\end{tabular}
+\end{table}
