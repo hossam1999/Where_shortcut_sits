@@ -54,6 +54,11 @@ def ensure_zenodo(kind: str):
     rec, _name, url, _lic = ZENODO[kind]
     files, lic, version = _zenodo_files(rec)
     C.EXT.mkdir(parents=True, exist_ok=True)
+    # The smoke run already extracted the annotation tables and deleted the zip.
+    # The tables are what A0 reads; do not fetch the multi-gigabyte archive again.
+    if kind == "derm" and any((C.EXT / "derm_tables").rglob("*.csv")):
+        return {"url": url, "version": version, "licence_id": lic.get("id") if isinstance(lic, dict) else None,
+                "files": [f["key"] for f in files], "ready": True}
     got = []
     for f in files:
         dest = C.EXT / f["key"]
