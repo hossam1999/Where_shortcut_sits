@@ -1,0 +1,44 @@
+{
+  "polarity": {
+    "convention": "black<128 = contaminated",
+    "n_checked": 3,
+    "samples": [
+      {
+        "image": "0000.jpg",
+        "mask": "0000.jpg",
+        "black_fraction": 0.16967170621141975,
+        "shape": [
+          576,
+          576
+        ]
+      },
+      {
+        "image": "0001.jpg",
+        "mask": "0001.jpg",
+        "black_fraction": 0.12437307098765432,
+        "shape": [
+          576,
+          576
+        ]
+      },
+      {
+        "image": "0002.jpg",
+        "mask": "0002.jpg",
+        "black_fraction": 0.2307761863425926,
+        "shape": [
+          576,
+          576
+        ]
+      }
+    ],
+    "accepted": true,
+    "note": "Accepted when each of the three masks has a black fraction strictly between 0.001 and 0.95."
+  },
+  "n_expert_pairs": 2700,
+  "n_probe_train": 2160,
+  "n_probe_heldout": 540,
+  "n_seeai_files": 2077,
+  "n_matched_before_exclusion": 51,
+  "n_excluded_probe_train": 19,
+  "n_excluded_expert_labelled": 3
+}

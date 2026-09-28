@@ -1,0 +1,8 @@
+{
+  "ran": true,
+  "answered": {
+    "thyroid": 3492,
+    "ovary": 1198
+  },
+  "model": "google/medgemma-1.5-4b-it"
+}

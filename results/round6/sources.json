@@ -1,0 +1,144 @@
+{
+  "date": "2026-09-28",
+  "counts": {
+    "isic2018_train_ids": 2594,
+    "ima_matched_before_exclusion": 2744,
+    "ima_excluded_isic2018_train": 2503,
+    "ima_analysed": 241,
+    "derm_matched": 20519,
+    "kabir_matched": 485,
+    "capsule": {
+      "n_expert_pairs": 2700,
+      "n_probe_train": 2160,
+      "n_probe_heldout": 540,
+      "n_seeai_files": 2077,
+      "n_matched_before_exclusion": 51,
+      "n_excluded_probe_train": 19,
+      "n_excluded_expert_labelled": 3
+    },
+    "capsule_polarity_accepted": true,
+    "medgemma_available": true,
+    "busclean_skipped": false
+  },
+  "sources": [
+    {
+      "name": "BUSClean",
+      "url": "https://github.com/hawaii-ai/bus-cleaning",
+      "version": "d2630a435cd257e366a516a3c5c5cf26c27b3243",
+      "download_date": "2026-09-28",
+      "licence": "MIT",
+      "research_use": true,
+      "skip": false,
+      "skip_reason": null,
+      "detector": {
+        "search": "grep -rni caliper over the bus-cleaning clone",
+        "caliper_specific_function": null,
+        "function_used": "detect_anno",
+        "signature": "detect_anno(im: Image.Image, show_thresh: bool = False)",
+        "also_defined": "detect_anno_BUSI(im: Image.Image, show_thresh: bool = False)",
+        "note": "No function is named for calipers. README.md and SampleArtifacts.ipynb describe detect_anno, run after enhance_image, as the detector of lesion annotations, markers, and calipers. detect_anno_BUSI adds a Hough step for BUSI cross-style marks when detect_anno returns nothing; it is not used. No thresholds were changed. The registered validity guard decides on the full cohort."
+      },
+      "n_matched": 4695
+    },
+    {
+      "name": "MedGemma 1.5 4B-it",
+      "url": "https://huggingface.co/google/medgemma-1.5-4b-it",
+      "version": "google/medgemma-1.5-4b-it",
+      "download_date": "2026-09-28",
+      "licence": "model terms of use",
+      "available": true,
+      "skip_reason": null,
+      "n_matched": 0
+    },
+    {
+      "name": "Kabir hair masks",
+      "url": "https://data.mendeley.com/datasets/j5ywpd2p27/2",
+      "version": "10.17632/j5ywpd2p27.2",
+      "download_date": "2026-09-28",
+      "licence": "CC BY 4.0",
+      "licence_quote": "type\":\"CreativeWork\",\"url\":\"http://creativecommons.org/licenses/by/4.0\",\"text\":\"CC BY 4.0\"},\"author\":{\"@type\":\"Person\",\"",
+      "note": "Already on the machine (Amendment 1). Licence read from the Mendeley dataset page.",
+      "n_matched": 485
+    },
+    {
+      "name": "Multicentre clear/contaminated capsule masks",
+      "url": "https://data.mendeley.com/datasets/vmxhn95j8z/3",
+      "version": "vmxhn95j8z v3",
+      "download_date": "2026-09-28",
+      "licence": "CC BY 4.0",
+      "licence_quote": "atabase\"/><meta data-react-helmet=\"true\" name=\"description\" content=\"The first publicly available clear and contaminated regions segmentation mask multicentre dataset created by precisely annotating 17593 copyright-free CC BY 4.0 li",
+      "n_matched": 29,
+      "n_excluded_probe_train": 19
+    },
+    {
+      "name": "DermArtifactDB",
+      "url": "https://zenodo.org/records/18324962",
+      "version": "version 0",
+      "download_date": "2026-09-28",
+      "licence": "CC BY 4.0",
+      "note": "Licence read from README.md inside the Zenodo archive before the labels were used. Heatmaps were not extracted.",
+      "n_matched": 20519,
+      "licence_quote": "act annotations, metadata files, and derived resources are released under the **Creative Commons Attribution 4.0 International (CC BY 4.0)** license."
+    },
+    {
+      "name": "IMA++",
+      "url": "https://zenodo.org/records/14201693",
+      "version": "v1.1",
+      "download_date": "2026-09-28",
+      "licence": "cc-by-nc-nd-4.0",
+      "note": "CC BY-NC-ND: measurement only. Masks and pixel-level derivatives stay under the data root and are never committed.",
+      "n_matched": 241,
+      "n_excluded_isic2018_train": 2503
+    }
+  ],
+  "gates": [
+    {
+      "cohort": "isic",
+      "source": "DermArtifactDB",
+      "n": 20519,
+      "gate": "analysed"
+    },
+    {
+      "cohort": "isic",
+      "source": "IMA++",
+      "n": 241,
+      "gate": "analysed"
+    },
+    {
+      "cohort": "isic",
+      "source": "Kabir",
+      "n": 485,
+      "gate": "analysed"
+    },
+    {
+      "cohort": "capsule",
+      "source": "Mendeley_vmxhn95j8z",
+      "n": 29,
+      "gate": "not_feasible"
+    },
+    {
+      "cohort": "thyroid",
+      "source": "BUSClean",
+      "n": 3493,
+      "gate": "analysed"
+    },
+    {
+      "cohort": "ovary",
+      "source": "BUSClean",
+      "n": 1202,
+      "gate": "analysed"
+    },
+    {
+      "cohort": "thyroid",
+      "source": "MedGemma",
+      "n": 0,
+      "gate": "pending"
+    },
+    {
+      "cohort": "ovary",
+      "source": "MedGemma",
+      "n": 0,
+      "gate": "pending"
+    }
+  ]
+}

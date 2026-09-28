@@ -1,0 +1,50 @@
+[
+  {
+    "cohort": "isic",
+    "source": "DermArtifactDB",
+    "n": 20519,
+    "gate": "analysed"
+  },
+  {
+    "cohort": "isic",
+    "source": "IMA++",
+    "n": 241,
+    "gate": "analysed"
+  },
+  {
+    "cohort": "isic",
+    "source": "Kabir",
+    "n": 485,
+    "gate": "analysed"
+  },
+  {
+    "cohort": "capsule",
+    "source": "Mendeley_vmxhn95j8z",
+    "n": 29,
+    "gate": "not_feasible"
+  },
+  {
+    "cohort": "thyroid",
+    "source": "BUSClean",
+    "n": 3493,
+    "gate": "analysed"
+  },
+  {
+    "cohort": "ovary",
+    "source": "BUSClean",
+    "n": 1202,
+    "gate": "analysed"
+  },
+  {
+    "cohort": "thyroid",
+    "source": "MedGemma",
+    "n": 0,
+    "gate": "pending"
+  },
+  {
+    "cohort": "ovary",
+    "source": "MedGemma",
+    "n": 0,
+    "gate": "pending"
+  }
+]
