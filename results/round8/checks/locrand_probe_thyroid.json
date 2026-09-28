@@ -1,0 +1,15 @@
+{
+ "cohort": "thyroid",
+ "encoder": "dino518",
+ "pasted_vs_real_auroc": 0.9057664709719504,
+ "pasted_vs_real_ci95_lo": 0.8811367030919897,
+ "pasted_vs_real_ci95_hi": 0.9299959967872757,
+ "pasted_vs_real_n_test_pos": 350,
+ "pasted_vs_real_n_test_neg": 219,
+ "reference_plain_vs_real_auroc": 0.9518851924331376,
+ "reference_plain_vs_real_ci95_lo": 0.935132410201806,
+ "reference_plain_vs_real_ci95_hi": 0.9670291569141415,
+ "reference_plain_vs_real_n_test_pos": 350,
+ "reference_plain_vs_real_n_test_neg": 219,
+ "distinguishable": true
+}

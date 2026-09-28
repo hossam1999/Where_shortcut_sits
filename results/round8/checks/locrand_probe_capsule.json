@@ -1,0 +1,15 @@
+{
+ "cohort": "capsule",
+ "encoder": "dino518",
+ "pasted_vs_real_auroc": 0.9900537634408603,
+ "pasted_vs_real_ci95_lo": 0.9787312236922667,
+ "pasted_vs_real_ci95_hi": 0.9981258742836514,
+ "pasted_vs_real_n_test_pos": 80,
+ "pasted_vs_real_n_test_neg": 93,
+ "reference_plain_vs_real_auroc": 0.9548387096774194,
+ "reference_plain_vs_real_ci95_lo": 0.9251581862299668,
+ "reference_plain_vs_real_ci95_hi": 0.9777986081180218,
+ "reference_plain_vs_real_n_test_pos": 80,
+ "reference_plain_vs_real_n_test_neg": 93,
+ "distinguishable": true
+}

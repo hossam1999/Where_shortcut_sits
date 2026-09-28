@@ -1,0 +1,15 @@
+{
+ "cohort": "ovary",
+ "encoder": "dino518",
+ "pasted_vs_real_auroc": 0.9040727459016393,
+ "pasted_vs_real_ci95_lo": 0.8549053292267113,
+ "pasted_vs_real_ci95_hi": 0.9473678311864286,
+ "pasted_vs_real_n_test_pos": 64,
+ "pasted_vs_real_n_test_neg": 122,
+ "reference_plain_vs_real_auroc": 0.9366034836065574,
+ "reference_plain_vs_real_ci95_lo": 0.897772941937927,
+ "reference_plain_vs_real_ci95_hi": 0.9698385650136205,
+ "reference_plain_vs_real_n_test_pos": 64,
+ "reference_plain_vs_real_n_test_neg": 122,
+ "distinguishable": true
+}

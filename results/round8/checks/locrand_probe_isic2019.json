@@ -1,0 +1,15 @@
+{
+ "cohort": "isic2019",
+ "encoder": "dino518",
+ "pasted_vs_real_auroc": 0.9754328563604959,
+ "pasted_vs_real_ci95_lo": 0.9632275784599992,
+ "pasted_vs_real_ci95_hi": 0.9853813828773365,
+ "pasted_vs_real_n_test_pos": 142,
+ "pasted_vs_real_n_test_neg": 1003,
+ "reference_plain_vs_real_auroc": 0.9391754314521225,
+ "reference_plain_vs_real_ci95_lo": 0.9220352122486616,
+ "reference_plain_vs_real_ci95_hi": 0.9545061676239367,
+ "reference_plain_vs_real_n_test_pos": 142,
+ "reference_plain_vs_real_n_test_neg": 1003,
+ "distinguishable": true
+}

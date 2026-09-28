@@ -1,0 +1,735 @@
+{
+ "prereg": "docs/PREREGISTRATION_ROUND8.md",
+ "prereg_commit": "47ab51c891d5acdf9225bfd71fe452a0a36d700c",
+ "primary_candidates": [
+  "mask_cmc",
+  "full_cmc",
+  "mask_bal",
+  "locrand_loc"
+ ],
+ "selection": {
+  "objective": "worst-group validation AUROC",
+  "guard": "same-artifact validation AUROC >= masking head's - margin",
+  "margin": 0.005,
+  "split": "val_groups",
+  "fallback": "masking head"
+ },
+ "grids": {
+  "mask_bal": [
+   "mask",
+   "lam0.25",
+   "lam0.5",
+   "lam0.75",
+   "lam1"
+  ],
+  "mask_cmc": [
+   "mask",
+   "pooled",
+   "per_class"
+  ],
+  "full_cmc": [
+   "mask",
+   "pooled",
+   "per_class"
+  ],
+  "locrand": [
+   "mask",
+   "locrand"
+  ],
+  "locrand_loc": [
+   "mask",
+   "locrand_loc"
+  ],
+  "afr": [
+   "mask",
+   "g0.5",
+   "g1",
+   "g2",
+   "g4"
+  ],
+  "mask_cfs": [
+   "mask",
+   "mu1",
+   "mu10",
+   "mu100"
+  ],
+  "ens": [
+   "mask",
+   "a0.75",
+   "a0.5",
+   "a0.25"
+  ],
+  "mask_cmc_uncontra": [
+   "mask",
+   "pooled",
+   "per_class"
+  ]
+ },
+ "seeds": {
+  "dev": [
+   42,
+   123,
+   456,
+   789,
+   2026
+  ],
+  "confirm": [
+   8101,
+   8202,
+   8303,
+   8404,
+   8505
+  ],
+  "ft_traps": [
+   8101,
+   8202
+  ]
+ },
+ "held_out_cohort": "ovary",
+ "held_out_settings": {
+  "mask_bal": "lam1",
+  "mask_bal_median_lambda": 1.0,
+  "mask_cmc": "per_class",
+  "full_cmc": "mask",
+  "locrand": "locrand",
+  "locrand_loc": "mask",
+  "afr": "mask",
+  "mask_cfs": "mu100",
+  "ens": "a0.25",
+  "mask_cmc_uncontra": "per_class"
+ },
+ "dev_choice_counts": [
+  {
+   "cohort": "capsule",
+   "family": "afr",
+   "setting": "g2",
+   "n": 1
+  },
+  {
+   "cohort": "capsule",
+   "family": "afr",
+   "setting": "g4",
+   "n": 1
+  },
+  {
+   "cohort": "capsule",
+   "family": "afr",
+   "setting": "mask",
+   "n": 48
+  },
+  {
+   "cohort": "capsule",
+   "family": "ens",
+   "setting": "a0.25",
+   "n": 45
+  },
+  {
+   "cohort": "capsule",
+   "family": "ens",
+   "setting": "a0.5",
+   "n": 2
+  },
+  {
+   "cohort": "capsule",
+   "family": "ens",
+   "setting": "mask",
+   "n": 3
+  },
+  {
+   "cohort": "capsule",
+   "family": "full_cmc",
+   "setting": "mask",
+   "n": 47
+  },
+  {
+   "cohort": "capsule",
+   "family": "full_cmc",
+   "setting": "per_class",
+   "n": 1
+  },
+  {
+   "cohort": "capsule",
+   "family": "full_cmc",
+   "setting": "pooled",
+   "n": 2
+  },
+  {
+   "cohort": "capsule",
+   "family": "locrand",
+   "setting": "locrand",
+   "n": 27
+  },
+  {
+   "cohort": "capsule",
+   "family": "locrand",
+   "setting": "mask",
+   "n": 23
+  },
+  {
+   "cohort": "capsule",
+   "family": "locrand_loc",
+   "setting": "locrand_loc",
+   "n": 7
+  },
+  {
+   "cohort": "capsule",
+   "family": "locrand_loc",
+   "setting": "mask",
+   "n": 43
+  },
+  {
+   "cohort": "capsule",
+   "family": "mask_bal",
+   "setting": "lam0.5",
+   "n": 2
+  },
+  {
+   "cohort": "capsule",
+   "family": "mask_bal",
+   "setting": "lam0.75",
+   "n": 4
+  },
+  {
+   "cohort": "capsule",
+   "family": "mask_bal",
+   "setting": "lam1",
+   "n": 41
+  },
+  {
+   "cohort": "capsule",
+   "family": "mask_bal",
+   "setting": "mask",
+   "n": 3
+  },
+  {
+   "cohort": "capsule",
+   "family": "mask_cfs",
+   "setting": "mask",
+   "n": 24
+  },
+  {
+   "cohort": "capsule",
+   "family": "mask_cfs",
+   "setting": "mu1",
+   "n": 7
+  },
+  {
+   "cohort": "capsule",
+   "family": "mask_cfs",
+   "setting": "mu10",
+   "n": 14
+  },
+  {
+   "cohort": "capsule",
+   "family": "mask_cfs",
+   "setting": "mu100",
+   "n": 5
+  },
+  {
+   "cohort": "capsule",
+   "family": "mask_cmc",
+   "setting": "mask",
+   "n": 4
+  },
+  {
+   "cohort": "capsule",
+   "family": "mask_cmc",
+   "setting": "per_class",
+   "n": 43
+  },
+  {
+   "cohort": "capsule",
+   "family": "mask_cmc",
+   "setting": "pooled",
+   "n": 3
+  },
+  {
+   "cohort": "capsule",
+   "family": "selector_v2",
+   "setting": "mask",
+   "n": 3
+  },
+  {
+   "cohort": "capsule",
+   "family": "selector_v2",
+   "setting": "mask_bal",
+   "n": 33
+  },
+  {
+   "cohort": "capsule",
+   "family": "selector_v2",
+   "setting": "mask_cmc",
+   "n": 14
+  },
+  {
+   "cohort": "isic",
+   "family": "afr",
+   "setting": "mask",
+   "n": 50
+  },
+  {
+   "cohort": "isic",
+   "family": "ens",
+   "setting": "a0.25",
+   "n": 39
+  },
+  {
+   "cohort": "isic",
+   "family": "ens",
+   "setting": "a0.5",
+   "n": 2
+  },
+  {
+   "cohort": "isic",
+   "family": "ens",
+   "setting": "a0.75",
+   "n": 7
+  },
+  {
+   "cohort": "isic",
+   "family": "ens",
+   "setting": "mask",
+   "n": 2
+  },
+  {
+   "cohort": "isic",
+   "family": "full_cmc",
+   "setting": "mask",
+   "n": 16
+  },
+  {
+   "cohort": "isic",
+   "family": "full_cmc",
+   "setting": "per_class",
+   "n": 19
+  },
+  {
+   "cohort": "isic",
+   "family": "full_cmc",
+   "setting": "pooled",
+   "n": 15
+  },
+  {
+   "cohort": "isic",
+   "family": "locrand",
+   "setting": "locrand",
+   "n": 45
+  },
+  {
+   "cohort": "isic",
+   "family": "locrand",
+   "setting": "mask",
+   "n": 5
+  },
+  {
+   "cohort": "isic",
+   "family": "locrand_loc",
+   "setting": "locrand_loc",
+   "n": 26
+  },
+  {
+   "cohort": "isic",
+   "family": "locrand_loc",
+   "setting": "mask",
+   "n": 24
+  },
+  {
+   "cohort": "isic",
+   "family": "mask_bal",
+   "setting": "lam0.25",
+   "n": 3
+  },
+  {
+   "cohort": "isic",
+   "family": "mask_bal",
+   "setting": "lam0.5",
+   "n": 4
+  },
+  {
+   "cohort": "isic",
+   "family": "mask_bal",
+   "setting": "lam0.75",
+   "n": 8
+  },
+  {
+   "cohort": "isic",
+   "family": "mask_bal",
+   "setting": "lam1",
+   "n": 32
+  },
+  {
+   "cohort": "isic",
+   "family": "mask_bal",
+   "setting": "mask",
+   "n": 3
+  },
+  {
+   "cohort": "isic",
+   "family": "mask_cfs",
+   "setting": "mask",
+   "n": 5
+  },
+  {
+   "cohort": "isic",
+   "family": "mask_cfs",
+   "setting": "mu1",
+   "n": 5
+  },
+  {
+   "cohort": "isic",
+   "family": "mask_cfs",
+   "setting": "mu10",
+   "n": 4
+  },
+  {
+   "cohort": "isic",
+   "family": "mask_cfs",
+   "setting": "mu100",
+   "n": 36
+  },
+  {
+   "cohort": "isic",
+   "family": "mask_cmc",
+   "setting": "mask",
+   "n": 6
+  },
+  {
+   "cohort": "isic",
+   "family": "mask_cmc",
+   "setting": "per_class",
+   "n": 23
+  },
+  {
+   "cohort": "isic",
+   "family": "mask_cmc",
+   "setting": "pooled",
+   "n": 21
+  },
+  {
+   "cohort": "isic",
+   "family": "mask_cmc_uncontra",
+   "setting": "mask",
+   "n": 3
+  },
+  {
+   "cohort": "isic",
+   "family": "mask_cmc_uncontra",
+   "setting": "per_class",
+   "n": 29
+  },
+  {
+   "cohort": "isic",
+   "family": "mask_cmc_uncontra",
+   "setting": "pooled",
+   "n": 18
+  },
+  {
+   "cohort": "isic",
+   "family": "selector_v2",
+   "setting": "full_cmc",
+   "n": 16
+  },
+  {
+   "cohort": "isic",
+   "family": "selector_v2",
+   "setting": "mask",
+   "n": 1
+  },
+  {
+   "cohort": "isic",
+   "family": "selector_v2",
+   "setting": "mask_bal",
+   "n": 20
+  },
+  {
+   "cohort": "isic",
+   "family": "selector_v2",
+   "setting": "mask_cmc",
+   "n": 10
+  },
+  {
+   "cohort": "isic",
+   "family": "selector_v2",
+   "setting": "umte",
+   "n": 2
+  },
+  {
+   "cohort": "isic",
+   "family": "selector_v2",
+   "setting": "umte_protect",
+   "n": 1
+  },
+  {
+   "cohort": "thyroid",
+   "family": "afr",
+   "setting": "g1",
+   "n": 2
+  },
+  {
+   "cohort": "thyroid",
+   "family": "afr",
+   "setting": "g2",
+   "n": 1
+  },
+  {
+   "cohort": "thyroid",
+   "family": "afr",
+   "setting": "mask",
+   "n": 47
+  },
+  {
+   "cohort": "thyroid",
+   "family": "ens",
+   "setting": "a0.25",
+   "n": 35
+  },
+  {
+   "cohort": "thyroid",
+   "family": "ens",
+   "setting": "a0.5",
+   "n": 6
+  },
+  {
+   "cohort": "thyroid",
+   "family": "ens",
+   "setting": "a0.75",
+   "n": 3
+  },
+  {
+   "cohort": "thyroid",
+   "family": "ens",
+   "setting": "mask",
+   "n": 6
+  },
+  {
+   "cohort": "thyroid",
+   "family": "full_cmc",
+   "setting": "mask",
+   "n": 48
+  },
+  {
+   "cohort": "thyroid",
+   "family": "full_cmc",
+   "setting": "per_class",
+   "n": 2
+  },
+  {
+   "cohort": "thyroid",
+   "family": "locrand",
+   "setting": "locrand",
+   "n": 38
+  },
+  {
+   "cohort": "thyroid",
+   "family": "locrand",
+   "setting": "mask",
+   "n": 12
+  },
+  {
+   "cohort": "thyroid",
+   "family": "locrand_loc",
+   "setting": "locrand_loc",
+   "n": 23
+  },
+  {
+   "cohort": "thyroid",
+   "family": "locrand_loc",
+   "setting": "mask",
+   "n": 27
+  },
+  {
+   "cohort": "thyroid",
+   "family": "mask_bal",
+   "setting": "lam0.25",
+   "n": 4
+  },
+  {
+   "cohort": "thyroid",
+   "family": "mask_bal",
+   "setting": "lam0.5",
+   "n": 4
+  },
+  {
+   "cohort": "thyroid",
+   "family": "mask_bal",
+   "setting": "lam0.75",
+   "n": 6
+  },
+  {
+   "cohort": "thyroid",
+   "family": "mask_bal",
+   "setting": "lam1",
+   "n": 30
+  },
+  {
+   "cohort": "thyroid",
+   "family": "mask_bal",
+   "setting": "mask",
+   "n": 6
+  },
+  {
+   "cohort": "thyroid",
+   "family": "mask_cfs",
+   "setting": "mask",
+   "n": 5
+  },
+  {
+   "cohort": "thyroid",
+   "family": "mask_cfs",
+   "setting": "mu1",
+   "n": 4
+  },
+  {
+   "cohort": "thyroid",
+   "family": "mask_cfs",
+   "setting": "mu10",
+   "n": 6
+  },
+  {
+   "cohort": "thyroid",
+   "family": "mask_cfs",
+   "setting": "mu100",
+   "n": 35
+  },
+  {
+   "cohort": "thyroid",
+   "family": "mask_cmc",
+   "setting": "mask",
+   "n": 6
+  },
+  {
+   "cohort": "thyroid",
+   "family": "mask_cmc",
+   "setting": "per_class",
+   "n": 39
+  },
+  {
+   "cohort": "thyroid",
+   "family": "mask_cmc",
+   "setting": "pooled",
+   "n": 5
+  },
+  {
+   "cohort": "thyroid",
+   "family": "selector_v2",
+   "setting": "locrand",
+   "n": 4
+  },
+  {
+   "cohort": "thyroid",
+   "family": "selector_v2",
+   "setting": "mask",
+   "n": 3
+  },
+  {
+   "cohort": "thyroid",
+   "family": "selector_v2",
+   "setting": "mask_bal",
+   "n": 34
+  },
+  {
+   "cohort": "thyroid",
+   "family": "selector_v2",
+   "setting": "mask_cmc",
+   "n": 5
+  },
+  {
+   "cohort": "thyroid",
+   "family": "selector_v2",
+   "setting": "umte",
+   "n": 1
+  },
+  {
+   "cohort": "thyroid",
+   "family": "selector_v2",
+   "setting": "umte_protect",
+   "n": 3
+  }
+ ],
+ "checks": {
+  "locrand_placements_capsule": {
+   "cohort": "capsule",
+   "recipients_placed": 369,
+   "versions_mean": 3.734417344173442,
+   "donors_used": 259
+  },
+  "locrand_placements_isic2019": {
+   "cohort": "isic2019",
+   "recipients_placed": 860,
+   "versions_mean": 3.994186046511628,
+   "donors_used": 3070
+  },
+  "locrand_placements_ovary": {
+   "cohort": "ovary",
+   "recipients_placed": 348,
+   "versions_mean": 4.0,
+   "donors_used": 555
+  },
+  "locrand_placements_thyroid": {
+   "cohort": "thyroid",
+   "recipients_placed": 1800,
+   "versions_mean": 4.0,
+   "donors_used": 1329
+  },
+  "locrand_probe_capsule": {
+   "cohort": "capsule",
+   "encoder": "dino518",
+   "pasted_vs_real_auroc": 0.9900537634408603,
+   "pasted_vs_real_ci95_lo": 0.9787312236922667,
+   "pasted_vs_real_ci95_hi": 0.9981258742836514,
+   "pasted_vs_real_n_test_pos": 80,
+   "pasted_vs_real_n_test_neg": 93,
+   "reference_plain_vs_real_auroc": 0.9548387096774194,
+   "reference_plain_vs_real_ci95_lo": 0.9251581862299668,
+   "reference_plain_vs_real_ci95_hi": 0.9777986081180218,
+   "reference_plain_vs_real_n_test_pos": 80,
+   "reference_plain_vs_real_n_test_neg": 93,
+   "distinguishable": true
+  },
+  "locrand_probe_isic2019": {
+   "cohort": "isic2019",
+   "encoder": "dino518",
+   "pasted_vs_real_auroc": 0.9754328563604959,
+   "pasted_vs_real_ci95_lo": 0.9632275784599992,
+   "pasted_vs_real_ci95_hi": 0.9853813828773365,
+   "pasted_vs_real_n_test_pos": 142,
+   "pasted_vs_real_n_test_neg": 1003,
+   "reference_plain_vs_real_auroc": 0.9391754314521225,
+   "reference_plain_vs_real_ci95_lo": 0.9220352122486616,
+   "reference_plain_vs_real_ci95_hi": 0.9545061676239367,
+   "reference_plain_vs_real_n_test_pos": 142,
+   "reference_plain_vs_real_n_test_neg": 1003,
+   "distinguishable": true
+  },
+  "locrand_probe_ovary": {
+   "cohort": "ovary",
+   "encoder": "dino518",
+   "pasted_vs_real_auroc": 0.9040727459016393,
+   "pasted_vs_real_ci95_lo": 0.8549053292267113,
+   "pasted_vs_real_ci95_hi": 0.9473678311864286,
+   "pasted_vs_real_n_test_pos": 64,
+   "pasted_vs_real_n_test_neg": 122,
+   "reference_plain_vs_real_auroc": 0.9366034836065574,
+   "reference_plain_vs_real_ci95_lo": 0.897772941937927,
+   "reference_plain_vs_real_ci95_hi": 0.9698385650136205,
+   "reference_plain_vs_real_n_test_pos": 64,
+   "reference_plain_vs_real_n_test_neg": 122,
+   "distinguishable": true
+  },
+  "locrand_probe_thyroid": {
+   "cohort": "thyroid",
+   "encoder": "dino518",
+   "pasted_vs_real_auroc": 0.9057664709719504,
+   "pasted_vs_real_ci95_lo": 0.8811367030919897,
+   "pasted_vs_real_ci95_hi": 0.9299959967872757,
+   "pasted_vs_real_n_test_pos": 350,
+   "pasted_vs_real_n_test_neg": 219,
+   "reference_plain_vs_real_auroc": 0.9518851924331376,
+   "reference_plain_vs_real_ci95_lo": 0.935132410201806,
+   "reference_plain_vs_real_ci95_hi": 0.9670291569141415,
+   "reference_plain_vs_real_n_test_pos": 350,
+   "reference_plain_vs_real_n_test_neg": 219,
+   "distinguishable": true
+  }
+ }
+}
