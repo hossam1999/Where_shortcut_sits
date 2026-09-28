@@ -1,0 +1,18 @@
+\begin{table}[H]\centering\scriptsize
+\caption{Experiments of this stage: registration status, the commit that first contains the registration, and what was stated in advance to count as support. Commit times come from this machine and are not independent proof of order.}\label{tab:exp}
+\begin{tabular}{p{3.1cm}p{2.1cm}p{2.4cm}p{3.2cm}p{3.3cm}}\toprule
+Experiment & Status & Registration & First commit (local time) & Support criterion \\\midrule
+Controlled dermoscopy sweep (E1) & \ok{} registered & REPLICATION\_\allowbreak{}SPEC & \texttt{2699d51}, 2026-09-26 15:47 & interaction CI $>0$; mask$-$ERM CI $>0$ at 0\% and $<0$ at 100\% \\
+Replications: DINOv2@224, DermLIP, randomised ruler & \ok{} registered & REPLICATION\_\allowbreak{}SPEC & \texttt{2699d51}, 2026-09-26 15:47 & same signs and verdicts as E1 \\
+Occlusion control (E4) & \ok{} registered & REPLICATION\_\allowbreak{}SPEC & \texttt{2699d51}, 2026-09-26 15:47 & no harm on the 50/50 test at any overlap \\
+Mask dilation (E5) & \ok{} registered & REPLICATION\_\allowbreak{}SPEC & \texttt{2699d51}, 2026-09-26 15:47 & harm grows with retention at 50\%; flat at 100\% \\
+Same-head counterfactual $|\Delta p|$ (E6, T3) & \ok{} registered & REVIEW2 (T3) & \texttt{29cd0da}, 2026-09-27 18:56 & mask $>$ ERM at in-ROI overlap, CI $>0$ \\
+Lesion-size tertiles (E7) & \mixed{} pilot analysis, replicated & REPLICATION\_\allowbreak{}SPEC & \texttt{2699d51}, 2026-09-26 15:47 & harm largest in small lesions \\
+Thyroid caliper sweep & \ok{} registered & THYROID\_\allowbreak{}TRAPS & \texttt{ea57661}, 2026-09-26 22:46 & interaction CI $>0$ \\
+Ovarian caliper sweep & \ok{} registered & OVARY\_\allowbreak{}TRAPS & \texttt{2517600}, 2026-09-27 07:29 & interaction CI $>0$ \\
+Capsule debris sweep & \ok{} registered & CAPSULE\_\allowbreak{}TRAPS & \texttt{fcbf8d9}, 2026-09-27 00:40 & interaction CI $>0$ \\
+Chest tube sweep (RAD-DINO) & \ok{} registered & CXR\_\allowbreak{}DEVICE\_\allowbreak{}TRAPS & \texttt{4d1a924}, 2026-09-26 18:07 & interaction CI $>0$ \\
+Chest tube sweep (DINOv2) & \no{} post hoc & --- & --- & descriptive only \\
+Regeneration with the crossed bootstrap (A1) & \ok{} registered & FINAL (A1) & \texttt{c45d482}, 2026-09-28 00:35 & a claim whose new CI includes 0 is rewritten \\
+\bottomrule\end{tabular}
+\end{table}

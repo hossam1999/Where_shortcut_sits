@@ -1,0 +1,230 @@
+\input{../common/preamble.tex}
+\input{tables/numbers.tex}
+\title{\textbf{Stage 2 --- The location law and its mechanism}\\[3pt]\large Where the Shortcut Sits: supervisor meeting 2 of 6}
+\author{}
+\date{Report generated from the repository on \today}
+\begin{document}
+\maketitle
+\stagebox{\textbf{In one sentence.} When only the artifact's overlap with the region of interest (ROI) is varied,
+ROI masking helps while the artifact lies outside the ROI and stops helping --- in most sweeps it hurts --- once the
+artifact overlaps it; the reversal comes from the artifact \emph{surviving} the mask and dominating what the model
+sees, not from occlusion, and it recurs in ultrasound, capsule endoscopy and chest radiography with one principled
+exception.}
+\input{../common/notation.tex}
+
+\section{Where we are}
+Stage~1 fixed the protocol (trap environments, frozen foundation-model features, linear heads, grouped splits,
+pre-registration, crossed bootstrap) and showed that the pilot's central sweep result replicates. This meeting asks
+\emph{why} masking reverses, and \emph{how general} the reversal is. Everything in this report comes from runs
+regenerated in \texttt{results/rerun\_2026-09-28/} and every interval uses the corrected (crossed seed $\times$ image)
+bootstrap. Relative to earlier drafts, three things are new: (i) the mechanism analyses now carry corrected intervals,
+and two lesion-size cells lost significance (Sec.~\ref{sec:changed}); (ii) the same-head counterfactual is tested with a
+confidence interval instead of being shown as a figure only; (iii) the controlled sweep is repeated in four further
+modalities with two backbones each where possible, and the counts of sweeps that support each part of the law are
+generated from the result files.
+
+\section{Question}
+\subsection{What we want to know}
+\begin{enumerate}[label=\textbf{Q2\alph*},leftmargin=*]\itemsep1pt
+\item Is the benefit of masking a function of the artifact's overlap $r$ with the ROI, with a sign change between
+$r=0$ and $r=1$? We call a positive \emph{location interaction}
+$\big[\mathrm{mask}-\mathrm{ERM}\big]_{r=0}-\big[\mathrm{mask}-\mathrm{ERM}\big]_{r=1}$ on the reversed test the
+\emph{location law}.
+\item Which mechanism produces the reversal? Three candidates were stated in advance:
+\emph{occlusion} (masking removes useful context whatever the artifact does), \emph{lost disease signal} (the
+background carries diagnostic information), and \emph{retention/concentration} (the part of the artifact inside the ROI
+survives masking and becomes a larger share of the visible pixels, so the head relies on it more).
+\item Does the law hold beyond one backbone, one artifact rendering and one modality --- and where does it fail?
+\end{enumerate}
+
+\subsection{Why these experiments, and what we rejected}
+\begin{itemize}[leftmargin=*]\itemsep1pt
+\item \emph{Occlusion control instead of arguing from intuition.} If masking harmed because it throws away context, it
+would harm even when the artifact carries no label information \citep[cf.][]{fong2019occlusions}. The control keeps the ruler at the same positions but
+makes it independent of the label.
+\item \emph{Dilation as a dose of retention.} Growing the mask by a margin keeps more of the ruler visible without
+changing the lesion. If retention drives the harm, harm should grow with retention when retention is incomplete (50\%
+overlap) and stay flat when the ruler is already fully retained (100\% overlap).
+\item \emph{Same-head counterfactual instead of saliency maps.} Saliency maps are qualitative and unstable for frozen
+encoders. We instead insert and remove the artifact on the \emph{same} test image and read the change in the predicted
+probability $|\Delta p|$ of each trained head: a direct, per-image measure of reliance on the artifact.
+\item \emph{Lesion size as a natural dose.} The same ruler covers a larger share of a small lesion; if concentration
+matters, harm should be largest for small lesions. A fixed ratio threshold was \emph{not} pre-specified, because the
+pilot showed none.
+\item \emph{Rejected:} measuring reliance through head weights (not comparable between masked and unmasked feature
+spaces) and a single ``average'' overlap (it would hide the sign change).
+\end{itemize}
+
+\section{Methods}
+\paragraph{Controlled sweep} ISIC 2018 pilot cohort (Stage~1), a $65\times19$\,px ruler pasted at a frozen position per
+image and overlap $r\in\{0,0.25,0.5,0.75,1\}$ (Figure~\ref{fig:examples}); DINOv2 ViT-B/14 at 518\,px \citep{oquab2024dinov2}, CLS features,
+logistic heads; seeds 42, 123, 456; environments 0.9/0.1 (training, correlated test), 0.1/0.9 (reversed test) and
+artifact-free (clean test). The primary outcome is the reversed-test AUROC.
+\paragraph{Arms} ERM (unmasked image); \textbf{ROI masking} (pixels outside the lesion mask set to the image mean before
+feature extraction); oracle inpainting (the known ruler pixels are replaced by the surrounding skin --- an upper bound
+that needs the artifact mask); group-balanced reweighting of the artifact $\times$ label cells; deep feature
+reweighting (DFR) on a balanced subset \citep{kirichenko2023dfr}; paired LEACE \citep{belrose2023leace} (the linear concept direction of the artifact is erased using
+images with and without it); GroupDRO \citep{sagawa2020groupdro}. All arms share features and seeds; only the input or the head changes.
+\paragraph{Occlusion control} The ruler is pasted at the same positions in 50\% of images independently of the label;
+AUROC is measured on a 50/50 test.
+\paragraph{Mask dilation} The lesion mask is dilated by 0, 10, 25 or 50\,px before masking. \emph{Retention} is the share
+of ruler pixels that remain visible; \emph{ruler share} is the ruler's share of all visible pixels.
+\paragraph{Same-head counterfactual} For each artifact-bearing image of the reversed test and each trained head, the
+image is scored with and without the pasted ruler (the masked head sees the masked version of both); $|\Delta p|$ is the
+absolute change in predicted probability. The mask $-$ ERM difference of mean $|\Delta p|$ is bootstrapped with seeds
+and images crossed.
+\paragraph{Lesion-size strata} Test images are split into tertiles of lesion area; the median ruler-to-lesion area ratio
+is reported per tertile.
+\paragraph{Replications and other modalities} DINOv2 at 224\,px, the dermatology foundation model DermLIP at 224\,px \citep{yan2025derm1m}, and
+a ruler whose colour, tick pattern and size are randomised per image (``stress''). Other modalities, each with its own
+ROI masks: thyroid nodules (TN3K \citep{gong2021tn3k}; synthetic caliper; DINOv2 and MedSigLIP-448), ovarian tumours (MMOTU \citep{zhao2022mmotu}; synthetic
+caliper; DINOv2), capsule-endoscopy lesions (SEE-AI \citep{seeai2023}; synthetic debris; box ROIs; DINOv2 and MedSigLIP) and pneumothorax
+radiographs (NIH \citep{wang2017chestxray8}; synthetic tube; lung masks; RAD-DINO \citep{perezgarcia2025raddino} and DINOv2).
+\paragraph{Statistics} Every interval is a 95\% percentile interval from 10,000 crossed bootstrap replicates (seeds
+resampled, one Poisson(1) weight per test image shared across seeds and arms). A claim is \emph{supported} if its
+pre-stated criterion holds with the interval; ``significant'' below means the 95\% interval excludes zero, not a
+multiplicity-adjusted test (the confirmatory family is in Stage~3).
+
+\section{Experiments}
+Table~\ref{tab:exp} lists each experiment of this stage with its registration status, the first commit that contains
+the registration and the support criterion. The pilot analyses (E1--E7) were specified before this project's
+re-implementation (\texttt{docs/REPLICATION\_SPEC.md}, \sTwoRegRep) and regenerated under the final registration
+(\sTwoRegFinal). \textbf{Caveat:} commit times come from this machine and are not independent proof of order.
+\input{tables/experiments.tex}
+
+\section{Results}
+\subsection{The controlled sweep: the location law}
+Masking changes the reversed-test AUROC by \sTwoMaskZero{} when the ruler lies outside the lesion, by
+\sTwoMaskFiveZero{} at 50\% overlap and by \sTwoMaskOneZeroZero{} at full overlap (Table~\ref{tab:sweep},
+Figure~\ref{fig:dose}); the location interaction is \sTwoInter. Masking therefore \sTwoHarmVerdict. Every other arm
+helps at every overlap, and their benefit \emph{grows} with overlap --- the opposite of masking --- because they target
+the artifact, not the background. On the correlated test the masked model at full overlap scores \sTwoCorrMaskHundred{}
+against \sTwoCorrErmHundred{} for ERM: the masked model exploits the ruler more, which is what the reversed test then
+punishes.
+\input{tables/sweep_main.tex}
+\begin{figure}[H]\centering\includegraphics[width=\linewidth]{figures/dose_response.pdf}
+\caption{Change in reversed-test AUROC against ERM as a function of overlap for masking and group balancing (shaded:
+crossed 95\% CI). Dermoscopy and the DINOv2/RAD-DINO sweeps in the other modalities.}\label{fig:dose}\end{figure}
+
+\paragraph{Replications} The sweep reverses with DINOv2 at 224\,px (interaction \sTwoDinoTwoTwoFourInter), with DermLIP
+(\sTwoDermlipInter) and with a randomised ruler (\sTwoStressInter) (Table~\ref{tab:rep}). The law is therefore not a
+property of one encoder, one resolution or one rendering of the ruler.
+\input{tables/sweep_replications.tex}
+
+\begin{figure}[H]\centering\includegraphics[width=0.86\linewidth]{figures/sweep_examples.pdf}
+\caption{Real images with the synthetic artifact at 0, 50 and 100\% overlap (\textcolor{roigreen}{green}: ROI; the
+capsule ROI is the annotated bounding box). Top: ISIC 2018 (CC BY-NC 4.0); middle: MMOTU ovarian ultrasound (CC BY
+4.0); bottom: SEE-AI capsule endoscopy (CC BY 4.0). Thyroid (TN3K) and NIH images are not shown because their
+redistribution terms are unclear.}\label{fig:examples}\end{figure}
+
+\subsection{Mechanism}
+\paragraph{Occlusion does not explain the harm} With the ruler present but uninformative, masking \sTwoOccVerdict{}
+(Table~\ref{tab:occ}); inpainting, which removes only the ruler, changes nothing either. Masking by itself does not cost
+the reversed-test AUROC it loses in the sweep.
+\input{tables/occlusion.tex}
+
+\paragraph{Retention drives the harm when it is incomplete} At 50\% overlap, dilating the mask from 0 to 25\,px raises
+retention from \sTwoRetFiveZeromZero{} to \sTwoRetFiveZeromTwoFive{} and moves the masking effect from
+\sTwoDilFiveZeromZero{} to \sTwoDilFiveZeromTwoFive. At 100\% overlap the ruler is already retained
+(\sTwoRetOneZeroZeromZero) and the effect stays flat (\sTwoDilOneZeroZeromZero{} without and \sTwoDilOneZeroZeromFiveZero{}
+with a 50\,px margin), although dilation \emph{lowers} the ruler's share of visible pixels
+(\sTwoShareOneZeroZeromZero{} to \sTwoShareOneZeroZeromFiveZero). Harm therefore tracks whether the ruler is visible,
+not how much of the image it occupies once visible (Table~\ref{tab:dil}). The intervals of neighbouring margins overlap;
+the pattern, not each step, is the finding.
+\input{tables/dilation.tex}
+
+\paragraph{The masked model relies more on the retained artifact} On the same images, inserting the ruler at full
+overlap changes the masked head's prediction by \sTwoDpMaskFull{} on average and the ERM head's by \sTwoDpErmFull{}
+--- about \sTwoDpRatioFull{} times as much; the paired difference is \sTwoDpDiffFull{} (Table~\ref{tab:cf},
+Figure~\ref{fig:cf}). At 0\% overlap the masked head cannot see the ruler (\sTwoDpMaskZero) whereas ERM still reacts to
+it (\sTwoDpErmZero). This is the mechanism in one measurement: masking removes the competing evidence, the retained
+artifact becomes the most informative remaining feature, and the head leans on it. The counterfactual was saved for the
+dermoscopy sweep only; the other sweeps did not store per-image counterfactual scores, so this measurement is not
+replicated across modalities.
+\input{tables/counterfactual.tex}
+\begin{figure}[H]\centering\includegraphics[width=0.66\linewidth]{figures/counterfactual.pdf}
+\caption{Mean same-head sensitivity $|\Delta p|$ to inserting the ruler, masked model (solid) and ERM (dashed), by
+overlap (dermoscopy sweep).}\label{fig:cf}\end{figure}
+
+\paragraph{Lesion size} Table~\ref{tab:tert} splits the test set by lesion area. The ruler covers a median
+\sTwoRatioLarge{} of a large lesion's area, \sTwoRatioMedium{} of a medium and \sTwoRatioSmall{} of a small one. With
+the corrected intervals, the harm at full overlap is significant for small (\sTwoTertSmallOneZeroZero) and medium
+lesions (\sTwoTertMediumOneZeroZero) and not for large ones (\sTwoTertLargeOneZeroZero, which \sTwoLargeVerdict); at
+50\% overlap it is significant only for small lesions (\sTwoTertSmallFiveZero; medium \sTwoTertMediumFiveZero). What
+survives is an ordering --- harm is largest where the artifact is large relative to the lesion --- with wide intervals
+because each tertile has few melanomas. No fixed ratio threshold is claimed.
+\input{tables/tertiles.tex}
+
+\subsection{Other modalities}
+Table~\ref{tab:other} repeats the sweep with synthetic artifacts on real images from four further modalities. Across
+all \sTwoNSweeps{} controlled sweeps of this report (four dermoscopy, seven others), the location interaction is
+positive with an interval above zero in \sTwoNInterPos{} and negative in \sTwoNInterNeg. Whether the falling benefit
+turns into harm at full overlap depends on the setting: masking harms significantly at full overlap in \sTwoNHarmFull{}
+sweeps, still helps in \sTwoNHelpFull{} and makes no significant difference in \sTwoNNullFull.
+\input{tables/other_sweeps.tex}
+\begin{itemize}[leftmargin=*]\itemsep1pt
+\item \textbf{Thyroid calipers.} Masking helps strongly with the caliper outside the nodule (DINOv2
+\sTwoThyroidcaliperDINOvTwoZero; MedSigLIP \sTwoThyroidcaliperMedSigLIPZero) and the benefit vanishes at full overlap
+(\sTwoThyroidcaliperDINOvTwoFull; \sTwoThyroidcaliperMedSigLIPFull): the law holds as a loss of benefit, not as harm.
+\item \textbf{Ovarian calipers.} Masking harms at full overlap (\sTwoOvariancaliperDINOvTwoFull) and its benefit
+outside the tumour is not significant (\sTwoOvariancaliperDINOvTwoZero): MMOTU tumours fill much of the frame, so little
+background is removed.
+\item \textbf{Capsule debris.} With DINOv2 the sweep reverses (\sTwoCapsuledebrisDINOvTwoZero{} to
+\sTwoCapsuledebrisDINOvTwoFull). With MedSigLIP masking still helps at full overlap
+(\sTwoCapsuledebrisMedSigLIPFull) but less than outside (\sTwoCapsuledebrisMedSigLIPZero; interaction
+\sTwoCapsuledebrisMedSigLIPInter): the box ROI contains much normal mucosa, so masking removes little of the lesion's
+context.
+\item \textbf{Chest tube --- the boundary.} With RAD-DINO the ERM model ignores a tube outside the lungs (reversed
+\sTwoCxrErmRevZero{} versus clean \sTwoCxrErmCleanZero{} at no overlap), so masking has nothing to remove at $r=0$; at
+full overlap ERM collapses (\sTwoCxrErmRevOneZeroZero) and the masked model less so (\sTwoCxrMaskRevOneZeroZero).
+The interaction is negative. With DINOv2, which does use the extra-pulmonary tube (reversed \sTwoCxrDinoErmRevZero{}
+versus clean \sTwoCxrDinoErmCleanZero), the law holds (\sTwoChesttubeDINOvTwoInter). The law's premise is that the
+encoder uses the out-of-ROI artifact; when it does not, masking cannot help outside and the law does not apply.
+\end{itemize}
+
+\section{What failed or changed}\label{sec:changed}
+\begin{itemize}[leftmargin=*]\itemsep1pt
+\item \textbf{Two lesion-size cells lost significance with the corrected bootstrap}: large lesions at full overlap and
+medium lesions at 50\% overlap. Earlier drafts described harm as increasing monotonically across all three tertiles at
+both overlaps; that statement is withdrawn and replaced by the ordering above. The old and new intervals are listed in
+\texttt{results/bootstrap\_correction/sweeps\_umte\_old\_vs\_new.md}.
+\item \textbf{Harm at full overlap is not universal.} Earlier drafts said masking ``harms once the artifact overlaps the
+ROI''. With corrected intervals, the robust statement is the \emph{interaction} (\sTwoNInterPos{} of \sTwoNSweeps);
+harm at full overlap is significant in \sTwoNHarmFull{} of \sTwoNSweeps{} sweeps.
+\item \textbf{Chest radiography with RAD-DINO contradicts the law}, as a failure of its premise (above). It was
+registered as a confirmation and is reported as a boundary case.
+\item \textbf{The counterfactual was not saved for the non-dermoscopy sweeps}, so the mechanism measurement is
+dermoscopy-only.
+\item \textbf{The ovarian sweep has no significant benefit outside the ROI}, so its crossover rests on the harm side
+only.
+\end{itemize}
+
+\section{Conclusion}
+\textbf{Supported.} The location law in its interaction form (Q2a) holds in \sTwoNInterPos{} of \sTwoNSweeps{}
+controlled sweeps across five modalities and four encoders. The mechanism (Q2b) is retention: occlusion alone does not
+harm, harm follows the visibility of the artifact under dilation, and the masked head's same-image reliance on an
+in-ROI artifact is about \sTwoDpRatioFull{} times that of ERM (\sTwoDpDiffFull). \textbf{Qualified.} Harm at full
+overlap is setting-dependent; the lesion-size gradient is an ordering with two non-significant cells. \textbf{Not
+supported.} The law for an encoder that ignores the out-of-ROI artifact (chest tube, RAD-DINO). The practical reading
+is: masking removes what lies outside the ROI and concentrates the model on what lies inside; whether that helps depends
+on where the shortcut sits.
+
+\section{Questions for the supervisor}
+\begin{enumerate}\itemsep1pt
+\item Should the thesis state the law in its interaction form only (robust) and treat harm at full overlap as
+setting-dependent, or keep harm as the headline for dermoscopy, where it holds with every encoder?
+\item Is one modality (dermoscopy) enough for the counterfactual mechanism, or should the counterfactual be re-run for
+thyroid and capsule before submission (about one GPU-hour each)?
+\item Is it acceptable to present chest radiography with RAD-DINO as a boundary of the law rather than as a failed
+confirmation, given that it was registered as a confirmation?
+\end{enumerate}
+
+\section{Next stage}
+Stage~3 leaves synthetic artifacts. It asks whether the same crossover appears with \emph{real} artifacts --- hair in
+dermoscopy, calipers in thyroid and ovarian ultrasound, debris in capsule endoscopy, devices in chest radiographs ---
+where location is defined by real masks and detectors. It also reports the overlap-contrast design that failed (E12),
+the detector validity checks and the 16-test confirmatory family with Holm correction.
+
+\bibliographystyle{plainnat}
+\bibliography{../common/references}
+\end{document}

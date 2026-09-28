@@ -1,0 +1,13 @@
+\begin{table}[H]\centering\small
+\caption{Controlled dermoscopy sweep (ISIC 2018, DINOv2 ViT-B/14 @518, three seeds): change in reversed-test AUROC versus ERM, crossed CIs.}\label{tab:sweep}
+\resizebox{\linewidth}{!}{\begin{tabular}{lccc}\toprule
+ & 0\% overlap & 50\% & 100\% \\\midrule
+ERM (reversed AUROC) & 0.665 & 0.573 & 0.515 \\
+ROI masking $-$ ERM & $+0.184$ [$+0.117, +0.250$] & $-0.097$ [$-0.164, -0.030$] & $-0.129$ [$-0.195, -0.064$] \\
+oracle inpainting $-$ ERM & $+0.141$ [$+0.109, +0.175$] & $+0.211$ [$+0.175, +0.249$] & $+0.243$ [$+0.205, +0.284$] \\
+group-balanced $-$ ERM & $+0.137$ [$+0.099, +0.179$] & $+0.219$ [$+0.177, +0.265$] & $+0.281$ [$+0.236, +0.329$] \\
+DFR $-$ ERM & $+0.124$ [$+0.075, +0.179$] & $+0.221$ [$+0.166, +0.281$] & $+0.279$ [$+0.220, +0.339$] \\
+paired LEACE $-$ ERM & $+0.167$ [$+0.126, +0.211$] & $+0.237$ [$+0.197, +0.280$] & $+0.294$ [$+0.249, +0.339$] \\
+GroupDRO $-$ ERM & $+0.080$ [$+0.044, +0.118$] & $+0.152$ [$+0.112, +0.193$] & $+0.197$ [$+0.155, +0.240$] \\
+\bottomrule\end{tabular}}
+\end{table}
