@@ -2,7 +2,8 @@
 \paragraph{What the evidence supports} Masking is not a neutral preprocessing step: its benefit depends on where the
 artifact sits. Four designs agree: real traps, covariate-matched traps (hair, thyroid, ovary), the real-artifact transplant on
 fixed images, and controlled sweeps, with fine-tuned networks and foundation-model zero-shot scores pointing the same
-way. The transplant removes the image-population explanation, but its paste-edge control shows that what it isolates
+way. It holds for every masking implementation we tried, falls continuously with the real overlap, and grows when
+images with contradicted labels are removed. The transplant removes the image-population explanation, but its paste-edge control shows that what it isolates
 is location, not the artifact's appearance: neutral tissue pasted through the same masks produces 52--92\% of the
 effect. The evidence that \emph{real} artifacts behave this way in \emph{natural} images therefore comes from the real
 and matched traps and from the unaltered test data, not from the transplant. The claim is about the \emph{gap}. Whether in-ROI masking helps a little or harms depends on
@@ -14,19 +15,23 @@ that the consequences are not. First, masking does not merely leave an in-ROI ar
 rely on it \emph{more}. On the same images, inserting the ruler inside the lesion changes the masked model's prediction
 about twice as much as ERM's (mean $|\Delta p|$ 0.491 versus 0.235 at full overlap; Sec.~\ref{sec:mech}), because
 masking removes the competing evidence around it. Second, the consequence is clinical and measurable on data as
-collected: on the patient-disjoint thyroid split, masking lowers sensitivity at every validation-fixed operating point,
-most for malignant nodules that carry a caliper. Third, the size of the effect is predictable before it is observed:
-fitted only to clean and correlated performance, a two-parameter account predicts held-out reversed AUROC with less
-than half the error of the natural heuristic (0.052 versus 0.129), and it anticipates the one encoder without a hair
-gap. Fourth, the neutral-paste control shows that the artifact's appearance is not what matters: \emph{any}
+collected: on the patient-disjoint thyroid split masking lowers sensitivity among malignant nodules that carry a
+caliper, in a subgroup registered in advance for a fine-tuned model near the published benchmark, and part of that loss
+survives any re-tuning of the threshold; on new patients from ISIC 2020 the harm on conflicting cases is invisible in the
+overall AUROC. Third, the size of the effect is predictable before it is observed: fitted only to clean and correlated
+performance, a two-parameter account predicts held-out reversed AUROC with less than half the error of the natural
+heuristic (0.052 versus 0.129), predicted 84 results registered before they existed (error 0.011), and anticipates the
+one encoder without a hair gap. Fourth, the neutral-paste control shows that the artifact's appearance is not what matters: \emph{any}
 label-correlated pattern inside the ROI survives masking (52--92\% of the transplant effect), so the problem cannot be
 solved by recognising particular artifacts. Together these turn an intuition into a decision rule: where the shortcut
 sits, and what carries it, decides whether masking helps and what to use instead (Sec.~\ref{sec:guide}).
 
 \paragraph{Why this matters clinically} On the patient-disjoint official thyroid test split the in-ROI caliper is
 associated with benign nodules; masking keeps it and removes competing evidence, and the malignant nodules that carry a
-caliper are then missed more often at every operating point we examined. An ROI-masked model can therefore look
-unchanged by overall AUROC while failing on exactly the cases in which the shortcut points the wrong way. Audits of
+caliper are then missed more often at every validation-fixed operating point. Most of that loss follows from
+transporting the threshold; re-tuning it on the test set itself removes the overall loss but not the loss in this
+subgroup. An ROI-masked model can therefore look unchanged by overall AUROC, even after local recalibration, while
+failing on exactly the cases in which the shortcut points the wrong way. Audits of
 masked models should stratify performance by artifact presence and location.
 
 \paragraph{Reading reversed-environment gains} A reversed-test gain can be manufactured by removing diagnosis-correlated
@@ -36,12 +41,13 @@ robustness by the minimum of correlated and reversed AUROC.
 
 \paragraph{Limitations}
 (i) \emph{Artifact labels.} Calipers are segmented by a rule-based detector and capsule debris by a patch-token probe
-(IoU 0.62 against expert masks); hair masks are published semi-automatic masks. Our visual audits were carried out by
-the analysis team, not by clinicians; a blinded audit of 240 images (four cohorts, three location cells, neutral
-identifiers; review sheet and scoring script in the repository) is prepared for two independent clinical raters but
-not yet done. Label errors dilute the constructed
-correlation and should bias effects toward zero, and stricter label definitions strengthen rather than weaken the
-results (Sec.~\ref{sec:robustness}); the transplant experiment does not depend on the artifact-free group being
+(IoU 0.62 against expert masks); hair masks are published semi-automatic masks. No clinician audited them. Independent
+sources confirm where hair lies, but our hair-presence threshold over-calls hair, with errors that differ by diagnosis;
+the thyroid caliper labels agree with two independent labellers where those agree with each other, but the registered
+cleaning rule could not be tested for thyroid, and the ovary and capsule labels remain unchecked (Sec.~\ref{sec:labels}).
+A blinded rating of 240 images by the first author, a non-clinician, is registered and not yet done. Label errors that
+do not depend on the diagnosis dilute the constructed correlation, and removing contradicted images or using stricter
+label definitions strengthens rather than weakens the results (Secs.~\ref{sec:robustness}, \ref{sec:labels}); the transplant experiment does not depend on the artifact-free group being
 perfectly clean because the transplanted instance is identical at both locations.
 (ii) \emph{Patient identifiers.} TN3K/TNCD, MMOTU and SEE-AI publish no patient or video identifiers for the pooled
 images, so the trap splits group near-duplicates by perceptual hash and frame blocks (a stricter embedding grouping
@@ -51,13 +57,16 @@ patient-disjoint. The one open cohort we found with patient identifiers, patholo
 fires on interface elements; external validation on it requires a transferred nodule segmentation and a re-validated
 detector and is left for future work. For dermoscopy, external validation on new patients was possible and was run under
 a pre-registered cell-count gate (ISIC 2020, patient-disjoint folds, hair masks from a segmenter trained only on
-ISIC 2019): the crossover replicates ($+0.250$ [$+0.174, +0.327$]).
+ISIC 2019): the crossover replicates ($+0.250$ [$+0.174, +0.327$]), and at natural prevalence masking lowers the AUROC on
+conflicting pairs (Sec.~\ref{sec:natural}). External validation is limited to dermoscopy, and on ISIC 2020 no
+operating-point effect was detectable.
 (iii) \emph{Constructed shifts.} Reversed environments are constructed by subsampling; real deployment shifts are
 less extreme, which is why we report the unaltered test distributions separately.
 (iv) \emph{Absolute performance.} Frozen encoders with linear heads are below the best published fine-tuned models on
 the one cohort with a directly comparable benchmark (official TNCD split: 0.735 AUROC versus 0.773--0.784 for
-fine-tuned CNNs with cross-entropy and up to 0.799 with curriculum learning, \citealp{gong2022acl}). The law
-replicates with end-to-end fine-tuned networks in three of four cohorts; on ovarian ultrasound the fine-tuned ResNet-50
+fine-tuned CNNs with cross-entropy and up to 0.799 with curriculum learning, \citealp{gong2022acl}). A fine-tuned
+ConvNeXt-T reaches 0.769, near but below the lowest published baseline, and shows every registered harm
+(Sec.~\ref{sec:natural}). The law replicates with end-to-end fine-tuned networks in three of four cohorts; on ovarian ultrasound the fine-tuned ResNet-50
 barely learns the task and shows no significant crossover (Sec.~\ref{sec:replication}). The other cohorts' binary
 tasks have no published benchmark on the same split (Supplement~S10).
 (v) \emph{Scope.} Chest radiography is a boundary case: the encoder ignored extra-pulmonary tubes and real drains carry
@@ -72,7 +81,11 @@ differences of up to 0.19 for some covariates. (vii) \emph{Transplant.} Pasted p
 become learnable shortcuts; the transplant establishes location dependence on fixed images, not the size of real
 artifacts' effects in their natural context (for hair, whose natural shortcut is carried mostly by correlates, the
 difference is large). (viii) \emph{Pre-registration.} Every registration is committed before its outcome results (registry with commit hashes
-and times in Supplement~S1); commit times are set by the committing machine, so only the registrations of the second
-review round carry an external (GitHub push) time stamp, and the 16-test primary family was assembled after the
-individual results. The final round (regression-adjusted matching, external validation) was registered and pushed
-before its runs.
+and times in Supplement~S1); commit times are set by the committing machine, so only the registrations that were
+pushed to GitHub before their runs (the second review round and every later round) carry an external time stamp, and
+the 16-test primary family was assembled after the individual results. Two later analyses are sensitivity analyses
+registered after the result they examine (the calibrated duplicate rule, the cleaner hair groups), and a few are
+exploratory (the consensus caliper labels). (ix) \emph{Operating points.} Most of the thyroid sensitivity loss at
+validation-fixed thresholds is threshold transport; the part that survives re-tuning has a wide interval
+($-0.154$ [$-0.302, -0.023$]). (x) \emph{Remedies.} No remedy improves on masking uniformly on unaltered data; the guide
+of Sec.~\ref{sec:guide} is a tool for auditing, not a claim of better deployment performance.

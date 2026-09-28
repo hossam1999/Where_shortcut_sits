@@ -30,7 +30,11 @@ The oracle-removal ceiling on a handful of annotated images diagnoses this regim
 
 \paragraph{Remedies do not transfer to unaltered test data} The regimes above are defined on the traps, whose reversed
 test sets are extreme by construction. On the unaltered test distributions (Sec.~\ref{sec:natural}) no remedy is
-uniformly better than the unmasked model: \input{tables/review2_guide_natural}.
+uniformly better than the unmasked model: \input{tables/review2_guide_natural}. On the shortcut-conflicting pairs,
+however, label-based group balancing does help: over masking $+0.136$ [$+0.063, +0.207$] on the thyroid split, $+0.043$
+[$+0.026, +0.059$] and $+0.100$ [$+0.055, +0.144$] for the BCN and MSK hold-outs and $+0.072$ [$+0.048, +0.097$] on
+ISIC 2020, with no change for HAM and capsule; it costs overall AUROC on HAM ($-0.032$ [$-0.049, -0.013$]) and
+capsule.
 We therefore offer the regimes as a decision guide for \emph{auditing} a model, not as a claim that any remedy
 improves deployment performance:
 (i) measure where artifacts sit relative to the ROI; out-of-ROI artifacts are what masking removes;

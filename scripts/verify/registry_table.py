@@ -37,6 +37,10 @@ RESULTS = {
                                    "results/review2/R0_R1_crossovers.csv"],
     "PREREGISTRATION_REVIEW3.md": ["results/review3", "results/review2/transplant/isic_dino518_neutral",
                                    "results/review2/transplant/thyroid_dino518_neutral"],
+    "PREREGISTRATION_ROUND4.md": ["results/round4"],
+    "PREREGISTRATION_ROUND5.md": ["results/round5"],
+    "PREREGISTRATION_ROUND6.md": ["results/round6"],
+    "PREREGISTRATION_ROUND7.md": ["results/round7"],
 }
 
 

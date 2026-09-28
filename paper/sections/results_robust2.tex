@@ -8,6 +8,25 @@ large-marker-only ($\ge 50$ px) and strict-location ($r\ge0.7$ / $r<0.05$) defin
 (thyroid $+0.217$ to $+0.282$; ovary $+0.043$ to $+0.067$) significant in every variant; both grow under stricter
 definitions, as expected if detector errors dilute rather than create the effects.
 
+\subsection{Artifact labels checked without a clinician (pre-registered)}\label{sec:labels}
+No clinician was available to audit the labels, so we compared them with every independent source we could find, with
+coverage gates and without the images on which our own labellers were trained (Supplement~S16). \emph{Dermoscopy.}
+Where hair is present our labels place it correctly: our lesion masks agree with the IMA++ multi-annotator masks (241
+images; Dice 0.851 [0.830, 0.870]; trap class agreement 84\%), and against independent hair masks (485 images) the hair
+lies on the other side of the lesion boundary in 1 of 264 trap images. But at our threshold ($>30$ pixels) the published
+hair masks mark hair on 93\% of the 8,864 images that the expert-reviewed DermArtifactDB labels call hair-free
+($\kappa=0.076$), more often for melanomas. Removing every image an independent source contradicts (42\% of each trap)
+raises the hair crossover from $+0.147$ [$+0.111, +0.185$] to $+0.199$ [$+0.164, +0.233$]: the label noise diluted
+the effect. \emph{Calipers.} Two independent labellers---an ultrasound annotation detector (BUSClean) and a medical
+vision--language model (MedGemma, run locally with fixed prompts and never shown our masks)---both pass a pre-registered
+informativeness rule on thyroid ($\kappa\ge0.40$) but err in opposite directions, so the registered rule that removes an
+image whenever either disagrees left too few out-of-ROI caliper images to re-run the thyroid traps. Where the two agree
+with each other (1,865 of 3,277 images) they agree with our cell for 94\%, and without the images both contradict the
+thyroid crossover is $+0.257$ [$+0.209, +0.304$] (exploratory; $+0.239$ on our labels); the subgroup loss of
+Sec.~\ref{sec:natural} holds in the 36 nodules whose in-ROI caliper both confirm. On ovarian screens the annotation
+detector fires on 90\% of caliper-free images and was declared invalid, so the ovary and capsule labels could not be
+checked with public data.
+
 \subsection{Stricter leakage grouping}\label{sec:leak_emb}
 TN3K/TNCD, MMOTU and SEE-AI publish no patient or video identifiers, so the main analyses group near-duplicates by
 perceptual hash (and, for capsule, blocks of 100 consecutive frames). As a pre-registered sensitivity analysis we

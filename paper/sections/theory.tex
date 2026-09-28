@@ -45,6 +45,14 @@ crossover near zero) disagreed in sign, which fails our pre-registered all-signs
 the model a qualitative account. Its one clear failure, also from the archived chest-drain runs (not re-estimated), is
 the drain cohort (implied 0.70--0.76, observed 0.19--0.24): the clean and correlated environments do not expose a
 shortcut carried by correlates of the drain, regime~(v).
+
+\paragraph{Prospective test (pre-registered)} The comparison above uses results that existed when the test was
+designed. We therefore registered the same procedure, unchanged, before the masking-implementation and overlap-bin
+analyses of Sec.~\ref{sec:impl} were run. On their 84 cells, fitted to each cell's clean and correlated AUROC only, the
+account predicted the held-out reversed AUROC with a mean absolute error of 0.011 ($r=0.996$), against 0.036 for the
+symmetry heuristic and 0.177 for ``reversed $=$ clean'', and met its registered criterion for quantitative prediction.
+This verdict covers frozen-encoder linear heads on the four real-artifact cohorts; across all cohorts, including the
+archived chest-radiograph cells, the account remains a qualitative one.
 \ifdupfloats
 \begin{figure}[t]\centering\includegraphics[width=\linewidth]{figures/theory_predict.pdf}
 \caption{Pre-registered test of the linear-Gaussian account on real encoders. $(S,A)$ are fitted to each model's

@@ -75,7 +75,7 @@ def compact():
     L = ["\\begin{table}[t]\\centering\\small",
          "\\caption{In-ROI artifacts (Trap~A): robustness $=\\min(\\text{reversed},\\text{correlated})$ AUROC, which "
          "penalises both shortcut use and shortcut flipping. Bold: best per column. Full reversed/correlated/clean values "
-         "for all cohorts and backbones: Table~\\ref{tab:main}.}", "\\label{m:tab:remedies}",
+         "for all cohorts and backbones: Supplement~S8.}", "\\label{m:tab:remedies}",
          "\\begin{tabular}{ll" + "c" * len(cols) + "}", "\\toprule", f"Method & Needs & {head} \\\\", "\\midrule"]
     for k, name, needs in CROWS:
         cells = []

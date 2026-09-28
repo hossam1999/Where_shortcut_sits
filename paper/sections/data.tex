@@ -11,12 +11,14 @@ U-Net trained on ISIC 2018 Task 1. Two traps share one hair-free group ($\le 30$
 Trap~A contains hair with overlap $r=|\text{hair}\cap\text{lesion}|/|\text{hair}|\ge0.5$, Trap~B $r<0.1$. Cells are
 subsampled to the hair-free source mix (HAM/BCN/MSK) within each label, giving Trap~A 704/157/2,738/989 and Trap~B
 704/157/4,327/930 images (hair-free benign/melanoma, hair benign/melanoma); five seeds of five-fold group-safe
-cross-validation (leakage groups: lesion identifiers and pHash); 172 reversed-test melanomas per trap and seed.
+cross-validation (leakage groups: lesion identifiers and pHash); 172 reversed-test melanomas per trap and seed. The
+30-pixel threshold is sensitive: independent labels show that it marks hair on many images that experts call hair-free
+(Sec.~\ref{sec:labels}).
 
 \paragraph{Thyroid ultrasound} TN3K images \citep{gong2021tn3k} with TNCD benign/malignant labels from cytological
 biopsy \citep{gong2022acl} (3,493 images of 2,421 patients; 1,210 malignant) and manual nodule masks; the official
 train/test split (2,879/614 images) is patient-disjoint \citep{gong2022acl}. Sonographer calipers were segmented by a frozen rule-based detector (dotted measurement lines
-and `+' ends; audit in Sec.~\ref{sec:limits}). Trap~A: calipers with $r\ge0.5$ (1,150 images); Trap~B: $r<0.1$ (326);
+and `+' ends; audits in Secs.~\ref{sec:robustness} and \ref{sec:labels}). Trap~A: calipers with $r\ge0.5$ (1,150 images); Trap~B: $r<0.1$ (326);
 caliper-free: 1,801. Patient identifiers are not published, so within the pooled images leakage groups are pHash
 chains (stricter embedding-based groups in Sec.~\ref{sec:leak_emb}).
 
