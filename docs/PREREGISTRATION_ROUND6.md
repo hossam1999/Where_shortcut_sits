@@ -138,3 +138,12 @@ and places where the registration left a rule implicit. No data of this round ha
    Stage 3 crossover (the one the measured errors refer to), not to the cleaned crossover of A2.
 7. **Reference crossover for ISIC**: the crossed-bootstrap estimate of the regenerated run (Stage 3), as for the
    other cohorts.
+
+## Amendment 3 (2026-09-28, before any rating)
+Reason: for a non-clinician the region is not identifiable on raw capsule frames (it is the union of expert lesion
+boxes) and uncertain on ultrasound, so a location answer given on the raw image alone would measure the rater's guess
+of the region rather than the artifact's position relative to the region our cells use. Change: in step 1 of the
+rating tool, the raw image is shown next to the same image with only the green outline of the dataset's expert region
+(lesion mask, nodule or tumour mask, lesion boxes; never our automatic artifact mask), and the page states the cohort's
+artifact and region. Step 2 (mask questions) still shows the review overlay. Contour images are generated locally into
+the git-ignored `audit_local/contours/`. No rating had been saved.

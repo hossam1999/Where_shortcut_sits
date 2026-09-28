@@ -22,6 +22,37 @@ import pandas as pd
 ROOT = Path(__file__).resolve().parents[2]
 SHEETS = {"main": ROOT / "audit" / "review_sheet.csv", "a4b": ROOT / "results" / "round6" / "a4b_review_sheet.csv"}
 OUT = ROOT / "results" / "round6" / "rating"
+CONTOURS = ROOT / "audit_local" / "contours"  # raw image + expert ROI outline only (git-ignored, never committed)
+COHORT = {"isic_hair": "isic", "thyroid_calipers": "thyroid", "ovary_calipers": "ovary", "capsule_debris": "capsule",
+          "thyroid": "thyroid", "ovary": "ovary"}
+WHAT = {
+    "isic_hair": ("hair (dark thin strands)", "the skin lesion"),
+    "thyroid_calipers": ("sonographer caliper or measurement marks (small + or x signs, dotted measurement lines)", "the nodule"),
+    "ovary_calipers": ("sonographer caliper or measurement marks (small + or x signs, dotted measurement lines)", "the tumour"),
+    "capsule_debris": ("bubbles, food debris, or turbid fluid", "the lesion area"),
+    "thyroid": ("sonographer caliper or measurement marks (small + or x signs, dotted measurement lines)", "the nodule"),
+    "ovary": ("sonographer caliper or measurement marks (small + or x signs, dotted measurement lines)", "the tumour"),
+}
+
+
+def make_contours():
+    """Contour-only images for the main audit package: the green outline of the dataset's expert ROI, no automatic mask."""
+    import sys
+    sys.path.insert(0, str(Path(__file__).resolve().parent))
+    import common as C
+    ids = pd.read_csv(ROOT / "audit" / "sample_ids.csv")
+    CONTOURS.mkdir(parents=True, exist_ok=True)
+    caches = {}
+    for r in ids.itertuples(index=False):
+        f = CONTOURS / f"{r.audit_id}.png"
+        if f.exists():
+            continue
+        name = COHORT[r.cohort]
+        if name not in caches:
+            caches[name] = C.cohort_frame(name)["cache"]
+        rgb, roi, _ = caches[name].get(str(r.image_id))
+        C.draw_contour(np.asarray(rgb), roi).save(f)
+    return len(ids)
 PASS_SEED = {1: 20260928, 2: 20261005}
 SHEET_NAME = "main"
 
@@ -72,9 +103,9 @@ button {{ font-size: 16px; padding: 8px 14px; margin-right: 8px; }}
 .step {{ color: #444; }}
 </style>
 <h1>Pass {pass_n} · {done}/{n}</h1>
-<p class=step>Step {step} of 2. The cell is not shown.</p>
-<p>{aid}</p>
-<img src="/img?pos={pos}&which={which}" alt="audit image">
+<p class=step>Step {step} of {steps}. {aid}. The artifact for this image: <b>{what}</b>. Region: <b>{region}</b>
+(green outline). The group this image belongs to is not shown.</p>
+{images}
 <form method=post action="/save">
 <input type=hidden name=pos value="{pos}">
 <input type=hidden name=step value="{step}">
@@ -110,8 +141,13 @@ class Handler(BaseHTTPRequestHandler):
 
     def _img(self, pos, which):
         row = self.sheet.iloc[int(pos)]
-        rel = row.image_file if which == "raw" else row.overlay_file
-        path = ROOT / rel
+        if which == "raw":
+            path = ROOT / row.image_file
+        elif which == "contour":  # a4b overlays are already contour-only
+            path = (ROOT / row.overlay_file) if SHEET_NAME == "a4b" else CONTOURS / f"{row.audit_id}.png"
+        else:
+            path = ROOT / row.overlay_file
+        rel = str(path.relative_to(ROOT))
         if not path.exists():
             self.send_error(404, str(rel))
             return
@@ -139,11 +175,20 @@ class Handler(BaseHTTPRequestHandler):
             row = self.sheet.iloc[pos]
             prev = done.get(row.audit_id, {})
             step = 1 if not prev.get("artifact_present") else 2
+            what, region = WHAT.get(row.cohort, ("the artifact", "the region"))
+            if step == 1:
+                imgs = (f'<p>Image as the model saw it (left) and the same image with the region outlined in green '
+                        f'(right).</p><img src="/img?pos={pos}&which=raw" alt="raw" style="max-width:49%"> '
+                        f'<img src="/img?pos={pos}&which=contour" alt="outline" style="max-width:49%">')
+            else:
+                imgs = (f'<p>Green = region outline; red = the automatic artifact mask.</p>'
+                        f'<img src="/img?pos={pos}&which=overlay" alt="overlay">')
             # step 1 shows the ROI outline for the location question: the A4b overlay has the outline only; for the
             # main package the raw image is shown first, as in audit/README.md
-            which = ("overlay" if SHEET_NAME == "a4b" else "raw") if step == 1 else "overlay"
             body = PAGE.format(pass_n=self.pass_n, done=len(done), n=len(self.sheet), step=step, aid=html.escape(row.audit_id),
-                               pos=pos, which=which, fields=form_fields(step, prev), notes=html.escape(str(prev.get("notes", ""))))
+                               pos=pos, fields=form_fields(step, prev), notes=html.escape(str(prev.get("notes", ""))),
+                               steps=1 if SHEET_NAME == "a4b" else 2, what=html.escape(what), region=html.escape(region),
+                               images=imgs)
         data = body.encode()
         self.send_response(200)
         self.send_header("Content-Type", "text/html; charset=utf-8")
@@ -183,8 +228,14 @@ def main():
     if not SHEETS[a.sheet].exists():
         raise SystemExit(f"missing {SHEETS[a.sheet]}" + (" (run scripts/round6/a4b_sample.py)" if a.sheet == "a4b" else ""))
     sheet = load_order(a.pass_n, a.sheet)
+    if a.sheet == "main" and not (a.smoke and not CONTOURS.exists()):
+        n = make_contours()
+        print(json.dumps({"contour_images": n, "dir": str(CONTOURS.relative_to(ROOT))}), flush=True)
     if a.smoke or a.check:
-        missing = [f for f in list(sheet.image_file) + list(sheet.overlay_file) if not (ROOT / f).exists()]
+        files = list(sheet.image_file) + list(sheet.overlay_file)
+        if a.sheet == "main":
+            files += [str((CONTOURS / f"{i}.png").relative_to(ROOT)) for i in sheet.audit_id]
+        missing = [f for f in files if not (ROOT / f).exists()]
         print(json.dumps({"sheet": a.sheet, "pass": a.pass_n, "n": len(sheet), "missing_files": len(missing),
                           "first_missing": missing[:3], "seed": PASS_SEED[a.pass_n],
                           "hint": "regenerate audit_local/ with python audit/make_audit_sample.py" if missing else ""}))
