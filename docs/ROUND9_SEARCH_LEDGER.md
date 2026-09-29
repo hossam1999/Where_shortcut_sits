@@ -58,3 +58,9 @@ background at test, and randomising it in training would also remove the lesion 
 S_m < S); it needs new renders, and the 12-candidate limit was used for g and h added by the author.
 
 ## 2. Results (appended after every candidate; `results/round9_search/summary.csv`, `components_<candidate>.csv`)
+
+### 1. mask_ba
+- development proxy: **22/29 components met**, worst slack -0.068 (D3' Trap B min(rev,corr) thyroid -0.060); Trap A reversed seed SD 0.034; settings chosen: {'ba': 126, 'mask': 49}
+- losses: D3' Trap B reversed thyroid -0.060 [-0.085]; D3' Trap B min(rev,corr) thyroid -0.060 [-0.098]; D3' clean (Trap B models) thyroid -0.066 [-0.097]; D4 no flipping thyroid trapA -0.175; D3' clean (Trap B models) capsule -0.017 [-0.030]; D3' clean (Trap B models) isic -0.051 [-0.085]
+- inconclusive: D2' val hard pairs thyroid +0.001 [+0.000]
+- status: does not meet every proxy component
