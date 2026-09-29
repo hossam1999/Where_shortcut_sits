@@ -13,3 +13,4 @@ mask_la,mask_la,29,28,1,0,0.0004,D1' val all pairs isic_MSK -0.005,0.0481
 mask_moments,mask_moments,29,26,1,2,-0.0019,D1' val all pairs isic_MSK -0.005,0.0228
 mask_condadv,mask_condadv,29,27,0,2,-0.0003,D2' val hard pairs isic_MSK +0.013,0.0262
 mask_cnc,mask_cnc,29,20,3,6,-0.0102,D1' val all pairs capsule -0.007,0.0374
+mask_cfc,mask_cfc,29,19,4,6,-0.0071,D3' Trap B reversed capsule -0.017,0.0146

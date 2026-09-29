@@ -1,0 +1,30 @@
+candidate,arm,component,cohort,estimate,ci95_lo,ci95_hi,margin,test,p_one_sided,met,label
+mask_cfc,mask_cfc,D1' val all pairs,thyroid,0.0073,-0.0021,0.0222,0.0100,NI,0.0005,True,met
+mask_cfc,mask_cfc,D1' val all pairs,capsule,0.0010,-0.0038,0.0068,0.0100,NI,0.0005,True,met
+mask_cfc,mask_cfc,D1' val all pairs,isic_BCN,0.0000,0.0000,0.0000,0.0100,NI,0.0005,True,met
+mask_cfc,mask_cfc,D1' val all pairs,isic_HAM,-0.0011,-0.0106,0.0084,0.0100,NI,0.0360,False,inconclusive
+mask_cfc,mask_cfc,D1' val all pairs,isic_MSK,-0.0002,-0.0035,0.0025,0.0100,NI,0.0005,True,met
+mask_cfc,mask_cfc,D2' val hard pairs,thyroid,0.0472,-0.0003,0.1289,0.0000,SUP,0.0385,False,inconclusive
+mask_cfc,mask_cfc,D2' val hard pairs,isic_BCN,0.0000,0.0000,0.0000,0.0000,SUP,1.0000,False,inconclusive
+mask_cfc,mask_cfc,D2' val hard pairs,isic_MSK,-0.0000,-0.0048,0.0047,0.0000,SUP,0.6590,False,loss
+mask_cfc,mask_cfc,"D2' Trap A min(rev,corr)",thyroid,0.1058,0.0886,0.1226,0.0000,SUP,0.0005,True,met
+mask_cfc,mask_cfc,D3' Trap B reversed,thyroid,-0.0097,-0.0318,0.0071,0.0300,NI,0.0325,False,inconclusive
+mask_cfc,mask_cfc,"D3' Trap B min(rev,corr)",thyroid,-0.0097,-0.0304,0.0079,0.0300,NI,0.0285,False,inconclusive
+mask_cfc,mask_cfc,D3' clean (Trap A models),thyroid,0.0075,-0.0107,0.0233,0.0300,NI,0.0005,True,met
+mask_cfc,mask_cfc,D3' clean (Trap B models),thyroid,-0.0085,-0.0310,0.0081,0.0300,NI,0.0320,False,inconclusive
+mask_cfc,mask_cfc,D4 no flipping,thyroid trapA,0.3552,,,0.0200,point,,True,met
+mask_cfc,mask_cfc,D4 no flipping,thyroid trapB,0.0398,,,0.0200,point,,True,met
+mask_cfc,mask_cfc,"D2' Trap A min(rev,corr)",capsule,0.0604,0.0416,0.0796,0.0000,SUP,0.0005,True,met
+mask_cfc,mask_cfc,D3' Trap B reversed,capsule,-0.0167,-0.0371,0.0000,0.0300,NI,0.0940,False,loss
+mask_cfc,mask_cfc,"D3' Trap B min(rev,corr)",capsule,-0.0167,-0.0371,0.0000,0.0300,NI,0.0940,False,loss
+mask_cfc,mask_cfc,D3' clean (Trap A models),capsule,0.0002,-0.0142,0.0136,0.0300,NI,0.0005,True,met
+mask_cfc,mask_cfc,D3' clean (Trap B models),capsule,-0.0173,-0.0352,-0.0024,0.0300,NI,0.0725,False,loss
+mask_cfc,mask_cfc,D4 no flipping,capsule trapA,0.2259,,,0.0200,point,,True,met
+mask_cfc,mask_cfc,D4 no flipping,capsule trapB,0.0710,,,0.0200,point,,True,met
+mask_cfc,mask_cfc,"D2' Trap A min(rev,corr)",isic,0.0398,0.0163,0.0646,0.0000,SUP,0.0005,True,met
+mask_cfc,mask_cfc,D3' Trap B reversed,isic,0.0018,-0.0194,0.0253,0.0300,NI,0.0015,True,met
+mask_cfc,mask_cfc,"D3' Trap B min(rev,corr)",isic,0.0018,-0.0194,0.0253,0.0300,NI,0.0015,True,met
+mask_cfc,mask_cfc,D3' clean (Trap A models),isic,-0.0021,-0.0199,0.0178,0.0300,NI,0.0015,True,met
+mask_cfc,mask_cfc,D3' clean (Trap B models),isic,-0.0088,-0.0234,0.0073,0.0300,NI,0.0015,True,met
+mask_cfc,mask_cfc,D4 no flipping,isic trapA,0.3883,,,0.0200,point,,True,met
+mask_cfc,mask_cfc,D4 no flipping,isic trapB,0.1653,,,0.0200,point,,True,met
