@@ -41,3 +41,29 @@ Old: archived runs without per-image predictions (per-seed bootstrap or point es
 | capsule/dino518_protect_tmpl/bootstrap_vs_erm.csv | trapB|mte_protect_balanced|test_rev|-erm | +0.453 [+0.426, +0.482] | +0.462 [+0.414, +0.509] | no |  |  |
 | capsule/dino518_protect_tmpl/bootstrap_vs_erm.csv | trapB|mte_protect_balanced|clean|-erm | +0.179 [+0.162, +0.195] | +0.201 [+0.169, +0.234] | no |  |  |
 
+## LaMa
+
+- rows: 19; regenerated: 19; verdict changed: 2; point estimates differing by more than 0.03: 2
+
+| file | key | old | new | verdict changed | Δ > 0.03 | note |
+|---|---|---|---|---|---|---|
+| lama_comparison.json | thyroid|lama-mask | +0.025 [+0.009, +0.040] | +0.027 [+0.000, +0.054] | no |  |  |
+| lama_comparison.json | thyroid|mask_lama-mask | +0.226 [+0.213, +0.238] | +0.223 [+0.206, +0.242] | no |  |  |
+| lama_comparison.json | thyroid|mte_protect-mask_lama | -0.009 [-0.045, +0.023] | +0.060 [+0.013, +0.105] | **yes** | **yes** |  |
+| lama_comparison.json | thyroid|mte_balanced-mask_lama | +0.162 [+0.152, +0.173] | +0.165 [+0.146, +0.185] | no |  |  |
+| lama_comparison.json | thyroid|lama-erm | +0.136 [+0.130, +0.142] | +0.136 [+0.124, +0.149] | no |  |  |
+| lama_comparison.json | thyroid|mte_protect-mask_lama (universal run) | -0.009 [-0.045, +0.023] | +0.060 [+0.013, +0.105] | **yes** | **yes** | extra: protected arm of the regenerated universal run instead of protect_generic |
+| thyroid/dino518_lama/bootstrap_vs_erm.csv | trapA|mask|test_rev|-erm | +0.201 [+0.187, +0.215] | +0.197 [+0.167, +0.226] | no |  |  |
+| thyroid/dino518_lama/bootstrap_vs_erm.csv | trapA|mask|clean|-erm | +0.090 [+0.076, +0.104] | +0.083 [+0.058, +0.109] | no |  |  |
+| thyroid/dino518_lama/bootstrap_vs_erm.csv | trapB|mask|test_rev|-erm | +0.271 [+0.246, +0.296] | +0.281 [+0.242, +0.320] | no |  |  |
+| thyroid/dino518_lama/bootstrap_vs_erm.csv | trapB|mask|clean|-erm | +0.135 [+0.100, +0.168] | +0.157 [+0.112, +0.201] | no |  |  |
+| lama_comparison.json | ovary|lama-mask | +0.027 [-0.017, +0.069] | +0.027 [-0.039, +0.091] | no |  |  |
+| lama_comparison.json | ovary|mask_lama-mask | +0.123 [+0.089, +0.155] | +0.128 [+0.084, +0.169] | no |  |  |
+| lama_comparison.json | ovary|mte_protect-mask_lama | -0.080 [-0.108, -0.053] | -0.085 [-0.120, -0.050] | no |  |  |
+| lama_comparison.json | ovary|mte_balanced-mask_lama | +0.067 [+0.037, +0.095] | +0.061 [+0.026, +0.095] | no |  |  |
+| lama_comparison.json | ovary|lama-erm | +0.158 [+0.141, +0.176] | +0.159 [+0.130, +0.190] | no |  |  |
+| ovary/dino518_lama/bootstrap_vs_erm.csv | trapA|mask|test_rev|-erm | +0.096 [+0.062, +0.132] | +0.101 [+0.046, +0.157] | no |  |  |
+| ovary/dino518_lama/bootstrap_vs_erm.csv | trapA|mask|clean|-erm | +0.067 [+0.045, +0.089] | +0.068 [+0.028, +0.108] | no |  |  |
+| ovary/dino518_lama/bootstrap_vs_erm.csv | trapB|mask|test_rev|-erm | +0.253 [+0.212, +0.294] | +0.253 [+0.177, +0.329] | no |  |  |
+| ovary/dino518_lama/bootstrap_vs_erm.csv | trapB|mask|clean|-erm | +0.087 [+0.047, +0.125] | +0.087 [+0.027, +0.144] | no |  |  |
+
