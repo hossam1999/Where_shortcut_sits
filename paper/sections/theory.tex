@@ -19,21 +19,21 @@ Sections~\ref{sec:law}--\ref{sec:guide}.
 
 \paragraph{Does the account match real encoders?} The same model gives the AUROC for any test composition, so $(S,A)$
 can be fitted to each trained model's clean and correlated AUROC \emph{only} and the reversed-test AUROC predicted from
-them; no parameter is shared across models or tuned. Over 136 ERM and masking models (real traps and controlled sweeps)
-the held-out reversed-test AUROC is predicted with a mean absolute error of 0.052 ($r=0.91$), against 0.129 for a
-linear-symmetry heuristic (reversed $=2\cdot$clean$-$correlated) and 0.237 for ``reversed $=$ clean''
-(Fig.~\ref{fig:theory_predict}). The account also anticipates DermLIP's missing hair gap. For the crossover itself the
-heuristic does almost as well, so we do not use the crossover correlation as evidence. Adding the chest-radiograph
-cells (154 models) leaves the error almost unchanged (0.053), but one near-zero device crossover has the wrong sign,
-which fails our pre-registered all-signs criterion; the account is therefore a qualitative one, and it fails, as
-consequence (v) says it must, for chest drains, where the shortcut is carried by the treated lung (implied reversed
-AUROC 0.72--0.78, observed 0.19--0.23).
+them; no parameter is shared across models or tuned. Table~\ref{tab:theory} compares its error with two reference
+predictors that use the same two inputs, a linear-symmetry heuristic (reversed $=2\cdot$clean$-$correlated) and
+``reversed $=$ clean'' (Fig.~\ref{fig:theory_predict}). On the results that existed when the test was designed the
+account's error is less than half the heuristic's, and it anticipates DermLIP's missing hair gap; for the crossover
+itself the heuristic does almost as well, so we do not use the crossover correlation as evidence. With the
+chest-radiograph cells added, one near-zero device crossover has the wrong sign, which fails our pre-registered
+all-signs criterion, and the account fails, as consequence (v) says it must, for chest drains, where the shortcut is
+carried by the treated lung (implied reversed AUROC 0.72--0.78, observed 0.19--0.23). Across all cohorts it is
+therefore a qualitative account.
 
-\paragraph{Prospective test (pre-registered)} The comparison above uses results that existed when the test was
-designed. We therefore registered the same procedure, unchanged, before the masking-implementation and overlap-bin
-analyses were run. On their 84 cells the account predicted the held-out reversed AUROC with a mean absolute error of
-0.011 ($r=0.996$), against 0.036 for the symmetry heuristic and 0.177 for ``reversed $=$ clean'', and met its registered
+\paragraph{Prospective test (pre-registered)} We then registered the same procedure, unchanged, before the
+masking-implementation and overlap-bin analyses were run. On their 84 cells the account's error was 0.011 AUROC, a
+third of the heuristic's, with every crossover sign right (Table~\ref{tab:theory}), which meets its registered
 criterion for quantitative prediction within frozen-encoder linear heads on the four real-artifact cohorts.
+\input{tables/main_theory}
 \ifdupfloats
 \begin{figure}[t]\centering\includegraphics[width=\linewidth]{figures/theory_predict.pdf}
 \caption{Pre-registered test of the linear-Gaussian account on real encoders. $(S,A)$ are fitted to each model's
