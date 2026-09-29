@@ -1,0 +1,219 @@
+% Moved from the main text in the scope cut (2026-09-30); text unchanged except cross-references.
+\section*{S18. Cohorts and further results in detail}
+\subsection*{Cohorts in detail}
+\paragraph{Controlled dermoscopy cohort} ISIC 2018 Task 1/2 images with manual lesion masks and melanoma labels
+from the union of the ISIC 2016 and 2017 tables (three images with conflicting labels dropped); perceptual-hash
+(Hamming $\le 8$) and lesion grouping; 2,437 images for which a $65\times19$\,px ruler (0.46\% of a
+$518\times518$ image) can be placed at 0/25/50/75/100\% overlap with the lesion within 10 percentage points
+(train/val/test 1,849/371/371 before common support).
+
+\paragraph{Real hair cohort (ISIC 2019)} All 25,331 ISIC 2019 training images; hair/ruler masks from the archive of
+\citet{wegley2026artifacts}; lesion masks manual for HAM10000 \citep{tschandl2018ham} and predicted elsewhere by a
+U-Net trained on ISIC 2018 Task 1. Two traps share one hair-free group ($\le 30$ hair pixels at native resolution):
+Trap~A contains hair with overlap $r=|\text{hair}\cap\text{lesion}|/|\text{hair}|\ge0.5$, Trap~B $r<0.1$. Cells are
+subsampled to the hair-free source mix (HAM/BCN/MSK) within each label, giving Trap~A 704/157/2,738/989 and Trap~B
+704/157/4,327/930 images (hair-free benign/melanoma, hair benign/melanoma); five seeds of five-fold group-safe
+cross-validation (leakage groups: lesion identifiers and pHash); 172 reversed-test melanomas per trap and seed. The
+30-pixel threshold is sensitive: independent labels show that it marks hair on many images that experts call hair-free
+(Robustness paragraphs below).
+
+\paragraph{Thyroid ultrasound} TN3K images \citep{gong2021tn3k} with TNCD benign/malignant labels from cytological
+biopsy \citep{gong2022acl} (3,493 images of 2,421 patients; 1,210 malignant) and manual nodule masks; the official
+train/test split (2,879/614 images) is patient-disjoint \citep{gong2022acl}. Sonographer calipers were segmented by a frozen rule-based detector (dotted measurement lines
+and `+' ends; audits below and in S4). Trap~A: calipers with $r\ge0.5$ (1,150 images); Trap~B: $r<0.1$ (326);
+caliper-free: 1,801. Patient identifiers are not published, so within the pooled images leakage groups are pHash
+chains (stricter embedding-based groups below).
+
+\paragraph{Ovarian tumour ultrasound} MMOTU OTU\_2d \citep{zhao2022mmotu} (CC BY 4.0): 1,202 images with tumour
+masks, labelled benign cystic (chocolate cyst, serous cystadenoma, simple cyst) versus lesions with solid
+components (teratoma, theca-cell tumour, mucinous cystadenoma, high-grade serous carcinoma). The thyroid detector is
+applied unchanged: Trap~A 341/276, Trap~B 91/103, caliper-free 170/178 (benign-cystic/solid).
+
+\paragraph{Capsule endoscopy} SEE-AI frames \citep{seeai2023} (CC BY 4.0) containing only erosions (3,550) or only
+polyp-like lesions (1,931); the ROI is the union of the expert lesion boxes. Contamination (debris, bubbles, bile)
+is segmented by a linear probe on DINOv2 patch tokens trained on 2,160 expert-masked frames (held-out pixel accuracy
+0.92, IoU 0.62; expert masks are used where available). Debris-free: $<3\%$ of the frame; Trap~A: debris $\ge10\%$
+with $r\ge0.5$; Trap~B: $r<0.1$. Leakage groups: blocks of 100 consecutive frame numbers plus pHash duplicates.
+
+\paragraph{Chest radiography} NIH ChestX-ray14 \citep{wang2017chestxray8}; lung ROIs from the TorchXRayVision
+PSPNet \citep{cohen2022xrv}. \emph{Controlled cohort:} 1,906 pneumothorax images without a chest drain (NEATX
+annotations) and 5,718 \emph{No Finding} images from other patients; a $100\times12$\,px radio-opaque tube is
+placed at controlled overlap with the lungs (7,610 images in common support). \emph{Real drains} (in-ROI only):
+29,687 images; drains are labelled by NEATX for pneumothorax-positive images and by a drain detector (precision
+0.95) for negatives; environments are built within view position (AP/PA); five patient-grouped folds.
+
+\subsection*{Further results}
+\paragraph{Masking implementation and the real overlap (pre-registered)} Mean-colour fill is one way to mask. Black fill, a blurred background (16-px Gaussian), a crop to the lesion box and a
+crop of the masked image all give a positive crossover in all four cohorts (16 of 16, Holm $p\le0.010$), from
+$+0.091$ [$+0.064, +0.117$] for the dermoscopy box crop to $+0.367$ [$+0.318, +0.416$] for black fill on capsule
+frames; implementations that keep part of the out-of-ROI content give weaker effects where that content still carries
+the artifact (blur for debris and ovarian calipers, the box crop for hair and debris). The two traps are the ends of a
+continuous dependence: with all artifact-bearing images binned by their real overlap $r$, the mask gain falls with $r$ in
+every cohort (slopes: hair $-0.235$ [$-0.276, -0.194$], thyroid $-0.250$ [$-0.303, -0.197$], capsule $-0.489$
+[$-0.539, -0.438$], ovary $-0.205$ [$-0.300, -0.109$]), and for hair it turns from a gain ($+0.124$ [$+0.085, +0.162$]
+at $r<0.1$) into a harm ($-0.086$ [$-0.119, -0.056$] at $r\ge0.75$), crossing zero near $r=0.40$ (S16).
+
+\paragraph{Replication across encoders, training regimes and foundation models} The crossover replicates with MedSigLIP (thyroid $+0.195$ [$+0.153, +0.238$], capsule $+0.335$ [$+0.286, +0.383$],
+ovary $+0.178$ [$+0.109, +0.248$]), a CNN (ConvNeXt-Base: thyroid $+0.275$ [$+0.231, +0.320$], capsule $+0.320$ [$+0.268, +0.372$]) and
+DINOv2 at three sizes (positive in all nine cohort--size combinations; S7), and with end-to-end fine-tuning \input{tables/review2_ft_text}.
+Without any task training, the zero-shot scores of vision--language models are already swayed by artifacts, and
+masking changes them as the law predicts (MedSigLIP crossovers: thyroid $+0.103$ [$+0.064, +0.143$], capsule $+0.045$
+[$+0.001, +0.090$], ovary $+0.181$ [$+0.103, +0.261$]; DermLIP on hair $+0.040$ [$+0.021, +0.058$]); MedSigLIP's
+zero-shot thyroid diagnosis itself is at chance (clean AUROC 0.45), so we use these scores only to show that the
+effect is a property of the representation.
+
+\paragraph{The one encoder without a hair gap} With the dermatology foundation model DermLIP and a trained linear
+head, masking harms at \emph{both} hair locations (Trap~A $-0.104$ [$-0.143, -0.067$], Trap~B $-0.090$
+[$-0.135, -0.046$]) and the hair crossover vanishes ($+0.014$ [$-0.037, +0.063$]), although the controlled ruler sweep
+reverses with DermLIP as with DINOv2 ($+0.161$ at no overlap, $-0.263$ to $-0.309$ at 25--100\%). Two measurements
+explain it. First, with DermLIP masking costs disease signal wherever the hair lies (clean AUROC $-0.066$
+[$-0.089, -0.043$] in Trap~A and $-0.063$ [$-0.094, -0.033$] in Trap~B): this encoder, trained on whole dermatology
+images, loses more from a masked background than DINOv2. Second, the pixel part of its hair shortcut is small in both
+traps (oracle hair inpainting $+0.033$ [$+0.025, +0.042$] and $+0.040$ [$+0.015, +0.064$]), whereas balancing, which
+also removes correlates, gains $+0.146$ and $+0.110$: masking removes little of the shortcut at either location, so
+there is no gap to find. The linear-Gaussian account fitted to DermLIP's clean and correlated AUROC anticipates this
+(predicted crossover $+0.013$, observed $+0.014$; main-text theory section). The law describes what masking can remove; when the shortcut is carried by
+correlates and the encoder is fragile to masking, masking removes little at either location.
+
+\paragraph{Operating points: registration status and capsule} \emph{Registration status for this frozen model: a pre-registered test inside a
+post hoc subgroup.} The subgroup (the 78 malignant nodules of the official test split that carry an in-ROI caliper; the
+same 78 in every seed) was defined after the first unaltered-data analysis, where its AUROC harm was found; the
+operating-point test in it was registered before the operating points were computed, and for the fine-tuned model below
+the whole test was registered before any result. The pre-registered decision rule
+(loss at the maximal-balanced-accuracy threshold and at $\ge3$ of the four other operating points) is met. On capsule
+endoscopy, where masking improves AUROC overall, it lowers the sensitivity for erosions carrying debris on the lesion
+at the two high-sensitivity operating points (S9).
+
+\paragraph{A fine-tuned model near the benchmark (pre-registered)} To test whether these are properties of a weak
+model, we compared twelve fine-tuning recipes on validation images only, committed the choice (ConvNeXt-T pretrained on
+ImageNet-22k, learning rate $10^{-4}$, 8 epochs, 224\,px) and then trained it with five seeds. Its test AUROC is 0.769,
+0.004 below the lowest published cross-entropy baseline on this split (0.773; \citealp{gong2022acl}) and above the
+frozen probe (0.735). All four registered tests are supported (Holm): masking lowers the AUROC on shortcut-conflicting
+pairs by $-0.102$ [$-0.178, -0.026$]; it lowers sensitivity at all four of OP2--OP5; at OP2 it lowers sensitivity among
+the 78 malignant nodules with an in-ROI caliper from 0.744 to 0.223 ($-0.521$ [$-0.642, -0.382$]), a subgroup registered
+before any result of this model existed; and its trap crossover is $+0.187$ [$+0.111, +0.268$]. Group balancing recovers
+the conflicting pairs ($+0.088$ [$+0.019, +0.158$] over masking).
+
+\paragraph{Is the loss a threshold artefact? (pre-registered)} Re-tuning each model's threshold on the test set
+itself---the best that recalibration at a deployment site can achieve---makes the overall sensitivity of the two models
+equal at a test specificity of 0.80 ($-0.017$ [$-0.124, +0.070$] for the fine-tuned model), but the conflicting subgroup
+still loses: from 0.544 to 0.390 ($-0.154$ [$-0.302, -0.023$]) for the fine-tuned model and from 0.505 to 0.331
+($-0.174$ [$-0.313, -0.012$]) for the frozen probe (Holm $p=0.019$ each), while the malignant nodules whose caliper
+points the right way tend to gain. About 30\% of the loss at validation-fixed thresholds therefore cannot be removed by
+any threshold; the rest follows from transporting thresholds from validation to test data, as deployment does. At a
+matched specificity of 0.90 and a matched sensitivity of 0.80 the direction is the same, with intervals that include
+zero (S16).
+
+\paragraph{New patients at natural prevalence (pre-registered)} Trained on all ISIC 2019 images and tested on ISIC 2020
+without any resampling, masking lowers the AUROC on shortcut-conflicting pairs: $-0.026$ [$-0.052, -0.000$] under the
+registered near-duplicate rule, which proved too loose (it removed most look-alike images of other patients), and
+$-0.037$ [$-0.061, -0.012$] under a label-free calibrated rule registered as a sensitivity analysis after that result
+(32,952 images). The overall AUROC is nearly unchanged ($+0.016$ [$-0.000, +0.033$]), and group balancing recovers the
+conflicting pairs ($+0.072$ [$+0.048, +0.097$] over masking). No sensitivity loss at
+a fixed operating point was detectable, and the cleanest in-lesion comparison (53 hair-free melanomas) was
+inconclusive ($-0.005$ [$-0.057, +0.048$]): the external harm combines the removal of hair beside melanomas with the
+retention of hair on benign lesions (S16).
+
+\paragraph{Calibration} For the held-out BCN hospital masking worsens both Brier score and expected calibration error
+(Table~\ref{tab:natural_clinical}); for HAM, MSK and capsule it improves every metric, in line with the AUROC results.
+\input{tables/natural_clinical}
+
+\paragraph{Robustness to artifact-label definitions}
+Artifact masks for calipers come from a detector (visual audit: 95\% of thyroid detections lie on real calipers;
+92--97\% of caliper-free images contain no visible caliper). Re-running the thyroid and ovary analyses with
+large-marker-only ($\ge 50$ px) and strict-location ($r\ge0.7$ / $r<0.05$) definitions leaves the crossover
+(thyroid $+0.215$ to $+0.262$; ovary $+0.170$ to $+0.195$) and the U-MtE$_{\text{protect}}$ gain over masking
+(thyroid $+0.217$ to $+0.282$; ovary $+0.043$ to $+0.067$) significant in every variant; both grow under stricter
+definitions, as expected if detector errors dilute rather than create the effects.
+
+\paragraph{Artifact labels checked without a clinician (pre-registered)}
+No clinician was available to audit the labels, so we compared them with every independent source we could find, with
+coverage gates and without the images on which our own labellers were trained (S16). \emph{Dermoscopy.}
+Where hair is present our labels place it correctly: our lesion masks agree with the IMA++ multi-annotator masks (241
+images; Dice 0.851 [0.830, 0.870]; trap class agreement 84\%), and against independent hair masks (485 images) the hair
+lies on the other side of the lesion boundary in 1 of 264 trap images. But at our threshold ($>30$ pixels) the published
+hair masks mark hair on 93\% of the 8,864 images that the expert-reviewed DermArtifactDB labels call hair-free
+($\kappa=0.076$), more often for melanomas. Removing every image an independent source contradicts (42\% of each trap)
+raises the hair crossover from $+0.147$ [$+0.111, +0.185$] to $+0.199$ [$+0.164, +0.233$]: the label noise diluted
+the effect. \emph{Calipers.} Two independent labellers---an ultrasound annotation detector (BUSClean) and a medical
+vision--language model (MedGemma, run locally with fixed prompts and never shown our masks)---both pass a pre-registered
+informativeness rule on thyroid ($\kappa\ge0.40$) but err in opposite directions, so the registered rule that removes an
+image whenever either disagrees left too few out-of-ROI caliper images to re-run the thyroid traps. Where the two agree
+with each other (1,865 of 3,277 images) they agree with our cell for 94\%, and without the images both contradict the
+thyroid crossover is $+0.257$ [$+0.209, +0.304$] (exploratory; $+0.239$ on our labels); the subgroup loss of
+the main-text section on unaltered data holds in the 36 nodules whose in-ROI caliper both confirm. On ovarian screens the annotation
+detector fires on 90\% of caliper-free images and was declared invalid, so the ovary and capsule labels could not be
+checked with public data.
+
+\paragraph{Stricter leakage grouping (pre-registered)}
+TN3K/TNCD, MMOTU and SEE-AI publish no patient or video identifiers, so the main analyses group near-duplicates by
+perceptual hash (and, for capsule, blocks of 100 consecutive frames). As a pre-registered sensitivity analysis we
+united these groups with connected components of mean-centred DINOv2 embeddings at the most aggressive cosine
+threshold that keeps every group below 5\% of the cohort (thyroid: 3,455 $\to$ 3,081 groups, $\tau=0.80$; ovary:
+1,059 $\to$ 969, $\tau=0.80$; capsule: 137 $\to$ 135, $\tau=0.93$) and re-ran all primary contrasts. Eleven of twelve
+keep their sign and significance: the location crossover is $+0.235$ [$+0.193, +0.275$] (thyroid), $+0.157$
+[$+0.053, +0.255$] (ovary) and $+0.353$ [$+0.296, +0.410$] (capsule), and protected U-MtE still beats masking on
+thyroid ($+0.251$ [$+0.215, +0.284$]) and ovary ($+0.051$ [$+0.020, +0.079$]). The exception is the small ovary
+advantage of erasure over augmentation, which loses significance ($+0.024$ [$-0.014, +0.062$]). Embedding grouping
+removes visually near-identical images of one patient or session; it cannot exclude differently looking images of
+the same patient.
+
+\paragraph{Rebuild on new hardware (pre-registered)}
+All data were downloaded again and every derived object---caches, perceptual-hash groups, the retrained lesion U-Net
+(held-out Dice 0.886; HAM10000 agreement 0.895), the caliper scan and the debris probe (IoU 0.625)---was rebuilt on a
+different GPU generation (pre-registered). Trap membership changes slightly where it depends on a retrained model
+(hair traps: Trap~A 2,655/942 artifact-bearing benign/melanoma images instead of 2,738/989); the thyroid and ovary
+cells are identical. \input{tables/review2_repro_text}
+
+\paragraph{Limitations in detail}
+(i) \emph{Artifact labels.} Calipers are segmented by a rule-based detector and capsule debris by a patch-token probe
+(IoU 0.62 against expert masks); hair masks are published semi-automatic masks. No clinician audited them. Independent
+sources confirm where hair lies, but our hair-presence threshold over-calls hair, with errors that differ by diagnosis;
+the thyroid caliper labels agree with two independent labellers where those agree with each other, but the registered
+cleaning rule could not be tested for thyroid, and the ovary and capsule labels remain unchecked (Robustness paragraphs above).
+A blinded rating of 240 images by the first author, a non-clinician, is registered and not yet done. Label errors that
+do not depend on the diagnosis dilute the constructed correlation, and removing contradicted images or using stricter
+label definitions strengthens rather than weakens the results (Robustness paragraphs above); the transplant experiment does not depend on the artifact-free group being
+perfectly clean because the transplanted instance is identical at both locations.
+(ii) \emph{Patient identifiers.} TN3K/TNCD, MMOTU and SEE-AI publish no patient or video identifiers for the pooled
+images, so the trap splits group near-duplicates by perceptual hash and frame blocks (a stricter embedding grouping
+leaves 11 of 12 primary estimates unchanged); the official TN3K/TNCD test split used for the unaltered-data analysis is
+patient-disjoint. The one open cohort we found with patient identifiers, pathology labels and real calipers
+(ThyUS2Path; 842 patients) has no nodule masks and uses a scanner interface on which our frozen caliper detector
+fires on interface elements; external validation on it requires a transferred nodule segmentation and a re-validated
+detector and is left for future work. For dermoscopy, external validation on new patients was possible and was run under
+a pre-registered cell-count gate (ISIC 2020, patient-disjoint folds, hair masks from a segmenter trained only on
+ISIC 2019): the crossover replicates ($+0.250$ [$+0.174, +0.327$]), and at natural prevalence masking lowers the AUROC on
+conflicting pairs (main text, unaltered test data). External validation is limited to dermoscopy, and on ISIC 2020 no
+operating-point effect was detectable.
+(iii) \emph{Constructed shifts.} Reversed environments are constructed by subsampling; real deployment shifts are
+less extreme, which is why we report the unaltered test distributions separately.
+(iv) \emph{Absolute performance.} Frozen encoders with linear heads are below the best published fine-tuned models on
+the one cohort with a directly comparable benchmark (official TNCD split: 0.735 AUROC versus 0.773--0.784 for
+fine-tuned CNNs with cross-entropy and up to 0.799 with curriculum learning, \citealp{gong2022acl}). A fine-tuned
+ConvNeXt-T reaches 0.769, near but below the lowest published baseline, and shows every registered harm
+(main text, unaltered test data). The law replicates with end-to-end fine-tuned networks in three of four cohorts; on ovarian ultrasound the fine-tuned ResNet-50
+barely learns the task and shows no significant crossover (Replication paragraph above). The other cohorts' binary
+tasks have no published benchmark on the same split (Supplement~S10).
+(v) \emph{Scope.} Chest radiography is a boundary case: the radiograph encoder ignored extra-pulmonary tubes, the
+crossover that a second encoder shows rests on a device contrast confounded with other tubes, and real drains carry the
+shortcut through correlates. The linear-Gaussian account is fitted per model and cannot anticipate a shortcut
+carried by correlates that the clean and correlated environments do not expose.
+(vi) \emph{Uncertainty and balance.} The original per-seed bootstrap understated CIs where seeds share test
+images. All model-comparison intervals were therefore recomputed with the crossed bootstrap from regenerated runs
+(main-text protocol section);
+claims whose interval then included zero were rewritten, and a few secondary analyses from runs that could not be
+regenerated are given as point estimates only. Matching left within-label standardised
+differences of up to 0.19 for some covariates. (vii) \emph{Transplant.} Pasted patterns, including neutral tissue,
+become learnable shortcuts; the transplant establishes location dependence on fixed images, not the size of real
+artifacts' effects in their natural context (for hair, whose natural shortcut is carried mostly by correlates, the
+difference is large). (viii) \emph{Pre-registration.} Every registration is committed before its outcome results (registry with commit hashes
+and times in Supplement~S1); commit times are set by the committing machine, so only the registrations that were
+pushed to GitHub before their runs (the second review round and every later round) carry an external time stamp, and
+the 16-test primary family was assembled after the individual results. Two later analyses are sensitivity analyses
+registered after the result they examine (the calibrated duplicate rule, the cleaner hair groups), and a few are
+exploratory (the consensus caliper labels). (ix) \emph{Operating points.} Most of the thyroid sensitivity loss at
+validation-fixed thresholds is threshold transport; the part that survives re-tuning has a wide interval
+($-0.154$ [$-0.302, -0.023$]). (x) \emph{Remedies.} No remedy dominates masking: in two registered rounds the best candidates fail on one cell, ISIC
+2020 overall, by 0.01--0.02 AUROC; the dominance tests use frozen DINOv2 features, and the one fine-tuned candidate (a
+paste-based model) was not a fair test because its pasting could not balance the traps.

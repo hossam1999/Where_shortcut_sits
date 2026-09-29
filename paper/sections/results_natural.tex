@@ -1,62 +1,42 @@
-% Unaltered test distributions (docs/PREREGISTRATION_NATURAL.md; operating points: docs/PREREGISTRATION_REVIEW2.md, R3).
+% Unaltered test distributions (docs/PREREGISTRATION_NATURAL.md; operating points: docs/PREREGISTRATION_REVIEW2.md, R3;
+% fine-tuned model and threshold re-tuning: PREREGISTRATION_ROUND6.md, ROUND7.md). Full text: Supplement S18.
 \section{Consequences on unaltered test data}\label{sec:natural}\label{sec:robust}
 The traps construct an extreme reversal. Without any resampling, in-ROI artifacts are still associated with the label
-in every cohort (thyroid calipers: 37.6\% of benign vs 24.1\% of malignant nodules; in-lesion hair: 31\% of melanomas
-vs 20\% of benign lesions; capsule debris on the lesion: 23\% of polyp-like lesions vs 10\% of erosions). We trained on
-natural training data and tested on untouched data: the official TN3K/TNCD test split, which is patient-disjoint from
-the training split \citep{gong2022acl}, each ISIC source held out in turn (a real change of hospital and device), and
-held-out capsule frame blocks.
+(thyroid calipers: 37.6\% of benign vs 24.1\% of malignant nodules; in-lesion hair: 31\% of melanomas vs 20\% of benign
+lesions; capsule debris on the lesion: 23\% of polyp-like lesions vs 10\% of erosions). We trained on natural training
+data and tested on untouched data: the official, patient-disjoint TN3K/TNCD test split \citep{gong2022acl}, each ISIC
+source held out in turn, and held-out capsule frame blocks. We report AUROC on \emph{shortcut-conflicting} pairs, in
+which the artifact points to the wrong diagnosis, beside AUROC over all pairs.
 
-\paragraph{Discrimination} All analyses in this section use the rebuilt runs (Sec.~\ref{sec:repro}).
-\input{tables/review2_natural_text}.
+\paragraph{Discrimination} \input{tables/review2_natural_text}.
 
-\paragraph{Operating points (pre-registered)} Because a clinical decision uses a threshold, we fixed thresholds on
-each seed's validation split at five operating points and compared test sensitivity and specificity
-(Table~\ref{tab:op}; the bootstrap re-estimates the thresholds in every replicate). On the official thyroid split
-masking lowers sensitivity at all five operating points, each with a CI excluding zero, for example from
-\input{tables/review2_op_inline}. Specificity rises correspondingly, so part of the change is a shift of the score distribution relative to
-thresholds learned on validation data (quantified below); the loss is largest where the shortcut conflicts with the
-label: among the malignant nodules that carry an in-ROI caliper, at a validation specificity of 0.80 sensitivity falls
-by \input{tables/review2_op_conflict}. \emph{Registration status for this frozen model: a pre-registered test inside a
-post hoc subgroup.} The subgroup (the 78 malignant nodules of the official test split that carry an in-ROI caliper; the
-same 78 in every seed) was defined after the first unaltered-data analysis, where its AUROC harm was found; the
-operating-point test in it was registered before the operating points were computed, and for the fine-tuned model below
-the whole test was registered before any result. The pre-registered decision rule
-(loss at the maximal-balanced-accuracy threshold and at $\ge3$ of the four other operating points) is met. On capsule
-endoscopy, where masking improves AUROC overall, it lowers the sensitivity for erosions carrying debris on the lesion
-at the two high-sensitivity operating points (Supplement~S9).
+\paragraph{Operating points (pre-registered)} A clinical decision uses a threshold. With thresholds fixed on each
+seed's validation split at five operating points (Table~\ref{tab:op}), masking lowers sensitivity on the official
+thyroid split at all five, for example from \input{tables/review2_op_inline}. Specificity rises correspondingly, so part
+of the change is a shift of the scores relative to the validation thresholds. The loss is largest where the shortcut
+conflicts with the label: among the 78 malignant nodules that carry an in-ROI caliper, sensitivity at a validation
+specificity of 0.80 falls by \input{tables/review2_op_conflict}. For this frozen model the subgroup was defined after
+its AUROC harm was found and only the operating-point test was registered in advance (Supplement~S18).
 
 \paragraph{A fine-tuned model near the benchmark (pre-registered)} To test whether these are properties of a weak
-model, we compared twelve fine-tuning recipes on validation images only, committed the choice (ConvNeXt-T pretrained on
-ImageNet-22k, learning rate $10^{-4}$, 8 epochs, 224\,px) and then trained it with five seeds. Its test AUROC is 0.769,
-0.004 below the lowest published cross-entropy baseline on this split (0.773; \citealp{gong2022acl}) and above the
-frozen probe (0.735). All four registered tests are supported (Holm): masking lowers the AUROC on shortcut-conflicting
-pairs by $-0.102$ [$-0.178, -0.026$]; it lowers sensitivity at all four of OP2--OP5; at OP2 it lowers sensitivity among
-the 78 malignant nodules with an in-ROI caliper from 0.744 to 0.223 ($-0.521$ [$-0.642, -0.382$]), a subgroup registered
-before any result of this model existed; and its trap crossover is $+0.187$ [$+0.111, +0.268$]. Group balancing recovers
-the conflicting pairs ($+0.088$ [$+0.019, +0.158$] over masking).
+model, we chose a fine-tuning recipe on validation images only (ConvNeXt-T pretrained on ImageNet-22k), registered the
+subgroup test before any result of this model existed and trained it with five seeds. Its test AUROC is 0.769, 0.004
+below the lowest published cross-entropy baseline on this split (0.773; \citealp{gong2022acl}). All four registered
+tests are supported (Holm): masking lowers the AUROC on conflicting pairs ($-0.102$ [$-0.178, -0.026$]), lowers
+sensitivity at four of five operating points, lowers it among the 78 conflicting malignant nodules from 0.744 to 0.223
+($-0.521$ [$-0.642, -0.382$]), and its trap crossover is $+0.187$ [$+0.111, +0.268$].
 
 \paragraph{Is the loss a threshold artefact? (pre-registered)} Re-tuning each model's threshold on the test set
-itself---the best that recalibration at a deployment site can achieve---makes the overall sensitivity of the two models
-equal at a test specificity of 0.80 ($-0.017$ [$-0.124, +0.070$] for the fine-tuned model), but the conflicting subgroup
-still loses: from 0.544 to 0.390 ($-0.154$ [$-0.302, -0.023$]) for the fine-tuned model and from 0.505 to 0.331
-($-0.174$ [$-0.313, -0.012$]) for the frozen probe (Holm $p=0.019$ each), while the malignant nodules whose caliper
-points the right way tend to gain. About 30\% of the loss at validation-fixed thresholds therefore cannot be removed by
-any threshold; the rest follows from transporting thresholds from validation to test data, as deployment does. At a
-matched specificity of 0.90 and a matched sensitivity of 0.80 the direction is the same, with intervals that include
-zero (Supplement~S16).
+itself---the best that recalibration at a deployment site can achieve---makes the overall sensitivity of the two arms
+equal at a test specificity of 0.80, but the conflicting subgroup still loses: from 0.544 to 0.390 ($-0.154$
+[$-0.302, -0.023$]) for the fine-tuned model and from 0.505 to 0.331 ($-0.174$ [$-0.313, -0.012$]) for the frozen probe
+(Holm $p=0.019$ each). About 30\% of the loss at validation-fixed thresholds therefore cannot be removed by any
+threshold; the rest follows from transporting thresholds from validation to test data, as deployment does.
 
 \paragraph{New patients at natural prevalence (pre-registered)} Trained on all ISIC 2019 images and tested on ISIC 2020
-without any resampling, masking lowers the AUROC on shortcut-conflicting pairs: $-0.026$ [$-0.052, -0.000$] under the
-registered near-duplicate rule, which proved too loose (it removed most look-alike images of other patients), and
-$-0.037$ [$-0.061, -0.012$] under a label-free calibrated rule registered as a sensitivity analysis after that result
-(32,952 images). The overall AUROC is nearly unchanged ($+0.016$ [$-0.000, +0.033$]), and group balancing recovers the
-conflicting pairs ($+0.072$ [$+0.048, +0.097$] over masking). No sensitivity loss at
-a fixed operating point was detectable, and the cleanest in-lesion comparison (53 hair-free melanomas) was
-inconclusive ($-0.005$ [$-0.057, +0.048$]): the external harm combines the removal of hair beside melanomas with the
-retention of hair on benign lesions (Supplement~S16).
+without resampling, masking lowers the AUROC on conflicting pairs ($-0.037$ [$-0.061, -0.012$] under a label-free
+duplicate rule registered as a sensitivity analysis; $-0.026$ [$-0.052, -0.000$] under the registered rule, which
+proved too loose), while overall AUROC is nearly unchanged ($+0.016$ [$-0.000, +0.033$]); group balancing recovers the
+conflicting pairs ($+0.072$ [$+0.048, +0.097$] over masking). No sensitivity loss at a fixed operating point was
+detectable (Supplement~S18).
 \input{tables/review2_op}
-\input{tables/natural_clinical}
-
-\paragraph{Calibration} For the held-out BCN hospital masking worsens both Brier score and expected calibration error
-(Table~\ref{tab:natural_clinical}); for HAM, MSK and capsule it improves every metric, in line with the AUROC results.

@@ -48,73 +48,57 @@ measured and marked, collapsed lungs are drained---so they are present in every 
 
 The most widely recommended defence is to restrict the classifier to the region of interest (ROI): segment the
 lesion or the lungs and discard the rest of the image. The rationale assumes that the shortcut lives in the
-background. Rulers, hair, ink and drains do not respect that assumption. When the artifact overlaps the ROI,
-masking cannot remove it; it removes everything \emph{else}. We ask whether the effect of masking depends on where
-the artifact sits, whether that dependence survives when the artifact is moved while the images stay the same, which
-quantity governs it, what it costs on unaltered clinical test data, and what to use instead.
+background. Rulers, hair, calipers and debris do not respect that assumption. That a mask cannot remove what it keeps
+sounds self-evident; its consequences are not. We show that masking makes a model rely \emph{more} on an artifact
+inside the ROI, that the resulting harm is hidden in overall metrics but concentrated in the cases a shortcut gets
+wrong, that it can be predicted before it is observed, and what to use instead.
 
 \paragraph{Contributions}
 \begin{enumerate}
-\item \textbf{A location law for ROI masking.} In pre-registered traps built from real artifacts in four diseases and
-three imaging modalities, masking removes an out-of-ROI shortcut but leaves an in-ROI one largely intact (Holm-significant
-crossovers in 4/4 cohorts). Because Trap~A and Trap~B images differ systematically, we test it on fixed images with a \emph{real-artifact transplant}---the same real artifact pasted inside or
-outside the ROI of the same images, with a neutral-tissue paste as paste-edge control---and observationally with
-covariate-matched traps; it replicates across three encoder families, three model sizes, end-to-end fine-tuning in all
-three cohorts where the network learned the task, and the zero-shot scores of vision--language models; it holds for
-five masking implementations, is graded in the real overlap, and grows when images with contradicted labels are
-removed (Secs.~\ref{sec:law}, \ref{sec:labels}).
+\item \textbf{A location law, tested causally.} In traps built from real artifacts in four diseases and three imaging
+modalities, masking removes an out-of-ROI shortcut but leaves an in-ROI one largely intact (Holm-significant
+crossovers in 4/4 cohorts). Moving the \emph{same} real artifact across the ROI boundary of the \emph{same} images
+reproduces the effect, so it is caused by location, not by which images carry artifacts. It holds for five masking
+implementations, is graded in the real overlap, replicates across encoders, end-to-end fine-tuning and new patients,
+and grows when images with contradicted labels are removed (Sec.~\ref{sec:law}).
 \item \textbf{Mechanism and a closed-form account.} Masking retains an in-ROI artifact while removing competing
-evidence, so reliance on it grows; a linear-Gaussian model states when in-ROI masking harms and, fitted to each
-model's clean and correlated performance only, matches its held-out reversed-test AUROC far better than simple
-reference predictors and predicted 84 results registered before they existed (pre-registered; Secs.~\ref{sec:mech},
-\ref{sec:theory}).
-\item \textbf{Clinical consequences on unaltered data.} Masking leaves overall AUROC nearly unchanged but lowers it
-on shortcut-conflicting cases, on the patient-disjoint official thyroid split and on new patients (ISIC 2019 $\to$ ISIC
-2020). For a fine-tuned thyroid model near the published benchmark it lowers sensitivity among malignant nodules that
-carry a caliper, in a subgroup registered in advance, and part of that loss survives thresholds re-tuned on the test set
-(Sec.~\ref{sec:natural}).
-\item \textbf{What to use instead.} A class-conditional mean constraint on the masked features, derived from the law,
-removes masking's in-ROI failure in every cohort, including one held out from every choice, and on the
-shortcut-conflicting cases of every unaltered test set, and is equal to masking elsewhere except for overall AUROC on one
-external set. Against a registered criterion for dominating masking, tested in two rounds on newly generated data and
-against published remedies (DFR, JTT, IRM, V-REx, LEACE, SPLINCE, LaMa inpainting) and a documented search,
-no remedy dominates; this one fails on one of 42 components. Without artifact labels, an annotation-free mask-then-erase
-tool handles overlay-like artifacts (Sec.~\ref{sec:guide}; methods in the supplement).
-\item \textbf{Reproducibility.} Pre-registration of every experiment with a registry of commit times, Holm-corrected
-primary claims, replication of the original pilot (73/88 numbers), a full rebuild on new hardware that reproduces
-every primary crossover within 0.01, artifact labels checked without a clinician against public expert annotations
-and two independent automatic labellers, public code, and a CLAIM 2024 checklist.
+evidence, so reliance on it grows. A two-parameter linear-Gaussian account states when in-ROI masking harms and
+predicted 84 results registered before they existed (Secs.~\ref{sec:mech}, \ref{sec:theory}).
+\item \textbf{Clinical consequences on unaltered data.} Masking leaves overall AUROC nearly unchanged but lowers it on
+shortcut-conflicting cases of a patient-disjoint thyroid split and of new patients; for a fine-tuned thyroid model near
+the published benchmark it lowers sensitivity among malignant nodules carrying a caliper, and part of that loss survives
+re-tuning the threshold on the test set (Sec.~\ref{sec:natural}).
+\item \textbf{What to use instead.} Against a registered criterion, tested in two rounds on newly generated data, no
+remedy dominates masking. The closest, a class-conditional mean constraint on the masked features, removes masking's
+in-ROI failure in every cohort and on every set of conflicting cases, at a small overall cost on one external set
+(Sec.~\ref{sec:guide}).
 \end{enumerate}
+Every confirmatory analysis was registered before its results, every reported interval is traced automatically to a
+result file, and code, registrations and result files are public.
 
 \section{Related work}
-\paragraph{Artifacts in dermoscopy} \citet{bissoto2020debiasing} annotated seven artifact types in ISIC images and
-showed that debiasing is harder than it looks; \citet{nauta2022uncovering} neutralised coloured calibration patches
-by inpainting and retraining---an artifact that a colour rule localises and that lies largely outside the lesion.
-Hair occlusion degrades classifiers trained on HAM10000 \citep{wang2024hair}, and removing dermoscopic dark-corner
-artifacts is not clearly beneficial, whereas adding synthetic ones to the training set improves classification
-\citep{pewton2024dca}; both treat an artifact's presence, not its position relative to the lesion.
-MaskMedPaint \citep{maskmedpaint} inpaints regions \emph{outside} the classification-relevant area. None of these
-treats artifact location relative to the ROI as a variable.
-\paragraph{Ultrasound} In fetal ultrasound, calipers and on-screen text act as shortcuts even for segmentation
-\citep{lin2024segshortcut}; we study them for classification in thyroid and ovarian ultrasound, where they lie on
-the nodule or tumour.
-\paragraph{Chest radiography} Hospital-specific signals limit the generalisation of pneumonia classifiers
-\citep{zech2018variable}. Drain-driven pneumothorax shortcuts are documented on NIH-CXR14 and CheXpert
-\citep{oakden2020hidden,jimenez2023shortcuts}; recent work localises them to late layers of probed encoders
-\citep{pedersen2026probes} and mitigates them by prevalence-equalised recalibration \citep{kina2026prevalence},
-which requires the artifact label at test time.
-\paragraph{Group robustness and erasure} Reweighting and GroupDRO \citep{sagawa2020groupdro}, last-layer
-retraining \citep{kirichenko2023dfr} and linear concept erasure \citep{ravfogel2020inlp,belrose2023leace}
-require artifact labels or paired data; erasure from unpaired labels removes label-correlated signal when the
-concept is correlated with the label, which is why the mask-then-erase tool we benchmark builds pairs by insertion. Task-preserving linear erasure
-(SPLINCE; \citealp{splice2025}) and projection of biased directions in vision--language models \citep{chuang2023debiasing}
-are the closest erasure methods; both require concept labels or prompts, whereas our concept subspace is estimated
-from synthetic insertions. Random erasing and occlusion augmentation \citep{zhong2020random,fong2019occlusions}
-use similar overlays as training noise; in our traps this does not remove the shortcut. Test-time selection
-\citep{bissoto2023tts} steers dermoscopy models with user keypoints.
+\paragraph{Artifacts as shortcuts} \citet{bissoto2020debiasing} annotated seven artifact types in ISIC images and
+showed that debiasing is harder than it looks; \citet{nauta2022uncovering} neutralised coloured calibration patches,
+which lie largely outside the lesion, by inpainting and retraining. Hair occlusion degrades classifiers trained on
+HAM10000 \citep{wang2024hair}, and adding synthetic dark-corner artifacts helps more than removing real ones
+\citep{pewton2024dca}; MaskMedPaint \citep{maskmedpaint} inpaints regions outside the classification-relevant area. In
+fetal ultrasound, calipers and on-screen text act as shortcuts even for segmentation \citep{lin2024segshortcut}. In
+chest radiography, hospital signals limit generalisation \citep{zech2018variable}, drain shortcuts are documented on
+NIH-CXR14 and CheXpert \citep{oakden2020hidden,jimenez2023shortcuts}, localised to late layers of probed encoders
+\citep{pedersen2026probes} and mitigated by prevalence-equalised recalibration, which needs the artifact label at test
+time \citep{kina2026prevalence}. These works treat an artifact's presence; none treats its location relative to the ROI
+as a variable.
+\paragraph{Removing shortcuts} Reweighting and GroupDRO \citep{sagawa2020groupdro}, last-layer retraining
+\citep{kirichenko2023dfr} and linear concept erasure \citep{ravfogel2020inlp,belrose2023leace} need artifact labels or
+paired data; erasure from unpaired labels removes label-correlated signal when the concept is correlated with the
+label. Task-preserving erasure (SPLINCE; \citealp{splice2025}) and projection of biased directions in vision--language
+models \citep{chuang2023debiasing} need concept labels or prompts. Random erasing and occlusion augmentation
+\citep{zhong2020random,fong2019occlusions} use overlays as training noise, and test-time selection
+\citep{bissoto2023tts} steers dermoscopy models with user keypoints. Counterfactual invariance
+\citep{veitch2021counterfactual} motivates the remedy we recommend.
 \paragraph{Foundation models} Classifiers trained on frozen foundation-model features inherit shortcut-like
 behaviour that pooled multi-institutional evaluation can hide \citep{germani2026aggregation}, and shortcut testing
-\citep{brown2023shortcut} probes whether a model's performance gaps stem from encoding a sensitive attribute. We ask where in
+\citep{brown2023shortcut} probes whether performance gaps stem from encoding a sensitive attribute. We ask where in
 the image the shortcut sits and what masking can and cannot remove.
 
 \input{sections/data}
@@ -122,67 +106,55 @@ the image the shortcut sits and what masking can and cannot remove.
 \section{Problem setup and protocol}\label{sec:setup}
 Let $Y\in\{0,1\}$ be the diagnosis and $A\in\{0,1\}$ the presence of an artifact. A \emph{trap} trains with
 $P(A{=}1\mid Y{=}1)=0.9$ and $P(A{=}1\mid Y{=}0)=0.1$ and tests on a correlated environment with the same rates,
-a \emph{reversed} environment with the rates swapped (0.1/0.9), and a clean environment in which the artifact is
-independent of the label (real traps: present in half of each class; controlled sweeps: absent). A model
-that uses $A$ gains on the correlated test and collapses on the reversed one; the primary metric is reversed-test
-AUROC, and clean AUROC measures the cost of a mitigation. The overlap $r=|\mathrm{artifact}\cap\mathrm{ROI}|/|\mathrm{artifact}|$
-is the controlled variable. Three designs vary it: \emph{controlled sweeps} paste a synthetic artifact at overlaps
-0--100\% on artifact-free images; \emph{real traps} compare images whose real artifact lies inside the ROI
-($r\ge0.5$, Trap~A) or outside it ($r<0.1$, Trap~B), each added to one shared artifact-free group; the
-\emph{real-artifact transplant} pastes one real artifact instance, cut out with its mask, inside ($r\ge0.95$) or
-outside ($r=0$) the ROI of the same artifact-free images. The \emph{location crossover}
+a \emph{reversed} environment with the rates swapped, and a clean environment in which the artifact is independent of
+the label. A model that uses $A$ gains on the correlated test and collapses on the reversed one; the primary metric is
+reversed-test AUROC, and clean AUROC measures the cost of a mitigation. The overlap
+$r=|\mathrm{artifact}\cap\mathrm{ROI}|/|\mathrm{artifact}|$ is the variable of interest. Three designs vary it:
+\emph{controlled sweeps} paste a synthetic artifact at overlaps 0--100\% on artifact-free images; \emph{real traps}
+compare images whose real artifact lies inside the ROI ($r\ge0.5$, Trap~A) or outside it ($r<0.1$, Trap~B), each added
+to one shared artifact-free group; the \emph{real-artifact transplant} pastes one real artifact instance inside
+($r\ge0.95$) or outside ($r=0$) the ROI of the same artifact-free images. The \emph{location crossover}
 $[\text{mask}-\text{ERM}]_{\text{out}}-[\text{mask}-\text{ERM}]_{\text{in}}$ of reversed-test AUROC summarises each
-design. Unless stated otherwise backbones are frozen and linear heads are fitted (end-to-end fine-tuning in
-Sec.~\ref{sec:replication}); regularisation strength and the decision threshold (balanced accuracy) are selected on
-clean validation data only. Uncertainty is a paired \emph{crossed} bootstrap: training seeds (or cross-validation
-folds) are resampled as clusters, each test image receives one Poisson weight shared by every cluster in which it
-appears, and AUROC differences are computed inside each cluster, so predictions of different models are never pooled
-into one ROC curve (10,000 replicates unless stated). The original protocol resampled images independently within
-each seed, which treats a test set shared by the seeds as several and gave intervals a median 1.56 times narrower
-(IQR 1.34--1.74 over 2,466 intervals; Supplement~S15). Every controlled sweep, real trap, transplant, remedy and
-unaltered-data analysis was therefore regenerated from per-image predictions, and \emph{every interval of a model
-comparison in the paper and the supplement is a crossed-bootstrap interval}; none uses the per-seed estimator. Two
-further cases are stated where they occur: agreement statistics between label sources, which involve no training
-seeds, use an image bootstrap; and a few secondary analyses in the supplement (patch-token suppression, pseudo-group
-balancing, erasure combined with DFR, the validation-driven selectors, text-prompted erasure, SPLINCE on chest drains
-and LaMa on dermoscopic hair) come from archived runs whose per-image predictions were not kept and are reported as
-point estimates, marked as archived. Registration status: the real traps, sweeps and unaltered-data tests were
-registered before their results (the 16-test primary family was grouped afterwards); the covariate-matched traps, the
-transplant, its paste-edge control and the operating points were designed after the real-trap results and registered
-before their own results, and each forms its own Holm family outside the primary family (Supplement~S1). The
-analyses added later---masking implementations, overlap dose-response, the external natural test, the prospective
-theory test, the label checks, the fine-tuned thyroid model and the threshold re-tuning---were registered in four
-further documents, each committed and pushed before its analysis; analyses decided after their data were seen are
-labelled exploratory.
-Splits are grouped by lesion/patient identifier where published and otherwise by perceptual hash (and frame
-blocks); a stricter embedding-based grouping is a sensitivity analysis (Sec.~\ref{sec:leak_emb}).
+design. Unless stated otherwise backbones are frozen and linear heads are fitted; regularisation strength and the
+decision threshold (balanced accuracy) are selected on clean validation data only. Splits are grouped by lesion or
+patient identifier where published and otherwise by perceptual hash (and frame blocks).
+
+\paragraph{Statistics} Uncertainty is a paired \emph{crossed} bootstrap: training seeds (or cross-validation folds)
+are resampled as clusters, each test image receives one Poisson weight shared by every cluster in which it appears,
+and AUROC differences are computed inside each cluster (10,000 replicates unless stated). \emph{Every interval of a
+model comparison in the paper and the supplement is a crossed-bootstrap interval}, computed from regenerated per-image
+predictions; the per-seed bootstrap of the original protocol, which treats a test set shared by the seeds as several
+and gave intervals a median 1.56 times narrower, is not used (Supplement~S15). Agreement statistics between label
+sources, which involve no training seeds, use an image bootstrap, and seven secondary analyses in the supplement come
+from archived runs without per-image predictions and are reported as point estimates, marked as archived. Each family
+of tests is Holm-corrected.
+
+\paragraph{Registration} Every confirmatory analysis was registered in a document committed before its results; the registry with
+commit hashes and times is in Supplement~S1. The real traps, sweeps and unaltered-data tests were registered first (the
+16-test primary family was grouped afterwards); the matched traps, transplant, paste-edge control and operating points
+were designed after the real-trap results and registered before their own results; each later registration was
+pushed to GitHub before its analysis was run. Analyses decided after their data were seen are labelled
+exploratory.
 
 \input{sections/results_law}
 \input{sections/results_mechanism}
 \input{sections/theory}
 \input{sections/results_natural}
-\input{sections/guide}
 \input{sections/results_robust2}
+\input{sections/guide}
 
 \section{Discussion and limitations}\label{sec:limits}
 \input{sections/discussion}
 
 \section{Conclusion}
-ROI masking is not a neutral preprocessing step. Its benefit depends on where the artifact sits: it removes shortcuts
-that live outside the ROI and leaves---or amplifies---those that live inside it. Moving the same real artifact across
-the ROI boundary of the same images reproduces the effect in all four cohorts, so it is not an artefact of which
-images happen to carry in-ROI artifacts; it holds across encoder families and model sizes and, where the network
-learns the task, after fine-tuning; a neutral paste
-through the same masks behaves similarly, so it is the location of a label-correlated pattern that matters. It follows
-from a two-parameter model of signal and artifact strength, which predicted new results before they existed. It holds for
-every masking implementation we tried and is graded in the real overlap. On unaltered clinical data the cost falls on
-the cases in which the in-ROI artifact points to the wrong diagnosis: it is hidden in the overall AUROC, visible on new
-patients, and for a fine-tuned thyroid model part of it survives any re-tuning of the decision threshold. No remedy we
-tested dominates masking, but one comes within a single cell. We
-recommend that shortcut audits of masked models report artifact location relative to the ROI and evaluate performance
-on shortcut-conflicting cases alongside clean and correlated performance, and that, where artifacts may lie inside the
-ROI, a class-conditional constraint on the masked features be used instead of masking alone. Code, pre-registrations,
-result files and a CLAIM 2024 checklist are public.
+ROI masking is not a neutral preprocessing step. It removes shortcuts that live outside the ROI and leaves---or
+amplifies---those that live inside it; moving the same real artifact across the ROI boundary of the same images
+reproduces the effect, a two-parameter account predicts it, and it holds across masking implementations, encoders and
+new patients. On unaltered clinical data the cost falls on the cases in which the in-ROI artifact points to the wrong
+diagnosis: hidden in the overall AUROC, visible on those cases, and for a fine-tuned thyroid model partly beyond the reach
+of threshold re-tuning. Audits of masked models should report artifact location relative to the ROI and performance on
+shortcut-conflicting cases; where artifacts may lie inside the ROI and image-level artifact labels exist, a
+class-conditional constraint on the masked features should be used instead of masking alone.
 
 \bibliographystyle{elsarticle-harv}
 \bibliography{refs}

@@ -1,21 +1,15 @@
-% The location law. Numbers: results/PRIMARY_CLAIMS.md, results/CROSS_COHORT.md, results/review2/*.csv
-% (generated tables paper/tables/review2_*.tex), docs/PREREGISTRATION_*.md result sections.
+% The location law. Numbers: results/PRIMARY_CLAIMS.md, results/CROSS_COHORT.md, results/review2/*.csv, results/round4/
+% (generated tables paper/tables/review2_*.tex); full text of the pre-cut version in Supplement S14 and S18.
 \section{Results: a location law for ROI masking}\label{sec:law}\label{sec:derm}\label{sec:multi}
 
-\subsection{Controlled dermoscopy: the effect reverses with overlap}
-With a synthetic ruler whose overlap with the lesion is swept from 0 to 100\% (2,437 ISIC 2018 images, DINOv2
-ViT-B/14 at 518\,px, three seeds), ROI masking improves reversed-environment AUROC over ERM by $+0.184$
-[$+0.117, +0.250$] when the ruler lies outside the lesion and \emph{lowers} it by $-0.097$ [$-0.164, -0.030$],
-$-0.111$ [$-0.181, -0.043$] and $-0.129$ [$-0.195, -0.064$] at 50, 75 and 100\% overlap (location interaction
-$+0.313$ [$+0.258, +0.370$]; Table~\ref{tab:synthetic_isic_dino518}); at 25\% overlap the change is not significant
-($-0.059$ [$-0.127, +0.008$]). The sign flip is reproduced at 224\,px and
-under randomised ruler colour, opacity, ticks and scale. At 0\% overlap the masked model's correlated and reversed
-AUROC coincide (0.849/0.849); at 100\% its correlated AUROC exceeds ERM's (0.961 vs 0.937): it uses the ruler
-\emph{more}. Synthetic calipers on thyroid nodules, synthetic debris on capsule lesions and synthetic calipers on
-ovarian tumours give the same interaction (thyroid $+0.433$ [$+0.362, +0.507$], capsule $+0.228$
-[$+0.144, +0.324$], ovary $+0.238$ [$+0.144, +0.340$]; Fig.~\ref{fig:dose}); whether the lost benefit becomes harm
-depends on the setting (ovary at full overlap $-0.197$ [$-0.357, -0.035$]; thyroid $-0.030$ [$-0.105, +0.042$]).
-\input{tables/synthetic_isic_dino518}
+\subsection{Controlled sweeps}
+With a synthetic ruler whose overlap with the lesion is swept from 0 to 100\% (2,437 ISIC 2018 images, DINOv2 ViT-B/14,
+three seeds), ROI masking improves reversed-test AUROC over ERM by $+0.184$ [$+0.117, +0.250$] when the ruler lies
+outside the lesion and lowers it by $-0.129$ [$-0.195, -0.064$] when it lies on the lesion (location interaction
+$+0.313$ [$+0.258, +0.370$]). At full overlap the masked model's correlated AUROC exceeds ERM's (0.961 vs 0.937): it
+uses the ruler \emph{more}. Synthetic calipers on thyroid nodules and ovarian tumours and synthetic debris on capsule
+lesions give the same interaction (thyroid $+0.433$ [$+0.362, +0.507$], ovary $+0.238$ [$+0.144, +0.340$], capsule
+$+0.228$ [$+0.144, +0.324$]; Fig.~\ref{fig:dose}; Supplement~S14).
 \ifdupfloats
 \begin{figure*}[t]\centering\includegraphics[width=\textwidth]{figures/dose_response.pdf}
 \caption{Controlled overlap sweeps: change in reversed-test AUROC versus ERM as the synthetic artifact moves into the
@@ -25,94 +19,51 @@ encoder ignores extra-pulmonary tubes; U-MtE with group balancing (green) is fla
 \fi
 
 \subsection{Real artifacts in four diseases (pre-registered)}
-Each real trap pair shares one artifact-free group; Trap~A adds images whose artifact lies mostly inside the ROI
-($r\ge0.5$), Trap~B images whose artifact lies outside it ($r<0.1$); five seeds of five-fold group-safe
-cross-validation. The crossover $[\text{mask}-\text{ERM}]_{\text{Trap B}}-[\text{mask}-\text{ERM}]_{\text{Trap A}}$ is
+In the real traps the crossover $[\text{mask}-\text{ERM}]_{\text{Trap B}}-[\text{mask}-\text{ERM}]_{\text{Trap A}}$ is
 positive and Holm-significant in all four cohorts: dermoscopic hair $+0.147$ [$+0.111, +0.185$], thyroid calipers
 $+0.239$ [$+0.196, +0.280$], ovarian calipers $+0.170$ [$+0.087, +0.252$] and capsule debris $+0.377$
-[$+0.327, +0.426$]. On dermoscopy masking \emph{harms} in-ROI ($-0.049$ [$-0.083, -0.018$], negative in all five
-seeds; BCN $-0.067$ [$-0.110, -0.025$]) and helps out of the ROI ($+0.098$ [$+0.060, +0.136$]). On thyroid, ovarian and
-capsule images in-ROI masking still helps, but far less than out of the ROI (thyroid $+0.109$ [$+0.085, +0.133$]
-versus $+0.348$ [$+0.307, +0.388$]; capsule $+0.084$ versus $+0.461$), and the masked Trap~A model still relies on the
-calipers (correlated 0.908 versus reversed 0.398). On new patients --- ISIC 2020, 32,997 images of 2,056 patients,
-patient-disjoint folds, hair masks from a segmenter trained only on ISIC 2019 and frozen before any ISIC 2020 image was
-scored --- the pre-registered external test reproduces the hair pattern: masking harms with hair on the lesion
-($-0.064$ [$-0.128, -0.002$]), helps with hair beside it ($+0.186$ [$+0.118, +0.249$]), crossover $+0.250$
-[$+0.174, +0.327$]. Because the
-artifact-bearing images of the two traps differ (next subsections), these crossovers describe the traps as built;
-their attribution to location rests on the matched traps for hair, thyroid and ovary and on the transplant for
-capsule, where matching is infeasible. What is universal in our data is therefore the \emph{gap}:
+[$+0.327, +0.426$]. On dermoscopy masking \emph{harms} with hair on the lesion ($-0.049$ [$-0.083, -0.018$]) and helps
+with hair beside it ($+0.098$ [$+0.060, +0.136$]). On ultrasound and capsule images in-ROI masking still helps, but far
+less than out of the ROI (thyroid $+0.109$ [$+0.085, +0.133$] versus $+0.348$ [$+0.307, +0.388$]), and the masked
+Trap~A model still relies on the calipers (correlated 0.908 versus reversed 0.398). On new patients (ISIC 2020,
+patient-disjoint folds, hair masks from a segmenter frozen before any ISIC 2020 image was scored) the registered
+external test reproduces the hair pattern: harm with hair on the lesion ($-0.064$ [$-0.128, -0.002$]), gain with hair
+beside it ($+0.186$ [$+0.118, +0.249$]), crossover $+0.250$ [$+0.174, +0.327$]. What is universal is the \emph{gap}:
 masking leaves an in-ROI shortcut largely intact while it removes an out-of-ROI one. Harm is conditional; it appears
-when the mask also removes disease context or leaves the artifact a larger share of what remains
-(Sec.~\ref{sec:theory}).
+when the mask also removes disease context or leaves the artifact a larger share of what remains (Sec.~\ref{sec:theory}).
 
-\subsection{Same images, same artifact: real-artifact transplant and paste-edge control}\label{sec:transplant}
-Trap~A and Trap~B contain different artifact-bearing images, and these differ systematically
-(Supplement~S11): lesions carrying in-lesion hair are much larger (standardised mean difference 2.1), as are
-thyroid nodules with calipers on them (0.4) and capsule lesions with debris on them (2.6), and in-ROI calipers carry
-more marker pixels. The crossover could therefore reflect population differences rather than artifact location. We
-removed this possibility by design (pre-registered): real artifact instances---a caliper measurement line with its end
-crosses, a hair strand, a piece of debris---were cut from artifact-bearing images with their masks and pasted
-\emph{inside} (overlap $\ge0.95$) or \emph{outside} (overlap 0) the ROI of the \emph{same} artifact-free images, with
-the same instance, transform and compositing in both locations; environments as in the controlled sweeps. As a
-paste-edge control, neutral tissue was pasted through the same masks, at the same positions and with the same
-blending (Supplement~S11).
-\input{tables/review2_transplant_text}
+\subsection{Location, not image population: transplant and matched traps}\label{sec:transplant}\label{sec:matched}
+Trap~A and Trap~B contain different images, and these differ systematically: lesions with hair on them are much larger
+(standardised mean difference 2.1), as are thyroid nodules with calipers on them and capsule lesions with debris on
+them. We therefore cut real artifact instances---a caliper line with its end crosses, a hair strand, a piece of
+debris---from artifact-bearing images and pasted each \emph{inside} or \emph{outside} the ROI of the \emph{same}
+artifact-free images, with the same instance, transform and compositing at both locations (pre-registered). Outside
+the ROI masking removes the pasted shortcut entirely; inside, the shortcut survives, and the location interaction is
+positive in all four cohorts (Table~\ref{tab:law}). A paste-edge control, neutral tissue pasted through the same masks,
+gives 52--92\% of the effect: what the transplant isolates is the location of a label-correlated pattern, not the
+appearance of a particular artifact, and the artifact's content adds to it significantly only for hair and thyroid
+calipers ($+0.049$ [$+0.026, +0.072$] and $+0.132$ [$+0.116, +0.148$]). As an observational check we matched the
+artifact-bearing images of the two traps 1:1 on lesion size, artifact amount and acquisition covariates: the crossovers
+are unchanged (Table~\ref{tab:law}), shrink by at most 16\% under a four times stricter calliper, and survive a doubly
+robust regression on every matching covariate (hair $+0.156$ [$+0.127, +0.187$], thyroid $+0.238$ [$+0.184, +0.291$],
+ovary $+0.165$ [$+0.056, +0.273$]). Matching was infeasible for capsule (19 pairs), where the location evidence rests on
+the transplant. Details and balance tables: Supplement~S11.
 \input{tables/review2_law}
 
-\subsection{Covariate-matched traps}\label{sec:matched}
-As a second, observational check we matched the artifact-bearing images of the two traps 1:1 on a propensity score of
-lesion or nodule size, artifact amount and acquisition covariates (age, sex, body site, source, diagnosis subtype for
-dermoscopy; image size and grey level for ultrasound; pre-registered), leaving everything else unchanged, and repeated
-it with a four times stricter calliper (full balance tables in Supplement~S11).
-\input{tables/review2_matched_text}
-A pre-registered doubly robust analysis on the matched samples---per-image placement values of the masked minus the
-ERM score regressed on the trap indicator, the label and every matching covariate within seed, with a crossed
-bootstrap---leaves the crossover unchanged: hair $+0.156$ [$+0.127, +0.187$], thyroid $+0.238$ [$+0.184, +0.291$],
-ovary $+0.165$ [$+0.056, +0.273$] (Holm $p=0.002$ each); residual imbalance after matching does not carry the effect.
-
-\subsection{Masking implementation and the real overlap (pre-registered)}\label{sec:impl}
-Mean-colour fill is one way to mask. Black fill, a blurred background (16-px Gaussian), a crop to the lesion box and a
-crop of the masked image all give a positive crossover in all four cohorts (16 of 16, Holm $p\le0.010$), from
-$+0.091$ [$+0.064, +0.117$] for the dermoscopy box crop to $+0.367$ [$+0.318, +0.416$] for black fill on capsule
-frames; implementations that keep part of the out-of-ROI content give weaker effects where that content still carries
-the artifact (blur for debris and ovarian calipers, the box crop for hair and debris). The two traps are the ends of a
-continuous dependence: with all artifact-bearing images binned by their real overlap $r$, the mask gain falls with $r$ in
-every cohort (slopes: hair $-0.235$ [$-0.276, -0.194$], thyroid $-0.250$ [$-0.303, -0.197$], capsule $-0.489$
-[$-0.539, -0.438$], ovary $-0.205$ [$-0.300, -0.109$]), and for hair it turns from a gain ($+0.124$ [$+0.085, +0.162$]
-at $r<0.1$) into a harm ($-0.086$ [$-0.119, -0.056$] at $r\ge0.75$), crossing zero near $r=0.40$ (Supplement~S16).
-
-\subsection{Replication across encoders, training regimes and foundation models}\label{sec:replication}
-The crossover replicates with MedSigLIP (thyroid $+0.195$ [$+0.153, +0.238$], capsule $+0.335$ [$+0.286, +0.383$],
-ovary $+0.178$ [$+0.109, +0.248$]), a CNN (ConvNeXt-Base: thyroid $+0.275$ [$+0.231, +0.320$], capsule $+0.320$ [$+0.268, +0.372$]) and
-DINOv2 at three sizes (positive in all nine cohort--size combinations; Supplement~S7), and with end-to-end fine-tuning \input{tables/review2_ft_text}.
-Without any task training, the zero-shot scores of vision--language models are already swayed by artifacts, and
-masking changes them as the law predicts (MedSigLIP crossovers: thyroid $+0.103$ [$+0.064, +0.143$], capsule $+0.045$
-[$+0.001, +0.090$], ovary $+0.181$ [$+0.103, +0.261$]; DermLIP on hair $+0.040$ [$+0.021, +0.058$]); MedSigLIP's
-zero-shot thyroid diagnosis itself is at chance (clean AUROC 0.45), so we use these scores only to show that the
-effect is a property of the representation.
-
-\paragraph{The one encoder without a hair gap} With the dermatology foundation model DermLIP and a trained linear
-head, masking harms at \emph{both} hair locations (Trap~A $-0.104$ [$-0.143, -0.067$], Trap~B $-0.090$
-[$-0.135, -0.046$]) and the hair crossover vanishes ($+0.014$ [$-0.037, +0.063$]), although the controlled ruler sweep
-reverses with DermLIP as with DINOv2 ($+0.161$ at no overlap, $-0.263$ to $-0.309$ at 25--100\%). Two measurements
-explain it. First, with DermLIP masking costs disease signal wherever the hair lies (clean AUROC $-0.066$
-[$-0.089, -0.043$] in Trap~A and $-0.063$ [$-0.094, -0.033$] in Trap~B): this encoder, trained on whole dermatology
-images, loses more from a masked background than DINOv2. Second, the pixel part of its hair shortcut is small in both
-traps (oracle hair inpainting $+0.033$ [$+0.025, +0.042$] and $+0.040$ [$+0.015, +0.064$]), whereas balancing, which
-also removes correlates, gains $+0.146$ and $+0.110$: masking removes little of the shortcut at either location, so
-there is no gap to find. The linear-Gaussian account fitted to DermLIP's clean and correlated AUROC anticipates this
-(predicted crossover $+0.013$, observed $+0.014$; Sec.~\ref{sec:theory}). The law describes what masking can remove; when the shortcut is carried by
-correlates and the encoder is fragile to masking, masking removes little at either location.
+\subsection{How general the law is}\label{sec:impl}\label{sec:replication}
+All four other masking implementations---black fill, blurred background, crop to the lesion box, crop of the masked
+image---give a positive crossover in all four cohorts (16 of 16, Holm $p\le0.010$). The two traps are the ends of a
+continuous dependence: binned by their real overlap, the mask gain falls with $r$ in every cohort, and for hair it turns
+from a gain ($+0.124$ [$+0.085, +0.162$] at $r<0.1$) into a harm ($-0.086$ [$-0.119, -0.056$] at $r\ge0.75$). The
+crossover replicates with MedSigLIP in three cohorts, with a CNN (ConvNeXt-Base) in two, with DINOv2 at three sizes
+(nine of nine), with end-to-end fine-tuning in the three cohorts where the network learned the task, and in the
+zero-shot scores of vision--language models. The one exception is the dermatology encoder DermLIP, with which masking
+costs disease signal at both hair locations and the hair crossover vanishes ($+0.014$ [$-0.037, +0.063$]); the account of
+Sec.~\ref{sec:theory} anticipates this ($+0.013$). Details: Supplement~S7, S16 and S18.
 
 \subsection{Chest radiography: a boundary case}
-With a synthetic tube swept into the lung fields of NIH pneumothorax radiographs (RAD-DINO), the encoder does not use
-an extra-pulmonary tube at all (reversed 0.913 versus clean 0.915 at no overlap), so masking has nothing to remove. On
-real devices (RANZCR-CLiP linked to NIH, four findings; Supplement~S3) lung masking helped at both locations with
-RAD-DINO, the registered primary encoder (no crossover survives Holm correction over the four findings). With MedSigLIP, the registered
-replication encoder, which does use the out-of-lung tube, the crossover is positive for all four findings ($+0.095$ to
-$+0.328$, Holm $p<0.001$) and masking harms inside the lungs for effusion ($-0.084$ [$-0.125, -0.043$]). The device
-contrast is confounded, however: images without an in-lung catheter carry more out-of-lung tubes, which lung masking
-removes. Real chest drains carry the shortcut mostly through correlates (the treated lung; lung masking gains $+0.039$
-[$+0.019, +0.058$] with RAD-DINO and $+0.005$ [$-0.013, +0.023$] with DINOv2). With the evidence split by encoder and a
-confounded contrast, we report chest radiography as the boundary of the law, not as a fifth confirmation.
+A radiograph encoder (RAD-DINO) ignores a synthetic tube outside the lungs, so masking has nothing to remove there. On
+real devices (RANZCR-CLiP linked to NIH) lung masking helped at both locations with RAD-DINO, whereas with MedSigLIP,
+which does use the out-of-lung tube, the crossover is positive for all four findings ($+0.095$ to $+0.328$); the device
+contrast is confounded with other tubes, and real chest drains carry the shortcut through the treated lung. We report
+chest radiography as the boundary of the law, not as a fifth confirmation (Supplement~S3).

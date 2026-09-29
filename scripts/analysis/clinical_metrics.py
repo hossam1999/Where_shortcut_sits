@@ -46,10 +46,10 @@ def main():
     print(out.round(3).to_string())
     cols = ["AUROC", "AUPRC", "Brier", "ECE", "Sens", "Spec"]
     L = ["\\begin{table}[t]\\centering\\scriptsize",
-         "\\caption{Clinical secondary metrics on the unaltered test sets (Sec.~\\ref{sec:natural}): mean (SD) over "
+         "\\caption{Clinical secondary metrics on the unaltered test sets (main text, unaltered test data): mean (SD) over "
          "training seeds. Sensitivity and specificity at the operating point of maximal balanced accuracy fixed on "
-         "validation data (OP1; other operating points with CIs in Table~\\ref{tab:op}); ECE with 10 equal-width bins; "
-         "AUPRC baseline = prevalence." + (" Rebuilt run (Sec.~\\ref{sec:repro})." if sfx else "") + "}\\label{tab:natural_clinical}",
+         "validation data (OP1; other operating points with CIs in the main-text operating-point table and S9); ECE with 10 equal-width bins; "
+         "AUPRC baseline = prevalence." + (" Rebuilt run (S18)." if sfx else "") + "}\\label{tab:natural_clinical}",
          "\\resizebox{\\linewidth}{!}{\\begin{tabular}{ll" + "c" * len(cols) + "}\\toprule", "Test set & Arm & " + " & ".join(cols) + " \\\\\\midrule"]
     for name in RUNS:
         q = out[out.test == name]

@@ -1,44 +1,31 @@
 \section{Data}\label{sec:data}
-\paragraph{Controlled dermoscopy cohort} ISIC 2018 Task 1/2 images with manual lesion masks and melanoma labels
-from the union of the ISIC 2016 and 2017 tables (three images with conflicting labels dropped); perceptual-hash
-(Hamming $\le 8$) and lesion grouping; 2,437 images for which a $65\times19$\,px ruler (0.46\% of a
-$518\times518$ image) can be placed at 0/25/50/75/100\% overlap with the lesion within 10 percentage points
-(train/val/test 1,849/371/371 before common support).
+\paragraph{Dermoscopy} \emph{Controlled cohort:} ISIC 2018 Task 1/2 images with manual lesion masks and melanoma labels
+(ISIC 2016/2017 tables); 2,437 images on which a $65\times19$\,px ruler can be placed at 0/25/50/75/100\% overlap with
+the lesion. \emph{Real hair:} all 25,331 ISIC 2019 training images; hair masks from \citet{wegley2026artifacts}; lesion
+masks manual for HAM10000 \citep{tschandl2018ham} and otherwise from a U-Net trained on ISIC 2018 Task 1. Two traps share
+one hair-free group ($\le 30$ hair pixels): Trap~A 704/157/2,738/989 and Trap~B 704/157/4,327/930 images (hair-free
+benign/melanoma, hair benign/melanoma), subsampled to the hair-free source mix within each label; five seeds of
+five-fold cross-validation grouped by lesion identifier and perceptual hash. \emph{New patients:} ISIC 2020 (32,997
+images of 2,056 patients), hair masks from a segmenter trained only on ISIC 2019.
 
-\paragraph{Real hair cohort (ISIC 2019)} All 25,331 ISIC 2019 training images; hair/ruler masks from the archive of
-\citet{wegley2026artifacts}; lesion masks manual for HAM10000 \citep{tschandl2018ham} and predicted elsewhere by a
-U-Net trained on ISIC 2018 Task 1. Two traps share one hair-free group ($\le 30$ hair pixels at native resolution):
-Trap~A contains hair with overlap $r=|\text{hair}\cap\text{lesion}|/|\text{hair}|\ge0.5$, Trap~B $r<0.1$. Cells are
-subsampled to the hair-free source mix (HAM/BCN/MSK) within each label, giving Trap~A 704/157/2,738/989 and Trap~B
-704/157/4,327/930 images (hair-free benign/melanoma, hair benign/melanoma); five seeds of five-fold group-safe
-cross-validation (leakage groups: lesion identifiers and pHash); 172 reversed-test melanomas per trap and seed. The
-30-pixel threshold is sensitive: independent labels show that it marks hair on many images that experts call hair-free
-(Sec.~\ref{sec:labels}).
-
-\paragraph{Thyroid ultrasound} TN3K images \citep{gong2021tn3k} with TNCD benign/malignant labels from cytological
-biopsy \citep{gong2022acl} (3,493 images of 2,421 patients; 1,210 malignant) and manual nodule masks; the official
-train/test split (2,879/614 images) is patient-disjoint \citep{gong2022acl}. Sonographer calipers were segmented by a frozen rule-based detector (dotted measurement lines
-and `+' ends; audits in Secs.~\ref{sec:robustness} and \ref{sec:labels}). Trap~A: calipers with $r\ge0.5$ (1,150 images); Trap~B: $r<0.1$ (326);
-caliper-free: 1,801. Patient identifiers are not published, so within the pooled images leakage groups are pHash
-chains (stricter embedding-based groups in Sec.~\ref{sec:leak_emb}).
+\paragraph{Thyroid ultrasound} TN3K images \citep{gong2021tn3k} with benign/malignant labels from cytological biopsy
+\citep{gong2022acl} (3,493 images; 1,210 malignant) and manual nodule masks; the official train/test split
+(2,879/614 images) is patient-disjoint. Sonographer calipers are segmented by a frozen rule-based detector (dotted
+measurement lines and `+' ends). Trap~A: calipers with $r\ge0.5$ (1,150 images); Trap~B: $r<0.1$ (326); caliper-free:
+1,801.
 
 \paragraph{Ovarian tumour ultrasound} MMOTU OTU\_2d \citep{zhao2022mmotu} (CC BY 4.0): 1,202 images with tumour
-masks, labelled benign cystic (chocolate cyst, serous cystadenoma, simple cyst) versus lesions with solid
-components (teratoma, theca-cell tumour, mucinous cystadenoma, high-grade serous carcinoma). The thyroid detector is
-applied unchanged: Trap~A 341/276, Trap~B 91/103, caliper-free 170/178 (benign-cystic/solid).
+masks, benign cystic versus lesions with solid components; the thyroid caliper detector is applied unchanged
+(Trap~A 341/276, Trap~B 91/103, caliper-free 170/178).
 
-\paragraph{Capsule endoscopy} SEE-AI frames \citep{seeai2023} (CC BY 4.0) containing only erosions (3,550) or only
-polyp-like lesions (1,931); the ROI is the union of the expert lesion boxes. Contamination (debris, bubbles, bile)
-is segmented by a linear probe on DINOv2 patch tokens trained on 2,160 expert-masked frames (held-out pixel accuracy
-0.92, IoU 0.62; expert masks are used where available). Debris-free: $<3\%$ of the frame; Trap~A: debris $\ge10\%$
-with $r\ge0.5$; Trap~B: $r<0.1$. Leakage groups: blocks of 100 consecutive frame numbers plus pHash duplicates.
+\paragraph{Capsule endoscopy} SEE-AI frames \citep{seeai2023} (CC BY 4.0) with only erosions (3,550) or only
+polyp-like lesions (1,931); the ROI is the union of the expert lesion boxes. Debris, bubbles and bile are segmented by
+a linear probe on DINOv2 patch tokens (held-out IoU 0.62 against expert masks). Leakage groups: blocks of 100
+consecutive frames plus perceptual-hash duplicates.
 
-\paragraph{Chest radiography} NIH ChestX-ray14 \citep{wang2017chestxray8}; lung ROIs from the TorchXRayVision
-PSPNet \citep{cohen2022xrv}. \emph{Controlled cohort:} 1,906 pneumothorax images without a chest drain (NEATX
-annotations) and 5,718 \emph{No Finding} images from other patients; a $100\times12$\,px radio-opaque tube is
-placed at controlled overlap with the lungs (7,610 images in common support). \emph{Real drains} (in-ROI only):
-29,687 images; drains are labelled by NEATX for pneumothorax-positive images and by a drain detector (precision
-0.95) for negatives; environments are built within view position (AP/PA); five patient-grouped folds.
+\paragraph{Chest radiography} NIH ChestX-ray14 \citep{wang2017chestxray8} with lung ROIs from the TorchXRayVision
+PSPNet \citep{cohen2022xrv}: a controlled tube sweep on 7,610 images, 29,687 images with real drains, and devices from
+RANZCR-CLiP linked to NIH (Supplement~S3).
 
 \ifdupfloats
 \begin{figure*}[t]\centering\includegraphics[width=\textwidth]{figures/examples.pdf}

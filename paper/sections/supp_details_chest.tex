@@ -1,0 +1,11 @@
+
+\paragraph{Chest radiography in detail} With a synthetic tube swept into the lung fields of NIH pneumothorax radiographs (RAD-DINO), the encoder does not use
+an extra-pulmonary tube at all (reversed 0.913 versus clean 0.915 at no overlap), so masking has nothing to remove. On
+real devices (RANZCR-CLiP linked to NIH, four findings; Table~\ref{tab:s3cxr}) lung masking helped at both locations with
+RAD-DINO, the registered primary encoder (no crossover survives Holm correction over the four findings). With MedSigLIP, the registered
+replication encoder, which does use the out-of-lung tube, the crossover is positive for all four findings ($+0.095$ to
+$+0.328$, Holm $p<0.001$) and masking harms inside the lungs for effusion ($-0.084$ [$-0.125, -0.043$]). The device
+contrast is confounded, however: images without an in-lung catheter carry more out-of-lung tubes, which lung masking
+removes. Real chest drains carry the shortcut mostly through correlates (the treated lung; lung masking gains $+0.039$
+[$+0.019, +0.058$] with RAD-DINO and $+0.005$ [$-0.013, +0.023$] with DINOv2). With the evidence split by encoder and a
+confounded contrast, we report chest radiography as the boundary of the law, not as a fifth confirmation.

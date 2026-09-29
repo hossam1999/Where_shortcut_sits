@@ -47,6 +47,7 @@ inspected before any label was read. Using it requires a nodule segmentation tra
 detector re-validated on this interface; we did not run it.
 
 \input{tables/s3_cxr}
+\input{sections/supp_details_chest}
 
 \section*{S4. Artifact labels: provenance, audits, sensitivity and an expert audit kit}
 \emph{Which labels are human and which are automatic.}
@@ -128,6 +129,17 @@ test, clean test without artifact), 5-fold grouped cross-validation, five presen
 Recipients without a feasible donor (mostly small capsule lesion boxes) are excluded; counts by label are in
 \texttt{results/review2/transplant/*/feasibility\_by\_label.csv}.
 
+\section*{S12. CLAIM 2024 checklist}
+\input{claim_checklist}
+
+\section*{S13. Reproducibility}
+All numbers in the main paper and this supplement are produced by scripts in the repository (\texttt{scripts/});
+tables are generated, never typed, and every confidence interval in the paper is traced automatically to a result
+file (\texttt{scripts/verify/audit\_paper\_numbers.py}). A complete rebuild on different hardware reproduces every
+primary crossover within 0.01 (S18). Compute: one 24\,GB GPU.
+
+\input{sections/supp_details_s14}
+
 \section*{S15. Per-seed versus crossed bootstrap}
 The original estimator resamples training-seed clusters and then test images independently within each sampled cluster.
 When the clusters share test images---every seed of an analysis scores the same official thyroid test split, the same
@@ -203,14 +215,7 @@ and are semi-confirmatory. Full reports: \texttt{stages/stage9\_remedies\_domina
 \input{tables/s17_r9_gains}
 \input{tables/s17_r9_decomp}
 
-\section*{S12. CLAIM 2024 checklist}
-\input{claim_checklist}
-
-\section*{S13. Reproducibility}
-All numbers in the main paper and this supplement are produced by scripts in the repository (\texttt{scripts/});
-tables are generated, never typed, and every confidence interval in the paper is traced automatically to a result
-file (\texttt{scripts/verify/audit\_paper\_numbers.py}). A complete rebuild on different hardware reproduces every
-primary crossover within 0.01 (main text). Compute: one 24\,GB GPU.
+\input{sections/supp_details_s18}
 
 \bibliographystyle{elsarticle-harv}
 \bibliography{refs}
