@@ -1,0 +1,348 @@
+scope,candidate,component,cohort,estimate,ci95_lo,ci95_hi,margin,test,p_one_sided,met,label
+all cohorts,mask_cmc,D1 all pairs,thyroid,-0.0019,-0.0113,0.0074,0.0100,NI,0.0450,False,inconclusive
+all cohorts,mask_cmc,D1 all pairs,capsule,-0.0000,-0.0009,0.0008,0.0100,NI,0.0001,True,met
+all cohorts,mask_cmc,D1 all pairs,isic_BCN,-0.0046,-0.0063,-0.0030,0.0100,NI,0.0001,True,met
+all cohorts,mask_cmc,D1 all pairs,isic_HAM,-0.0027,-0.0083,0.0017,0.0100,NI,0.0082,True,met
+all cohorts,mask_cmc,D1 all pairs,isic_MSK,-0.0021,-0.0060,0.0017,0.0100,NI,0.0001,True,met
+all cohorts,mask_cmc,D1 all pairs,isic2020,-0.0211,-0.0267,-0.0158,0.0100,NI,1.0000,False,loss
+all cohorts,mask_cmc,D2 hard pairs,thyroid,0.0844,0.0688,0.1013,0.0000,SUP,0.0001,True,met
+all cohorts,mask_cmc,D2 hard pairs,isic_BCN,0.0363,0.0333,0.0397,0.0000,SUP,0.0001,True,met
+all cohorts,mask_cmc,D2 hard pairs,isic_MSK,0.0704,0.0590,0.0822,0.0000,SUP,0.0001,True,met
+all cohorts,mask_cmc,D2 hard pairs,isic2020,0.0779,0.0686,0.0878,0.0000,SUP,0.0001,True,met
+all cohorts,mask_cmc,"D2 Trap A min(rev,corr)",thyroid,0.3300,0.3106,0.3510,0.0000,SUP,0.0001,True,met
+all cohorts,mask_cmc,"D2 Trap A min(rev,corr)",capsule,0.1527,0.1305,0.1770,0.0000,SUP,0.0001,True,met
+all cohorts,mask_cmc,"D2 Trap A min(rev,corr)",ovary,0.1183,0.0886,0.1471,0.0000,SUP,0.0001,True,met
+all cohorts,mask_cmc,"D2 Trap A min(rev,corr)",isic,0.1932,0.1662,0.2210,0.0000,SUP,0.0001,True,met
+all cohorts,mask_cmc,D3 Trap B reversed,thyroid,0.0151,0.0057,0.0267,0.0300,NI,0.0001,True,met
+all cohorts,mask_cmc,D3 Trap B reversed,capsule,0.0216,0.0136,0.0296,0.0300,NI,0.0001,True,met
+all cohorts,mask_cmc,D3 Trap B reversed,ovary,-0.0024,-0.0172,0.0108,0.0300,NI,0.0004,True,met
+all cohorts,mask_cmc,D3 Trap B reversed,isic,0.0450,0.0325,0.0579,0.0300,NI,0.0001,True,met
+all cohorts,mask_cmc,D3 Trap B reversed (pooled),thyroid+capsule+ovary+isic,0.0198,0.0141,0.0256,0.0100,NI,0.0001,True,met
+all cohorts,mask_cmc,"D3 Trap B min(rev,corr)",thyroid,0.0151,-0.0003,0.0262,0.0300,NI,0.0001,True,met
+all cohorts,mask_cmc,"D3 Trap B min(rev,corr)",capsule,0.0216,0.0136,0.0296,0.0300,NI,0.0001,True,met
+all cohorts,mask_cmc,"D3 Trap B min(rev,corr)",ovary,-0.0024,-0.0170,0.0117,0.0300,NI,0.0004,True,met
+all cohorts,mask_cmc,"D3 Trap B min(rev,corr)",isic,0.0450,0.0325,0.0579,0.0300,NI,0.0001,True,met
+all cohorts,mask_cmc,"D3 Trap B min(rev,corr) (pooled)",thyroid+capsule+ovary+isic,0.0198,0.0136,0.0256,0.0100,NI,0.0001,True,met
+all cohorts,mask_cmc,D3 clean (Trap A models),thyroid,0.0954,0.0793,0.1112,0.0300,NI,0.0001,True,met
+all cohorts,mask_cmc,D3 clean (Trap A models),capsule,0.0483,0.0369,0.0612,0.0300,NI,0.0001,True,met
+all cohorts,mask_cmc,D3 clean (Trap A models),ovary,0.0429,0.0233,0.0623,0.0300,NI,0.0001,True,met
+all cohorts,mask_cmc,D3 clean (Trap A models),isic,0.0394,0.0227,0.0564,0.0300,NI,0.0001,True,met
+all cohorts,mask_cmc,D3 clean (Trap A models) (pooled),thyroid+capsule+ovary+isic,0.0565,0.0484,0.0646,0.0100,NI,0.0001,True,met
+all cohorts,mask_cmc,D3 clean (Trap B models),thyroid,0.0086,-0.0026,0.0228,0.0300,NI,0.0001,True,met
+all cohorts,mask_cmc,D3 clean (Trap B models),capsule,0.0072,0.0023,0.0121,0.0300,NI,0.0001,True,met
+all cohorts,mask_cmc,D3 clean (Trap B models),ovary,-0.0024,-0.0152,0.0110,0.0300,NI,0.0001,True,met
+all cohorts,mask_cmc,D3 clean (Trap B models),isic,0.0128,0.0031,0.0216,0.0300,NI,0.0001,True,met
+all cohorts,mask_cmc,D3 clean (Trap B models) (pooled),thyroid+capsule+ovary+isic,0.0066,0.0015,0.0120,0.0100,NI,0.0001,True,met
+all cohorts,mask_cmc,D4 no flipping,thyroid trapA,0.1028,,,0.0200,point,,True,met
+all cohorts,mask_cmc,D4 no flipping,thyroid trapB,0.0288,,,0.0200,point,,True,met
+all cohorts,mask_cmc,D4 no flipping,capsule trapA,0.1412,,,0.0200,point,,True,met
+all cohorts,mask_cmc,D4 no flipping,capsule trapB,0.0564,,,0.0200,point,,True,met
+all cohorts,mask_cmc,D4 no flipping,ovary trapA,0.2069,,,0.0200,point,,True,met
+all cohorts,mask_cmc,D4 no flipping,ovary trapB,0.0510,,,0.0200,point,,True,met
+all cohorts,mask_cmc,D4 no flipping,isic trapA,0.2162,,,0.0200,point,,True,met
+all cohorts,mask_cmc,D4 no flipping,isic trapB,0.1134,,,0.0200,point,,True,met
+all cohorts,full_cmc,D1 all pairs,thyroid,0.0000,0.0000,0.0000,0.0100,NI,0.0001,True,met
+all cohorts,full_cmc,D1 all pairs,capsule,0.0000,0.0000,0.0000,0.0100,NI,0.0001,True,met
+all cohorts,full_cmc,D1 all pairs,isic_BCN,0.0038,0.0000,0.0125,0.0100,NI,0.0001,True,met
+all cohorts,full_cmc,D1 all pairs,isic_HAM,-0.0378,-0.0527,-0.0232,0.0100,NI,0.9998,False,loss
+all cohorts,full_cmc,D1 all pairs,isic_MSK,-0.0202,-0.0439,0.0034,0.0100,NI,0.8030,False,loss
+all cohorts,full_cmc,D1 all pairs,isic2020,-0.0324,-0.0531,-0.0123,0.0100,NI,0.9852,False,loss
+all cohorts,full_cmc,D2 hard pairs,thyroid,0.0000,0.0000,0.0000,0.0000,SUP,1.0000,False,inconclusive
+all cohorts,full_cmc,D2 hard pairs,isic_BCN,0.0143,0.0000,0.0449,0.0000,SUP,0.3348,False,inconclusive
+all cohorts,full_cmc,D2 hard pairs,isic_MSK,0.1261,0.0852,0.1676,0.0000,SUP,0.0001,True,met
+all cohorts,full_cmc,D2 hard pairs,isic2020,0.0907,0.0677,0.1138,0.0000,SUP,0.0001,True,met
+all cohorts,full_cmc,"D2 Trap A min(rev,corr)",thyroid,0.0406,0.0258,0.0582,0.0000,SUP,0.0001,True,met
+all cohorts,full_cmc,"D2 Trap A min(rev,corr)",capsule,0.0195,0.0057,0.0344,0.0000,SUP,0.0012,True,met
+all cohorts,full_cmc,"D2 Trap A min(rev,corr)",ovary,0.0000,0.0000,0.0000,0.0000,SUP,1.0000,False,inconclusive
+all cohorts,full_cmc,"D2 Trap A min(rev,corr)",isic,0.2397,0.1914,0.2877,0.0000,SUP,0.0001,True,met
+all cohorts,full_cmc,D3 Trap B reversed,thyroid,0.0000,0.0000,0.0000,0.0300,NI,0.0001,True,met
+all cohorts,full_cmc,D3 Trap B reversed,capsule,0.0000,0.0000,0.0000,0.0300,NI,0.0001,True,met
+all cohorts,full_cmc,D3 Trap B reversed,ovary,0.0000,0.0000,0.0000,0.0300,NI,0.0001,True,met
+all cohorts,full_cmc,D3 Trap B reversed,isic,0.0287,-0.0028,0.0655,0.0300,NI,0.0001,True,met
+all cohorts,full_cmc,D3 Trap B reversed (pooled),thyroid+capsule+ovary+isic,0.0072,-0.0007,0.0164,0.0100,NI,0.0001,True,met
+all cohorts,full_cmc,"D3 Trap B min(rev,corr)",thyroid,0.0000,0.0000,0.0000,0.0300,NI,0.0001,True,met
+all cohorts,full_cmc,"D3 Trap B min(rev,corr)",capsule,0.0000,0.0000,0.0000,0.0300,NI,0.0001,True,met
+all cohorts,full_cmc,"D3 Trap B min(rev,corr)",ovary,0.0000,0.0000,0.0000,0.0300,NI,0.0001,True,met
+all cohorts,full_cmc,"D3 Trap B min(rev,corr)",isic,0.0287,-0.0028,0.0655,0.0300,NI,0.0001,True,met
+all cohorts,full_cmc,"D3 Trap B min(rev,corr) (pooled)",thyroid+capsule+ovary+isic,0.0072,-0.0007,0.0164,0.0100,NI,0.0001,True,met
+all cohorts,full_cmc,D3 clean (Trap A models),thyroid,-0.0025,-0.0110,0.0064,0.0300,NI,0.0001,True,met
+all cohorts,full_cmc,D3 clean (Trap A models),capsule,-0.0027,-0.0113,0.0055,0.0300,NI,0.0001,True,met
+all cohorts,full_cmc,D3 clean (Trap A models),ovary,0.0000,0.0000,0.0000,0.0300,NI,0.0001,True,met
+all cohorts,full_cmc,D3 clean (Trap A models),isic,0.0723,0.0444,0.1015,0.0300,NI,0.0001,True,met
+all cohorts,full_cmc,D3 clean (Trap A models) (pooled),thyroid+capsule+ovary+isic,0.0168,0.0091,0.0245,0.0100,NI,0.0001,True,met
+all cohorts,full_cmc,D3 clean (Trap B models),thyroid,0.0000,0.0000,0.0000,0.0300,NI,0.0001,True,met
+all cohorts,full_cmc,D3 clean (Trap B models),capsule,0.0000,0.0000,0.0000,0.0300,NI,0.0001,True,met
+all cohorts,full_cmc,D3 clean (Trap B models),ovary,0.0000,0.0000,0.0000,0.0300,NI,0.0001,True,met
+all cohorts,full_cmc,D3 clean (Trap B models),isic,0.0207,-0.0028,0.0458,0.0300,NI,0.0001,True,met
+all cohorts,full_cmc,D3 clean (Trap B models) (pooled),thyroid+capsule+ovary+isic,0.0052,-0.0007,0.0114,0.0100,NI,0.0001,True,met
+all cohorts,full_cmc,D4 no flipping,thyroid trapA,0.4437,,,0.0200,point,,True,met
+all cohorts,full_cmc,D4 no flipping,thyroid trapB,0.0455,,,0.0200,point,,True,met
+all cohorts,full_cmc,D4 no flipping,capsule trapA,0.2700,,,0.0200,point,,True,met
+all cohorts,full_cmc,D4 no flipping,capsule trapB,0.0806,,,0.0200,point,,True,met
+all cohorts,full_cmc,D4 no flipping,ovary trapA,0.3434,,,0.0200,point,,True,met
+all cohorts,full_cmc,D4 no flipping,ovary trapB,0.0502,,,0.0200,point,,True,met
+all cohorts,full_cmc,D4 no flipping,isic trapA,0.1838,,,0.0200,point,,True,met
+all cohorts,full_cmc,D4 no flipping,isic trapB,0.1647,,,0.0200,point,,True,met
+all cohorts,mask_bal,D1 all pairs,thyroid,-0.0076,-0.0174,0.0013,0.0100,NI,0.2872,False,loss
+all cohorts,mask_bal,D1 all pairs,capsule,-0.0014,-0.0036,0.0002,0.0100,NI,0.0001,True,met
+all cohorts,mask_bal,D1 all pairs,isic_BCN,0.0033,0.0001,0.0066,0.0100,NI,0.0001,True,met
+all cohorts,mask_bal,D1 all pairs,isic_HAM,0.0029,-0.0010,0.0078,0.0100,NI,0.0001,True,met
+all cohorts,mask_bal,D1 all pairs,isic_MSK,-0.0056,-0.0112,-0.0003,0.0100,NI,0.0561,False,loss
+all cohorts,mask_bal,D1 all pairs,isic2020,-0.0110,-0.0164,-0.0054,0.0100,NI,0.6454,False,loss
+all cohorts,mask_bal,D2 hard pairs,thyroid,0.0477,0.0320,0.0657,0.0000,SUP,0.0001,True,met
+all cohorts,mask_bal,D2 hard pairs,isic_BCN,0.0328,0.0264,0.0397,0.0000,SUP,0.0001,True,met
+all cohorts,mask_bal,D2 hard pairs,isic_MSK,0.0445,0.0298,0.0577,0.0000,SUP,0.0001,True,met
+all cohorts,mask_bal,D2 hard pairs,isic2020,0.0352,0.0242,0.0456,0.0000,SUP,0.0001,True,met
+all cohorts,mask_bal,"D2 Trap A min(rev,corr)",thyroid,0.3804,0.3554,0.4037,0.0000,SUP,0.0001,True,met
+all cohorts,mask_bal,"D2 Trap A min(rev,corr)",capsule,0.1663,0.1484,0.1847,0.0000,SUP,0.0001,True,met
+all cohorts,mask_bal,"D2 Trap A min(rev,corr)",ovary,0.1614,0.1351,0.1874,0.0000,SUP,0.0001,True,met
+all cohorts,mask_bal,"D2 Trap A min(rev,corr)",isic,0.2127,0.1869,0.2393,0.0000,SUP,0.0001,True,met
+all cohorts,mask_bal,D3 Trap B reversed,thyroid,0.0308,0.0200,0.0424,0.0300,NI,0.0001,True,met
+all cohorts,mask_bal,D3 Trap B reversed,capsule,0.0224,0.0131,0.0324,0.0300,NI,0.0001,True,met
+all cohorts,mask_bal,D3 Trap B reversed,ovary,0.0434,0.0176,0.0692,0.0300,NI,0.0001,True,met
+all cohorts,mask_bal,D3 Trap B reversed,isic,0.0846,0.0635,0.1055,0.0300,NI,0.0001,True,met
+all cohorts,mask_bal,D3 Trap B reversed (pooled),thyroid+capsule+ovary+isic,0.0453,0.0364,0.0544,0.0100,NI,0.0001,True,met
+all cohorts,mask_bal,"D3 Trap B min(rev,corr)",thyroid,0.0308,-0.0115,0.0406,0.0300,NI,0.0003,True,met
+all cohorts,mask_bal,"D3 Trap B min(rev,corr)",capsule,0.0224,0.0131,0.0324,0.0300,NI,0.0001,True,met
+all cohorts,mask_bal,"D3 Trap B min(rev,corr)",ovary,0.0358,-0.0230,0.0642,0.0300,NI,0.0106,True,met
+all cohorts,mask_bal,"D3 Trap B min(rev,corr)",isic,0.0846,0.0633,0.1055,0.0300,NI,0.0001,True,met
+all cohorts,mask_bal,"D3 Trap B min(rev,corr) (pooled)",thyroid+capsule+ovary+isic,0.0434,0.0239,0.0519,0.0100,NI,0.0001,True,met
+all cohorts,mask_bal,D3 clean (Trap A models),thyroid,0.1071,0.0888,0.1251,0.0300,NI,0.0001,True,met
+all cohorts,mask_bal,D3 clean (Trap A models),capsule,0.0510,0.0399,0.0625,0.0300,NI,0.0001,True,met
+all cohorts,mask_bal,D3 clean (Trap A models),ovary,0.0505,0.0304,0.0712,0.0300,NI,0.0001,True,met
+all cohorts,mask_bal,D3 clean (Trap A models),isic,0.0438,0.0264,0.0617,0.0300,NI,0.0001,True,met
+all cohorts,mask_bal,D3 clean (Trap A models) (pooled),thyroid+capsule+ovary+isic,0.0631,0.0545,0.0717,0.0100,NI,0.0001,True,met
+all cohorts,mask_bal,D3 clean (Trap B models),thyroid,0.0113,-0.0020,0.0252,0.0300,NI,0.0001,True,met
+all cohorts,mask_bal,D3 clean (Trap B models),capsule,0.0033,-0.0029,0.0098,0.0300,NI,0.0001,True,met
+all cohorts,mask_bal,D3 clean (Trap B models),ovary,0.0118,-0.0086,0.0332,0.0300,NI,0.0001,True,met
+all cohorts,mask_bal,D3 clean (Trap B models),isic,0.0119,-0.0063,0.0291,0.0300,NI,0.0001,True,met
+all cohorts,mask_bal,D3 clean (Trap B models) (pooled),thyroid+capsule+ovary+isic,0.0096,0.0020,0.0174,0.0100,NI,0.0001,True,met
+all cohorts,mask_bal,D4 no flipping,thyroid trapA,0.0272,,,0.0200,point,,True,met
+all cohorts,mask_bal,D4 no flipping,thyroid trapB,0.0042,,,0.0200,point,,True,met
+all cohorts,mask_bal,D4 no flipping,capsule trapA,0.1218,,,0.0200,point,,True,met
+all cohorts,mask_bal,D4 no flipping,capsule trapB,0.0475,,,0.0200,point,,True,met
+all cohorts,mask_bal,D4 no flipping,ovary trapA,0.1458,,,0.0200,point,,True,met
+all cohorts,mask_bal,D4 no flipping,ovary trapB,-0.0076,,,0.0200,point,,True,met
+all cohorts,mask_bal,D4 no flipping,isic trapA,0.1873,,,0.0200,point,,True,met
+all cohorts,mask_bal,D4 no flipping,isic trapB,0.0402,,,0.0200,point,,True,met
+all cohorts,locrand_loc,D1 all pairs,thyroid,-0.0010,-0.0071,0.0052,0.0100,NI,0.0034,True,met
+all cohorts,locrand_loc,D1 all pairs,capsule,-0.0016,-0.0030,-0.0003,0.0100,NI,0.0001,True,met
+all cohorts,locrand_loc,D1 all pairs,isic_BCN,-0.0018,-0.0026,-0.0008,0.0100,NI,0.0001,True,met
+all cohorts,locrand_loc,D1 all pairs,isic_HAM,0.0005,-0.0007,0.0018,0.0100,NI,0.0001,True,met
+all cohorts,locrand_loc,D1 all pairs,isic_MSK,0.0011,-0.0006,0.0028,0.0100,NI,0.0001,True,met
+all cohorts,locrand_loc,D1 all pairs,isic2020,-0.0009,-0.0025,0.0005,0.0100,NI,0.0001,True,met
+all cohorts,locrand_loc,D2 hard pairs,thyroid,0.0243,0.0098,0.0397,0.0000,SUP,0.0010,True,met
+all cohorts,locrand_loc,D2 hard pairs,isic_BCN,-0.0002,-0.0012,0.0007,0.0000,SUP,0.6695,False,loss
+all cohorts,locrand_loc,D2 hard pairs,isic_MSK,0.0054,0.0017,0.0091,0.0000,SUP,0.0021,True,met
+all cohorts,locrand_loc,D2 hard pairs,isic2020,0.0027,0.0005,0.0053,0.0000,SUP,0.0066,True,met
+all cohorts,locrand_loc,"D2 Trap A min(rev,corr)",thyroid,0.1644,0.1374,0.1928,0.0000,SUP,0.0001,True,met
+all cohorts,locrand_loc,"D2 Trap A min(rev,corr)",capsule,0.0012,-0.0015,0.0050,0.0000,SUP,0.2418,False,inconclusive
+all cohorts,locrand_loc,"D2 Trap A min(rev,corr)",ovary,0.0000,0.0000,0.0000,0.0000,SUP,1.0000,False,inconclusive
+all cohorts,locrand_loc,"D2 Trap A min(rev,corr)",isic,0.0287,0.0205,0.0372,0.0000,SUP,0.0001,True,met
+all cohorts,locrand_loc,D3 Trap B reversed,thyroid,0.0000,0.0000,0.0000,0.0300,NI,0.0001,True,met
+all cohorts,locrand_loc,D3 Trap B reversed,capsule,0.0000,0.0000,0.0000,0.0300,NI,0.0001,True,met
+all cohorts,locrand_loc,D3 Trap B reversed,ovary,0.0000,0.0000,0.0000,0.0300,NI,0.0001,True,met
+all cohorts,locrand_loc,D3 Trap B reversed,isic,0.0000,-0.0000,0.0000,0.0300,NI,0.0001,True,met
+all cohorts,locrand_loc,D3 Trap B reversed (pooled),thyroid+capsule+ovary+isic,0.0000,-0.0000,0.0000,0.0100,NI,0.0001,True,met
+all cohorts,locrand_loc,"D3 Trap B min(rev,corr)",thyroid,0.0000,0.0000,0.0000,0.0300,NI,0.0001,True,met
+all cohorts,locrand_loc,"D3 Trap B min(rev,corr)",capsule,0.0000,0.0000,0.0000,0.0300,NI,0.0001,True,met
+all cohorts,locrand_loc,"D3 Trap B min(rev,corr)",ovary,0.0000,0.0000,0.0000,0.0300,NI,0.0001,True,met
+all cohorts,locrand_loc,"D3 Trap B min(rev,corr)",isic,0.0000,-0.0000,0.0000,0.0300,NI,0.0001,True,met
+all cohorts,locrand_loc,"D3 Trap B min(rev,corr) (pooled)",thyroid+capsule+ovary+isic,0.0000,-0.0000,0.0000,0.0100,NI,0.0001,True,met
+all cohorts,locrand_loc,D3 clean (Trap A models),thyroid,0.0295,0.0134,0.0464,0.0300,NI,0.0001,True,met
+all cohorts,locrand_loc,D3 clean (Trap A models),capsule,-0.0009,-0.0037,0.0008,0.0300,NI,0.0001,True,met
+all cohorts,locrand_loc,D3 clean (Trap A models),ovary,0.0000,0.0000,0.0000,0.0300,NI,0.0001,True,met
+all cohorts,locrand_loc,D3 clean (Trap A models),isic,0.0073,0.0021,0.0123,0.0300,NI,0.0001,True,met
+all cohorts,locrand_loc,D3 clean (Trap A models) (pooled),thyroid+capsule+ovary+isic,0.0090,0.0047,0.0134,0.0100,NI,0.0001,True,met
+all cohorts,locrand_loc,D3 clean (Trap B models),thyroid,0.0000,0.0000,0.0000,0.0300,NI,0.0001,True,met
+all cohorts,locrand_loc,D3 clean (Trap B models),capsule,0.0000,0.0000,0.0000,0.0300,NI,0.0001,True,met
+all cohorts,locrand_loc,D3 clean (Trap B models),ovary,0.0000,0.0000,0.0000,0.0300,NI,0.0001,True,met
+all cohorts,locrand_loc,D3 clean (Trap B models),isic,-0.0000,-0.0000,0.0000,0.0300,NI,0.0001,True,met
+all cohorts,locrand_loc,D3 clean (Trap B models) (pooled),thyroid+capsule+ovary+isic,0.0000,-0.0000,0.0000,0.0100,NI,0.0001,True,met
+all cohorts,locrand_loc,D4 no flipping,thyroid trapA,0.2836,,,0.0200,point,,True,met
+all cohorts,locrand_loc,D4 no flipping,thyroid trapB,0.0455,,,0.0200,point,,True,met
+all cohorts,locrand_loc,D4 no flipping,capsule trapA,0.2961,,,0.0200,point,,True,met
+all cohorts,locrand_loc,D4 no flipping,capsule trapB,0.0806,,,0.0200,point,,True,met
+all cohorts,locrand_loc,D4 no flipping,ovary trapA,0.3434,,,0.0200,point,,True,met
+all cohorts,locrand_loc,D4 no flipping,ovary trapB,0.0502,,,0.0200,point,,True,met
+all cohorts,locrand_loc,D4 no flipping,isic trapA,0.4388,,,0.0200,point,,True,met
+all cohorts,locrand_loc,D4 no flipping,isic trapB,0.1770,,,0.0200,point,,True,met
+without ovary,mask_cmc,D1 all pairs,thyroid,-0.0019,-0.0113,0.0074,0.0100,NI,0.0450,False,inconclusive
+without ovary,mask_cmc,D1 all pairs,capsule,-0.0000,-0.0009,0.0008,0.0100,NI,0.0001,True,met
+without ovary,mask_cmc,D1 all pairs,isic_BCN,-0.0046,-0.0063,-0.0030,0.0100,NI,0.0001,True,met
+without ovary,mask_cmc,D1 all pairs,isic_HAM,-0.0027,-0.0083,0.0017,0.0100,NI,0.0082,True,met
+without ovary,mask_cmc,D1 all pairs,isic_MSK,-0.0021,-0.0060,0.0017,0.0100,NI,0.0001,True,met
+without ovary,mask_cmc,D1 all pairs,isic2020,-0.0211,-0.0267,-0.0158,0.0100,NI,1.0000,False,loss
+without ovary,mask_cmc,D2 hard pairs,thyroid,0.0844,0.0688,0.1013,0.0000,SUP,0.0001,True,met
+without ovary,mask_cmc,D2 hard pairs,isic_BCN,0.0363,0.0333,0.0397,0.0000,SUP,0.0001,True,met
+without ovary,mask_cmc,D2 hard pairs,isic_MSK,0.0704,0.0590,0.0822,0.0000,SUP,0.0001,True,met
+without ovary,mask_cmc,D2 hard pairs,isic2020,0.0779,0.0686,0.0878,0.0000,SUP,0.0001,True,met
+without ovary,mask_cmc,"D2 Trap A min(rev,corr)",thyroid,0.3300,0.3106,0.3510,0.0000,SUP,0.0001,True,met
+without ovary,mask_cmc,"D2 Trap A min(rev,corr)",capsule,0.1527,0.1305,0.1770,0.0000,SUP,0.0001,True,met
+without ovary,mask_cmc,"D2 Trap A min(rev,corr)",isic,0.1932,0.1662,0.2210,0.0000,SUP,0.0001,True,met
+without ovary,mask_cmc,D3 Trap B reversed,thyroid,0.0151,0.0057,0.0267,0.0300,NI,0.0001,True,met
+without ovary,mask_cmc,D3 Trap B reversed,capsule,0.0216,0.0136,0.0296,0.0300,NI,0.0001,True,met
+without ovary,mask_cmc,D3 Trap B reversed,isic,0.0450,0.0325,0.0579,0.0300,NI,0.0001,True,met
+without ovary,mask_cmc,D3 Trap B reversed (pooled),thyroid+capsule+isic,0.0272,0.0212,0.0335,0.0100,NI,0.0001,True,met
+without ovary,mask_cmc,"D3 Trap B min(rev,corr)",thyroid,0.0151,-0.0003,0.0262,0.0300,NI,0.0001,True,met
+without ovary,mask_cmc,"D3 Trap B min(rev,corr)",capsule,0.0216,0.0136,0.0296,0.0300,NI,0.0001,True,met
+without ovary,mask_cmc,"D3 Trap B min(rev,corr)",isic,0.0450,0.0325,0.0579,0.0300,NI,0.0001,True,met
+without ovary,mask_cmc,"D3 Trap B min(rev,corr) (pooled)",thyroid+capsule+isic,0.0272,0.0202,0.0334,0.0100,NI,0.0001,True,met
+without ovary,mask_cmc,D3 clean (Trap A models),thyroid,0.0954,0.0793,0.1112,0.0300,NI,0.0001,True,met
+without ovary,mask_cmc,D3 clean (Trap A models),capsule,0.0483,0.0369,0.0612,0.0300,NI,0.0001,True,met
+without ovary,mask_cmc,D3 clean (Trap A models),isic,0.0394,0.0227,0.0564,0.0300,NI,0.0001,True,met
+without ovary,mask_cmc,D3 clean (Trap A models) (pooled),thyroid+capsule+isic,0.0610,0.0524,0.0697,0.0100,NI,0.0001,True,met
+without ovary,mask_cmc,D3 clean (Trap B models),thyroid,0.0086,-0.0026,0.0228,0.0300,NI,0.0001,True,met
+without ovary,mask_cmc,D3 clean (Trap B models),capsule,0.0072,0.0023,0.0121,0.0300,NI,0.0001,True,met
+without ovary,mask_cmc,D3 clean (Trap B models),isic,0.0128,0.0031,0.0216,0.0300,NI,0.0001,True,met
+without ovary,mask_cmc,D3 clean (Trap B models) (pooled),thyroid+capsule+isic,0.0095,0.0043,0.0152,0.0100,NI,0.0001,True,met
+without ovary,mask_cmc,D4 no flipping,thyroid trapA,0.1028,,,0.0200,point,,True,met
+without ovary,mask_cmc,D4 no flipping,thyroid trapB,0.0288,,,0.0200,point,,True,met
+without ovary,mask_cmc,D4 no flipping,capsule trapA,0.1412,,,0.0200,point,,True,met
+without ovary,mask_cmc,D4 no flipping,capsule trapB,0.0564,,,0.0200,point,,True,met
+without ovary,mask_cmc,D4 no flipping,isic trapA,0.2162,,,0.0200,point,,True,met
+without ovary,mask_cmc,D4 no flipping,isic trapB,0.1134,,,0.0200,point,,True,met
+without ovary,full_cmc,D1 all pairs,thyroid,0.0000,0.0000,0.0000,0.0100,NI,0.0001,True,met
+without ovary,full_cmc,D1 all pairs,capsule,0.0000,0.0000,0.0000,0.0100,NI,0.0001,True,met
+without ovary,full_cmc,D1 all pairs,isic_BCN,0.0038,0.0000,0.0125,0.0100,NI,0.0001,True,met
+without ovary,full_cmc,D1 all pairs,isic_HAM,-0.0378,-0.0527,-0.0232,0.0100,NI,0.9998,False,loss
+without ovary,full_cmc,D1 all pairs,isic_MSK,-0.0202,-0.0439,0.0034,0.0100,NI,0.8030,False,loss
+without ovary,full_cmc,D1 all pairs,isic2020,-0.0324,-0.0531,-0.0123,0.0100,NI,0.9852,False,loss
+without ovary,full_cmc,D2 hard pairs,thyroid,0.0000,0.0000,0.0000,0.0000,SUP,1.0000,False,inconclusive
+without ovary,full_cmc,D2 hard pairs,isic_BCN,0.0143,0.0000,0.0449,0.0000,SUP,0.3348,False,inconclusive
+without ovary,full_cmc,D2 hard pairs,isic_MSK,0.1261,0.0852,0.1676,0.0000,SUP,0.0001,True,met
+without ovary,full_cmc,D2 hard pairs,isic2020,0.0907,0.0677,0.1138,0.0000,SUP,0.0001,True,met
+without ovary,full_cmc,"D2 Trap A min(rev,corr)",thyroid,0.0406,0.0258,0.0582,0.0000,SUP,0.0001,True,met
+without ovary,full_cmc,"D2 Trap A min(rev,corr)",capsule,0.0195,0.0057,0.0344,0.0000,SUP,0.0012,True,met
+without ovary,full_cmc,"D2 Trap A min(rev,corr)",isic,0.2397,0.1914,0.2877,0.0000,SUP,0.0001,True,met
+without ovary,full_cmc,D3 Trap B reversed,thyroid,0.0000,0.0000,0.0000,0.0300,NI,0.0001,True,met
+without ovary,full_cmc,D3 Trap B reversed,capsule,0.0000,0.0000,0.0000,0.0300,NI,0.0001,True,met
+without ovary,full_cmc,D3 Trap B reversed,isic,0.0287,-0.0028,0.0655,0.0300,NI,0.0001,True,met
+without ovary,full_cmc,D3 Trap B reversed (pooled),thyroid+capsule+isic,0.0096,-0.0009,0.0218,0.0100,NI,0.0001,True,met
+without ovary,full_cmc,"D3 Trap B min(rev,corr)",thyroid,0.0000,0.0000,0.0000,0.0300,NI,0.0001,True,met
+without ovary,full_cmc,"D3 Trap B min(rev,corr)",capsule,0.0000,0.0000,0.0000,0.0300,NI,0.0001,True,met
+without ovary,full_cmc,"D3 Trap B min(rev,corr)",isic,0.0287,-0.0028,0.0655,0.0300,NI,0.0001,True,met
+without ovary,full_cmc,"D3 Trap B min(rev,corr) (pooled)",thyroid+capsule+isic,0.0096,-0.0009,0.0218,0.0100,NI,0.0001,True,met
+without ovary,full_cmc,D3 clean (Trap A models),thyroid,-0.0025,-0.0110,0.0064,0.0300,NI,0.0001,True,met
+without ovary,full_cmc,D3 clean (Trap A models),capsule,-0.0027,-0.0113,0.0055,0.0300,NI,0.0001,True,met
+without ovary,full_cmc,D3 clean (Trap A models),isic,0.0723,0.0444,0.1015,0.0300,NI,0.0001,True,met
+without ovary,full_cmc,D3 clean (Trap A models) (pooled),thyroid+capsule+isic,0.0224,0.0122,0.0327,0.0100,NI,0.0001,True,met
+without ovary,full_cmc,D3 clean (Trap B models),thyroid,0.0000,0.0000,0.0000,0.0300,NI,0.0001,True,met
+without ovary,full_cmc,D3 clean (Trap B models),capsule,0.0000,0.0000,0.0000,0.0300,NI,0.0001,True,met
+without ovary,full_cmc,D3 clean (Trap B models),isic,0.0207,-0.0028,0.0458,0.0300,NI,0.0001,True,met
+without ovary,full_cmc,D3 clean (Trap B models) (pooled),thyroid+capsule+isic,0.0069,-0.0009,0.0153,0.0100,NI,0.0001,True,met
+without ovary,full_cmc,D4 no flipping,thyroid trapA,0.4437,,,0.0200,point,,True,met
+without ovary,full_cmc,D4 no flipping,thyroid trapB,0.0455,,,0.0200,point,,True,met
+without ovary,full_cmc,D4 no flipping,capsule trapA,0.2700,,,0.0200,point,,True,met
+without ovary,full_cmc,D4 no flipping,capsule trapB,0.0806,,,0.0200,point,,True,met
+without ovary,full_cmc,D4 no flipping,isic trapA,0.1838,,,0.0200,point,,True,met
+without ovary,full_cmc,D4 no flipping,isic trapB,0.1647,,,0.0200,point,,True,met
+without ovary,mask_bal,D1 all pairs,thyroid,-0.0076,-0.0174,0.0013,0.0100,NI,0.2872,False,loss
+without ovary,mask_bal,D1 all pairs,capsule,-0.0014,-0.0036,0.0002,0.0100,NI,0.0001,True,met
+without ovary,mask_bal,D1 all pairs,isic_BCN,0.0033,0.0001,0.0066,0.0100,NI,0.0001,True,met
+without ovary,mask_bal,D1 all pairs,isic_HAM,0.0029,-0.0010,0.0078,0.0100,NI,0.0001,True,met
+without ovary,mask_bal,D1 all pairs,isic_MSK,-0.0056,-0.0112,-0.0003,0.0100,NI,0.0561,False,loss
+without ovary,mask_bal,D1 all pairs,isic2020,-0.0110,-0.0164,-0.0054,0.0100,NI,0.6454,False,loss
+without ovary,mask_bal,D2 hard pairs,thyroid,0.0477,0.0320,0.0657,0.0000,SUP,0.0001,True,met
+without ovary,mask_bal,D2 hard pairs,isic_BCN,0.0328,0.0264,0.0397,0.0000,SUP,0.0001,True,met
+without ovary,mask_bal,D2 hard pairs,isic_MSK,0.0445,0.0298,0.0577,0.0000,SUP,0.0001,True,met
+without ovary,mask_bal,D2 hard pairs,isic2020,0.0352,0.0242,0.0456,0.0000,SUP,0.0001,True,met
+without ovary,mask_bal,"D2 Trap A min(rev,corr)",thyroid,0.3804,0.3554,0.4037,0.0000,SUP,0.0001,True,met
+without ovary,mask_bal,"D2 Trap A min(rev,corr)",capsule,0.1663,0.1484,0.1847,0.0000,SUP,0.0001,True,met
+without ovary,mask_bal,"D2 Trap A min(rev,corr)",isic,0.2127,0.1869,0.2393,0.0000,SUP,0.0001,True,met
+without ovary,mask_bal,D3 Trap B reversed,thyroid,0.0308,0.0200,0.0424,0.0300,NI,0.0001,True,met
+without ovary,mask_bal,D3 Trap B reversed,capsule,0.0224,0.0131,0.0324,0.0300,NI,0.0001,True,met
+without ovary,mask_bal,D3 Trap B reversed,isic,0.0846,0.0635,0.1055,0.0300,NI,0.0001,True,met
+without ovary,mask_bal,D3 Trap B reversed (pooled),thyroid+capsule+isic,0.0459,0.0374,0.0544,0.0100,NI,0.0001,True,met
+without ovary,mask_bal,"D3 Trap B min(rev,corr)",thyroid,0.0308,-0.0115,0.0406,0.0300,NI,0.0003,True,met
+without ovary,mask_bal,"D3 Trap B min(rev,corr)",capsule,0.0224,0.0131,0.0324,0.0300,NI,0.0001,True,met
+without ovary,mask_bal,"D3 Trap B min(rev,corr)",isic,0.0846,0.0633,0.1055,0.0300,NI,0.0001,True,met
+without ovary,mask_bal,"D3 Trap B min(rev,corr) (pooled)",thyroid+capsule+isic,0.0459,0.0305,0.0534,0.0100,NI,0.0001,True,met
+without ovary,mask_bal,D3 clean (Trap A models),thyroid,0.1071,0.0888,0.1251,0.0300,NI,0.0001,True,met
+without ovary,mask_bal,D3 clean (Trap A models),capsule,0.0510,0.0399,0.0625,0.0300,NI,0.0001,True,met
+without ovary,mask_bal,D3 clean (Trap A models),isic,0.0438,0.0264,0.0617,0.0300,NI,0.0001,True,met
+without ovary,mask_bal,D3 clean (Trap A models) (pooled),thyroid+capsule+isic,0.0673,0.0582,0.0765,0.0100,NI,0.0001,True,met
+without ovary,mask_bal,D3 clean (Trap B models),thyroid,0.0113,-0.0020,0.0252,0.0300,NI,0.0001,True,met
+without ovary,mask_bal,D3 clean (Trap B models),capsule,0.0033,-0.0029,0.0098,0.0300,NI,0.0001,True,met
+without ovary,mask_bal,D3 clean (Trap B models),isic,0.0119,-0.0063,0.0291,0.0300,NI,0.0001,True,met
+without ovary,mask_bal,D3 clean (Trap B models) (pooled),thyroid+capsule+isic,0.0088,0.0010,0.0163,0.0100,NI,0.0001,True,met
+without ovary,mask_bal,D4 no flipping,thyroid trapA,0.0272,,,0.0200,point,,True,met
+without ovary,mask_bal,D4 no flipping,thyroid trapB,0.0042,,,0.0200,point,,True,met
+without ovary,mask_bal,D4 no flipping,capsule trapA,0.1218,,,0.0200,point,,True,met
+without ovary,mask_bal,D4 no flipping,capsule trapB,0.0475,,,0.0200,point,,True,met
+without ovary,mask_bal,D4 no flipping,isic trapA,0.1873,,,0.0200,point,,True,met
+without ovary,mask_bal,D4 no flipping,isic trapB,0.0402,,,0.0200,point,,True,met
+without ovary,locrand_loc,D1 all pairs,thyroid,-0.0010,-0.0071,0.0052,0.0100,NI,0.0034,True,met
+without ovary,locrand_loc,D1 all pairs,capsule,-0.0016,-0.0030,-0.0003,0.0100,NI,0.0001,True,met
+without ovary,locrand_loc,D1 all pairs,isic_BCN,-0.0018,-0.0026,-0.0008,0.0100,NI,0.0001,True,met
+without ovary,locrand_loc,D1 all pairs,isic_HAM,0.0005,-0.0007,0.0018,0.0100,NI,0.0001,True,met
+without ovary,locrand_loc,D1 all pairs,isic_MSK,0.0011,-0.0006,0.0028,0.0100,NI,0.0001,True,met
+without ovary,locrand_loc,D1 all pairs,isic2020,-0.0009,-0.0025,0.0005,0.0100,NI,0.0001,True,met
+without ovary,locrand_loc,D2 hard pairs,thyroid,0.0243,0.0098,0.0397,0.0000,SUP,0.0010,True,met
+without ovary,locrand_loc,D2 hard pairs,isic_BCN,-0.0002,-0.0012,0.0007,0.0000,SUP,0.6695,False,loss
+without ovary,locrand_loc,D2 hard pairs,isic_MSK,0.0054,0.0017,0.0091,0.0000,SUP,0.0021,True,met
+without ovary,locrand_loc,D2 hard pairs,isic2020,0.0027,0.0005,0.0053,0.0000,SUP,0.0066,True,met
+without ovary,locrand_loc,"D2 Trap A min(rev,corr)",thyroid,0.1644,0.1374,0.1928,0.0000,SUP,0.0001,True,met
+without ovary,locrand_loc,"D2 Trap A min(rev,corr)",capsule,0.0012,-0.0015,0.0050,0.0000,SUP,0.2418,False,inconclusive
+without ovary,locrand_loc,"D2 Trap A min(rev,corr)",isic,0.0287,0.0205,0.0372,0.0000,SUP,0.0001,True,met
+without ovary,locrand_loc,D3 Trap B reversed,thyroid,0.0000,0.0000,0.0000,0.0300,NI,0.0001,True,met
+without ovary,locrand_loc,D3 Trap B reversed,capsule,0.0000,0.0000,0.0000,0.0300,NI,0.0001,True,met
+without ovary,locrand_loc,D3 Trap B reversed,isic,0.0000,-0.0000,0.0000,0.0300,NI,0.0001,True,met
+without ovary,locrand_loc,D3 Trap B reversed (pooled),thyroid+capsule+isic,0.0000,-0.0000,0.0000,0.0100,NI,0.0001,True,met
+without ovary,locrand_loc,"D3 Trap B min(rev,corr)",thyroid,0.0000,0.0000,0.0000,0.0300,NI,0.0001,True,met
+without ovary,locrand_loc,"D3 Trap B min(rev,corr)",capsule,0.0000,0.0000,0.0000,0.0300,NI,0.0001,True,met
+without ovary,locrand_loc,"D3 Trap B min(rev,corr)",isic,0.0000,-0.0000,0.0000,0.0300,NI,0.0001,True,met
+without ovary,locrand_loc,"D3 Trap B min(rev,corr) (pooled)",thyroid+capsule+isic,0.0000,-0.0000,0.0000,0.0100,NI,0.0001,True,met
+without ovary,locrand_loc,D3 clean (Trap A models),thyroid,0.0295,0.0134,0.0464,0.0300,NI,0.0001,True,met
+without ovary,locrand_loc,D3 clean (Trap A models),capsule,-0.0009,-0.0037,0.0008,0.0300,NI,0.0001,True,met
+without ovary,locrand_loc,D3 clean (Trap A models),isic,0.0073,0.0021,0.0123,0.0300,NI,0.0001,True,met
+without ovary,locrand_loc,D3 clean (Trap A models) (pooled),thyroid+capsule+isic,0.0120,0.0063,0.0178,0.0100,NI,0.0001,True,met
+without ovary,locrand_loc,D3 clean (Trap B models),thyroid,0.0000,0.0000,0.0000,0.0300,NI,0.0001,True,met
+without ovary,locrand_loc,D3 clean (Trap B models),capsule,0.0000,0.0000,0.0000,0.0300,NI,0.0001,True,met
+without ovary,locrand_loc,D3 clean (Trap B models),isic,-0.0000,-0.0000,0.0000,0.0300,NI,0.0001,True,met
+without ovary,locrand_loc,D3 clean (Trap B models) (pooled),thyroid+capsule+isic,0.0000,-0.0000,0.0000,0.0100,NI,0.0001,True,met
+without ovary,locrand_loc,D4 no flipping,thyroid trapA,0.2836,,,0.0200,point,,True,met
+without ovary,locrand_loc,D4 no flipping,thyroid trapB,0.0455,,,0.0200,point,,True,met
+without ovary,locrand_loc,D4 no flipping,capsule trapA,0.2961,,,0.0200,point,,True,met
+without ovary,locrand_loc,D4 no flipping,capsule trapB,0.0806,,,0.0200,point,,True,met
+without ovary,locrand_loc,D4 no flipping,isic trapA,0.4388,,,0.0200,point,,True,met
+without ovary,locrand_loc,D4 no flipping,isic trapB,0.1770,,,0.0200,point,,True,met
+D5,mask_bal,D5 r=1 test_rev,thyroid,0.4668,0.4315,0.5034,0.0000,SUP,0.0001,True,met
+D5,mask_bal,D5 r=0 test_rev,thyroid,-0.0021,-0.0055,0.0004,0.0300,NI,0.0001,True,met
+D5,mask_bal,D5 r=0 clean,thyroid,-0.0021,-0.0055,0.0004,0.0300,NI,0.0001,True,met
+D5,mask_bal,D5 r=1 test_rev,capsule,0.1561,0.1358,0.1771,0.0000,SUP,0.0001,True,met
+D5,mask_bal,D5 r=0 test_rev,capsule,-0.0007,-0.0025,0.0008,0.0300,NI,0.0001,True,met
+D5,mask_bal,D5 r=0 clean,capsule,-0.0007,-0.0025,0.0008,0.0300,NI,0.0001,True,met
+D5,mask_bal,D5 r=1 test_rev,ovary,0.1140,0.0763,0.1519,0.0000,SUP,0.0001,True,met
+D5,mask_bal,D5 r=0 test_rev,ovary,-0.0032,-0.0116,0.0057,0.0300,NI,0.0001,True,met
+D5,mask_bal,D5 r=0 clean,ovary,-0.0032,-0.0116,0.0057,0.0300,NI,0.0001,True,met
+D5,mask_bal,D5 r=1 test_rev,isic2018,0.3685,0.3433,0.3930,0.0000,SUP,0.0001,True,met
+D5,mask_bal,D5 r=0 test_rev,isic2018,-0.0010,-0.0030,0.0008,0.0300,NI,0.0001,True,met
+D5,mask_bal,D5 r=0 clean,isic2018,-0.0010,-0.0030,0.0008,0.0300,NI,0.0001,True,met
+D5,mask_cmc,D5 r=1 test_rev,thyroid,0.4331,0.3905,0.4742,0.0000,SUP,0.0001,True,met
+D5,mask_cmc,D5 r=0 test_rev,thyroid,-0.0002,-0.0021,0.0018,0.0300,NI,0.0001,True,met
+D5,mask_cmc,D5 r=0 clean,thyroid,-0.0002,-0.0021,0.0018,0.0300,NI,0.0001,True,met
+D5,mask_cmc,D5 r=1 test_rev,capsule,0.1520,0.1266,0.1805,0.0000,SUP,0.0001,True,met
+D5,mask_cmc,D5 r=0 test_rev,capsule,-0.0001,-0.0007,0.0006,0.0300,NI,0.0001,True,met
+D5,mask_cmc,D5 r=0 clean,capsule,-0.0001,-0.0007,0.0006,0.0300,NI,0.0001,True,met
+D5,mask_cmc,D5 r=1 test_rev,ovary,0.0901,0.0509,0.1252,0.0000,SUP,0.0001,True,met
+D5,mask_cmc,D5 r=0 test_rev,ovary,-0.0032,-0.0100,0.0015,0.0300,NI,0.0001,True,met
+D5,mask_cmc,D5 r=0 clean,ovary,-0.0032,-0.0100,0.0015,0.0300,NI,0.0001,True,met
+D5,mask_cmc,D5 r=1 test_rev,isic2018,0.3909,0.3690,0.4134,0.0000,SUP,0.0001,True,met
+D5,mask_cmc,D5 r=0 test_rev,isic2018,-0.0022,-0.0055,0.0001,0.0300,NI,0.0001,True,met
+D5,mask_cmc,D5 r=0 clean,isic2018,-0.0022,-0.0055,0.0001,0.0300,NI,0.0001,True,met
+D5,full_cmc,D5 r=1 test_rev,thyroid,0.0071,0.0000,0.0229,0.0000,SUP,0.3354,False,inconclusive
+D5,full_cmc,D5 r=0 test_rev,thyroid,0.0000,0.0000,0.0000,0.0300,NI,0.0001,True,met
+D5,full_cmc,D5 r=0 clean,thyroid,0.0000,0.0000,0.0000,0.0300,NI,0.0001,True,met
+D5,full_cmc,D5 r=1 test_rev,capsule,0.0027,-0.0138,0.0213,0.0000,SUP,0.4306,False,inconclusive
+D5,full_cmc,D5 r=0 test_rev,capsule,0.0000,0.0000,0.0000,0.0300,NI,0.0001,True,met
+D5,full_cmc,D5 r=0 clean,capsule,0.0000,0.0000,0.0000,0.0300,NI,0.0001,True,met
+D5,full_cmc,D5 r=1 test_rev,ovary,0.0270,-0.0054,0.0611,0.0000,SUP,0.0503,False,inconclusive
+D5,full_cmc,D5 r=0 test_rev,ovary,-0.0171,-0.0345,-0.0028,0.0300,NI,0.0675,False,loss
+D5,full_cmc,D5 r=0 clean,ovary,-0.0163,-0.0335,-0.0024,0.0300,NI,0.0551,False,loss
+D5,full_cmc,D5 r=1 test_rev,isic2018,0.3111,0.2256,0.3931,0.0000,SUP,0.0001,True,met
+D5,full_cmc,D5 r=0 test_rev,isic2018,0.0000,0.0000,0.0000,0.0300,NI,0.0001,True,met
+D5,full_cmc,D5 r=0 clean,isic2018,0.0000,0.0000,0.0000,0.0300,NI,0.0001,True,met
+D6,locrand_ft,D6 all pairs,thyroid (fine-tuned),-0.0063,-0.0231,0.0099,0.0200,NI,0.0531,False,inconclusive
+D6,locrand_ft,D6 hard pairs,thyroid (fine-tuned),0.0007,-0.0258,0.0281,0.0000,SUP,0.4783,False,inconclusive
+D6,locrand_ft,"D6 Trap A min(rev,corr)",thyroid (fine-tuned),0.1193,0.0880,0.1496,0.0000,SUP,0.0001,True,met

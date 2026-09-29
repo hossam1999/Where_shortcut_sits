@@ -1,0 +1,11 @@
+setting,objective,guard_stat,guard_ref,admissible,chosen,trap,seed
+mask,0.80237,0.86038,0.86038,True,True,natural,81010
+locrand_ft,0.82529,0.85124,0.86038,False,False,natural,81010
+mask,0.88526,0.87839,0.87839,True,False,natural,82020
+locrand_ft,0.88960,0.88215,0.87839,True,True,natural,82020
+mask,0.77507,0.83879,0.83879,True,True,natural,83030
+locrand_ft,0.80525,0.83241,0.83879,False,False,natural,83030
+mask,0.81214,0.88300,0.88300,True,True,natural,84040
+locrand_ft,0.78363,0.86320,0.88300,False,False,natural,84040
+mask,0.74660,0.86983,0.86983,True,True,natural,85050
+locrand_ft,0.73145,0.86705,0.86983,True,False,natural,85050

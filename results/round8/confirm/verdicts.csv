@@ -1,0 +1,13 @@
+scope,candidate,p_iut,no_flipping,components,components_met,all_D2_met,sequence,dominates,p_holm
+all cohorts,mask_cmc,1.0000,True,42,40,True,tested,False,
+all cohorts,full_cmc,1.0000,True,42,36,False,not tested in the sequence,False,
+all cohorts,mask_bal,0.6454,True,42,39,True,not tested in the sequence,False,
+all cohorts,locrand_loc,1.0000,True,42,39,False,not tested in the sequence,False,
+without ovary,mask_cmc,1.0000,True,35,33,True,tested,False,
+without ovary,full_cmc,1.0000,True,35,30,False,not tested in the sequence,False,
+without ovary,mask_bal,0.6454,True,35,32,True,not tested in the sequence,False,
+without ovary,locrand_loc,0.6695,True,35,33,False,not tested in the sequence,False,
+D5,mask_bal,0.0001,,12,12,,,True,0.0003
+D5,mask_cmc,0.0001,,12,12,,,True,0.0003
+D5,full_cmc,0.4306,,12,7,,,False,0.4306
+D6,locrand_ft,0.4783,,3,1,,,False,0.4783

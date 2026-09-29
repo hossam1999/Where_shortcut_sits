@@ -1,0 +1,16 @@
+encoder,cohort,candidate,estimate,ci95_lo,ci95_hi,margin,test,p_one_sided,met,label,p_holm,met_holm
+medsiglip448,thyroid,mask_bal,0.4284,0.3999,0.4549,0.0000,SUP,0.0001,True,met,0.0015,True
+medsiglip448,thyroid,mask_cmc,0.3970,0.3729,0.4236,0.0000,SUP,0.0001,True,met,0.0015,True
+medsiglip448,thyroid,full_cmc,0.1191,0.0559,0.1697,0.0000,SUP,0.0002,True,met,0.0015,True
+medsiglip448,capsule,mask_bal,0.1616,0.1345,0.1875,0.0000,SUP,0.0001,True,met,0.0015,True
+medsiglip448,capsule,mask_cmc,0.1591,0.1276,0.1888,0.0000,SUP,0.0001,True,met,0.0015,True
+medsiglip448,capsule,full_cmc,0.0227,0.0055,0.0416,0.0000,SUP,0.0040,True,met,0.0080,True
+medsiglip448,ovary,mask_bal,0.2858,0.2501,0.3227,0.0000,SUP,0.0001,True,met,0.0015,True
+medsiglip448,ovary,mask_cmc,0.2484,0.2121,0.2852,0.0000,SUP,0.0001,True,met,0.0015,True
+medsiglip448,ovary,full_cmc,0.0000,0.0000,0.0000,0.0000,SUP,1.0000,False,inconclusive,1.0000,False
+convnext384,thyroid,mask_bal,0.3829,0.3512,0.4128,0.0000,SUP,0.0001,True,met,0.0015,True
+convnext384,thyroid,mask_cmc,0.3181,0.2960,0.3406,0.0000,SUP,0.0001,True,met,0.0015,True
+convnext384,thyroid,full_cmc,0.1247,0.0902,0.1611,0.0000,SUP,0.0001,True,met,0.0015,True
+convnext384,capsule,mask_bal,0.1489,0.1158,0.1792,0.0000,SUP,0.0001,True,met,0.0015,True
+convnext384,capsule,mask_cmc,0.1319,0.0908,0.1682,0.0000,SUP,0.0001,True,met,0.0015,True
+convnext384,capsule,full_cmc,0.0353,0.0130,0.0590,0.0000,SUP,0.0005,True,met,0.0015,True
