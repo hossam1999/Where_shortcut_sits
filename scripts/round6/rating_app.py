@@ -97,8 +97,11 @@ def write_answer(pass_n: int, row: dict, sheet: pd.DataFrame):
 
 PAGE = """<!doctype html><meta charset=utf-8><title>Round 6 rating</title>
 <style>
-body {{ font: 16px/1.4 sans-serif; margin: 24px; max-width: 920px; }}
+body {{ font: 16px/1.4 sans-serif; margin: 24px; max-width: 1400px; }}
 img {{ max-width: 100%; background: #111; }}
+.pair {{ display: flex; gap: 12px; align-items: flex-start; }}
+.pair figure {{ flex: 1; margin: 0; min-width: 0; }}
+.pair figcaption {{ font-size: 14px; color: #333; margin-bottom: 6px; }}
 button {{ font-size: 16px; padding: 8px 14px; margin-right: 8px; }}
 .step {{ color: #444; }}
 </style>
@@ -181,8 +184,12 @@ class Handler(BaseHTTPRequestHandler):
                         f'(right).</p><img src="/img?pos={pos}&which=raw" alt="raw" style="max-width:49%"> '
                         f'<img src="/img?pos={pos}&which=contour" alt="outline" style="max-width:49%">')
             else:
-                imgs = (f'<p>Green = region outline; red = the automatic artifact mask.</p>'
-                        f'<img src="/img?pos={pos}&which=overlay" alt="overlay">')
+                imgs = (f'<div class=pair>'
+                        f'<figure><figcaption>Original image</figcaption>'
+                        f'<img src="/img?pos={pos}&which=raw" alt="original"></figure>'
+                        f'<figure><figcaption>Same image: green = region outline, red = automatic artifact mask</figcaption>'
+                        f'<img src="/img?pos={pos}&which=overlay" alt="overlay"></figure>'
+                        f'</div>')
             # step 1 shows the ROI outline for the location question: the A4b overlay has the outline only; for the
             # main package the raw image is shown first, as in audit/README.md
             body = PAGE.format(pass_n=self.pass_n, done=len(done), n=len(self.sheet), step=step, aid=html.escape(row.audit_id),
