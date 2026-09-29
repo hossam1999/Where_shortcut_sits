@@ -41,3 +41,19 @@ IDs, CC BY-NC), then thyroid cohorts with patient IDs. For ISIC 2020 the hair ma
 trained on the ISIC 2019 hair masks only (frozen before any ISIC 2020 image is scored); lesion masks from the existing
 spec U-Net; groups = patient_id; traps, environments, arms (erm, mask), seeds and folds as the ISIC 2019 spec traps;
 **Claim X1**: crossover > 0 (crossed CI). If any condition fails the cohort is not run and is listed for the author.
+
+## Addendum to A1 (2026-09-29) — regeneration of the four archived analyses without per-image predictions
+Committed before any of these runs. Four analyses were reported as point estimates ("not re-estimated") because their
+per-image predictions were not kept: (1) LaMa inpainting followed by masking on thyroid and ovary
+(`results/lama_comparison.json`, `results/{thyroid,ovary}/dino518_lama`); (2) template-based U-MtE on capsule debris,
+plain and disease-protected (`results/capsule/dino518_protect_tmpl`); (3) real chest drains (`results/cxr_drain`,
+including DFR on RAD-DINO and DINOv2) and the chest-radiograph cells of the theory comparison; (4) real chest-radiograph
+devices, RANZCR-CLiP linked to NIH (`results/cxr_traps`). They are regenerated as a re-estimation under A1, not as new
+hypotheses: the rules of A1 apply unchanged (same commands, configurations and seeds, no hyperparameter changed;
+per-image predictions saved to `results/rerun_2026-09-28/` with `WTSS_BOOTSTRAP=crossed`; old versus new intervals,
+changes of the "excludes zero" verdict and point-estimate differences over 0.03 tabulated in
+`results/bootstrap_correction/`; an interval that cannot be regenerated stays a point estimate labelled not
+re-estimated). A dataset that is no longer on this machine is downloaded again only if no agreement is required
+(NIH ChestX-ray14 and the NEATX drain labels qualify; RANZCR-CLiP requires accepting Kaggle competition rules, so
+analysis 4 is skipped unless its data are already present); derived inputs that were deleted (LaMa-inpainted caches,
+chest-radiograph cohorts and caches) are rebuilt with the archived scripts.
