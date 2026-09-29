@@ -6,3 +6,4 @@ baselines,mask_balanced,29,26,1,2,-0.0039,"D3' Trap B min(rev,corr) thyroid +0.0
 baselines,mask_cmc,29,27,1,1,-0.0029,D1' val all pairs thyroid -0.003,0.0243
 mask_ba,mask_ba,29,22,6,1,-0.0675,"D3' Trap B min(rev,corr) thyroid -0.060",0.0342
 full_ba,full_ba,29,22,1,6,-0.0168,D2' val hard pairs isic_BCN -0.003,0.0553
+mask_cmc_ba,mask_cmc_ba,29,23,4,2,-0.0356,D3' clean (Trap B models) thyroid -0.034,0.0206

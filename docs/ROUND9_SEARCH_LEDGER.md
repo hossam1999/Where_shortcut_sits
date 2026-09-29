@@ -70,3 +70,9 @@ S_m < S); it needs new renders, and the 12-candidate limit was used for g and h 
 - losses: D2' val hard pairs isic_BCN -0.003 [-0.017]
 - inconclusive: D1' val all pairs isic_MSK +0.000 [-0.018]; D2' val hard pairs thyroid +0.000 [+0.000]; D2' val hard pairs isic_MSK +0.016 [-0.006]; D3' clean (Trap A models) thyroid -0.013 [-0.031]; D2' Trap A min(rev,corr) capsule +0.001 [-0.003]; D3' clean (Trap B models) isic +0.002 [-0.030]
 - status: does not meet every proxy component
+
+### 3. mask_cmc_ba
+- development proxy: **23/29 components met**, worst slack -0.036 (D3' clean (Trap B models) thyroid -0.034); Trap A reversed seed SD 0.021; settings chosen: {'per_class': 107, 'pooled': 40, 'mask': 28}
+- losses: D3' Trap B reversed thyroid -0.021 [-0.049]; D3' Trap B min(rev,corr) thyroid -0.021 [-0.054]; D3' clean (Trap B models) thyroid -0.035 [-0.066]; D3' clean (Trap B models) isic -0.017 [-0.039]
+- inconclusive: D1' val all pairs thyroid -0.003 [-0.014]; D1' val all pairs isic_MSK -0.005 [-0.011]
+- status: does not meet every proxy component
