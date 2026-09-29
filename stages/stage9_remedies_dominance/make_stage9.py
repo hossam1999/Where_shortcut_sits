@@ -226,6 +226,14 @@ def round9():
               ("D2 Trap A min(rev,corr)", ("thyroid", "capsule", "ovary", "isic"), "Trap A (artifact in the ROI)")]
     series = [(c8, "mask_cmc", "mask_cmc (round 8)", BLUE, "o"), (c8, "mask_bal", "mask_bal (round 8)", MUTED, "s"),
               (c, "mask_irm", "IRMv1 (round 9)", ORANGE, "D"), (c, "mask_vrex", "V-REx (round 9)", GREEN, "^")]
+    dominance_figure(panels, series, F / "dominance.pdf")
+    # the manuscript's copy (paper/figures/dominance.pdf via scripts/make_paper_round_tables.py) uses journal wording
+    paper = {"mask_cmc (round 8)": "class-conditional constraint (first round)", "mask_bal (round 8)": "partial reweighting (first round)",
+             "IRMv1 (round 9)": "IRMv1 (second round)", "V-REx (round 9)": "V-REx (second round)"}
+    dominance_figure(panels, [(a, b, paper[lab_], col, mk) for a, b, lab_, col, mk in series], F / "dominance_paper.pdf")
+
+
+def dominance_figure(panels, series, path):
     plt = L.plot_style()
     fig, ax = plt.subplots(1, 3, figsize=(10.4, 3.4), gridspec_kw={"width_ratios": [6, 4, 4]})
     short = {"thyroid": "thyroid", "capsule": "capsule", "isic_BCN": "BCN", "isic_HAM": "HAM", "isic_MSK": "MSK",
@@ -248,7 +256,7 @@ def round9():
     ax[0].set_ylabel("candidate $-$ masking (AUROC)")
     h, lb = ax[0].get_legend_handles_labels()
     fig.tight_layout(rect=(0, 0.1, 1, 1)); fig.legend(h, lb, loc="lower center", ncol=4, fontsize=7, frameon=False)
-    fig.savefig(F / "dominance.pdf"); plt.close(fig)
+    fig.savefig(path); plt.close(fig)
 
 
 def main():

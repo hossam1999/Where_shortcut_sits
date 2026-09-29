@@ -51,7 +51,7 @@ lesion or the lungs and discard the rest of the image. The rationale assumes tha
 background. Rulers, hair, ink and drains do not respect that assumption. When the artifact overlaps the ROI,
 masking cannot remove it; it removes everything \emph{else}. We ask whether the effect of masking depends on where
 the artifact sits, whether that dependence survives when the artifact is moved while the images stay the same, which
-quantity governs it, what it costs on unaltered clinical test data, and which remedies apply in which regime.
+quantity governs it, what it costs on unaltered clinical test data, and what to use instead.
 
 \paragraph{Contributions}
 \begin{enumerate}
@@ -73,13 +73,13 @@ on shortcut-conflicting cases, on the patient-disjoint official thyroid split an
 2020). For a fine-tuned thyroid model near the published benchmark it lowers sensitivity among malignant nodules that
 carry a caliper, in a subgroup registered in advance, and part of that loss survives thresholds re-tuned on the test set
 (Sec.~\ref{sec:natural}).
-\item \textbf{What carries the shortcut decides the fix.} A decision guide that separates distinct overlays,
-pathology-like artifacts and correlate-carried shortcuts, benchmarked against DFR, JTT, LEACE, SPLINCE, LaMa
-inpainting and an annotation-free mask-then-erase tool, with the caveat that no remedy transfers uniformly to
-unaltered data; label-based group balancing recovers the shortcut-conflicting cases on three of five unaltered test sets
-and on ISIC 2020. Tested against a registered dominance criterion in two rounds on newly generated data, no remedy is
-never worse than masking and better wherever it fails; the closest fails on one cell of 42 (Sec.~\ref{sec:guide}; methods
-in the supplement).
+\item \textbf{What to use instead.} A class-conditional mean constraint on the masked features, derived from the law,
+removes masking's in-ROI failure in every cohort, including one held out from every choice, and on the
+shortcut-conflicting cases of every unaltered test set, and is equal to masking elsewhere except for overall AUROC on one
+external set. Against a registered criterion for dominating masking, tested in two rounds on newly generated data and
+against published remedies (DFR, JTT, IRM, V-REx, LEACE, SPLINCE, LaMa inpainting) and a documented search,
+no remedy dominates; this one fails on one of 42 components. Without artifact labels, an annotation-free mask-then-erase
+tool handles overlay-like artifacts (Sec.~\ref{sec:guide}; methods in the supplement).
 \item \textbf{Reproducibility.} Pre-registration of every experiment with a registry of commit times, Holm-corrected
 primary claims, replication of the original pilot (73/88 numbers), a full rebuild on new hardware that reproduces
 every primary crossover within 0.01, artifact labels checked without a clinician against public expert annotations
@@ -174,8 +174,9 @@ the cases in which the in-ROI artifact points to the wrong diagnosis: it is hidd
 patients, and for a fine-tuned thyroid model part of it survives any re-tuning of the decision threshold. No remedy we
 tested dominates masking, but one comes within a single cell. We
 recommend that shortcut audits of masked models report artifact location relative to the ROI and evaluate performance
-on shortcut-conflicting cases alongside clean and correlated performance, and that the choice of remedy follow what
-carries the shortcut. Code, pre-registrations, result files and a CLAIM 2024 checklist are public.
+on shortcut-conflicting cases alongside clean and correlated performance, and that, where artifacts may lie inside the
+ROI, a class-conditional constraint on the masked features be used instead of masking alone. Code, pre-registrations,
+result files and a CLAIM 2024 checklist are public.
 
 \bibliographystyle{elsarticle-harv}
 \bibliography{refs}
