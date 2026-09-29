@@ -7,8 +7,8 @@ $y$ the diagnosis and $a$ the image-level artifact label from the automatic dete
 training only. On the training images we compute the within-class mean differences
 $\delta_y=\mu(x\mid a{=}1,y)-\mu(x\mid a{=}0,y)$, project the features onto the orthogonal complement of $\delta_0,\delta_1$
 (or of their average; chosen on validation data) and fit an ordinary logistic head on all training images at their
-natural weights. Within each class the head can then not score images with and without the artifact differently on
-average, while no image is down-weighted; group balancing, by contrast, loses on unaltered data mainly by discarding
+natural weights. Within each class, the head then cannot score images with and without the artifact differently on
+average, and no image is down-weighted; group balancing, by contrast, loses on unaltered data mainly by discarding
 disease evidence through reweighting (Supplement~S17). The constraint is the first-moment, linear case of
 counterfactual invariance \citep{veitch2021counterfactual}; what is new is its derivation from the location law and
 its use after masking. At test time it needs only the masked image.
@@ -18,10 +18,9 @@ its use after masking. At test time it needs only the masked image.
 conflicting pairs of the unaltered test sets, and no shortcut flipping---42 components, all of which must hold
 (Supplement~S17). Settings were chosen on validation data only; confirmation used trap resamples generated after the
 registration and one cohort (ovary) that never influenced a choice. The constraint met 40 of 42 components
-(Fig.~\ref{fig:dom}). It is better than masking in every Trap~A---thyroid $+0.330$ [$+0.311, +0.351$], capsule $+0.153$
-[$+0.131, +0.177$], dermoscopy hair $+0.193$ [$+0.166, +0.221$], held-out ovary $+0.118$ [$+0.089, +0.147$]---and on the
-conflicting pairs of every unaltered test set (e.g.\ thyroid $+0.084$ [$+0.069, +0.101$], ISIC 2020 $+0.078$
-[$+0.069, +0.088$]), and not worse on the Trap~B and clean tests and on four of the six unaltered test sets. Its two
+(Fig.~\ref{fig:dom}). It is better than masking in every Trap~A, by $+0.118$ (held-out ovary) to $+0.330$ (thyroid), and
+on the conflicting pairs of every unaltered test set (e.g.\ thyroid $+0.084$, ISIC 2020 $+0.078$), and not worse on the
+Trap~B and clean tests and on four of the six unaltered test sets. Its two
 failed components are the thyroid split, where non-inferiority is inconclusive ($-0.002$ [$-0.011, +0.007$]), and
 ISIC 2020 overall, where it loses ($-0.021$ [$-0.027, -0.016$]) because in-lesion hair still points to melanoma for most
 patients.
@@ -37,15 +36,15 @@ from every choice.}\label{fig:dom}\end{figure*}
 \paragraph{Nothing does better} A documented search over twelve further ideas on development data only---among them
 backdoor adjustment, product of experts, logit adjustment, moment matching, conditional adversarial debiasing,
 contrastive and invariance methods---and a second registered round of its three best on new data gave the same answer:
-IRMv1 met 41 of 42 components and lost only on ISIC 2020 overall ($-0.009$ [$-0.013, -0.005$]), and the constraint,
-refitted with its frozen recipe, replicated its result ($-0.015$ [$-0.024, -0.006$] on ISIC 2020 only). Every alternative
+IRMv1 met 41 of 42 components and lost only on ISIC 2020 overall ($-0.009$), and the constraint, refitted with its
+frozen recipe, replicated its result (loss on ISIC 2020 only, $-0.015$; Supplement~S17). Every alternative
 to masking, including the unmasked model, loses overall on ISIC 2020, mostly on pairs whose images share the artifact
 status. No remedy we tested dominates masking.
 
 \paragraph{Without artifact labels} Erasing from the masked features the subspace along which \emph{generic}
 synthetic overlays move them (mask-then-erase, U-MtE; Supplement~S8) removes most of what masking leaves for
-overlay-like artifacts (thyroid $+0.224$ [$+0.195, +0.253$] over masking with DINOv2), but it is worse than masking
-for debris that resembles the pathology ($-0.126$ [$-0.146, -0.107$]) and cannot reach a shortcut carried by correlates.
+overlay-like artifacts (thyroid $+0.224$ [$+0.195, +0.253$] over masking), but it is worse than masking for debris that
+resembles the pathology ($-0.126$) and cannot reach a shortcut carried by correlates.
 
 \paragraph{Decision guide} (i) Measure where artifacts sit relative to the ROI; for artifacts outside it, masking is
 enough. (ii) For artifacts inside it, with image-level artifact labels from an automatic detector, use the

@@ -1,14 +1,14 @@
 % Mechanism (controlled sweeps; results/analysis/mechanism.csv, results/SUMMARY.md). Full text: Supplement S14.
 \section{Mechanism: masking retains an in-ROI artifact and removes its competitors}\label{sec:mech}
 Three explanations were tested in the controlled ruler sweep. \emph{Occlusion} alone does not harm: with the ruler
-present but uncorrelated with the label, masking changes AUROC by $+0.036$ to $+0.041$ at every overlap, none
-significantly, so the harm requires the correlation. \emph{Lost context} is not the driver: widening the mask so that
+present but uncorrelated with the label, masking changes AUROC by at most $+0.041$ at any overlap, never significantly,
+so the harm requires the correlation. \emph{Lost context} is not the driver: widening the mask so that
 it restores ruler pixels increases the harm. \emph{Amplified reliance} is: with the head held fixed, inserting the ruler
 on the lesion changes the masked model's prediction about twice as much as ERM's ($|\Delta p|$ 0.491 versus 0.235 at
 full overlap; paired difference $+0.255$ [$+0.221, +0.287$]), because masking removes the competing evidence around it.
-The same holds for ovarian calipers ($+0.188$ [$+0.133, +0.250$]) and capsule debris ($+0.186$ [$+0.130, +0.260$]);
-for thyroid calipers the masked model relies on the caliper as much as ERM does (Fig.~\ref{fig:mechanism}). Harm is
-largest for small lesions, where the ruler is a larger share of what survives the mask (Supplement~S14).
+The same holds for ovarian calipers and capsule debris; for thyroid calipers the masked model relies on the caliper as
+much as ERM does (Fig.~\ref{fig:mechanism}). Harm is largest for small lesions, where the ruler is a larger share of what
+survives the mask (Supplement~S14).
 
 For real hair, removing every hair pixel at test time closes only 44--47\% of ERM's clean--reversed gap: most of what a
 frozen encoder exploits is what accompanies hair (age, sex, body site), not the hair itself. This bounds every

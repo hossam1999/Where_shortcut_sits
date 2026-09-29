@@ -5,13 +5,13 @@
 Stricter label definitions (large markers only; stricter location thresholds) leave every thyroid and ovary crossover
 significant and larger, as expected if label errors dilute rather than create the effect. We also compared the labels
 with every independent source we could find. Where hair is present our labels place it correctly (lesion masks against
-multi-annotator masks: Dice 0.851 [0.830, 0.870]), but our hair-presence threshold marks hair on many images that
+multi-annotator masks: Dice 0.851), but our hair-presence threshold marks hair on many images that
 expert-reviewed labels call hair-free ($\kappa=0.076$); removing every image an independent source contradicts
-\emph{raises} the hair crossover from $+0.147$ to $+0.199$ [$+0.164, +0.233$]. For thyroid calipers two independent
+\emph{raises} the hair crossover from $+0.147$ to $+0.199$ [$+0.164, +0.233$]: the label noise diluted the effect. For thyroid calipers two independent
 labellers (an ultrasound annotation detector and a locally run medical vision--language model) agree with our cell for
 94\% of the images on which they agree with each other; the registered cleaning rule, which removes an image whenever
-either disagrees, left too few out-of-ROI images to be tested, and without the images both contradict the crossover is
-$+0.257$ [$+0.209, +0.304$] (exploratory). The ovary and capsule labels could not be checked with public data.
+either disagrees, left too few out-of-ROI images to be tested; without the images both contradict, the crossover is
+$+0.257$ (exploratory; $+0.239$ on our labels). The ovary and capsule labels could not be checked with public data.
 
 \paragraph{Leakage and rebuild} Uniting the perceptual-hash groups with connected components of DINOv2 embeddings
 (pre-registered) keeps 11 of 12 primary contrasts at the same sign and significance. A complete rebuild on different
