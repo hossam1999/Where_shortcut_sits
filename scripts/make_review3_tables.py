@@ -218,10 +218,16 @@ def supp_tables():
     write("paste_edge", L, "review3")
     c = C[C.orig_lo.notna()].copy()
     # the original (per-seed) intervals are not printed (docs/PREREGISTRATION_FINAL.md, A1); they are listed in
-    # results/bootstrap_correction/sweeps_umte_old_vs_new.md
+    # results/bootstrap_correction/sweeps_umte_old_vs_new.md. In the regenerated crossed_ci.csv the orig_* columns were
+    # computed with WTSS_BOOTSTRAP=crossed (so they equal the crossed CI); the per-seed reference is the archived file.
+    old = pd.read_csv(paths.REPO_ROOT / "results" / "review3" / "crossed_ci.csv")[["claim", "cohort", "orig_lo", "orig_hi"]]
+    c = c.drop(columns=["orig_lo", "orig_hi"]).merge(old, on=["claim", "cohort"], how="left", validate="one_to_one")
+    if c.orig_lo.isna().any():
+        raise SystemExit("crossed table: claim without an archived per-seed interval")
+    c["width_ratio"] = (c.crossed_hi - c.crossed_lo) / (c.orig_hi - c.orig_lo)
     c["verdict_changed"] = ((c.orig_lo > 0) | (c.orig_hi < 0)) != c.crossed_excludes_zero.astype(bool)
     L = ["\\begin{center}\\scriptsize\\resizebox{\\linewidth}{!}{\\begin{tabular}{llccc}\\toprule",
-         "Claim & Cohort / test set & Crossed seed$\\times$image bootstrap & Width relative to the original & Verdict changed \\\\\\midrule"]
+         "Claim & Cohort / test set & Crossed seed$\\times$image bootstrap & Width / per-seed width & Verdict changed \\\\\\midrule"]
     for r in c.itertuples():
         L.append(f"{r.claim.replace('_', chr(92) + '_')} & {r.cohort} & {ci(r.estimate, r.crossed_lo, r.crossed_hi)}"
                  f"{'' if r.crossed_excludes_zero else '$^*$'} & {r.width_ratio:.2f} & {'yes' if r.verdict_changed else 'no'} \\\\")

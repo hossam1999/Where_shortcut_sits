@@ -73,10 +73,9 @@ tasks have no published benchmark on the same split (Supplement~S10).
 the shortcut through correlates. The linear-Gaussian account is fitted per model and cannot anticipate a shortcut
 carried by correlates that the clean and correlated environments do not expose.
 (vi) \emph{Uncertainty and balance.} The original per-seed bootstrap understated CIs where seeds share test
-images. Every interval in this paper comes from regenerated runs with a crossed seed$\times$image bootstrap (median
-width 1.56 times the original across 2,466 intervals); claims whose interval now includes zero were rewritten, and the few archived runs
-whose per-image predictions were not kept (chest-radiograph devices and drains, LaMa inpainting, template erasure) are
-reported as point estimates only. Matching left within-label standardised
+images. All intervals were therefore recomputed with the crossed bootstrap from regenerated runs (Sec.~\ref{sec:setup});
+claims whose interval then included zero were rewritten, and the few runs that could not be regenerated are given as
+point estimates only. Matching left within-label standardised
 differences of up to 0.19 for some covariates. (vii) \emph{Transplant.} Pasted patterns, including neutral tissue,
 become learnable shortcuts; the transplant establishes location dependence on fixed images, not the size of real
 artifacts' effects in their natural context (for hair, whose natural shortcut is carried mostly by correlates, the

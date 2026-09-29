@@ -44,7 +44,7 @@ No. & Item & Answer & Where / comment \\\midrule\endhead
 27 & Ensembling techniques & NA & No ensembles. \\
 \multicolumn{4}{l}{\emph{Methods --- evaluation}}\\
 28 & Metrics of model performance & Yes & Reversed, correlated and clean AUROC; location crossover; AUPRC, Brier, ECE, sensitivity/specificity (M Setup, Consequences on unaltered data). \\
-29 & Statistical measures of significance and uncertainty & Yes & Crossed seed$\times$image bootstrap for every interval, from regenerated runs (S15; old-versus-new comparison in the repository); Holm per family (M Setup; S1). \\
+29 & Statistical measures of significance and uncertainty & Yes & Crossed seed$\times$image bootstrap for every model-comparison interval, from regenerated runs (S15; old-versus-new comparison in the repository); image bootstrap for label agreement; point estimates only for the archived runs without per-image predictions; Holm per family (M Setup; S1). \\
 30 & Robustness or sensitivity analysis & Yes & Label definitions, leakage grouping, covariate matching, rebuild on new hardware (M Robustness). \\
 31 & Methods for explainability or interpretability & Yes & Same-head counterfactual sensitivity to inserting the artifact (M Mechanism). \\
 32 & Evaluation on internal data & Yes & All traps and sweeps. \\
