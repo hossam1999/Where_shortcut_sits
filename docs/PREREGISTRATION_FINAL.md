@@ -57,3 +57,7 @@ re-estimated). A dataset that is no longer on this machine is downloaded again o
 (NIH ChestX-ray14 and the NEATX drain labels qualify; RANZCR-CLiP requires accepting Kaggle competition rules, so
 analysis 4 is skipped unless its data are already present); derived inputs that were deleted (LaMa-inpainted caches,
 chest-radiograph cohorts and caches) are rebuilt with the archived scripts.
+*Note (2026-09-29, before analysis 4 is run):* the author supplied Kaggle credentials whose account has accepted the
+RANZCR-CLiP competition rules, so the RANZCR-CLiP data are downloaded with the archived command
+(`scripts/data/download_extra.sh`) and analysis 4 is regenerated under the same A1 rules; no agreement was accepted
+by the analysis itself.
