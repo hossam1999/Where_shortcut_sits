@@ -1,6 +1,28 @@
 # Round 9 — exploratory search ledger (a SEARCH on development data, not a test)
 
-<!-- MORNING SUMMARY (written at the end of the search) -->
+## MORNING SUMMARY (2026-09-29, 01:15; plain language)
+**Round 8 (registered, final): no remedy dominates masking.** The fixed sequence stopped at its first candidate,
+mask_cmc: it met 40 of the 42 components. It was better than masking wherever masking fails (every Trap A, every hard-pair
+cell, including ISIC 2020) and kept masking's behaviour outside the ROI. It lost on one cell, **ISIC 2019 → 2020 all pairs
+(−0.021 [−0.027, −0.016])**, and thyroid all pairs was inconclusive (−0.002 [−0.011, +0.007]). mask_bal met every D2
+component but lost on thyroid, MSK and ISIC 2020 all pairs. By the registered rule the paper says: *wins where masking fails but costs
+elsewhere* (mask_cmc, mask_bal). The sweeps claim D5 was supported for mask_cmc and mask_bal; the fine-tuned paste
+remedy (D6) was not. Every cohort's pasted-vs-real probe exceeded 0.75 (0.90–0.99), and the paste plans could not balance the
+traps (too few training-set donors): the paste results should not be read as evidence about real artifacts.
+(`results/round8/SUMMARY.md`, commit 0d66e42.)
+
+**Round-9 search (development data only; 12 candidates, the limit; about 50 minutes of CPU, no GPU).** No candidate met
+all 29 development proxy components. Three eligible candidates met 28 or 27 with **no loss**: V-REx on masked features
+(28/29), IRMv1 (28/29) and conditional adversarial debiasing (27/29). Product of experts and group logit adjustment
+also reached 28/29 but **flip the shortcut** in thyroid Trap A (D4), so they are not eligible (rule 4). The honest caveat:
+round 8's mask_bal also scored 28/29 on this proxy and still lost on ISIC 2020, and the proxy cannot see ISIC 2020.
+The one pattern worth testing: **conditional adversarial debiasing is the only arm whose all-pairs contrast with masking
+is ≥ −0.001 in every development cohort (positive on all three ISIC sources)**, i.e. the cell where round 8 failed; it
+pays with smaller Trap A gains (+0.09 to +0.17 instead of +0.18 to +0.38) and more seed variance.
+
+**Needs your approval**: (1) whether round 9 should be run at all, given that the proxy cannot distinguish the
+search's best from round 8's mask_bal; (2) if yes, `docs/PREREGISTRATION_ROUND9_DRAFT.md` (3 candidates, fixed
+sequence mask_condadv → mask_irm → mask_vrex, reserved seeds 9101–9505, ovary held out). No round-9 confirmation was run.
 
 ## 0. Start (2026-09-29 00:15) and firewall
 - Round 8 is final (commit 0d66e42, `results/round8/SUMMARY.md`): **no primary candidate dominates masking**. Decision
@@ -130,3 +152,40 @@ S_m < S); it needs new renders, and the 12-candidate limit was used for g and h 
 - losses: none
 - inconclusive: D2' val hard pairs isic_BCN +0.006 [-0.000]
 - status: does not meet every proxy component
+
+
+## 3. Synthesis (01:15)
+**Candidates tried: 12** (the limit), plus 5 reference arms (erm, mask_balanced, and round 8's mask_cmc, full_cmc,
+mask_bal on development data), which are not counted. Wall-clock about 50 minutes, CPU only (no GPU used). No crash.
+No candidate met every proxy component, so the "two candidates" stopping rule did not trigger; the search ended at the
+12-candidate limit.
+
+| # | candidate | met / 29 | losses | eligible | kept for the draft? | why |
+|---|---|---|---|---|---|---|
+| ref | mask_bal (round 8) | 28 | 0 | yes | — | reference: 28/29 here, yet lost on ISIC 2020 in round-8 confirmation |
+| ref | mask_cmc (round 8) | 27 | 1 | yes | — | reference |
+| 1 | mask_ba | 22 | 6 | no (D4 flip, thyroid Trap A) | dropped | the unpenalised A term over-absorbs: flips thyroid Trap A, loses Trap B / clean |
+| 2 | full_ba | 22 | 1 | yes | dropped | loses BCN hard pairs; falls back to masking in 67 % of training sets |
+| 3 | mask_cmc_ba | 23 | 4 | yes | dropped | Trap B and clean losses in thyroid |
+| 4 | full_cmc_ba | 23 | 1 | yes | dropped | MSK all-pairs loss |
+| 5 | mask_poe | 28 | 1 (D4) | **no** (flips thyroid Trap A, −0.052) | dropped | rule 4 |
+| 6 | mask_la | 28 | 1 (D4) | **no** (flips thyroid Trap A, −0.041) | dropped | rule 4 |
+| 7 | mask_moments | 26 | 1 | yes | dropped | MSK all-pairs loss |
+| 8 | mask_condadv | 27 | 0 | yes | **kept (1st)** | only arm with all-pairs contrast ≥ −0.001 everywhere (positive on BCN, HAM, MSK) — the round-8 failure cell's proxy; smaller Trap A gains |
+| 9 | mask_cnc | 20 | 3 | yes | dropped | all-pairs losses (capsule, MSK), capsule Trap B |
+| 10 | mask_cfc | 19 | 4 | yes | dropped | capsule Trap B / clean losses; needs donor masks |
+| 11 | mask_vrex | 28 | 0 | yes | **kept (3rd)** | behaves like round-8 mask_bal (same small all-pairs costs; HAM −0.005 inconclusive) |
+| 12 | mask_irm | 28 | 0 | yes | **kept (2nd)** | all-pairs ≈ 0 everywhere; smaller Trap A gains (capsule +0.020); contrary to the prediction (≈ masking) it helps in thyroid and ISIC Trap A |
+
+Predictions versus outcomes: backdoor adjustment — wrong (predicted ≈ CMC); the unpenalised artifact covariate
+over-corrects (D4 flip in thyroid Trap A). PoE/logit adjustment: the predicted flipping risk occurred.
+Moments ≈ CMC: yes. Conditional adversary: the predicted instability is moderate (seed SD 0.026 vs 0.017 for
+mask_bal); the predicted D1' risk did not occur. CnC and counterfactual contrastive: the predicted disease-signal cost
+occurred (D1' / D3' losses). V-REx ≈ balancing: yes. IRM ≈ masking: wrong (it moves off masking in 66 % of training
+sets and gains in Trap A).
+
+**Requirements and inference cost (rule 5, 6)** of the kept candidates: training needs the image-level automatic artifact
+labels already in the repository (caliper detector, hair masks, debris probe) and the ROI masks; selection needs the
+validation split with the same labels; test time needs only the image and its ROI mask — one frozen-encoder pass,
+masking, then a linear head (V-REx, IRM) or a 768→256→128 MLP plus a linear head (conditional adversary): the same
+encoder cost as masking, a negligible head cost. No detector runs at test time. CPU training in seconds to minutes.
