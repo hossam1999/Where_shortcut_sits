@@ -43,6 +43,8 @@ Old: archived runs without per-image predictions (per-seed bootstrap or point es
 
 ## LaMa
 
+**Provenance of the thyroid U-MtE-protect change** (checked 2026-09-29, no GPU run): the archived thyroid protect_generic run was committed in 419b252 (2026-09-27 01:56), before 001f743 (04:40, protected arm added to the drivers) and before later runner changes. The regenerated protect_generic run gives U-MtE-protect − ERM +0.392 on Trap A reversed, equal to the protected arm of the regenerated universal run (+0.392), against +0.328 archived; every other arm of the run reproduces within 0.002. `git diff 419b252 HEAD -- scripts/run_thyroid_traps.py src/wtss/experiments/ src/wtss/methods/insertion.py`, restricted to the protected arm, shows no change in its computation: `disease_directions` and `protect` are identical, the subspace fit keeps energy 0.9 and at most 64 directions, and the call site is the same. The diff changes only the cache-coverage check (`_covered`), the BLAS thread limit (`threadpool_limits(2)` removed), the process-pool conditions and adds new arms. The cached feature files the arm reads were rewritten after the archived run (erm/mask 2026-09-27 19:05, mask_insert_generic 2026-09-28 00:56), so the two runs used different extractions of the same views. The cause is still unclear; nothing was adjusted.
+
 - rows: 19; regenerated: 19; verdict changed: 2; point estimates differing by more than 0.03: 2
 
 | file | key | old | new | verdict changed | Δ > 0.03 | note |
@@ -66,4 +68,43 @@ Old: archived runs without per-image predictions (per-seed bootstrap or point es
 | ovary/dino518_lama/bootstrap_vs_erm.csv | trapA|mask|clean|-erm | +0.067 [+0.045, +0.089] | +0.068 [+0.028, +0.108] | no |  |  |
 | ovary/dino518_lama/bootstrap_vs_erm.csv | trapB|mask|test_rev|-erm | +0.253 [+0.212, +0.294] | +0.253 [+0.177, +0.329] | no |  |  |
 | ovary/dino518_lama/bootstrap_vs_erm.csv | trapB|mask|clean|-erm | +0.087 [+0.047, +0.125] | +0.087 [+0.027, +0.144] | no |  |  |
+
+## chest drains
+
+- rows: 32; regenerated: 32; verdict changed: 10; point estimates differing by more than 0.03: 0
+
+| file | key | old | new | verdict changed | Δ > 0.03 | note |
+|---|---|---|---|---|---|---|
+| cxr_drain/raddino518_universal/paired_deltas.csv | mask|erm|test_rev | +0.049 [+0.035, +0.061] | +0.039 [+0.019, +0.058] | no |  |  |
+| cxr_drain/raddino518_universal/paired_deltas.csv | mask|erm|clean | -0.016 [-0.024, -0.008] | -0.015 [-0.023, -0.007] | no |  |  |
+| cxr_drain/raddino518_universal/paired_deltas.csv | mte|mask|test_rev | +0.029 [+0.021, +0.036] | +0.040 [+0.023, +0.057] | no |  |  |
+| cxr_drain/raddino518_universal/paired_deltas.csv | mte|mask|clean | -0.024 [-0.030, -0.018] | -0.021 [-0.028, -0.014] | no |  |  |
+| cxr_drain/raddino518_universal/paired_deltas.csv | mte|mte_aug|test_rev | +0.031 [+0.022, +0.042] | +0.036 [+0.018, +0.054] | no |  |  |
+| cxr_drain/raddino518_universal/paired_deltas.csv | mte|mte_aug|clean | -0.020 [-0.026, -0.014] | -0.020 [-0.027, -0.014] | no |  |  |
+| cxr_drain/raddino518_universal/paired_deltas.csv | mte_protect|mask|test_rev | +0.030 [+0.022, +0.037] | +0.042 [+0.028, +0.058] | no |  |  |
+| cxr_drain/raddino518_universal/paired_deltas.csv | mte_protect|mask|clean | -0.003 [-0.009, +0.002] | -0.004 [-0.009, -0.001] | **yes** |  |  |
+| cxr_drain/raddino518_universal/paired_deltas.csv | mte_balanced|balanced|test_rev | -0.079 [-0.097, -0.061] | -0.079 [-0.106, -0.044] | no |  |  |
+| cxr_drain/raddino518_universal/paired_deltas.csv | mte_balanced|balanced|clean | -0.027 [-0.035, -0.020] | -0.029 [-0.039, -0.018] | no |  |  |
+| cxr_drain/raddino518_universal/paired_deltas.csv | mask_dfr|dfr|test_rev | -0.036 [-0.055, -0.014] | -0.031 [-0.060, -0.002] | no |  |  |
+| cxr_drain/raddino518_universal/paired_deltas.csv | mask_dfr|dfr|clean | +0.001 [-0.011, +0.013] | +0.000 [-0.022, +0.021] | no |  |  |
+| cxr_drain/raddino518_universal/paired_deltas.csv | jtt|erm|test_rev | -0.016 [-0.020, -0.011] | -0.015 [-0.023, -0.006] | no |  |  |
+| cxr_drain/raddino518_universal/paired_deltas.csv | jtt|erm|clean | -0.012 [-0.019, -0.005] | -0.012 [-0.024, +0.003] | **yes** |  |  |
+| cxr_drain/raddino518_universal/paired_deltas.csv | mte|jtt|test_rev | +0.094 [+0.077, +0.109] | +0.094 [+0.077, +0.111] | no |  |  |
+| cxr_drain/raddino518_universal/paired_deltas.csv | mte|jtt|clean | -0.028 [-0.041, -0.014] | -0.024 [-0.039, -0.009] | no |  |  |
+| cxr_drain/dino518_universal/paired_deltas.csv | mask|erm|test_rev | +0.012 [+0.002, +0.023] | +0.005 [-0.013, +0.023] | **yes** |  |  |
+| cxr_drain/dino518_universal/paired_deltas.csv | mask|erm|clean | +0.012 [-0.000, +0.023] | +0.011 [-0.004, +0.029] | no |  |  |
+| cxr_drain/dino518_universal/paired_deltas.csv | mte|mask|test_rev | -0.008 [-0.015, +0.000] | -0.001 [-0.009, +0.008] | no |  |  |
+| cxr_drain/dino518_universal/paired_deltas.csv | mte|mask|clean | -0.000 [-0.006, +0.006] | -0.001 [-0.008, +0.007] | no |  |  |
+| cxr_drain/dino518_universal/paired_deltas.csv | mte|mte_aug|test_rev | -0.010 [-0.016, -0.002] | -0.002 [-0.010, +0.008] | **yes** |  |  |
+| cxr_drain/dino518_universal/paired_deltas.csv | mte|mte_aug|clean | -0.001 [-0.007, +0.005] | -0.001 [-0.007, +0.006] | no |  |  |
+| cxr_drain/dino518_universal/paired_deltas.csv | mte_protect|mask|test_rev | -0.011 [-0.019, -0.003] | -0.003 [-0.013, +0.006] | **yes** |  |  |
+| cxr_drain/dino518_universal/paired_deltas.csv | mte_protect|mask|clean | -0.016 [-0.023, -0.009] | -0.013 [-0.019, -0.007] | no |  |  |
+| cxr_drain/dino518_universal/paired_deltas.csv | mte_balanced|balanced|test_rev | +0.044 [+0.025, +0.064] | +0.031 [-0.023, +0.079] | **yes** |  |  |
+| cxr_drain/dino518_universal/paired_deltas.csv | mte_balanced|balanced|clean | +0.023 [+0.010, +0.037] | +0.020 [+0.001, +0.040] | no |  |  |
+| cxr_drain/dino518_universal/paired_deltas.csv | mask_dfr|dfr|test_rev | +0.018 [+0.001, +0.034] | +0.023 [-0.004, +0.050] | **yes** |  |  |
+| cxr_drain/dino518_universal/paired_deltas.csv | mask_dfr|dfr|clean | +0.017 [-0.003, +0.039] | +0.017 [+0.000, +0.033] | **yes** |  |  |
+| cxr_drain/dino518_universal/paired_deltas.csv | jtt|erm|test_rev | +0.014 [+0.009, +0.019] | +0.009 [+0.002, +0.016] | no |  |  |
+| cxr_drain/dino518_universal/paired_deltas.csv | jtt|erm|clean | -0.004 [-0.011, +0.002] | -0.001 [-0.010, +0.006] | no |  |  |
+| cxr_drain/dino518_universal/paired_deltas.csv | mte|jtt|test_rev | -0.010 [-0.019, -0.000] | -0.005 [-0.021, +0.011] | **yes** |  |  |
+| cxr_drain/dino518_universal/paired_deltas.csv | mte|jtt|clean | +0.016 [+0.004, +0.028] | +0.012 [-0.005, +0.029] | **yes** |  |  |
 

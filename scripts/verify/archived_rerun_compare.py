@@ -177,6 +177,20 @@ def main():
                                       diff_over_003=("est_diff_over_003", "sum")).to_string())
 
 
+NOTES = {"LaMa": (
+    "**Provenance of the thyroid U-MtE-protect change** (checked 2026-09-29, no GPU run): the archived thyroid "
+    "protect_generic run was committed in 419b252 (2026-09-27 01:56), before 001f743 (04:40, protected arm added to the "
+    "drivers) and before later runner changes. The regenerated protect_generic run gives U-MtE-protect − ERM +0.392 on "
+    "Trap A reversed, equal to the protected arm of the regenerated universal run (+0.392), against +0.328 archived; every "
+    "other arm of the run reproduces within 0.002. `git diff 419b252 HEAD -- scripts/run_thyroid_traps.py "
+    "src/wtss/experiments/ src/wtss/methods/insertion.py`, restricted to the protected arm, shows no change in its "
+    "computation: `disease_directions` and `protect` are identical, the subspace fit keeps energy 0.9 and at most 64 "
+    "directions, and the call site is the same. The diff changes only the cache-coverage check (`_covered`), the BLAS "
+    "thread limit (`threadpool_limits(2)` removed), the process-pool conditions and adds new arms. The cached feature files "
+    "the arm reads were rewritten after the archived run (erm/mask 2026-09-27 19:05, mask_insert_generic 2026-09-28 00:56), "
+    "so the two runs used different extractions of the same views. The cause is still unclear; nothing was adjusted."),}
+
+
 def write_md(d: pd.DataFrame):
     fmt = lambda e, l, h: "—" if not np.isfinite(e) else (f"{e:+.3f}" + (f" [{l:+.3f}, {h:+.3f}]" if np.isfinite(l) else ""))
     lines = ["# Archived analyses regenerated (A1 addendum, docs/PREREGISTRATION_FINAL.md)", "",
@@ -185,7 +199,7 @@ def write_md(d: pd.DataFrame):
              "Verdict = CI excludes zero.", ""]
     for an, g in d.groupby("analysis", sort=False):
         ok = g[g.new_est.notna()]
-        lines += [f"## {an}", "", f"- rows: {len(g)}; regenerated: {len(ok)}; verdict changed: "
+        lines += [f"## {an}", ""] + ([NOTES[an], ""] if an in NOTES else []) + [f"- rows: {len(g)}; regenerated: {len(ok)}; verdict changed: "
                   f"{int(g.verdict_changed.fillna(False).astype(bool).sum())}; point estimates differing by more than 0.03: "
                   f"{int(g['est_diff_over_003'].sum())}", "",
                   "| file | key | old | new | verdict changed | Δ > 0.03 | note |", "|---|---|---|---|---|---|---|"]
