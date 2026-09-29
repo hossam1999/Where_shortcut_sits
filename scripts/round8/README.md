@@ -23,3 +23,15 @@ bash scripts/round8/phase1.sh          # Phase 1: scoreboard of existing results
 | `ft.py` | D6: locrand during fine-tuning of the thyroid ConvNeXt-T |
 | `analyse.py` | D1–D6, IUT, Holm, replication, every arm × cell, `results/round8/SUMMARY.md` |
 | `scoreboard.py`, `pair_decomposition.py`, `criterion_check.py`, `design_tables.py` | Phase 1 |
+
+## Absolute AUROC for the paper's remedies table (after release)
+The paper's remedies table reports each arm minus masking from `confirm/descriptive_all_cells.csv`. The absolute AUROCs
+need the git-ignored confirmation predictions, which are in `wtss_outputs.tar`:
+
+    tar -xf wtss_outputs.tar --wildcards 'results/round8/confirm/trap/*_dino518/predictions.csv.gz' \
+                                         'results/round8/confirm/natural/*_dino518/predictions.csv.gz'
+    PYTHONPATH=src python scripts/round8/absolute_scores.py      # CPU only
+    git add results/round8/confirm/absolute_auroc.csv            # the predictions stay git-ignored
+
+The script checks that every arm minus masking reproduces the registered differences (it stops otherwise).
+`scripts/make_main_summary_tables.py` then switches the table to absolute AUROCs with a masking column.
