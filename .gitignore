@@ -33,3 +33,7 @@ results/round7/_smoke/
 # round 8: smoke runs and per-source scoreboard parts (regenerable; never committed)
 results/round8/_smoke/
 results/round8/scoreboard_parts/
+
+# round-9 search: predictions and smoke runs (never committed)
+results/round9_search/preds/
+results/round9_search/_smoke/
