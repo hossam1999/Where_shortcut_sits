@@ -155,6 +155,9 @@ def devices():
                 g = lambda z: (z["seed_delta_mean"], z["ci95_lo"], z["ci95_hi"])
                 rows.append(row("chest devices", str(fo.relative_to(OLD)), f"{enc}|{d}|crossover", g(o),
                                 g(n) if n else None, "" if n else "not regenerated"))
+    for r in rows:  # author's decision 2026-09-29: the device-matched follow-up was dropped for time; archived values stand
+        if "raddino518_devmatched" in r["file"]:
+            r["note"] = "not re-estimated (dropped for time); archived point estimate unchanged"
     return rows
 
 
