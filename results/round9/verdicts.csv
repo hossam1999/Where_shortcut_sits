@@ -1,0 +1,11 @@
+scope,candidate,role,p_iut,no_flipping,components,components_met,losses,all_D2_met,sequence,dominates
+all cohorts,mask_condadv,candidate,0.9999,True,42,27,6,False,tested,False
+all cohorts,mask_irm,candidate,0.3433,True,42,41,1,True,not tested in the sequence,False
+all cohorts,mask_vrex,candidate,0.7999,True,42,40,1,True,not tested in the sequence,False
+all cohorts,mask_cmc,reference,0.8489,True,42,41,1,True,descriptive reference,
+all cohorts,mask_bal,reference,0.9803,True,42,38,3,True,descriptive reference,
+without ovary,mask_condadv,candidate,0.9999,True,35,26,3,False,tested,False
+without ovary,mask_irm,candidate,0.3433,True,35,34,1,True,not tested in the sequence,False
+without ovary,mask_vrex,candidate,0.7999,True,35,33,1,True,not tested in the sequence,False
+without ovary,mask_cmc,reference,0.8489,True,35,34,1,True,descriptive reference,
+without ovary,mask_bal,reference,0.9803,True,35,32,3,True,descriptive reference,
