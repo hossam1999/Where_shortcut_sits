@@ -79,3 +79,18 @@ Reversed AUROC (ERM / mask / U-MtE): r=0: 0.913 / 0.910 / 0.891; r=0.5: 0.772 / 
 - With artifact labels, balanced alone is better than U-MtE_balanced (−0.031 [−0.038, −0.025]).
 Interpretation: with a strong disease signal (clean AUROC 0.91) RAD-DINO ignores extra-pulmonary overlays; the
 in-ROI residual shortcut after masking is still present and is what U-MtE removes.
+
+## Results after regeneration (2026-09-29; docs/PREREGISTRATION_FINAL.md, A1 addendum; the text above is unchanged)
+Regenerated with per-image predictions and the crossed seed × image bootstrap (results/rerun_2026-09-28/cxr_traps/;
+old versus new in results/bootstrap_correction/archived_old_vs_new.md). Holm over the four diseases per encoder.
+- **RAD-DINO (primary):** X1 supported 4/4; X2 not supported 0/4; X3 not supported 0/4. The archived per-seed
+  analysis had X3 in 1/4 (Atelectasis); regenerated, Atelectasis +0.046 [+0.011, +0.082], Holm p = 0.054.
+  Infiltration −0.025 [−0.055, +0.006] (archived −0.032, CI excluding zero).
+- **MedSigLIP-448 (registered replication; only cell counts had been archived, so these fits are its first):**
+  X1 supported 4/4; X2 supported 1/4 (Effusion −0.084 [−0.125, −0.043]); X3 supported 4/4 (Atelectasis +0.095,
+  Consolidation +0.139, Effusion +0.328, Infiltration +0.135; Holm p < 0.001 each).
+- **DINOv2 (registered replication):** not run.
+- Device-matched follow-up (RAD-DINO, Infiltration): not regenerated (dropped for time); archived point estimates stand.
+Interpretation for the paper: chest radiography stays a boundary case. The primary radiograph encoder shows no
+crossover; MedSigLIP, which relies on the out-of-lung tube, shows it for every finding, on a contrast confounded with
+other tubes (Follow-up 1) in the direction that works against a positive crossover.

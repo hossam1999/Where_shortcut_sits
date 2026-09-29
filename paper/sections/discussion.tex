@@ -69,13 +69,14 @@ ConvNeXt-T reaches 0.769, near but below the lowest published baseline, and show
 (Sec.~\ref{sec:natural}). The law replicates with end-to-end fine-tuned networks in three of four cohorts; on ovarian ultrasound the fine-tuned ResNet-50
 barely learns the task and shows no significant crossover (Sec.~\ref{sec:replication}). The other cohorts' binary
 tasks have no published benchmark on the same split (Supplement~S10).
-(v) \emph{Scope.} Chest radiography is a boundary case: the encoder ignored extra-pulmonary tubes and real drains carry
-the shortcut through correlates. The linear-Gaussian account is fitted per model and cannot anticipate a shortcut
+(v) \emph{Scope.} Chest radiography is a boundary case: the radiograph encoder ignored extra-pulmonary tubes, the
+crossover that a second encoder shows rests on a device contrast confounded with other tubes, and real drains carry the
+shortcut through correlates. The linear-Gaussian account is fitted per model and cannot anticipate a shortcut
 carried by correlates that the clean and correlated environments do not expose.
 (vi) \emph{Uncertainty and balance.} The original per-seed bootstrap understated CIs where seeds share test
 images. All intervals were therefore recomputed with the crossed bootstrap from regenerated runs (Sec.~\ref{sec:setup});
-claims whose interval then included zero were rewritten, and the few runs that could not be regenerated are given as
-point estimates only. Matching left within-label standardised
+claims whose interval then included zero were rewritten, and a few secondary analyses from runs that could not be
+regenerated are given as point estimates only. Matching left within-label standardised
 differences of up to 0.19 for some covariates. (vii) \emph{Transplant.} Pasted patterns, including neutral tissue,
 become learnable shortcuts; the transplant establishes location dependence on fixed images, not the size of real
 artifacts' effects in their natural context (for hair, whose natural shortcut is carried mostly by correlates, the

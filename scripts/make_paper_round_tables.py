@@ -1,4 +1,4 @@
-"""Supplement S16-S17 tables: copies of the generated Stage 7-9 tables (rounds 4-9) with journal wording.
+"""Supplement S3, S16-S17 tables: copies of the generated Stage 3 device table and Stage 7-9 tables (rounds 4-9) with journal wording.
 
 The stage reports refer to "Stage 3", "R10", "A2" and so on; the paper does not. This script copies each generated
 table, expands the stage macros to their values, replaces those internal names and prefixes the labels, so the numbers
@@ -11,6 +11,7 @@ import re
 from pathlib import Path
 
 ROOT = Path(__file__).resolve().parents[1]
+S3 = ROOT / "stages" / "stage3_real_artifacts" / "tables"
 S7 = ROOT / "stages" / "stage7_robustness_external" / "tables"
 S8 = ROOT / "stages" / "stage8_labels_strong_model" / "tables"
 S9 = ROOT / "stages" / "stage9_remedies_dominance" / "tables"
@@ -54,7 +55,7 @@ def macros() -> dict:
 def main():
     mac = macros()
     OUT.mkdir(parents=True, exist_ok=True)
-    for (d, name), sec in [(x, "s16") for x in TABLES] + [(x, "s17") for x in S17]:
+    for (d, name), sec in [((S3, "cxr"), "s3")] + [(x, "s16") for x in TABLES] + [(x, "s17") for x in S17]:
         t = (d / f"{name}.tex").read_text()
         t = re.sub(r"\\(s(?:Seven|Eight|Nine)\w+)(\{\})?", lambda m: mac[m.group(1)], t)
         for a, b in WORDS:
@@ -68,7 +69,7 @@ def main():
     import shutil
     fig = ROOT / "stages" / "stage9_remedies_dominance" / "figures" / "dominance_paper.pdf"
     shutil.copyfile(fig, ROOT / "paper" / "figures" / "dominance.pdf")
-    print("S16/S17 tables written:", len(TABLES) + len(S17), "; figure copied: paper/figures/dominance.pdf")
+    print("S3/S16/S17 tables written:", 1 + len(TABLES) + len(S17), "; figure copied: paper/figures/dominance.pdf")
 
 
 if __name__ == "__main__":

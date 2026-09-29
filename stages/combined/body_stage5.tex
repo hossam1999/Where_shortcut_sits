@@ -322,9 +322,9 @@ against \sFiveTMaeSym{} for the symmetric-reversal heuristic and \sFiveTMaeClean
 sign of all \sFiveTTwoN{} real-trap crossovers right (MAE \sFiveTTwoMae) and of \sFiveTTwoFt{} fine-tuned crossovers ---
 networks that violate its assumptions --- and the sign of \sFiveTThreeSign{} of \sFiveTThreeN{} controlled-sweep gains
 (heuristic: \sFiveTThreeSymSign). From the fitted $S$ alone, the sign of the in-ROI masking effect is right in
-\sFiveTFourAgree{} of \sFiveTFourN{} cells. Its clear failure is the chest-drain cohort of Stage~3: the clean and
-correlated environments do not reveal a shortcut carried by the treated lung, so the model cannot see it --- the boundary
-its assumption (5) predicts.
+\sFiveTFourAgree{} of \sFiveTFourN{} cells. Its clear failure is the chest-drain cohort of Stage~3 (implied reversed
+AUROC \sFiveTDrainPred, observed \sFiveTDrainObs): the clean and correlated environments do not reveal a shortcut
+carried by the treated lung, so the model cannot see it --- the boundary its assumption (5) predicts.
 
 The account is simple: a model's reliance on an artifact is fixed by the ratio of artifact to disease signal it sees;
 masking lowers the disease signal (less context) and, when the artifact lies inside the ROI, leaves the artifact's signal
@@ -347,9 +347,11 @@ Fine-tuned (outside assumptions) & linear-Gaussian theory & 12 & 0.027 & 0.980 &
 \caption{Left: predicted versus observed reversed AUROC (theory, blue; symmetric heuristic, grey). Right: predicted
 versus observed real-trap crossover (frozen encoders, blue; fine-tuned, red).}\label{s5:fig:theory}\end{figure}
 \paragraph{Verdict by the registered rule} The rule called the theory \emph{quantitatively predictive} only if every
-crossover sign agreed, both correlations were $\ge0.7$, and its error beat ``reversed = clean''. On the full registered
-cell set one near-zero chest-radiograph crossover (observed $\approx-0.002$) had the wrong sign; the report therefore calls
-it a \emph{qualitative account that closely matches held-out results} and does not say that it ``predicts magnitudes''. The
+crossover sign agreed, both correlations were $\ge0.7$, and its error beat ``reversed = clean''. The cells above exclude
+chest radiography. With the regenerated chest-radiograph cells added (\sFiveTCxrN{} cells; error \sFiveTCxrMae, $r$
+\sFiveTCxrR) one near-zero device crossover has the wrong sign (\sFiveTCxrWrong: observed \sFiveTCxrWrongObs, implied
+\sFiveTCxrWrongPred; \sFiveTCxrSign{} of \sFiveTCxrSignN{} signs agree), as it did in the archived analysis; the report
+therefore calls it a \emph{qualitative account that closely matches held-out results} and does not say that it ``predicts magnitudes''. The
 correlation of predicted and observed crossovers ($r=$ \sFiveTTwoR) is not used as evidence, because the symmetric
 heuristic also correlates almost perfectly; the held-out error is the evidence.
 
@@ -413,7 +415,7 @@ finetune/\allowbreak{}thyroid/\allowbreak{}vit\_small\_patch16\_224.augreg\_in21
 \item \textbf{Fine-tuning}: thyroid ResNet-50 is not significant; the ovary network is not evaluable.
 \item \textbf{DermLIP}: no crossover; explained, and anticipated by the theory, but still an exception.
 \item \textbf{The theory} is a qualitative account by its registered rule and fails for correlate-carried shortcuts (chest
-drains); the chest-radiograph cells could not be re-estimated and are excluded from its current error figures.
+drains); with the regenerated chest-radiograph cells one of \sFiveTCxrSignN{} crossover signs disagrees.
 \item \textbf{Absolute performance} is below task-specific fine-tuned models on thyroid.
 \item \textbf{External validation is dermoscopy only}; no ultrasound or capsule cohort passed the gate.
 \end{itemize}

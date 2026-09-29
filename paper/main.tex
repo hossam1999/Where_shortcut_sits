@@ -143,9 +143,10 @@ each seed, which treats a test set shared by the seeds as several and gave inter
 unaltered-data analysis was therefore regenerated from per-image predictions, and \emph{every interval of a model
 comparison in the paper and the supplement is a crossed-bootstrap interval}; none uses the per-seed estimator. Two
 further cases are stated where they occur: agreement statistics between label sources, which involve no training
-seeds, use an image bootstrap; and archived runs whose per-image predictions were not kept (real chest-radiograph devices and drains,
-LaMa inpainting, template-based erasure) are reported as point estimates without intervals, marked ``not
-re-estimated''. Registration status: the real traps, sweeps and unaltered-data tests were
+seeds, use an image bootstrap; and a few secondary analyses in the supplement (patch-token suppression, pseudo-group
+balancing, erasure combined with DFR, the validation-driven selectors, text-prompted erasure, SPLINCE on chest drains
+and LaMa on dermoscopic hair) come from archived runs whose per-image predictions were not kept and are reported as
+point estimates, marked as archived. Registration status: the real traps, sweeps and unaltered-data tests were
 registered before their results (the 16-test primary family was grouped afterwards); the covariate-matched traps, the
 transplant, its paste-edge control and the operating points were designed after the real-trap results and registered
 before their own results, and each forms its own Holm family outside the primary family (Supplement~S1). The

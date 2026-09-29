@@ -208,8 +208,7 @@ def robustness():
     """min(reversed, correlated) AUROC per arm (robustness summary) and shortcut-flip flags, Trap A."""
     out = []
     for coh, bb, rel in UNIV_ALL + [("Chest drains", "RAD-DINO", "cxr_drain/raddino518_universal")]:
-        root = L.OLD if rel.startswith("cxr") else L.NEW
-        m = L.csv(f"{rel}/metrics_per_seed.csv", root)
+        m = L.csv(f"{rel}/metrics_per_seed.csv")
         if m is None:
             continue
         if "trap" in m:
@@ -238,8 +237,8 @@ def robustness():
             M.add(f"Rob{L.Macros.clean(coh.split()[0] + bb + r.arm)}", L.f3(r.min_rev_corr))
     L.table(T / "robustness.tex", ["Trap A"] + [a[1] for a in ROB_ARMS], rows,
             "Robustness summary in the in-ROI trap: $\\min$(reversed, correlated) AUROC per arm (mean over seeds; best per "
-            "row in bold; $^\\dagger$ = the arm flips the shortcut, correlated $<$ reversed $-0.02$). Chest drains: point "
-            "estimates, not re-estimated.", "tab:rob", size="\\scriptsize", resize=True)
+            "row in bold; $^\\dagger$ = the arm flips the shortcut, correlated $<$ reversed $-0.02$).", "tab:rob",
+            size="\\scriptsize", resize=True)
 
 
 def primary_all():
@@ -392,11 +391,47 @@ def finetune_remedies():
             "tab:ftrem", size="\\scriptsize", resize=True)
 
 
+def regenerated_remedies():
+    """Remedy analyses first archived without per-image predictions and regenerated with them (A1 addendum,
+    docs/PREREGISTRATION_FINAL.md): LaMa then masking (thyroid, ovary), template-based U-MtE on capsule debris, and the
+    chest-drain remedy contrasts. Crossed 95% CIs."""
+    out = []
+    for coh in ("thyroid", "ovary"):
+        j = L.js(f"{coh}/dino518_lama/lama_comparison_crossed.json")
+        for k in ("mask_lama-mask", "mte_protect-mask_lama", "mte_balanced-mask_lama"):
+            e, lo, hi = j[k]
+            out.append({"analysis": "LaMa inpainting then masking", "cohort": coh, "contrast": k, "estimate": e, "lo": lo, "hi": hi})
+    x = L.js("capsule/dino518_protect_tmpl/EXTRA.json")["trapA_mte_minus_mask"]
+    out.append({"analysis": "U-MtE from real-debris templates", "cohort": "capsule", "contrast": "mte-mask",
+                "estimate": x["seed_delta_mean"], "lo": x["ci95_lo"], "hi": x["ci95_hi"]})
+    p = L.csv("capsule/dino518_protect_tmpl/paired_deltas_crossed.csv").set_index("key").loc["trapA|mte_protect|mask|test_rev"]
+    out.append({"analysis": "U-MtE from real-debris templates", "cohort": "capsule", "contrast": "mte_protect-mask",
+                "estimate": p.estimate, "lo": p.ci95_lo, "hi": p.ci95_hi})
+    for bb, rel in (("RAD-DINO", "cxr_drain/raddino518_universal"), ("DINOv2", "cxr_drain/dino518_universal")):
+        p = L.csv(f"{rel}/paired_deltas_crossed.csv").set_index("key")
+        for a, r_ in (("mte", "mask"), ("mte_protect", "mask"), ("mte", "jtt"), ("mte_balanced", "balanced")):
+            k = f"{a}|{r_}|test_rev"
+            if k in p.index:
+                out.append({"analysis": f"chest drains, {bb}", "cohort": "drains", "contrast": f"{a}-{r_}",
+                            "estimate": p.loc[k].estimate, "lo": p.loc[k].ci95_lo, "hi": p.loc[k].ci95_hi})
+    df = L.derived("stage6_regenerated", pd.DataFrame(out))
+    for r in df.itertuples():
+        M.add(f"Rg{L.Macros.clean(r.analysis.split()[0] + r.analysis.split()[-1] + r.cohort + r.contrast)}", L.ci(r.estimate, r.lo, r.hi))
+    pretty = lambda t: L.tex_escape(t).replace("-", " $-$ ")
+    rows = [[r.analysis if (k == 0 or df.analysis.iloc[k - 1] != r.analysis) else "", L.tex_escape(r.cohort), pretty(r.contrast),
+             L.ci(r.estimate, r.lo, r.hi)] for k, r in enumerate(df.itertuples())]
+    L.table(T / "regenerated.tex", ["Analysis", "Cohort", "Contrast (Trap A, reversed)", "Estimate [95\\% CI]"], rows,
+            "Remedy analyses regenerated with per-image predictions after the other runs (same commands and seeds; "
+            "crossed bootstrap).", "tab:regen", align="p{4.0cm}p{2.0cm}p{4.4cm}c", size="\\scriptsize")
+
+
 def archived_points():
     """Remedy analyses whose per-image predictions were not saved: point estimates only (not re-estimated)."""
     out = []
     lj = json.loads((L.OLD / "lama_comparison.json").read_text())
     for k, v in lj.items():
+        if k.split("|")[0] in ("thyroid", "ovary"):
+            continue  # regenerated: regenerated_remedies()
         out.append({"analysis": "LaMa inpainting (oracle masks)", "cohort": k.split("|")[0], "contrast": k.split("|")[1], "estimate": round(v[0], 3)})
     for coh, rel in (("thyroid", "thyroid/medsiglip448_text"), ("ovary", "ovary/medsiglip448_text"), ("capsule", "capsule/medsiglip448_text"),
                      ("hair (DermLIP)", "spec_e13/dermlip224_spec_text")):
@@ -424,11 +459,6 @@ def archived_points():
             for a in ("umte_pbal", "mte", "pbal", "erm"):
                 if a in m:
                     out.append({"analysis": "pseudo-group balancing (U8)", "cohort": coh, "contrast": f"{a} reversed AUROC", "estimate": round(float(m[a]), 3)})
-    p = pd.read_csv(L.OLD / "cxr_drain/raddino518_universal/paired_deltas.csv")
-    for a, r_ in (("mte", "mask"), ("mte_protect", "mask"), ("mte", "mte_aug"), ("mte", "jtt"), ("mte_balanced", "balanced")):
-        q = p[(p.arm == a) & (p.ref == r_) & (p.env == "test_rev")]
-        if len(q):
-            out.append({"analysis": "chest drains, RAD-DINO", "cohort": "drains", "contrast": f"{a}-{r_}", "estimate": round(float(q.seed_delta_mean.iloc[0]), 3)})
     for tag, f in (("location-adaptive selection (U13)", "adaptive_select_summary.csv"), ("split-validation selection (U14)", "adaptive_select_split_summary.csv")):
         d = pd.read_csv(L.OLD / f)
         # the summary files concatenate the runs in this order; dino518 runs are thyroid, capsule (, ovary)
@@ -580,7 +610,7 @@ def external_examples():
 def main():
     remedies(); primary_remedies(); natural_remedies(); audit(); external(); paper(); registrations(); remedies_figure()
     remedies_all(); robustness(); primary_all(); supp_contrasts(); sweeps_remedies(); baselines(); rank_ablation()
-    finetune_remedies(); archived_points(); scale_remedy(); overlay_figure()
+    finetune_remedies(); regenerated_remedies(); archived_points(); scale_remedy(); overlay_figure()
     try:
         external_examples()
     except Exception as e:  # noqa: BLE001

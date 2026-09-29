@@ -222,6 +222,23 @@ def theory():
     M.add("TThreeMae", L.f3(t3["mae"])); M.add("TThreeSymSign", s["reference_ref_sym"]["T3_sign_agree"])
     M.add("TFourN", s["T4_inroi_sign_from_dS"]["n"]); M.add("TFourAgree", s["T4_inroi_sign_from_dS"]["agree"])
     M.add("TFtMae", L.f3(f["mae"]))
+    # the same procedure with the regenerated chest-radiograph cells added (A1 addendum; retrospective only)
+    sc = L.js("theory_with_cxr/prediction_summary.json")
+    if sc is not None:
+        c1, c2 = sc["T1_primary"]["theory"], sc["T2_crossover"]
+        M.add("TCxrN", c1["n"]); M.add("TCxrMae", L.f3(c1["mae"])); M.add("TCxrR", L.f3(c1["r"]))
+        M.add("TCxrSign", c2["sign_agree"]); M.add("TCxrSignN", c2["n"]); M.add("TCxrVerdict", sc["verdict"])
+        xc = L.csv("theory_with_cxr/prediction_crossover.csv")
+        wrong = xc[(np.sign(xc.obs) != np.sign(xc.pred)) & ~xc.finetune.astype(bool)]
+        if len(wrong):
+            w = wrong.iloc[0]
+            M.add("TCxrWrong", L.tex_escape(w.cohort.replace("CXR ", "").lower()))
+            M.add("TCxrWrongObs", L.s3(float(w.obs))); M.add("TCxrWrongPred", L.s3(float(w.pred)))
+        cells = L.csv("theory_with_cxr/prediction_cells.csv")
+        d = cells[(cells.cohort == "Chest drain") & cells.arm.isin(["erm", "mask"])]
+        if len(d):
+            M.add("TDrainPred", f"{d.pred_rev.min():.2f}--{d.pred_rev.max():.2f}")
+            M.add("TDrainObs", f"{d.rev.min():.2f}--{d.rev.max():.2f}")
     # figure: predicted vs observed reversed AUROC and crossover
     c = L.csv("theory/prediction_cells.csv"); x = L.csv("theory/prediction_crossover.csv")
     plt = L.plot_style()

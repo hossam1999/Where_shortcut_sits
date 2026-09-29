@@ -192,24 +192,57 @@ def primary():
             "two-sided bootstrap $p$ (floored at $10^{-4}$), Holm-adjusted over the four cohorts.", "tab:primary")
 
 
+def _holm(ps):
+    order, adj, run = sorted(range(len(ps)), key=lambda i: ps[i]), [0.0] * len(ps), 0.0
+    for k, i in enumerate(order):
+        run = max(run, min(1.0, (len(ps) - k) * ps[i])); adj[i] = run
+    return adj
+
+
 def cxr():
-    """Chest-radiograph device traps: per-image predictions were not saved, so no interval can be regenerated with
-    the crossed bootstrap (docs/PREREGISTRATION_FINAL.md, A1): point estimates only, labelled not re-estimated."""
-    rows = []
-    for dis in ("Atelectasis", "Consolidation", "Effusion", "Infiltration"):
-        b = L.csv(f"cxr_traps/raddino518/{dis}/bootstrap_vs_erm.csv", root=L.OLD)
-        x = L.js(f"cxr_traps/raddino518/{dis}/X3_crossover.json", root=L.OLD)
-        if b is None:
+    """Chest-radiograph device traps (docs/PREREGISTRATION_CXR_DEVICE_TRAPS.md), regenerated with per-image predictions
+    and the crossed bootstrap (A1 addendum). RAD-DINO is the registered primary encoder, MedSigLIP the registered
+    replication (first fitted in the regeneration). Claims X1-X3 per disease, Holm over the four diseases per encoder."""
+    rows, out = [], []
+    for bb, lab in (("raddino518", "RAD-DINO"), ("medsiglip448", "MedSigLIP")):
+        recs = []
+        for dis in ("Atelectasis", "Consolidation", "Effusion", "Infiltration"):
+            b = L.csv(f"cxr_traps/{bb}/{dis}/bootstrap_vs_erm.csv")
+            x = L.js(f"cxr_traps/{bb}/{dis}/X3_crossover.json")
+            if b is None or x is None:
+                continue
+            g = lambda t: b[(b.trap == t) & (b.arm == "mask") & (b.env == "test_rev")].iloc[0]
+            recs.append((dis, g("trapA"), g("trapB"), x))
+        if not recs:
             continue
-        g = lambda t: b[(b.trap == t) & (b.arm == "mask") & (b.env == "test_rev")].seed_delta_mean
-        rows.append([dis, L.s3(float(g("trapA").iloc[0])) if len(g("trapA")) else "\\na",
-                     L.s3(float(g("trapB").iloc[0])) if len(g("trapB")) else "\\na",
-                     L.s3(None if x is None else float(x["seed_delta_mean"]))])
-    L.table(T / "cxr.tex", ["Finding (NIH, RANZCR-CLiP devices)", "mask $-$ ERM, Trap A", "Trap B", "Crossover"],
-            rows or [["\\na"] * 4], "Chest radiographs with real devices (NIH ChestX-ray14 linked to RANZCR-CLiP; RAD-DINO): Trap A = central "
-            "venous catheter inside the lungs, Trap B = endotracheal tube outside them. Point estimates only, \\textbf{not re-estimated} with the corrected bootstrap (per-image predictions were not saved; "
-            "the old intervals are withdrawn).", "tab:cxr")
+        pa = _holm([float(r[1].p_boot_two_sided) for r in recs])
+        pb = _holm([float(r[2].p_boot_two_sided) for r in recs])
+        px = _holm([float(r[3]["p_boot_two_sided"]) for r in recs])
+        for (dis, a, b_, x), qa, qb, qx in zip(recs, pa, pb, px):
+            x1, x2, x3 = qb < 0.05 and b_.seed_delta_mean > 0, qa < 0.05 and a.seed_delta_mean < 0, qx < 0.05 and x["seed_delta_mean"] > 0
+            rows.append([lab if dis == recs[0][0] else "", dis, L.ci_row(a), L.ci_row(b_), L.ci_row(x), f"{qx:.4f}",
+                         "".join(k for k, ok in (("X1 ", x1), ("X2 ", x2), ("X3", x3)) if ok).strip() or "none"])
+            out.append({"encoder": lab, "disease": dis, "mask_minus_erm_A": round(float(a.seed_delta_mean), 3),
+                        "mask_minus_erm_B": round(float(b_.seed_delta_mean), 3), "crossover": round(float(x["seed_delta_mean"]), 3),
+                        "crossover_lo": round(float(x["ci95_lo"]), 3), "crossover_hi": round(float(x["ci95_hi"]), 3),
+                        "p_holm_X3": round(qx, 4), "X1": x1, "X2": x2, "X3": x3})
+    df = L.derived("stage3_cxr_devices", pd.DataFrame(out))
+    L.table(T / "cxr.tex", ["Encoder", "Finding", "mask $-$ ERM, Trap A (in lungs)", "mask $-$ ERM, Trap B (outside)",
+                            "Crossover", "$p$ (Holm, 4)", "Supported"],
+            rows or [["\\na"] * 7], "Chest radiographs with real devices (NIH ChestX-ray14 linked to RANZCR-CLiP, AP films): "
+            "Trap A = central venous catheter inside the lungs, Trap B = endotracheal tube outside them; reversed-test "
+            "AUROC, crossed 95\\% CIs, Holm over the four findings per encoder. Registered claims: X1 masking helps in "
+            "Trap B, X2 masking harms in Trap A, X3 crossover $>0$. RAD-DINO is the registered primary encoder; the "
+            "registered MedSigLIP replication was fitted for the first time when these runs were regenerated.", "tab:cxr",
+            size="\\scriptsize", resize=True)
     M.add("NCxr", len(rows))
+    for lab, q in df.groupby("encoder", sort=False):
+        k = L.Macros.clean(lab)
+        M.add(f"CxrXOne{k}", int(q.X1.sum())); M.add(f"CxrXTwo{k}", int(q.X2.sum())); M.add(f"CxrXThree{k}", int(q.X3.sum()))
+        M.add(f"CxrXmin{k}", L.s3(float(q.crossover.min()))); M.add(f"CxrXmax{k}", L.s3(float(q.crossover.max())))
+    e = df[(df.encoder == "MedSigLIP") & (df.disease == "Effusion")]
+    if len(e):
+        M.add("CxrMedSigLIPEffA", L.s3(float(e.mask_minus_erm_A.iloc[0])))
 
 
 def registrations():
@@ -361,10 +394,11 @@ def hair_correlates():
 
 
 def cxr_extra():
-    """Chest drains (NIH, NEATX labels) with both backbones and the device-matched follow-up (point estimates)."""
+    """Chest drains (NIH, NEATX labels) with both backbones (regenerated, A1 addendum) and the device-matched follow-up
+    (archived point estimates; not re-estimated)."""
     out = []
     for bb, d in (("RAD-DINO", "cxr_drain/raddino518_universal"), ("DINOv2", "cxr_drain/dino518_universal")):
-        m = pd.read_csv(L.OLD / d / "metrics_per_seed.csv")
+        m = pd.read_csv(L.NEW / d / "metrics_per_seed.csv")
         g = m.groupby(["method", "env"]).auc.mean().unstack()
         for meth in ("erm", "mask", "balanced", "dfr", "mask_dfr"):
             out.append({"backbone": bb, "method": meth, "clean": round(g.loc[meth, "clean"], 3),
@@ -375,8 +409,13 @@ def cxr_extra():
             for r in df.itertuples()]
     L.table(T / "drains.tex", ["Encoder", "Arm", "clean", "correlated", "reversed"], rows,
             "Real chest drains (NIH ChestX-ray14 pneumothorax, 29,687 images, patient-grouped folds; drains lie inside the "
-            "lungs, so this is an in-ROI trap only). AUROC, mean over 5 folds; \\textbf{point estimates, not re-estimated} "
-            "with the crossed bootstrap (per-image predictions were not saved).", "tab:drains", size="\\scriptsize")
+            "lungs, so this is an in-ROI trap only). AUROC, mean over 5 seeds of 5 patient-grouped folds.", "tab:drains",
+            size="\\scriptsize")
+    for bb, d in (("RAD-DINO", "cxr_drain/raddino518_universal"), ("DINOv2", "cxr_drain/dino518_universal")):
+        p = pd.read_csv(L.NEW / d / "paired_deltas_crossed.csv").set_index("key")
+        if "mask|erm|test_rev" in p.index:
+            r = p.loc["mask|erm|test_rev"]
+            M.add(f"Dr{L.Macros.clean(bb)}MaskGain", L.ci(r.estimate, r.ci95_lo, r.ci95_hi))
     for r in df.itertuples():
         k = L.Macros.clean(r.backbone + r.method)
         M.add(f"Dr{k}Rev", L.f3(r.test_rev)); M.add(f"Dr{k}Clean", L.f3(r.clean))

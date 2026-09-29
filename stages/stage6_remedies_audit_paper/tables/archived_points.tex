@@ -7,17 +7,7 @@ Analysis & Cohort / run & Contrast (Trap A, reversed) & Point estimate \\\midrul
 \endhead
 \bottomrule
 \endlastfoot
-LaMa inpainting (oracle masks) & thyroid & lama $-$ mask & $+0.025$ \\
- & thyroid & mask\_lama $-$ mask & $+0.226$ \\
- & thyroid & mte\_protect $-$ mask\_lama & $-0.009$ \\
- & thyroid & mte\_balanced $-$ mask\_lama & $+0.162$ \\
- & thyroid & lama $-$ erm & $+0.136$ \\
- & ovary & lama $-$ mask & $+0.027$ \\
- & ovary & mask\_lama $-$ mask & $+0.123$ \\
- & ovary & mte\_protect $-$ mask\_lama & $-0.080$ \\
- & ovary & mte\_balanced $-$ mask\_lama & $+0.067$ \\
- & ovary & lama $-$ erm & $+0.158$ \\
- & isic & lama $-$ mask & $+0.145$ \\
+LaMa inpainting (oracle masks) & isic & lama $-$ mask & $+0.145$ \\
  & isic & mask\_lama $-$ mask & $+0.127$ \\
  & isic & mte\_protect $-$ mask\_lama & $-0.086$ \\
  & isic & mte\_balanced $-$ mask\_lama & $+0.123$ \\
@@ -61,11 +51,6 @@ pseudo-group balancing (U8) & thyroid & umte\_pbal reversed AUROC & 0.663 \\
  & hair & mte reversed AUROC & 0.506 \\
  & hair & pbal reversed AUROC & 0.498 \\
  & hair & erm reversed AUROC & 0.491 \\
-chest drains, RAD-DINO & drains & mte $-$ mask & $+0.029$ \\
- & drains & mte\_protect $-$ mask & $+0.030$ \\
- & drains & mte $-$ mte\_aug & $+0.031$ \\
- & drains & mte $-$ jtt & $+0.094$ \\
- & drains & mte\_balanced $-$ balanced & $-0.079$ \\
 location-adaptive selection (U13) & thyroid & auto $-$ mask & $+0.395$ \\
  & thyroid & auto $-$ dfr & $+0.057$ \\
  & capsule & auto $-$ mask & $+0.168$ \\

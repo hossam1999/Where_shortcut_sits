@@ -176,8 +176,9 @@ is less complete with ViT-L.
 \input{tables/scale_remedy.tex}
 
 \subsection{Published baselines and alternatives}
-Table~\ref{tab:jtt} (crossed intervals available) and Table~\ref{tab:archived} (point estimates of analyses whose predictions were not
-saved).
+Table~\ref{tab:jtt} (crossed intervals), Table~\ref{tab:regen} (analyses first archived without per-image predictions and
+regenerated with them; crossed intervals) and Table~\ref{tab:archived} (point estimates of analyses whose predictions were
+not saved).
 \begin{itemize}[leftmargin=*]\itemsep1pt
 \item \textbf{JTT} (label-free): U-MtE beats it on thyroid (\sSixScthyroidmtejtt) and ovary (\sSixScovarymtejtt); JTT wins
 on hair ($\min$(rev, corr) \sSixBlDermoscopyjtt{} versus \sSixBlDermoscopymte); on capsule U-MtE+JTT is the most robust
@@ -187,8 +188,12 @@ label-free combination (\sSixBlCapsuleumtejtt).
 on thyroid, capsule and hair (\sSixBlThyroidmtebalanced{} versus \sSixBlThyroidsplice; \sSixBlCapsulemtebalanced{} versus
 \sSixBlCapsulesplice; \sSixBlDermoscopymtebalanced{} versus \sSixBlDermoscopysplice).
 \item \textbf{LaMa inpainting} of the detected artifact pixels, followed by masking, is a strong baseline that needs artifact
-masks; protected U-MtE matches it on thyroid without masks and is below it on ovary and hair; U-MtE with balancing beats
-it everywhere.
+masks (over masking: thyroid \sSixRgLaMamaskingthyroidmasklamamask, ovary \sSixRgLaMamaskingovarymasklamamask). Protected
+U-MtE, which needs no artifact mask, exceeds it on thyroid (\sSixRgLaMamaskingthyroidmteprotectmasklama) and is below it on
+ovary (\sSixRgLaMamaskingovarymteprotectmasklama) and hair (\sSixArLaMaisicmteprotectmasklama, archived point estimate);
+U-MtE with balancing beats it everywhere. The thyroid comparison changed when the run was regenerated (archived
+$-0.009$): the protected arm reproduced about 0.06 higher than in its first run, with unchanged code for that arm, and
+now agrees with the protected arm of the main regenerated run (\texttt{results/bootstrap\_correction/archived\_old\_vs\_new.md}).
 \item \textbf{Text-prompted erasure} with MedSigLIP and DermLIP is a near no-op ($\le$ \sSixArtextpromptedovarymasktexterasemask{}
 over masking): the text-space artifact direction does not coincide with the image-space direction along which the artifact
 moves the representation.
@@ -199,9 +204,14 @@ versus \sSixArpseudogroupthyroidmtereversedAUROC{} for U-MtE) and not on hair, w
 \item \textbf{Erasure + DFR} adds at most about 0.01 over masking + DFR: once a group-robust head is used, masking does the rest.
 \item \textbf{Validation-driven selectors} beat masking in every cohort and are within about 0.02 of the best candidate, but
 neither is uniformly best; admitting DFR as a candidate fixes chest drains and makes the choice noisier elsewhere.
-\item \textbf{Chest drains}: U-MtE gains only about 0.03 over masking with RAD-DINO and nothing with DINOv2; DFR is best.
+\item \textbf{Chest drains}: U-MtE gains \sSixRgchestRADDINOdrainsmtemask{} over masking with RAD-DINO and nothing with
+DINOv2 (\sSixRgchestDINOvTwodrainsmtemask); DFR is best.
+\item \textbf{Templates instead of generic overlays} on capsule debris make erasure worse
+(\sSixRgUMtEtemplatescapsulemtemask{} against masking); disease protection removes that failure
+(\sSixRgUMtEtemplatescapsulemteprotectmask).
 \end{itemize}
 \input{tables/jtt_splice.tex}
+\input{tables/regenerated.tex}
 \input{tables/archived_points.tex}
 
 \subsection{Robustness of the remedy tests to leakage groups}
@@ -316,8 +326,9 @@ generative-AI disclosure.
 \item External validation exists for dermoscopy only.
 \item The theory is fitted per model and cannot see correlate-carried shortcuts.
 \item Disease protection needs diagnosis labels of artifact-free images; balanced variants need image-level artifact labels.
-\item Some analyses (chest-radiograph devices and drains, LaMa, text prompts, SLAS, selectors) could not be re-estimated with
-the crossed bootstrap and are reported as point estimates.
+\item Some secondary analyses (text prompts, SLAS, pseudo-groups, erasure + DFR, the selectors, LaMa on hair) could not be
+re-estimated with the crossed bootstrap and are reported as point estimates; the chest-radiograph devices and drains,
+LaMa on thyroid and ovary and the template variant were regenerated with per-image predictions.
 \item Commit times of registrations are machine-set; only the registrations pushed to GitHub before running carry an
 external time stamp.
 \end{enumerate}

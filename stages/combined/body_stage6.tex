@@ -228,7 +228,7 @@ drains (\sSixRobChestRADDINOdfr). DFR and masking + DFR over-correct on thyroid:
 reversed one (marked $^\dagger$). Without artifact labels, protected U-MtE is the most robust label-free arm for thyroid; for
 capsule the best label-free choice is U-MtE combined with JTT (Table~\ref{s6:tab:jtt}).
 \begin{table}[H]\centering\scriptsize
-\caption{Robustness summary in the in-ROI trap: $\min$(reversed, correlated) AUROC per arm (mean over seeds; best per row in bold; $^\dagger$ = the arm flips the shortcut, correlated $<$ reversed $-0.02$). Chest drains: point estimates, not re-estimated.}\label{s6:tab:rob}
+\caption{Robustness summary in the in-ROI trap: $\min$(reversed, correlated) AUROC per arm (mean over seeds; best per row in bold; $^\dagger$ = the arm flips the shortcut, correlated $<$ reversed $-0.02$).}\label{s6:tab:rob}
 \resizebox{\linewidth}{!}{\begin{tabular}{lcccccccccc}\toprule
 Trap A & ERM & mask & U-MtE & U-MtE prot. & overlay aug. & JTT & balanced & DFR & mask+DFR & U-MtE+bal. \\\midrule
 Dermoscopy hair, DINOv2 & 0.510 & 0.460 & 0.500 & 0.502 & 0.466 & 0.575 & \textbf{0.722} & 0.705 & 0.662 & 0.695 \\
@@ -240,7 +240,7 @@ Ovarian calipers, MedSigLIP & 0.426 & 0.428 & 0.638 & 0.581 & 0.444 & -- & 0.729
 Capsule debris, DINOv2 & 0.581 & 0.665 & 0.539 & 0.659 & 0.678 & 0.596 & 0.760 & 0.816 & \textbf{0.892} & 0.839 \\
 Capsule debris, MedSigLIP & 0.570 & 0.687 & 0.457 & 0.658 & 0.706 & -- & 0.796 & 0.825 & \textbf{0.915} & 0.839 \\
 Capsule debris, ConvNeXt & 0.528 & 0.612 & 0.537 & 0.636 & 0.627 & -- & 0.725 & 0.783 & \textbf{0.858} & 0.801 \\
-Chest drains, RAD-DINO & 0.191 & 0.239 & 0.268 & 0.269 & 0.237 & 0.175 & 0.538 & \textbf{0.683} & 0.646 & 0.460 \\
+Chest drains, RAD-DINO & 0.194 & 0.232 & 0.272 & 0.275 & 0.236 & 0.179 & 0.540 & \textbf{0.666} & 0.635 & 0.461 \\
 \bottomrule\end{tabular}}
 \end{table}
 
@@ -374,8 +374,9 @@ Capsule & ViT-L/14 & $-0.097$ [$-0.114, -0.079$] & $-0.044$ [$-0.056, -0.032$] \
 
 
 \subsubsection{Published baselines and alternatives}
-Table~\ref{s6:tab:jtt} (crossed intervals available) and Table~\ref{s6:tab:archived} (point estimates of analyses whose predictions were not
-saved).
+Table~\ref{s6:tab:jtt} (crossed intervals), Table~\ref{s6:tab:regen} (analyses first archived without per-image predictions and
+regenerated with them; crossed intervals) and Table~\ref{s6:tab:archived} (point estimates of analyses whose predictions were
+not saved).
 \begin{itemize}[leftmargin=*]\itemsep1pt
 \item \textbf{JTT} (label-free): U-MtE beats it on thyroid (\sSixScthyroidmtejtt) and ovary (\sSixScovarymtejtt); JTT wins
 on hair ($\min$(rev, corr) \sSixBlDermoscopyjtt{} versus \sSixBlDermoscopymte); on capsule U-MtE+JTT is the most robust
@@ -385,8 +386,12 @@ label-free combination (\sSixBlCapsuleumtejtt).
 on thyroid, capsule and hair (\sSixBlThyroidmtebalanced{} versus \sSixBlThyroidsplice; \sSixBlCapsulemtebalanced{} versus
 \sSixBlCapsulesplice; \sSixBlDermoscopymtebalanced{} versus \sSixBlDermoscopysplice).
 \item \textbf{LaMa inpainting} of the detected artifact pixels, followed by masking, is a strong baseline that needs artifact
-masks; protected U-MtE matches it on thyroid without masks and is below it on ovary and hair; U-MtE with balancing beats
-it everywhere.
+masks (over masking: thyroid \sSixRgLaMamaskingthyroidmasklamamask, ovary \sSixRgLaMamaskingovarymasklamamask). Protected
+U-MtE, which needs no artifact mask, exceeds it on thyroid (\sSixRgLaMamaskingthyroidmteprotectmasklama) and is below it on
+ovary (\sSixRgLaMamaskingovarymteprotectmasklama) and hair (\sSixArLaMaisicmteprotectmasklama, archived point estimate);
+U-MtE with balancing beats it everywhere. The thyroid comparison changed when the run was regenerated (archived
+$-0.009$): the protected arm reproduced about 0.06 higher than in its first run, with unchanged code for that arm, and
+now agrees with the protected arm of the main regenerated run (\texttt{results/bootstrap\_correction/archived\_old\_vs\_new.md}).
 \item \textbf{Text-prompted erasure} with MedSigLIP and DermLIP is a near no-op ($\le$ \sSixArtextpromptedovarymasktexterasemask{}
 over masking): the text-space artifact direction does not coincide with the image-space direction along which the artifact
 moves the representation.
@@ -397,7 +402,11 @@ versus \sSixArpseudogroupthyroidmtereversedAUROC{} for U-MtE) and not on hair, w
 \item \textbf{Erasure + DFR} adds at most about 0.01 over masking + DFR: once a group-robust head is used, masking does the rest.
 \item \textbf{Validation-driven selectors} beat masking in every cohort and are within about 0.02 of the best candidate, but
 neither is uniformly best; admitting DFR as a candidate fixes chest drains and makes the choice noisier elsewhere.
-\item \textbf{Chest drains}: U-MtE gains only about 0.03 over masking with RAD-DINO and nothing with DINOv2; DFR is best.
+\item \textbf{Chest drains}: U-MtE gains \sSixRgchestRADDINOdrainsmtemask{} over masking with RAD-DINO and nothing with
+DINOv2 (\sSixRgchestDINOvTwodrainsmtemask); DFR is best.
+\item \textbf{Templates instead of generic overlays} on capsule debris make erasure worse
+(\sSixRgUMtEtemplatescapsulemtemask{} against masking); disease protection removes that failure
+(\sSixRgUMtEtemplatescapsulemteprotectmask).
 \end{itemize}
 {\scriptsize
 \begin{longtable}{lccccc}
@@ -440,6 +449,29 @@ Dermoscopy hair & U-MtE prot. & 0.718 & 0.904 & 0.502 & 0.502 \\
 Dermoscopy hair & SPLINCE & 0.600 & 0.575 & 0.637 & 0.575 \\
 \end{longtable}}
 
+\begin{table}[H]\centering\scriptsize
+\caption{Remedy analyses regenerated with per-image predictions after the other runs (same commands and seeds; crossed bootstrap).}\label{s6:tab:regen}
+\begin{tabular}{p{4.0cm}p{2.0cm}p{4.4cm}c}\toprule
+Analysis & Cohort & Contrast (Trap A, reversed) & Estimate [95\% CI] \\\midrule
+LaMa inpainting then masking & thyroid & mask\_lama $-$ mask & $+0.224$ [$+0.206, +0.242$] \\
+ & thyroid & mte\_protect $-$ mask\_lama & $+0.060$ [$+0.013, +0.105$] \\
+ & thyroid & mte\_balanced $-$ mask\_lama & $+0.165$ [$+0.146, +0.185$] \\
+ & ovary & mask\_lama $-$ mask & $+0.128$ [$+0.084, +0.169$] \\
+ & ovary & mte\_protect $-$ mask\_lama & $-0.085$ [$-0.120, -0.050$] \\
+ & ovary & mte\_balanced $-$ mask\_lama & $+0.061$ [$+0.026, +0.095$] \\
+U-MtE from real-debris templates & capsule & mte $-$ mask & $-0.392$ [$-0.425, -0.360$] \\
+ & capsule & mte\_protect $-$ mask & $+0.003$ [$-0.014, +0.021$] \\
+chest drains, RAD-DINO & drains & mte $-$ mask & $+0.040$ [$+0.023, +0.057$] \\
+ & drains & mte\_protect $-$ mask & $+0.042$ [$+0.028, +0.058$] \\
+ & drains & mte $-$ jtt & $+0.094$ [$+0.077, +0.111$] \\
+ & drains & mte\_balanced $-$ balanced & $-0.079$ [$-0.106, -0.044$] \\
+chest drains, DINOv2 & drains & mte $-$ mask & $-0.001$ [$-0.009, +0.008$] \\
+ & drains & mte\_protect $-$ mask & $-0.003$ [$-0.013, +0.006$] \\
+ & drains & mte $-$ jtt & $-0.005$ [$-0.021, +0.011$] \\
+ & drains & mte\_balanced $-$ balanced & $+0.031$ [$-0.023, +0.079$] \\
+\bottomrule\end{tabular}
+\end{table}
+
 {\scriptsize
 \begin{longtable}{p{4.0cm}p{3.6cm}p{5.2cm}c}
 \caption{Remedy analyses whose per-image predictions were not saved, so their intervals could not be re-estimated with the crossed bootstrap: \textbf{point estimates only}.}\label{s6:tab:archived}\\\toprule
@@ -449,17 +481,7 @@ Analysis & Cohort / run & Contrast (Trap A, reversed) & Point estimate \\\midrul
 \endhead
 \bottomrule
 \endlastfoot
-LaMa inpainting (oracle masks) & thyroid & lama $-$ mask & $+0.025$ \\
- & thyroid & mask\_lama $-$ mask & $+0.226$ \\
- & thyroid & mte\_protect $-$ mask\_lama & $-0.009$ \\
- & thyroid & mte\_balanced $-$ mask\_lama & $+0.162$ \\
- & thyroid & lama $-$ erm & $+0.136$ \\
- & ovary & lama $-$ mask & $+0.027$ \\
- & ovary & mask\_lama $-$ mask & $+0.123$ \\
- & ovary & mte\_protect $-$ mask\_lama & $-0.080$ \\
- & ovary & mte\_balanced $-$ mask\_lama & $+0.067$ \\
- & ovary & lama $-$ erm & $+0.158$ \\
- & isic & lama $-$ mask & $+0.145$ \\
+LaMa inpainting (oracle masks) & isic & lama $-$ mask & $+0.145$ \\
  & isic & mask\_lama $-$ mask & $+0.127$ \\
  & isic & mte\_protect $-$ mask\_lama & $-0.086$ \\
  & isic & mte\_balanced $-$ mask\_lama & $+0.123$ \\
@@ -503,11 +525,6 @@ pseudo-group balancing (U8) & thyroid & umte\_pbal reversed AUROC & 0.663 \\
  & hair & mte reversed AUROC & 0.506 \\
  & hair & pbal reversed AUROC & 0.498 \\
  & hair & erm reversed AUROC & 0.491 \\
-chest drains, RAD-DINO & drains & mte $-$ mask & $+0.029$ \\
- & drains & mte\_protect $-$ mask & $+0.030$ \\
- & drains & mte $-$ mte\_aug & $+0.031$ \\
- & drains & mte $-$ jtt & $+0.094$ \\
- & drains & mte\_balanced $-$ balanced & $-0.079$ \\
 location-adaptive selection (U13) & thyroid & auto $-$ mask & $+0.395$ \\
  & thyroid & auto $-$ dfr & $+0.057$ \\
  & capsule & auto $-$ mask & $+0.168$ \\
@@ -695,8 +712,9 @@ generative-AI disclosure.
 \item External validation exists for dermoscopy only.
 \item The theory is fitted per model and cannot see correlate-carried shortcuts.
 \item Disease protection needs diagnosis labels of artifact-free images; balanced variants need image-level artifact labels.
-\item Some analyses (chest-radiograph devices and drains, LaMa, text prompts, SLAS, selectors) could not be re-estimated with
-the crossed bootstrap and are reported as point estimates.
+\item Some secondary analyses (text prompts, SLAS, pseudo-groups, erasure + DFR, the selectors, LaMa on hair) could not be
+re-estimated with the crossed bootstrap and are reported as point estimates; the chest-radiograph devices and drains,
+LaMa on thyroid and ovary and the template variant were regenerated with per-image predictions.
 \item Commit times of registrations are machine-set; only the registrations pushed to GitHub before running carry an
 external time stamp.
 \end{enumerate}

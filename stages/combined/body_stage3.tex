@@ -4,8 +4,8 @@
 \stagebox{\textbf{In one sentence.} With real, unedited artifacts --- hair in dermoscopy, calipers in thyroid and
 ovarian ultrasound, debris in capsule endoscopy --- ROI masking helps far more when the artifact lies outside the ROI
 than inside it: the crossover is positive in \sThreeNXPos{} of \sThreeNRuns{} cohort--encoder pairs and in all four
-pre-specified location tests after Holm correction; the dermatology encoder DermLIP and real chest-radiograph devices
-are the exceptions, and the hair shortcut turns out to be carried largely by correlates of hair rather than by its
+pre-specified location tests after Holm correction; the dermatology encoder DermLIP and, with the radiograph encoder
+RAD-DINO, real chest-radiograph devices are the exceptions, and the hair shortcut turns out to be carried largely by correlates of hair rather than by its
 pixels.}
 \subsection{Where this stage starts}
 Stage~1 showed with real hair (E13) that masking harms when hair lies on the lesion and helps when it lies beside it.
@@ -364,51 +364,63 @@ crossover vanishes (\sThreeXisicDermLIP). DermLIP was trained on whole dermatolo
 the background is removed, whatever the hair does (Stage~1: clean AUROC falls with masking in both traps).
 
 \subsubsection{Chest radiography: the boundary}
-\paragraph{Device traps} Lung masking helped for both device types in all four registered findings (Table~\ref{s3:tab:cxr});
-the registered claim that masking harms --- or helps less --- for the in-lung catheter was supported for one finding only.
-A confound noted before the follow-up was fitted: the catheter-free group carries many more out-of-lung tubes than the
-catheter group (endotracheal tubes 77\% versus 39\%, nasogastric tubes 83\% versus 42\%), because CLiP's catheter-free
-images were selected for other devices; masking removes those tubes. A follow-up matched within label on view and on the
-presence of the other devices (Infiltration) still shows no crossover (Trap~A \sThreeDmtrapA, Trap~B \sThreeDmtrapB,
-crossover \sThreeDmcrossover; point estimates).
-\begin{table}[H]\centering\small
-\caption{Chest radiographs with real devices (NIH ChestX-ray14 linked to RANZCR-CLiP; RAD-DINO): Trap A = central venous catheter inside the lungs, Trap B = endotracheal tube outside them. Point estimates only, \textbf{not re-estimated} with the corrected bootstrap (per-image predictions were not saved; the old intervals are withdrawn).}\label{s3:tab:cxr}
-\begin{tabular}{lccc}\toprule
-Finding (NIH, RANZCR-CLiP devices) & mask $-$ ERM, Trap A & Trap B & Crossover \\\midrule
-Atelectasis & $+0.045$ & $+0.105$ & $+0.060$ \\
-Consolidation & $+0.070$ & $+0.068$ & $-0.002$ \\
-Effusion & $+0.104$ & $+0.100$ & $-0.004$ \\
-Infiltration & $+0.094$ & $+0.063$ & $-0.032$ \\
-\bottomrule\end{tabular}
+\paragraph{Device traps} Table~\ref{s3:tab:cxr}. With the registered primary encoder RAD-DINO, lung masking helped for both
+device types in all four findings (X1 in \sThreeCxrXOneRADDINO{} of 4); neither the in-lung penalty (X2) nor the
+crossover (X3) was supported (crossovers \sThreeCxrXminRADDINO{} to \sThreeCxrXmaxRADDINO; in the archived per-seed
+analysis one finding, atelectasis, had passed X3). With the registered replication encoder MedSigLIP, fitted for the
+first time when these runs were regenerated, the crossover is positive for all four findings (\sThreeCxrXminMedSigLIP{}
+to \sThreeCxrXmaxMedSigLIP, Holm), and for effusion masking harms inside the lungs (\sThreeCxrMedSigLIPEffA). The two
+encoders differ in what they use: MedSigLIP relies heavily on the out-of-lung tube, which masking removes (Trap~B gains
+of 0.23--0.31), whereas RAD-DINO barely uses extra-pulmonary tubes (the synthetic-tube sweep of Stage~2). A confound noted
+before the follow-up was fitted: the catheter-free group carries many more out-of-lung tubes than the catheter group
+(endotracheal tubes 77\% versus 39\%, nasogastric tubes 83\% versus 42\%), because CLiP's catheter-free images were
+selected for other devices; masking removes those tubes, which inflates masking's gain in Trap~A and so works against a
+positive crossover. A RAD-DINO follow-up matched within label on view and on the presence of the other devices
+(Infiltration) still shows no crossover (Trap~A \sThreeDmtrapA, Trap~B \sThreeDmtrapB, crossover \sThreeDmcrossover;
+archived point estimates, \textbf{not re-estimated}). The registered DINOv2 replication was not run.
+\begin{table}[H]\centering\scriptsize
+\caption{Chest radiographs with real devices (NIH ChestX-ray14 linked to RANZCR-CLiP, AP films): Trap A = central venous catheter inside the lungs, Trap B = endotracheal tube outside them; reversed-test AUROC, crossed 95\% CIs, Holm over the four findings per encoder. Registered claims: X1 masking helps in Trap B, X2 masking harms in Trap A, X3 crossover $>0$. RAD-DINO is the registered primary encoder; the registered MedSigLIP replication was fitted for the first time when these runs were regenerated.}\label{s3:tab:cxr}
+\resizebox{\linewidth}{!}{\begin{tabular}{lcccccc}\toprule
+Encoder & Finding & mask $-$ ERM, Trap A (in lungs) & mask $-$ ERM, Trap B (outside) & Crossover & $p$ (Holm, 4) & Supported \\\midrule
+RAD-DINO & Atelectasis & $+0.059$ [$+0.019, +0.099$] & $+0.105$ [$+0.092, +0.117$] & $+0.046$ [$+0.011, +0.082$] & 0.0544 & X1 \\
+ & Consolidation & $+0.074$ [$+0.025, +0.125$] & $+0.070$ [$+0.047, +0.092$] & $-0.004$ [$-0.065, +0.058$] & 0.9112 & X1 \\
+ & Effusion & $+0.078$ [$+0.032, +0.125$] & $+0.100$ [$+0.089, +0.111$] & $+0.022$ [$-0.030, +0.074$] & 0.8364 & X1 \\
+ & Infiltration & $+0.087$ [$+0.060, +0.116$] & $+0.063$ [$+0.055, +0.071$] & $-0.025$ [$-0.055, +0.006$] & 0.3444 & X1 \\
+MedSigLIP & Atelectasis & $+0.183$ [$+0.146, +0.220$] & $+0.278$ [$+0.261, +0.296$] & $+0.095$ [$+0.053, +0.137$] & 0.0004 & X1 X3 \\
+ & Consolidation & $+0.087$ [$+0.031, +0.142$] & $+0.226$ [$+0.206, +0.246$] & $+0.139$ [$+0.081, +0.197$] & 0.0004 & X1 X3 \\
+ & Effusion & $-0.084$ [$-0.125, -0.043$] & $+0.244$ [$+0.230, +0.259$] & $+0.328$ [$+0.287, +0.369$] & 0.0004 & X1 X2 X3 \\
+ & Infiltration & $+0.174$ [$+0.128, +0.219$] & $+0.309$ [$+0.293, +0.325$] & $+0.135$ [$+0.084, +0.185$] & 0.0004 & X1 X3 \\
+\bottomrule\end{tabular}}
 \end{table}
 
 \paragraph{Chest drains} Table~\ref{s3:tab:drains}. The drain is an extreme shortcut: ERM's reversed AUROC is
 \sThreeDrRADDINOermRev{} (RAD-DINO) and \sThreeDrDINOvTwoermRev{} (DINOv2), against clean \sThreeDrRADDINOermClean{} and
-\sThreeDrDINOvTwoermClean. Lung masking barely helps (\sThreeDrRADDINOmaskRev, \sThreeDrDINOvTwomaskRev), because the drain
-lies in the lungs. Label-based DFR is best (\sThreeDrRADDINOdfrRev, \sThreeDrDINOvTwodfrRev): a drain comes with a treated,
+\sThreeDrDINOvTwoermClean. Lung masking barely helps (\sThreeDrRADDINOmaskRev, \sThreeDrDINOvTwomaskRev; gain over ERM
+\sThreeDrRADDINOMaskGain{} and \sThreeDrDINOvTwoMaskGain), because the drain lies in the lungs. Label-based DFR is best (\sThreeDrRADDINOdfrRev, \sThreeDrDINOvTwodfrRev): a drain comes with a treated,
 re-expanded lung, so the shortcut is carried by the treatment's consequences, not only by the tube --- a second
 correlate-carried case.
 \begin{table}[H]\centering\scriptsize
-\caption{Real chest drains (NIH ChestX-ray14 pneumothorax, 29,687 images, patient-grouped folds; drains lie inside the lungs, so this is an in-ROI trap only). AUROC, mean over 5 folds; \textbf{point estimates, not re-estimated} with the crossed bootstrap (per-image predictions were not saved).}\label{s3:tab:drains}
+\caption{Real chest drains (NIH ChestX-ray14 pneumothorax, 29,687 images, patient-grouped folds; drains lie inside the lungs, so this is an in-ROI trap only). AUROC, mean over 5 seeds of 5 patient-grouped folds.}\label{s3:tab:drains}
 \begin{tabular}{lcccc}\toprule
 Encoder & Arm & clean & correlated & reversed \\\midrule
-RAD-DINO & ERM & 0.886 & 0.948 & 0.191 \\
- & lung masking & 0.870 & 0.949 & 0.239 \\
- & group-balanced & 0.853 & 0.870 & 0.538 \\
- & DFR & 0.800 & 0.738 & 0.683 \\
- & masking + DFR & 0.801 & 0.770 & 0.646 \\
-DINOv2 & ERM & 0.823 & 0.922 & 0.280 \\
- & lung masking & 0.834 & 0.932 & 0.292 \\
- & group-balanced & 0.781 & 0.841 & 0.399 \\
- & DFR & 0.770 & 0.808 & 0.549 \\
- & masking + DFR & 0.788 & 0.827 & 0.566 \\
+RAD-DINO & ERM & 0.888 & 0.946 & 0.194 \\
+ & lung masking & 0.873 & 0.947 & 0.232 \\
+ & group-balanced & 0.858 & 0.880 & 0.540 \\
+ & DFR & 0.802 & 0.758 & 0.666 \\
+ & masking + DFR & 0.802 & 0.779 & 0.635 \\
+DINOv2 & ERM & 0.822 & 0.920 & 0.284 \\
+ & lung masking & 0.833 & 0.931 & 0.289 \\
+ & group-balanced & 0.786 & 0.846 & 0.402 \\
+ & DFR & 0.771 & 0.806 & 0.537 \\
+ & masking + DFR & 0.788 & 0.828 & 0.561 \\
 \bottomrule\end{tabular}
 \end{table}
 
 \paragraph{Reading} Together with the synthetic-tube sweep of Stage~2 (RAD-DINO ignores an out-of-lung tube), chest
-radiography is a boundary: in-lung devices are either confounded with other devices or carried by correlates, and the
-radiograph encoder does not use extra-pulmonary tubes at all. It is reported as a boundary case, not as a fifth
-confirmation.
+radiography is a boundary: in-lung devices are confounded with other devices or carried by correlates, and the
+radiograph encoder does not use extra-pulmonary tubes at all. A general medical encoder that does use them (MedSigLIP)
+shows the crossover, which is consistent with the law, but one encoder with a confounded contrast is not enough to count
+chest radiography as a fifth confirmation; it is reported as a boundary case.
 
 \subsubsection{Datasets considered and not used}
 \begin{table}[H]\centering\scriptsize
@@ -468,10 +480,10 @@ capsule/\allowbreak{}dino518\_main & trapB /\allowbreak{} leace\_paired /\allowb
 \item \textbf{In-ROI masking harms only for dermoscopy hair}; for calipers and debris it helps less. The registered
 ``harm'' claims (T2, O2, C2) were not supported for thyroid, ovary and capsule.
 \item \textbf{DermLIP has no hair crossover}; ``the crossover holds for every encoder'' is not claimed.
-\item \textbf{Chest-radiograph device traps}: the registered in-ROI penalty was not supported (crossover in 1 of 4
-findings); the device-matched follow-up does not change this. Their intervals and those of the drain runs could not be
-re-estimated with the crossed bootstrap (per-image predictions were not saved and RANZCR-CLiP is not on the current
-machine) and are shown as point estimates.
+\item \textbf{Chest-radiograph device traps}: with RAD-DINO the registered in-ROI penalty was not supported (crossover
+in 0 of 4 findings after regeneration, 1 of 4 in the archived analysis); the device-matched follow-up, which was not
+regenerated, does not change this. With the MedSigLIP replication it is supported (crossover in 4 of 4, in-lung harm in
+1 of 4).
 \item \textbf{Oracle inpainting fails on capsule debris}, where the artifact resembles the disease.
 \item \textbf{The hair shortcut is mostly correlate-carried}, and the in-lesion harm is sensitive to how the hair-free
 group is defined.
@@ -499,7 +511,8 @@ informative: an encoder that needs the surroundings of a lesion loses disease si
 between locations is dominated by that loss.
 \paragraph{Why is chest radiography not counted as a confirmation?} In the device traps the in-lung catheter is
 confounded with other devices, and in the drain trap the shortcut is carried by the treated lung. Neither isolates
-location; counting them either way would be unjustified.
+location; counting them either way would be unjustified. The MedSigLIP replication points towards the law, and the
+confound works against it, but the primary radiograph encoder shows no crossover, so the evidence is split by encoder.
 \paragraph{Is Holm over four tests enough?} The four $p$ values are at the bootstrap floor ($10^{-4}$); any
 multiplicity correction over any plausible family leaves them significant.
 \paragraph{How reliable are the capsule masks at IoU \sThreeProbeIoU?} Pixel IoU is modest, but the traps use
@@ -511,15 +524,16 @@ across 3\% or 10\%. Errors dilute effects rather than create them (Section on ma
 positive in all four cohorts with DINOv2 (Holm over the four location tests), with MedSigLIP in three cohorts and with a
 CNN in two. Label-based methods fix both traps. \textbf{Qualified.} Only for dermoscopy hair does masking actually harm
 in the in-ROI trap, and that harm depends on how the hair-free group is defined; hair is a correlate-carried shortcut.
-\textbf{Not supported.} A crossover with DermLIP; an in-ROI penalty for real chest-radiograph devices; pixel removal for
+\textbf{Not supported.} A crossover with DermLIP; an in-ROI penalty for real chest-radiograph devices with RAD-DINO
+(supported with MedSigLIP); pixel removal for
 debris that resembles the disease.
 
 \subsection{Questions for the supervisor}
 \begin{enumerate}\itemsep1pt
 \item Is a visual audit of the automatic artifact masks by a non-clinician acceptable for the thesis, or should a
 clinician check a sample before the real-artifact results are written up?
-\item Should chest radiography stay in the main text as a boundary case with point estimates only, or move to an
-appendix?
+\item Chest radiography now has crossed intervals and a positive MedSigLIP replication (crossover in all four findings)
+beside a null primary encoder. Should it stay a boundary case, become a qualified fifth cohort, or move to an appendix?
 \item How should the thesis present the correlate-carried nature of the hair shortcut: as a limitation of the hair
 cohort, or as a finding about real shortcuts in its own right?
 \item Is it acceptable to count calipers and debris as confirmations when masking still helps (less) inside the ROI,
