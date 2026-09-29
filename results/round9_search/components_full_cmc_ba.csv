@@ -1,0 +1,30 @@
+candidate,arm,component,cohort,estimate,ci95_lo,ci95_hi,margin,test,p_one_sided,met,label
+full_cmc_ba,full_cmc_ba,D1' val all pairs,thyroid,0.0000,0.0000,0.0000,0.0100,NI,0.0005,True,met
+full_cmc_ba,full_cmc_ba,D1' val all pairs,capsule,0.0000,0.0000,0.0000,0.0100,NI,0.0005,True,met
+full_cmc_ba,full_cmc_ba,D1' val all pairs,isic_BCN,-0.0044,-0.0169,0.0065,0.0100,NI,0.1570,False,inconclusive
+full_cmc_ba,full_cmc_ba,D1' val all pairs,isic_HAM,0.0091,-0.0095,0.0286,0.0100,NI,0.0225,True,met
+full_cmc_ba,full_cmc_ba,D1' val all pairs,isic_MSK,-0.0056,-0.0227,0.0132,0.0100,NI,0.2940,False,loss
+full_cmc_ba,full_cmc_ba,D2' val hard pairs,thyroid,0.0000,0.0000,0.0000,0.0000,SUP,1.0000,False,inconclusive
+full_cmc_ba,full_cmc_ba,D2' val hard pairs,isic_BCN,0.0118,-0.0082,0.0349,0.0000,SUP,0.1235,False,inconclusive
+full_cmc_ba,full_cmc_ba,D2' val hard pairs,isic_MSK,0.0361,0.0125,0.0638,0.0000,SUP,0.0010,True,met
+full_cmc_ba,full_cmc_ba,"D2' Trap A min(rev,corr)",thyroid,0.0151,0.0000,0.0342,0.0000,SUP,0.0725,False,inconclusive
+full_cmc_ba,full_cmc_ba,D3' Trap B reversed,thyroid,0.0000,0.0000,0.0000,0.0300,NI,0.0005,True,met
+full_cmc_ba,full_cmc_ba,"D3' Trap B min(rev,corr)",thyroid,0.0000,0.0000,0.0000,0.0300,NI,0.0005,True,met
+full_cmc_ba,full_cmc_ba,D3' clean (Trap A models),thyroid,-0.0085,-0.0211,0.0000,0.0300,NI,0.0010,True,met
+full_cmc_ba,full_cmc_ba,D3' clean (Trap B models),thyroid,0.0000,0.0000,0.0000,0.0300,NI,0.0005,True,met
+full_cmc_ba,full_cmc_ba,D4 no flipping,thyroid trapA,0.4704,,,0.0200,point,,True,met
+full_cmc_ba,full_cmc_ba,D4 no flipping,thyroid trapB,0.0327,,,0.0200,point,,True,met
+full_cmc_ba,full_cmc_ba,"D2' Trap A min(rev,corr)",capsule,0.0032,-0.0009,0.0134,0.0000,SUP,0.3770,False,inconclusive
+full_cmc_ba,full_cmc_ba,D3' Trap B reversed,capsule,0.0000,0.0000,0.0000,0.0300,NI,0.0005,True,met
+full_cmc_ba,full_cmc_ba,"D3' Trap B min(rev,corr)",capsule,0.0000,0.0000,0.0000,0.0300,NI,0.0005,True,met
+full_cmc_ba,full_cmc_ba,D3' clean (Trap A models),capsule,-0.0060,-0.0181,0.0000,0.0300,NI,0.0015,True,met
+full_cmc_ba,full_cmc_ba,D3' clean (Trap B models),capsule,0.0000,0.0000,0.0000,0.0300,NI,0.0005,True,met
+full_cmc_ba,full_cmc_ba,D4 no flipping,capsule trapA,0.2966,,,0.0200,point,,True,met
+full_cmc_ba,full_cmc_ba,D4 no flipping,capsule trapB,0.0724,,,0.0200,point,,True,met
+full_cmc_ba,full_cmc_ba,"D2' Trap A min(rev,corr)",isic,0.2628,0.2225,0.3015,0.0000,SUP,0.0005,True,met
+full_cmc_ba,full_cmc_ba,D3' Trap B reversed,isic,0.0116,-0.0169,0.0488,0.0300,NI,0.0015,True,met
+full_cmc_ba,full_cmc_ba,"D3' Trap B min(rev,corr)",isic,0.0116,-0.0169,0.0488,0.0300,NI,0.0015,True,met
+full_cmc_ba,full_cmc_ba,D3' clean (Trap A models),isic,0.0843,0.0564,0.1118,0.0300,NI,0.0005,True,met
+full_cmc_ba,full_cmc_ba,D3' clean (Trap B models),isic,-0.0088,-0.0269,0.0081,0.0300,NI,0.0130,True,met
+full_cmc_ba,full_cmc_ba,D4 no flipping,isic trapA,0.1502,,,0.0200,point,,True,met
+full_cmc_ba,full_cmc_ba,D4 no flipping,isic trapB,0.1471,,,0.0200,point,,True,met
