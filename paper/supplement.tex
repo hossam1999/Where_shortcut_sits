@@ -173,6 +173,23 @@ for any re-tuning at a deployment site; the crossed bootstrap re-estimates the t
 \input{tables/s16_matched}
 \input{tables/s16_matched_other}
 
+\section*{S17. Is there a remedy that dominates masking?}
+Two registrations (\texttt{PREREGISTRATION\_ROUND8} and \texttt{ROUND9}; registry in S1) and a documented search between
+them (\texttt{docs/ROUND9\_SEARCH\_LEDGER.md}). Candidates are heads on frozen DINOv2-B/14 features of the masked image
+(or the full image); every setting is chosen per training set on validation data by the worst-group validation AUROC,
+subject to the same-artifact validation AUROC staying within 0.005 of masking's, with masking as fallback. A candidate
+dominates if every component of the criterion holds (intersection--union test, one-sided 0.025 each); across candidates a
+fixed sequence registered in advance. Confirmation: trap resamples generated only after each registration (seeds
+8101--8505 and 9101--9505), ovary held out from every choice; the unaltered test sets and ISIC 2020 had been seen before
+and are semi-confirmatory. Full reports: \texttt{stages/stage9\_remedies\_dominance}.
+\input{tables/s17_criterion}
+\input{tables/s17_r8_verdicts}
+\input{tables/s17_r8_components}
+\input{tables/s17_search}
+\input{tables/s17_r9_verdicts}
+\input{tables/s17_r9_gains}
+\input{tables/s17_r9_decomp}
+
 \section*{S12. CLAIM 2024 checklist}
 \input{claim_checklist}
 

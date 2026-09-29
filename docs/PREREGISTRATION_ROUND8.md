@@ -236,3 +236,18 @@ margin, cell, estimand or seed is changed. Implemented in `scripts/round8/{commo
    or **inconclusive** (otherwise); a failed D4 condition is a loss. "Wins where masking fails but costs elsewhere"
    (§9) names only the components labelled loss.
 Reason: made after review of the registration, before any development or confirmation result existed.
+
+## Results (added after the run; the text above is unchanged)
+Amendment 1 at `47ab51c`, frozen development choices at `bdfb4e8`, results at `0d66e42` (`results/round8/SUMMARY.md`);
+write-up in Stage 9.
+- **No primary candidate dominates masking.** The fixed sequence stopped at mask_cmc (40 of 42 components). Decision:
+  *wins where masking fails but costs elsewhere*: mask_cmc (loss: ISIC 2019 → 2020 all pairs −0.021 [−0.027, −0.016];
+  thyroid all pairs inconclusive −0.002 [−0.011, +0.007]) and mask_bal (losses: all pairs thyroid −0.008, MSK −0.006,
+  ISIC 2020 −0.011).
+- mask_cmc − masking where masking fails: Trap A min(rev, corr) thyroid +0.330 [+0.311, +0.351], capsule +0.153
+  [+0.131, +0.177], ovary (held out) +0.118 [+0.089, +0.147], ISIC hair +0.193 [+0.166, +0.221]; conflicting pairs
+  thyroid +0.084, BCN +0.036, MSK +0.070, ISIC 2020 +0.078 [+0.069, +0.088]. On ISIC 2020 easy pairs −0.116.
+- D5 (sweeps): mask_cmc and mask_bal dominate (12 of 12 each). D6 (fine-tuned paste): not supported (1 of 3).
+  Replication R: Trap A gain in 5 of 5 cohort-encoder cells for mask_cmc and mask_bal.
+- Checks: pasted-versus-real probe AUROC 0.904–0.990 (> 0.75 in every cohort); the paste plans could not balance the
+  traps (too few recipients with a training-set donor). The paste results are not evidence about real artifacts.

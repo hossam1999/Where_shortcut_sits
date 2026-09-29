@@ -1,0 +1,20 @@
+\begin{table}[H]\centering\scriptsize
+\caption{The exploratory search: twelve candidates on development data only (development seeds, validation folds of the unaltered training sets; never a test set used for confirmation, never ovary). Round 8's candidates are shown on the same development criterion for comparison.}\label{tab:search}
+\begin{tabular}{p{5.4cm}p{2.4cm}p{1.0cm}p{2.8cm}p{2.2cm}}\toprule
+Search candidate (frozen masked features) & Development components met & Losses & Eligible & Registered in round 9 \\\midrule
+backdoor adjustment & 22 of 29 & 6 & no (flips the shortcut) & -- \\
+backdoor adjustment, full image & 22 of 29 & 1 & yes & -- \\
+constraint + backdoor & 23 of 29 & 4 & yes & -- \\
+constraint + backdoor, full image & 23 of 29 & 1 & yes & -- \\
+product of experts & 28 of 29 & 1 & no (flips the shortcut) & -- \\
+group logit adjustment & 28 of 29 & 1 & no (flips the shortcut) & -- \\
+moment matching & 26 of 29 & 1 & yes & -- \\
+conditional adversarial debiasing & 27 of 29 & 0 & yes & 1st \\
+Correct-n-Contrast & 20 of 29 & 3 & yes & -- \\
+counterfactual contrastive & 19 of 29 & 4 & yes & -- \\
+V-REx & 28 of 29 & 0 & yes & 3rd \\
+IRMv1 & 28 of 29 & 0 & yes & 2nd \\
+round 8 \texttt{mask\_cmc} (reference) & 27 of 29 & 1 & yes & -- \\
+round 8 \texttt{mask\_bal} (reference) & 28 of 29 & 0 & yes & -- \\
+\bottomrule\end{tabular}
+\end{table}

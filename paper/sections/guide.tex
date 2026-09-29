@@ -35,8 +35,26 @@ however, label-based group balancing does help: over masking $+0.136$ [$+0.063, 
 [$+0.026, +0.059$] and $+0.100$ [$+0.055, +0.144$] for the BCN and MSK hold-outs and $+0.072$ [$+0.048, +0.097$] on
 ISIC 2020, with no change for HAM and capsule; it costs overall AUROC on HAM ($-0.032$ [$-0.049, -0.013$]) and
 capsule.
+\paragraph{Is there one remedy to use instead of masking? (pre-registered)} We registered a criterion for
+\emph{dominating} masking: not worse (margin 0.01) on the six unaltered test sets and on Trap~B and clean tests, better on
+every Trap~A and on the conflicting pairs of the unaltered test sets, and no shortcut flipping --- 42 components, all of
+which must hold (Supplement~S17). Settings were chosen on validation data only; confirmation used trap resamples generated
+after each registration and one cohort (ovary) that never influenced a choice. In a first round no candidate dominated.
+The closest, a class-conditional mean constraint on the masked features (the head may not score images with and without
+the artifact differently within a class; an adaptation of counterfactual invariance, \citealp{veitch2021counterfactual}),
+met 40 of 42 components: it is better than masking in every Trap~A (thyroid $+0.330$ [$+0.311, +0.351$], held-out ovary
+$+0.118$ [$+0.089, +0.147$]) and on the conflicting pairs of every unaltered test set (ISIC 2020 $+0.078$
+[$+0.069, +0.088$]), and equal elsewhere, but loses $-0.021$ [$-0.027, -0.016$] overall on ISIC 2020, where in-lesion hair
+still helps most patients. A documented search over twelve further ideas (backdoor adjustment, product of experts, logit
+adjustment, conditional adversarial debiasing, contrastive and invariance methods) on development data, and a second
+registered round of its three best on new data, gave the same result: IRMv1 met 41 of 42 components and lost only on ISIC
+2020 overall ($-0.009$ [$-0.013, -0.005$]); the first round's constraint, refitted, replicated its result. Every
+alternative to masking, including the unmasked model, loses overall on ISIC 2020 ($-0.009$ to $-0.029$), mostly on pairs
+whose images share the artifact status: there masking is simply the better disease ranker.
+
 We therefore offer the regimes as a decision guide for \emph{auditing} a model, not as a claim that any remedy
-improves deployment performance:
+improves deployment performance everywhere; where artifacts may lie inside the ROI, the class-conditional constraint is the
+registered option that fixes masking's failure at the smallest measured cost:
 (i) measure where artifacts sit relative to the ROI; out-of-ROI artifacts are what masking removes;
 (ii) for in-ROI artifacts estimate which regime applies (oracle-removal ceiling, resemblance to the pathology);
 (iii) evaluate any mitigation on shortcut-conflicting cases \emph{and} on the unaltered distribution, reporting clean,

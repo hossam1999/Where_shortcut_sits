@@ -11,7 +11,7 @@ Hard pairs & positive--negative pairs whose artifact status conflicts with the t
 OP1--OP5 & thresholds fixed on validation data: maximal balanced accuracy; specificity $\ge0.80$, $\ge0.90$; sensitivity $\ge0.80$, $\ge0.90$. \\
 U-MtE & mask-then-erase: ROI masking followed by erasure of the feature subspace along which generic synthetic overlays move masked images. \\
 min(rev, corr) & robustness summary: the lower of reversed and correlated AUROC ($^\dagger$: the arm flips the shortcut). \\}
-\title{\textbf{Where the Shortcut Sits}\\[4pt]\Large Location-dependent failure of region-of-interest masking as a shortcut defence\\[4pt]\large Full report: the eight stages of the work}
+\title{\textbf{Where the Shortcut Sits}\\[4pt]\Large Location-dependent failure of region-of-interest masking as a shortcut defence\\[4pt]\large Full report: the nine stages of the work}
 \author{}
 \date{}
 \begin{document}
@@ -19,7 +19,7 @@ min(rev, corr) & robustness summary: the lower of reversed and correlated AUROC 
 \begin{abstract}
 \noindent Region-of-interest (ROI) masking --- segmenting the lesion and discarding the background --- is the most common
 defence against acquisition artifacts that act as shortcuts in medical image classifiers. Its rationale assumes that the
-artifact lies outside the ROI. This report asks what happens when it does not. It collects the eight stages of the work in
+artifact lies outside the ROI. This report asks what happens when it does not. It collects the nine stages of the work in
 one document. Stage~1 re-implements the pilot study from its written specification, fixes the protocol and corrects the
 interval estimator. Stage~2 varies only the artifact's overlap with the ROI and establishes the \emph{location law}:
 masking helps when the artifact lies outside the ROI and loses its benefit --- often turning harmful --- once it
@@ -32,7 +32,8 @@ concludes that the right remedy depends on what carries the shortcut. Stage~7 te
 every masking implementation tried, falls continuously with the real overlap, reappears on an external test set at natural
 prevalence, and was predicted prospectively by the theory. Stage~8 checks the real-artifact labels without a clinician,
 against public expert annotations and two independent automatic labellers, and repeats the thyroid analyses with a
-fine-tuned model near the published benchmark. Every number is generated from the result files of
+fine-tuned model near the published benchmark. Stage~9 asks whether any remedy beats masking everywhere, with a
+registered criterion in two rounds: none does, but the best come within one cell. Every number is generated from the result files of
 the repository and traced by an automatic audit.
 \end{abstract}
 
@@ -42,13 +43,13 @@ the repository and traced by an automatic audit.
 \section*{Overview}\addcontentsline{toc}{section}{Overview}
 \paragraph{The question} Does the benefit of ROI masking depend on where the artifact sits relative to the ROI --- and
 if so, through which mechanism, is it causal, does it matter clinically, and what should replace masking when it fails?
-\paragraph{How the report is organised} Each of Sections~\ref{sec:stage1}--\ref{sec:stage8} is one stage of the work, in
+\paragraph{How the report is organised} Each of Sections~\ref{sec:stage1}--\ref{sec:stage9} is one stage of the work, in
 the order in which it was carried out. Each stage opens with a one-sentence summary, states its questions and the
 reasons for its design, describes its methods and registrations, reports its results with figures and tables, lists
 what failed or changed, answers the questions a reader is likely to ask, draws its conclusion and lists the decisions it
 raises. Section~\ref{sec:conclusion} draws the conclusions of the work as a whole.
 \begin{table}[H]\centering\scriptsize
-\caption{The eight stages at a glance.}\label{tab:overview}
+\caption{The nine stages at a glance.}\label{tab:overview}
 \begin{tabular}{p{0.6cm}p{3.4cm}p{5.6cm}p{5.6cm}}\toprule
 Stage & Topic & Question & Answer in one line \\\midrule
 1 & Problem, pilot, protocol & Does the pilot reproduce, and is its protocol sound? & Yes for the central sweep result (\sOneNewMatch{} of \sOneNewN{} numbers match); the interval estimator was too narrow and was replaced. \\
@@ -59,6 +60,7 @@ Stage & Topic & Question & Answer in one line \\\midrule
 6 & Remedies and thesis & What to do instead of masking? & It depends on what carries the shortcut; no remedy transfers uniformly to unaltered data. \\
 7 & Robustness & Is the law an artefact of the fill, the thresholds, the data or hindsight? & No: \sSevenNPrimOK/\sSevenNPrim{} crossovers for other implementations; graded in $r$ in \sSevenNHNine/\sSevenNHNineOf{} cohorts; hard-pair harm on ISIC 2020; theory predictive prospectively. \\
 8 & Labels and a strong model & Are the real-artifact labels right, and does the law hold for a near-benchmark model? & Hair position right, presence over-called; crossover grows on uncontradicted labels (\sEightCleanisic); fine-tuned thyroid model shows every registered harm (subgroup \sEightFTThree; \sEightTMOne{} with re-tuned thresholds). \\
+9 & Remedies & Does any remedy beat masking everywhere? & No; a class-conditional constraint fixes every in-ROI failure and costs \sNineCmcDOneallisicTwoZeroTwoZero{} overall on ISIC 2020 only. \\
 \bottomrule\end{tabular}\end{table}
 \input{../common/notation.tex}
 \clearpage
@@ -78,6 +80,8 @@ Stage & Topic & Question & Answer in one line \\\midrule
 \input{body_stage7.tex}
 \clearpage
 \input{body_stage8.tex}
+\clearpage
+\input{body_stage9.tex}
 \clearpage
 
 \section{Conclusion}\label{sec:conclusion}
@@ -141,7 +145,11 @@ disease protection when the artifact resembles the pathology (capsule), and cann
 correlates (hair, chest drains), where label-based reweighting is required. With image-level labels, U-MtE with balancing
 or masking with DFR is the most robust choice. For fine-tuned networks, erasure must happen during training. On unaltered
 data no remedy improves on masking uniformly (\sSixNatRemPos{} of \sSixNatRemN{} comparisons favour a remedy,
-\sSixNatRemNeg{} favour masking) (Stage~6).
+\sSixNatRemNeg{} favour masking) (Stage~6). Tested against a registered criterion in two rounds, no remedy dominates
+masking; a class-conditional mean constraint on the masked features is better wherever masking fails --- every Trap~A,
+including a cohort held out from all choices (\sNineCmcDTwoTrapovary), and the conflicting cases of every unaltered test
+set --- and equal elsewhere, except for \sNineCmcDOneallisicTwoZeroTwoZero{} overall AUROC on ISIC 2020, where every
+alternative to masking loses (Stage~9).
 \end{enumerate}
 
 \subsection{Contributions}
@@ -172,6 +180,7 @@ operating point), or that the external harm is due to amplified in-lesion hair a
 \item That U-MtE improves deployment performance (it does not on unaltered data), or works post hoc on fine-tuned networks.
 \item That the transplant measures the harm of a particular real artifact (most of it is the paste).
 \item That the cohorts without patient identifiers are patient-independent.
+\item That any tested remedy dominates masking (none does; the best lose on ISIC 2020 overall).
 \item That the artifact labels are validated by a clinician (they are checked against public expert annotations and
 automatic labellers), or that the fine-tuned thyroid model reaches the published benchmark (it is \sEightFTZeroGap{} below).
 \end{itemize}

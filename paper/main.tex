@@ -14,22 +14,22 @@
 
 \begin{abstract}
 Medical image classifiers exploit acquisition artifacts---hair, sonographer calipers, intestinal debris---that
-correlate with the diagnosis; the standard defence restricts the model to the region of interest (ROI). This
-defence depends on where the artifact sits. In pre-registered traps built from real artifacts in four diseases
-and three modalities, masking removes an out-of-ROI shortcut but leaves an in-ROI one largely intact (crossover $+0.15$
-to $+0.38$ reversed-test AUROC, all Holm-significant; $+0.25$ on new patients from ISIC 2020). Pasting the \emph{same}
-real artifact inside or outside the ROI of the \emph{same} images reproduces the effect (location interaction
-\input{tables/review2_abstract_transplant}), and covariate-matched traps agree. The effect holds for five masking
-implementations, falls continuously with the real artifact--ROI overlap in all four cohorts, replicates across encoder
-families and sizes, fine-tuned networks and zero-shot vision--language scores, and grows when images whose labels
-independent annotation sources contradict are removed. A linear-Gaussian account, fitted only to each model's clean and
-correlated performance, predicted 84 results registered before they existed with a mean absolute error of 0.011 AUROC.
-On unaltered data the harm is hidden in subgroups: overall AUROC barely changes, but masking lowers AUROC on
-shortcut-conflicting cases on the patient-disjoint thyroid split and on new patients from ISIC 2020, and it lowers
-sensitivity among malignant nodules carrying a caliper for a fine-tuned model near the published benchmark, in a
-subgroup registered in advance; part of this loss survives thresholds re-tuned on the test set. Group balancing
-recovers the conflicting cases, but no remedy improves on masking uniformly. Audits of ROI-masked models should report
-artifact location and shortcut-conflicting performance. Code, pre-registrations and results are public.
+correlate with the diagnosis; the standard defence restricts the model to the region of interest (ROI). This defence
+depends on where the artifact sits. In pre-registered traps built from real artifacts in four diseases and three
+modalities, masking removes an out-of-ROI shortcut but leaves an in-ROI one largely intact (crossover $+0.15$ to $+0.38$
+reversed-test AUROC, all Holm-significant; $+0.25$ on new patients). Moving the \emph{same} real artifact across the ROI
+boundary of the \emph{same} images reproduces the effect (location interaction
+\input{tables/review2_abstract_transplant}). It holds for five masking implementations, falls continuously with the
+artifact--ROI overlap, replicates across encoders, fine-tuning and zero-shot vision--language scores, and grows when
+images with contradicted labels are removed. A linear-Gaussian account predicted 84 results registered before they
+existed (mean absolute error 0.011 AUROC). On unaltered data the harm hides in subgroups: overall AUROC barely changes,
+but masking lowers AUROC on shortcut-conflicting cases, on a patient-disjoint thyroid split and on new patients, and
+lowers sensitivity among malignant nodules carrying a caliper for a near-benchmark fine-tuned model, in a subgroup
+registered in advance, partly even after re-tuning the threshold. Against a registered criterion, no remedy dominates
+masking; the closest, a class-conditional mean constraint on the masked features, removes masking's failure in every
+cohort and on every set of conflicting cases, at a cost of 0.02 overall AUROC on one external set. Audits of ROI-masked
+models should report artifact location and shortcut-conflicting performance. Code, pre-registrations and results are
+public.
 \end{abstract}
 
 \begin{keyword}
@@ -77,7 +77,9 @@ carry a caliper, in a subgroup registered in advance, and part of that loss surv
 pathology-like artifacts and correlate-carried shortcuts, benchmarked against DFR, JTT, LEACE, SPLINCE, LaMa
 inpainting and an annotation-free mask-then-erase tool, with the caveat that no remedy transfers uniformly to
 unaltered data; label-based group balancing recovers the shortcut-conflicting cases on three of five unaltered test sets
-and on ISIC 2020 (Sec.~\ref{sec:guide}; methods in the supplement).
+and on ISIC 2020. Tested against a registered dominance criterion in two rounds on newly generated data, no remedy is
+never worse than masking and better wherever it fails; the closest fails on one cell of 42 (Sec.~\ref{sec:guide}; methods
+in the supplement).
 \item \textbf{Reproducibility.} Pre-registration of every experiment with a registry of commit times, Holm-corrected
 primary claims, replication of the original pilot (73/88 numbers), a full rebuild on new hardware that reproduces
 every primary crossover within 0.01, artifact labels checked without a clinician against public expert annotations
@@ -169,7 +171,8 @@ through the same masks behaves similarly, so it is the location of a label-corre
 from a two-parameter model of signal and artifact strength, which predicted new results before they existed. It holds for
 every masking implementation we tried and is graded in the real overlap. On unaltered clinical data the cost falls on
 the cases in which the in-ROI artifact points to the wrong diagnosis: it is hidden in the overall AUROC, visible on new
-patients, and for a fine-tuned thyroid model part of it survives any re-tuning of the decision threshold. We
+patients, and for a fine-tuned thyroid model part of it survives any re-tuning of the decision threshold. No remedy we
+tested dominates masking, but one comes within a single cell. We
 recommend that shortcut audits of masked models report artifact location relative to the ROI and evaluate performance
 on shortcut-conflicting cases alongside clean and correlated performance, and that the choice of remedy follow what
 carries the shortcut. Code, pre-registrations, result files and a CLAIM 2024 checklist are public.

@@ -70,3 +70,14 @@ failed components labelled loss / inconclusive. Crossed seed × image bootstrap,
 - Outputs: `results/round9/` (choices, components, verdicts, replication, decomposition, SUMMARY.md); predictions and
   features are never committed.
 - Seed-level stability: the SD over seeds of the Trap A reversed contrast with masking, per cohort, for every arm.
+
+## Results (added after the run; the text above is unchanged)
+Registration at `6563a66`, confirmation code at `ba03bda`, results at `76739e3` (`results/round9/SUMMARY.md`); write-up
+in Stage 9. This was the last remedy round.
+- **No candidate dominates masking.** mask_condadv, first in the sequence, met 27 of 42 components (losses including
+  ISIC 2020 all pairs −0.029 and ovary Trap B); the sequence stopped. Decision: *wins where masking fails but costs
+  elsewhere*: mask_irm (41 of 42; loss ISIC 2020 all pairs −0.009 [−0.013, −0.005]) and mask_vrex (40 of 42; loss ISIC
+  2020 −0.012).
+- References with frozen round-8 recipes: mask_cmc 41 of 42 (loss ISIC 2020 −0.015 [−0.024, −0.006]); mask_bal 38 of 42.
+- ISIC 2020 all pairs, every arm minus masking: −0.009 to −0.029, including ERM −0.014, mostly from same-artifact pairs.
+- Replication R: Trap A gain in 5 of 5 cells for each candidate (Holm).

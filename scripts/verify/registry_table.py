@@ -41,6 +41,8 @@ RESULTS = {
     "PREREGISTRATION_ROUND5.md": ["results/round5"],
     "PREREGISTRATION_ROUND6.md": ["results/round6"],
     "PREREGISTRATION_ROUND7.md": ["results/round7"],
+    "PREREGISTRATION_ROUND8.md": ["results/round8/confirm"],
+    "PREREGISTRATION_ROUND9.md": ["results/round9"],
 }
 
 

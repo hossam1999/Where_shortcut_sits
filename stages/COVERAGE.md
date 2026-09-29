@@ -61,6 +61,9 @@ back to earlier stages, never forward.
 | Round 6: fine-tuned thyroid model, recipe B1, FT0–FT4, operating points, comparison with the frozen probe | 8 | 5.6 |
 | Round 7 (`docs/PREREGISTRATION_ROUND7.md`, `scripts/round7/`, `results/round7/`): thresholds matched on the test set, TM1–TM2 | 8 | 5.7 |
 | Round 6 exploratory E1 (consensus traps) and E2 (confirmed subgroup) | 8 | 5.3 |
+| Round 8 (`docs/ROUND8_DESIGN.md`, `docs/PREREGISTRATION_ROUND8.md`, `results/round8/`): dominance criterion, four candidates, sweeps D5, fine-tuned D6, replication R, paste checks | 9 | 4, 5.1 |
+| Round 9 search (`docs/ROUND9_SEARCH_LEDGER.md`, `results/round9_search/`): twelve candidates on development data | 9 | 5.2 |
+| Round 9 (`docs/PREREGISTRATION_ROUND9.md`, `results/round9/`): three candidates on new data, references, ISIC 2020 decomposition | 9 | 5.3 |
 
 Analyses whose per-image predictions were not saved (chest-radiograph devices and drains, LaMa, text prompts, SLAS,
 U8, U10, selectors, archived hair sensitivity designs) appear as point estimates labelled "not re-estimated"; their

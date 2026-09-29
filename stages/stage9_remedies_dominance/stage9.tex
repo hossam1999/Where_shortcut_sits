@@ -1,0 +1,183 @@
+\input{../common/preamble.tex}
+\input{tables/numbers.tex}
+\newcommand{\notY}{1 = melanoma, malignant nodule, tumour with a solid component, erosion}
+\newcommand{\notA}{a real artifact: hair, sonographer caliper, capsule debris}
+\newcommand{\notROI}{lesion, nodule, tumour, union of expert lesion boxes}
+\newcommand{\notCross}{$[\text{mask}-\text{ERM}]_{\text{Trap B}}-[\text{mask}-\text{ERM}]_{\text{Trap A}}$ of reversed-test AUROC (Stage~3).}
+\newcommand{\notCI}{95\% crossed seed$\times$image bootstrap interval (Stage~1), 10{,}000 replicates; one-sided tests at 0.025.}
+\newcommand{\notExtra}{Candidate & a remedy compared with masking: every contrast is candidate $-$ masking, AUROC. \\ Dominates & meets every component of the registered criterion (Table~\ref{tab:crit}). \\ Easy / conflicting / same-artifact pairs & positive--negative pairs whose artifact status follows / conflicts with the association, or is the same in both images (Stage~5). \\ Development / confirmation & data used to choose a candidate's settings / data generated only after its registration. \\}
+\title{\textbf{Stage 9 --- Is there a remedy that beats masking everywhere?}\\[3pt]\large Where the Shortcut Sits: progress report 9}
+\author{}
+\date{}
+\begin{document}
+\maketitle
+\stagebox{\textbf{In one sentence.} No remedy dominates ROI masking --- none of the seven candidates registered in two rounds
+(four, then three chosen by a search over twelve ideas) is never worse and better wherever masking fails --- but the best
+ones come within one cell: a
+class-conditional mean constraint on the masked features (\texttt{mask\_cmc}) and IRMv1 are better than masking in every
+Trap~A (including a cohort held out from all choices) and on the shortcut-conflicting cases of every unaltered test set,
+equal to it elsewhere, and lose only on the external ISIC 2020 set (\sNineCmcDOneallisicTwoZeroTwoZero{} and
+\sNineNinemaskirmDOneisicTwoZeroTwoZero{} overall AUROC), where every alternative to masking, including the unmasked
+model, loses.}
+\input{../common/notation.tex}
+
+\tableofcontents
+\clearpage
+
+\section{Where this stage starts}
+Stage~6 developed and compared remedies for the failure of masking and concluded that the right remedy depends on what
+carries the shortcut, and that no remedy improved on masking uniformly on unaltered data. Stage~8 validated the labels
+the remedies need and showed the failure on a near-benchmark model. One question remained: is there \emph{one} method a
+practitioner could use instead of masking --- never worse, and better where masking fails? This stage answers it with a
+registered criterion, two registered rounds on data generated only after each registration, and a documented search
+between them.
+
+\section{Questions}
+\begin{enumerate}[label=\textbf{Q9\alph*},leftmargin=*]\itemsep1pt
+\item Does any existing or adapted remedy dominate masking by a registered criterion?
+\item If not, where exactly does the best one lose, and why?
+\item Can a search over further ideas, including methods from outside medical imaging, find one that does?
+\end{enumerate}
+\paragraph{Design decisions} \emph{The comparison is with masking only.} ``Dominates'' means not worse where masking
+already works and better where it fails (Table~\ref{tab:crit}); it does not require beating every other remedy.
+\emph{Cells where no honest method can win are left out}: easy pairs (a method that stops using the shortcut must lose
+there) and correlated tests as strong as training (the criterion uses the worse of the reversed and correlated tests).
+\emph{One criterion, many components.} A candidate dominates only if all 42 components are met (an intersection--union
+test, so no correction within a candidate); across candidates a fixed sequence, registered in advance, keeps the full
+0.025 for the first. \emph{Choices on validation data only.} Every setting is chosen per training set by the worst-group
+validation AUROC with a guard on the same-artifact pairs, which measure disease ranking whatever the association; masking
+is always a fallback. \emph{Untouched confirmation.} New trap resamples with seeds used for nothing else, and one cohort
+(ovary) whose data never influence a choice. The unaltered test sets and ISIC 2020 had been seen before and are
+semi-confirmatory. \emph{Novelty is not a condition}: every candidate is labelled published or adaptation with its closest
+prior work; none is new. \emph{At deployment} a candidate may use only the image, its ROI mask and automatic detectors.
+
+\section{Methods}
+\paragraph{Design (no test scoring)} Every existing arm was recomputed on one crossed bootstrap (11{,}135 cells); the
+closest existing arm met 29 of 36 cells of the criterion. An exact decomposition of the all-pairs AUROC into easy,
+conflicting and same-artifact pairs showed that balancing loses on unaltered data mainly through the same-artifact
+pairs, i.e.\ through disease signal lost by reweighting, not through removing the shortcut.
+\paragraph{Round 8 candidates} (i) \texttt{mask\_cmc}: masked features projected onto the complement of the within-class
+mean differences between images with and without the artifact, so the head may not score them differently on average
+within a class; a first-moment, linear case of counterfactual invariance (Veitch et al.\ 2021). (ii) \texttt{full\_cmc}:
+the same on the full image. (iii) \texttt{mask\_bal}: partial group reweighting with a validated strength. (iv)
+\texttt{locrand\_loc}: real artifact instances pasted inside and outside the ROI so that presence at each location is
+independent of the label. Nine further arms (the uniform paste plan, a selector, combinations, AFR, GroupDRO, a soft U-MtE, a label-sensitivity run) are descriptive.
+Separate claims: controlled sweeps (D5), a fine-tuned paste model (D6), replication with MedSigLIP and ConvNeXt (R).
+One amendment, before any run, replaced Holm across candidates by the fixed sequence, made the location-matched paste
+plan primary and labelled failed components as \emph{loss} or \emph{inconclusive}.
+\paragraph{Search} After round 8, twelve ideas were tried on development data only (development seeds; validation folds
+of the unaltered training sets; never a confirmation seed, test set, ISIC 2020 or ovary; enforced in code): backdoor
+adjustment, product of experts and logit adjustment from NLP and long-tail learning, moment matching, conditional
+adversarial debiasing, Correct-n-Contrast and counterfactual contrastive learning, V-REx and IRMv1, and combinations.
+Every attempt is logged.
+\paragraph{Round 9} The three best eligible search candidates, in the fixed sequence conditional adversarial debiasing
+$\to$ IRMv1 $\to$ V-REx, with round 8's \texttt{mask\_cmc} and \texttt{mask\_bal} refitted with their frozen recipes as
+references; new confirmation seeds; registered as the last remedy round.
+
+\section{Experiments}
+\input{tables/experiments.tex}
+\input{tables/criterion.tex}
+
+\section{Results}
+\subsection{Round 8: close, but no dominance}
+Table~\ref{tab:rEight}. The sequence stopped at its first candidate: \texttt{mask\_cmc} met \sNineMetmaskcmc{} of
+\sNineNComp{} components. It is better than masking in every Trap~A --- thyroid \sNineCmcDTwoTrapthyroid, capsule
+\sNineCmcDTwoTrapcapsule, dermoscopy hair \sNineCmcDTwoTrapisic{} and the held-out ovary \sNineCmcDTwoTrapovary{} --- and
+on the conflicting pairs of every unaltered test set, including ISIC 2020 (\sNineCmcDTwohardisicTwoZeroTwoZero); it is not
+worse on Trap~B and the clean tests, never flips the shortcut, and is not worse overall on four of the six unaltered test
+sets (thyroid inconclusive: \sNineCmcDOneallthyroid). Its one loss is ISIC 2020 overall (\sNineCmcDOneallisicTwoZeroTwoZero).
+\texttt{mask\_bal} also met every D2 component but lost small amounts overall on thyroid, MSK and ISIC 2020
+(Table~\ref{tab:rEightc}, Figure~\ref{fig:dom}).
+\input{tables/r8_verdicts.tex}
+\input{tables/r8_components.tex}
+\paragraph{Why ISIC 2020} On ISIC 2020 in-lesion hair still points towards melanoma for most patients. \texttt{mask\_cmc}
+removes that shortcut: it gains \sNineCmcIsicTwoZerohard{} on the conflicting pairs and loses \sNineCmcIsicTwoZeroeasy{} on
+the easy pairs, where the shortcut gives the right answer; the rest of the overall loss comes from the same-artifact
+pairs.
+\paragraph{Separate claims} In the controlled sweeps \texttt{mask\_cmc} and \texttt{mask\_bal} dominate masking
+(\sNineDFivemaskcmc{} components each; D5, Holm). The replication with MedSigLIP and ConvNeXt supports the Trap~A gain in
+\sNineRepmaskcmc{} cohorts for \texttt{mask\_cmc} (smallest gain \sNineRepMinmaskcmc) and \sNineRepmaskbal{} for
+\texttt{mask\_bal}. The paste candidates are not a fair test: in the traps too few images could receive a paste to balance
+presence between the classes, and a probe separates pasted from real artifacts (AUROC \sNineProbeMin--\sNineProbeMax); the
+fine-tuned paste model met \sNineDSix{} components (D6).
+
+\subsection{The search}
+Table~\ref{tab:search}. None of the \sNineNSearch{} candidates met every development component. Three flip the shortcut in
+thyroid Trap~A and are not eligible (backdoor adjustment, product of experts, logit adjustment); the contrastive methods
+lose disease signal. The three kept met 27--28 of 29 with no loss --- but round 8's \texttt{mask\_bal} also scored
+\sNineSearchBal{} of 29 on this development criterion and still lost on ISIC 2020, which the search could not see.
+\input{tables/search.tex}
+
+\subsection{Round 9: the same result on new data}
+Table~\ref{tab:rNine} and Figure~\ref{fig:dom}. Conditional adversarial debiasing, first in the sequence, met only
+\sNineNineMetmaskcondadv{} components; the sequence stopped. IRMv1 met \sNineNineMetmaskirm, losing only ISIC 2020 overall
+(\sNineNinemaskirmDOneisicTwoZeroTwoZero, just beyond the margin of $-0.01$) while gaining on its conflicting pairs
+(\sNineNinemaskirmDTwoisicTwoZeroTwoZero); V-REx met \sNineNineMetmaskvrex. Refitted on the new data with its frozen recipe,
+\texttt{mask\_cmc} met \sNineNineMetmaskcmc{} and again lost only ISIC 2020 overall (\sNineNinemaskcmcDOneisicTwoZeroTwoZero):
+the round-8 result replicates. IRMv1 gains less than \texttt{mask\_cmc} where masking fails (Table~\ref{tab:rNineg}), so it
+sits at a different point of the same trade-off.
+\input{tables/r9_verdicts.tex}
+\input{tables/r9_gains.tex}
+\paragraph{ISIC 2020 is where masking itself is strong} Table~\ref{tab:decomp}. Every arm loses there overall, from
+\sNineDecBest{} to \sNineDecWorst{} --- including the unmasked model (ERM, \sNineDecErm), whose loss comes mostly from the
+same-artifact pairs (\sNineDecErmSame). On new patients at natural prevalence, masking ranks disease better than any
+alternative we tested, and a method that removes the in-lesion hair shortcut additionally gives up the easy pairs.
+\input{tables/r9_decomp.tex}
+\begin{figure}[H]\centering\includegraphics[width=\linewidth]{figures/dominance.pdf}
+\caption{The four best candidates minus masking (crossed 95\% CIs). Left: all pairs of the unaltered test sets (dashed:
+the registered margin $-0.01$). Middle: conflicting pairs. Right: Trap~A $\min$(reversed, correlated); *ovary held out from
+every choice.}\label{fig:dom}\end{figure}
+
+\section{What failed or changed}
+\begin{itemize}[leftmargin=*]\itemsep1pt
+\item \textbf{No dominance} in either round; the best candidates fail on one cell, ISIC 2020 overall.
+\item \textbf{The paste candidates} were not a fair test (too few recipients to balance the traps; pasted artifacts
+distinguishable from real ones).
+\item \textbf{The development criterion} of the search could not see ISIC 2020; the candidate it ranked first (conditional
+adversarial debiasing) failed most in confirmation.
+\item \textbf{A premise in the approval of round 8 was wrong}: the trap validation split does not carry the training
+association. The registered guard was kept because it is right either way.
+\item \textbf{Scope}: frozen DINOv2 features for the dominance test; replication in two encoders for Trap~A only; the
+fine-tuned route (D6) was tested only with the paste candidate.
+\end{itemize}
+
+\section{Anticipated questions}
+\paragraph{Is a loss of 0.01--0.02 AUROC on one external set a reason to keep masking?} It is a trade-off, not a
+verdict. \texttt{mask\_cmc} gives up \sNineCmcDOneallisicTwoZeroTwoZero{} overall on ISIC 2020 and gains
+\sNineCmcDTwohardisicTwoZeroTwoZero{} on the cases in which the shortcut points the wrong way, and it removes masking's
+failure wherever the artifact lies inside the ROI. Which matters more is a clinical choice; the registered criterion
+counts the overall loss as a failure, and we report it as one.
+\paragraph{Why was the criterion so strict?} Because ``better than masking'' is only useful if it holds everywhere a user
+might deploy the method. The strictness also makes the negative result informative: the candidates fail by one cell, not
+by many.
+\paragraph{Were twelve search candidates a fishing expedition?} The search used development data only, every attempt is
+logged with its prediction, and the three candidates it produced were confirmed on data generated after their
+registration --- where they did not dominate.
+\paragraph{Is \texttt{mask\_cmc} new?} No. It is an adaptation of counterfactual invariance (a class-conditional
+constraint) applied after masking; what is new is deriving it from the location law and the pair decomposition, and
+testing it this way.
+\paragraph{Why does even the unmasked model lose on ISIC 2020?} Masking is strong there: the unmasked model loses mostly
+on the same-artifact pairs, i.e.\ it ranks disease worse when the surroundings are kept, presumably because skin context
+and hair beside the lesion transfer poorly between the two collections. That is consistent with the location law ---
+masking helps where the shortcut lies outside the ROI --- and it explains why an alternative that keeps context, or that
+also removes the in-lesion shortcut, falls short of masking overall on this set.
+
+\section{Conclusion}
+\textbf{Not supported.} No remedy dominates masking (seven registered candidates in rounds 8 and 9; twelve searched).
+\textbf{Supported, as a trade-off.} A class-conditional mean constraint on masked features, and IRMv1, are better than
+masking wherever masking fails --- every Trap~A including a held-out cohort, the conflicting cases of every unaltered test
+set --- and equal to it elsewhere, except for a loss of 0.01--0.02 overall AUROC on the external ISIC 2020 set, where
+every alternative to masking loses. In the controlled sweeps both round-8 winners dominate masking.
+
+\section{Questions for the supervisor}
+\begin{enumerate}\itemsep1pt
+\item Should the paper recommend \texttt{mask\_cmc} as the remedy to use when artifacts may lie inside the ROI,
+stating its ISIC 2020 cost, or only report it?
+\item Should the negative dominance result (two registered rounds) enter the main text, as the answer to ``so what should
+we use instead?''?
+\item Is closing the remedy question here --- no further search --- acceptable?
+\end{enumerate}
+
+\bibliographystyle{plainnat}
+\bibliography{../common/references}
+\end{document}

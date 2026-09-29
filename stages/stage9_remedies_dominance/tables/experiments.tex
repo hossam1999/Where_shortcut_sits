@@ -1,0 +1,10 @@
+\begin{table}[H]\centering\scriptsize
+\caption{Experiments of this stage. Each registration was committed before the data it tests were generated (round 8: confirmation seeds 8101--8505; round 9: 9101--9505). Commit times are set by the committing machine.}\label{tab:exp}
+\begin{tabular}{p{5.0cm}p{3.6cm}p{2.8cm}p{3.6cm}}\toprule
+Experiment & Status & First commit (local time) & Support criterion \\\midrule
+Design and scoreboard of every existing arm & \posthoc{design; no test scoring of new models} & \texttt{86e99d8}, 2026-09-28 21:19 & -- \\
+Round 8: four primary candidates (fixed sequence), sweeps (D5), fine-tuned (D6), replication (R) & \registered{round 8}; one amendment before any run & \texttt{dd5c7ee}, 2026-09-28 22:01 & dominance: every component of D1--D4 met (intersection--union) \\
+Search over twelve candidates on development data & \posthoc{exploratory; development data only} & \texttt{8645734}, 2026-09-29 00:15 & ranking only \\
+Round 9: three candidates from the search (fixed sequence) & \registered{round 9}; the last remedy round & \texttt{6563a66}, 2026-09-29 08:44 & as round 8 \\
+\bottomrule\end{tabular}
+\end{table}
