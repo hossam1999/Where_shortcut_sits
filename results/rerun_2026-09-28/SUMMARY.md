@@ -93,3 +93,5 @@ Verdict counts: {'MATCH': 76, 'SIGN+CI': 6, 'MISMATCH': 5}
 | E15   | trapA dfr − ERM (rev)                               | +0.114 [+0.091, +0.138] | +0.116 [+0.090, +0.145] | MATCH     | /workspace/Where_shortcut_sits/results/rerun_2026-09-28/spec_e13/dermlip224_spec/bootstrap_vs_erm.csv                                   |
 | E15   | trapA leace_paired − ERM (rev)                      | +0.031 [+0.028, +0.034] | +0.034 [+0.026, +0.042] | MATCH     | /workspace/Where_shortcut_sits/results/rerun_2026-09-28/spec_e13/dermlip224_spec/bootstrap_vs_erm.csv                                   |
 | E15   | trapA leace_unpaired − ERM (rev)                    | +0.192                  | +0.203 [+0.165, +0.243] | MATCH     | /workspace/Where_shortcut_sits/results/rerun_2026-09-28/spec_e13/dermlip224_spec/bootstrap_vs_erm.csv                                   |
+
+**2026-09-29:** the four archived analyses without per-image predictions were regenerated — see `SUMMARY_archived_reruns.md`. Exception: the device-matched RAD-DINO follow-up (`cxr_traps/raddino518_devmatched`) is **not re-estimated (dropped for time)**; its archived point estimates are unchanged.
