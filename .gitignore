@@ -37,3 +37,6 @@ results/round8/scoreboard_parts/
 # round-9 search: predictions and smoke runs (never committed)
 results/round9_search/preds/
 results/round9_search/_smoke/
+
+# round 9: smoke runs and logs (never committed)
+results/round9/_smoke/
