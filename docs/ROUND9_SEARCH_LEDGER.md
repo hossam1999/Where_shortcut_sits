@@ -100,3 +100,9 @@ S_m < S); it needs new renders, and the 12-candidate limit was used for g and h 
 - losses: D1' val all pairs isic_MSK -0.005 [-0.012]
 - inconclusive: D2' val hard pairs thyroid +0.013 [+0.000]; D2' val hard pairs isic_BCN +0.006 [+0.000]
 - status: does not meet every proxy component
+
+### 8. mask_condadv
+- development proxy: **27/29 components met**, worst slack -0.000 (D2' val hard pairs isic_MSK +0.013); Trap A reversed seed SD 0.026; settings chosen: {'lam1': 60, 'mask': 56, 'lam0.1': 42, 'lam10': 17}
+- losses: none
+- inconclusive: D2' val hard pairs thyroid +0.020 [+0.000]; D2' val hard pairs isic_MSK +0.013 [-0.000]
+- status: does not meet every proxy component
