@@ -21,8 +21,8 @@ registration and one cohort (ovary) that never influenced a choice. Table~\ref{t
 masking on these data. Group balancing, alone or after U-MtE, gains the most where masking fails, but pays where masking
 already works: it is worse than masking on the unaltered test sets overall in three of six (e.g.\ ISIC 2020 $-0.025$ and
 $-0.035$), because reweighting discards disease evidence. The constraint keeps most of that gain---better than masking in
-every Trap~A, by $+0.118$ (held-out ovary) to $+0.330$ (thyroid), and on every set of conflicting pairs---without the
-cost: it is never worse on a Trap~B test and is within the registered margin on four of the six unaltered test sets. It
+every Trap~A, by $+0.118$ (held-out ovary) to $+0.330$ (thyroid, from 0.400 to 0.730), and on every set of conflicting
+pairs---without the cost: it is never worse on a Trap~B test and is within the registered margin on four of the six unaltered test sets. It
 met 40 of 42 components (Fig.~\ref{fig:dom}); the two it failed are the thyroid split, where non-inferiority is
 inconclusive ($-0.002$ [$-0.011, +0.007$]), and ISIC 2020 overall ($-0.021$ [$-0.027, -0.016$]), where in-lesion hair
 still points to melanoma for most patients.
@@ -46,9 +46,9 @@ status. No remedy we tested dominates masking.
 
 \paragraph{Without artifact labels} Erasing from the masked features the subspace along which \emph{generic}
 synthetic overlays move them (mask-then-erase, U-MtE; Supplement~S8) removes much of what masking leaves for
-overlay-like artifacts (thyroid calipers $+0.224$ in Trap~A) at almost no cost on the unaltered test sets, but it is worse
-than masking for debris that resembles the pathology ($-0.119$) and gains little where the shortcut is carried by
-correlates of hair (Table~\ref{tab:remedies}).
+overlay-like artifacts (thyroid calipers in Trap~A: from 0.400 to 0.624) at almost no cost on the unaltered test sets,
+but it is worse than masking for debris that resembles the pathology (capsule: 0.548 versus 0.667) and gains little where
+the shortcut is carried by correlates of hair (Table~\ref{tab:remedies}).
 
 \paragraph{Decision guide} (i) Measure where artifacts sit relative to the ROI; for artifacts outside it, masking is
 enough. (ii) For artifacts inside it, with image-level artifact labels from an automatic detector, use the
