@@ -10,8 +10,9 @@ $\delta_y=\mu(x\mid a{=}1,y)-\mu(x\mid a{=}0,y)$, project the features onto the 
 natural weights. Within each class, the head then cannot score images with and without the artifact differently on
 average, and no image is down-weighted; group balancing, by contrast, loses on unaltered data mainly by discarding
 disease evidence through reweighting (Supplement~S17). The constraint is the first-moment, linear case of
-counterfactual invariance \citep{veitch2021counterfactual}; what is new is its derivation from the location law and
-its use after masking. At test time it needs only the masked image.
+counterfactual invariance \citep{veitch2021counterfactual} and of the auxiliary-label conditional-independence
+regularisers of \citet{makar2022causally}; what is new is its derivation from the location law and its use after
+masking. At test time it needs only the masked image.
 
 \paragraph{Registered test against masking} We registered a criterion for \emph{dominating} masking: not worse (margin
 0.01 AUROC) on the six unaltered test sets and on the Trap~B and clean tests, better on every Trap~A and on the

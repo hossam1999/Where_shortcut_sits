@@ -43,11 +43,12 @@ training distribution but are not evidence of disease \citep{geirhos2020shortcut
 surgical skin markings \citep{winkler2019markings} and ruler scale bars \citep{winkler2021scalebars} changed
 the melanoma predictions of a market-approved system; in chest radiography, pneumothorax classifiers detect the
 chest drain that treats the condition rather than the condition itself
-\citep{oakden2020hidden,jimenez2023shortcuts,zech2018variable}. Such correlations are causal in origin---suspicious lesions are
+\citep{oakden2020hidden,rueckel2021pneumothorax,jimenez2023shortcuts,zech2018variable}. Such correlations are causal in origin---suspicious lesions are
 measured and marked, collapsed lungs are drained---so they are present in every retrospectively collected dataset.
 
 The most widely recommended defence is to restrict the classifier to the region of interest (ROI): segment the
-lesion or the lungs and discard the rest of the image. The rationale assumes that the shortcut lives in the
+lesion or the lungs and discard the rest of the image, or penalise what the model uses outside the segmentation
+\citep{maron2021confounding,bassi2024isnet}. The rationale assumes that the shortcut lives in the
 background. Rulers, hair, calipers and debris do not respect that assumption. That a mask cannot remove what it keeps
 sounds self-evident; its consequences are not. We show that masking makes a model rely \emph{more} on an artifact
 inside the ROI, that the resulting harm is hidden in overall metrics but concentrated in the cases a shortcut gets
@@ -97,10 +98,18 @@ HAM10000 \citep{wang2024hair}, and adding synthetic dark-corner artifacts helps 
 \citep{pewton2024dca}; MaskMedPaint \citep{maskmedpaint} inpaints regions outside the classification-relevant area. In
 fetal ultrasound, calipers and on-screen text act as shortcuts even for segmentation \citep{lin2024segshortcut}. In
 chest radiography, hospital signals limit generalisation \citep{zech2018variable}, drain shortcuts are documented on
-NIH-CXR14 and CheXpert \citep{oakden2020hidden,jimenez2023shortcuts}, localised to late layers of probed encoders
-\citep{pedersen2026probes} and mitigated by prevalence-equalised recalibration, which needs the artifact label at test
-time \citep{kina2026prevalence}. These works treat an artifact's presence; none treats its location relative to the ROI
-as a variable.
+NIH-CXR14 and CheXpert \citep{oakden2020hidden,jimenez2023shortcuts}, reduced by training with in-image annotations
+\citep{rueckel2021pneumothorax}, localised to late layers of probed encoders \citep{pedersen2026probes} and mitigated
+by prevalence-equalised recalibration, which needs the artifact label at test time \citep{kina2026prevalence}. These
+works treat an artifact's presence; none treats its location relative to the ROI as a variable.
+\paragraph{Restricting the model to the ROI} Medical images often remain classifiable with the ROI removed, and models
+trained on full chest radiographs performed better on images without the ROI than on the ROI alone
+\citep{sourget2025mask}. Training on segmented dermoscopy images improved balanced accuracy for one training set but
+not another \citep{maron2021confounding}, and penalising relevance outside segmentation masks makes chest-radiograph
+classifiers more robust to background bias \citep{bassi2024isnet}. All of these assume that the shortcut lies outside
+the ROI. In natural images, mitigating one shortcut can amplify reliance on others \citep{li2023whacamole}; masking is
+such a mitigation when an artifact lies inside the ROI, and we show that in medical images it amplifies the in-ROI
+shortcut, that location causes this, and why.
 \paragraph{Removing shortcuts} Reweighting and GroupDRO \citep{sagawa2020groupdro}, last-layer retraining
 \citep{kirichenko2023dfr} and linear concept erasure \citep{ravfogel2020inlp,belrose2023leace} need artifact labels or
 paired data; erasure from unpaired labels removes label-correlated signal when the concept is correlated with the
@@ -108,7 +117,8 @@ label. Task-preserving erasure (SPLINCE; \citealp{splice2025}) and projection of
 models \citep{chuang2023debiasing} need concept labels or prompts. Random erasing and occlusion augmentation
 \citep{zhong2020random,fong2019occlusions} use overlays as training noise, and test-time selection
 \citep{bissoto2023tts} steers dermoscopy models with user keypoints. Counterfactual invariance
-\citep{veitch2021counterfactual} motivates the remedy we recommend.
+\citep{veitch2021counterfactual}, enforced as conditional independence from an auxiliary label given the class
+\citep{makar2022causally}, motivates the remedy we recommend.
 \paragraph{Foundation models} Classifiers trained on frozen foundation-model features inherit shortcut-like
 behaviour that pooled multi-institutional evaluation can hide \citep{germani2026aggregation}, and shortcut testing
 \citep{brown2023shortcut} probes whether performance gaps stem from encoding a sensitive attribute. We ask where in

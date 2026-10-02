@@ -15,7 +15,9 @@ $\tilde A\to0$ but scales $S$ by $1-\rho^2$, where $\rho$ is its overlap with th
 when the artifact resembles the pathology unless the disease direction is protected; (iv) group balancing removes the artifact--label association and everything
 correlated with it, whatever the location; (v) a shortcut carried by correlates that neither the mask nor pixel-level
 erasure touch can only be removed by label-based reweighting. Each consequence is borne out in
-Sections~\ref{sec:law}--\ref{sec:guide}.
+Sections~\ref{sec:law}--\ref{sec:guide}. In the terms of \citet{hermann2024foundations}, who separate a feature's
+predictivity from its availability, masking changes the relative predictivity of what the head can still use; unlike
+that synthetic analysis, the account is fitted to trained models and makes quantitative predictions.
 
 \paragraph{Does the account match real encoders?} The same model gives the AUROC for any test composition, so $(S,A)$
 can be fitted to each trained model's clean and correlated AUROC \emph{only} and the reversed-test AUROC predicted from
