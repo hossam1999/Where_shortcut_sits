@@ -38,10 +38,58 @@ on first download, before any label is read for analysis.
 - Not useful: BUS-CoT (aggregate of existing breast sets incl. BUSI), Histology Tissue Fold Dataset (no diagnosis labels),
   KFGNet thyroid videos (244-video classification subset), PICCOLO (40 patients, by request).
 
-## Recommendation
-1. **TN5000 first**: open, CC BY, biopsy-confirmed, a new hospital, boxes for the ROI; it would turn the thyroid result
-   into one with an external cohort. One download answers the two checks (calipers present? patient IDs?).
-2. **DERM12345 or MILK10k** as a second external dermoscopy test, with the frozen hair pipeline and the existing gate.
-3. **EMBED** only if the author applies for access: it is the best new modality but cannot start without the agreement.
+## Verification (2026-10-03)
+Outcome-free checks only: no model was fitted and no model output was looked at. The ISIC Archive bucket
+(`isic-archive.s3.amazonaws.com`, public) is reachable from this environment. figshare, Harvard Dataverse, Hugging
+Face, Zenodo, Kaggle, PhysioNet and `dl.fbaipublicfiles.com` (the DINOv2 weights) are blocked by the network policy,
+so the encoder cannot run here. Files: `results/dataset_search_2026-10/`.
 
-Any of these would be a new confirmatory analysis and needs its own registration committed before labels are read.
+**Overlap with the data already used.** Metadata of eight ISIC Archive collections were matched by `isic_id`
+against the ISIC 2019 and ISIC 2020 training sets. DERM12345, MILK10k and HIBA share no image with them. The two large
+"histopathology-confirmed" collections (10.34970/277003, 18,133 images; ISIC-DICM-17k) overlap in 12,594 and 9,810
+images, and their 2,096 / 1,921 non-overlapping melanomas come mostly from the same institutions as ISIC 2019
+(anonymous challenge images, MSKCC, ViDIR Vienna), so they are not external tests. HIBA has 196 melanomas, too few
+for three cells of 50.
+
+**DERM12345: does not strengthen the paper (drop).**
+- 400 melanomas (all histopathology), 9,952 nevi; patient IDs on every image, but the melanomas come from only
+  **98 patients** (median 3 images, up to 22), and 136 of the 400 are on palms or soles, where there is no hair.
+- **Device confounding.** Melanoma and nevus images were taken largely with different equipment: 33% of melanoma images
+  have rare resolutions against 3% of nevi (1920×1080: 3% vs 34%); round dark corners 36% vs 3%; red timestamps
+  9% vs 0.3%. These three image properties alone predict melanoma with **AUROC 0.795** (logistic regression,
+  patient-grouped 5-fold cross-validation; `derm12345_device_features.csv`). A trap on these data would be dominated
+  by a device shortcut that lies outside the lesion in every environment, so the hair test would be insensitive.
+- Restricting to the main device (768×576) leaves 149 melanoma images from 48 patients: the three cells of ≥ 50
+  melanomas cannot be filled.
+
+**MILK10k: clean but probably fails the gate; no patient IDs.**
+- 450 melanomas and 746 nevi, one dermoscopic image per lesion, five centres, 95.7% histopathology; no overlap with
+  ISIC 2019/2020; **lesion IDs only, no patient IDs** (criterion 3 of the external-validation rule fails).
+- No device confounding: every image is 600×450, dark corners 4.2% vs 0.9%, device-only AUROC 0.503.
+- The released MONET hair scores cannot define a hair-free group (only 3 of 1,196 melanoma and nevus images score
+  below 0.1).
+- Visual reading of 60 random melanomas (`milk10k_visual_sample_ids.csv`, one reader, thumbnails): hair-free 34,
+  hair on the lesion 12 (+3 borderline), hair only outside 5 (+2 borderline), mixed 4. Scaled to 450 melanomas the
+  hair-outside cell (Trap B) is about 35–55 images: near or below the gate, because the lesion fills most close-ups.
+
+**TN5000: the only candidate with clear potential, not verifiable here.**
+- Two real TN5000 images (000202 benign, 000224 malignant), visible in the screenshots of a public project that uses
+  the data (github.com/Abhijeet-Omega/Thyroid-Nodule-AI-Analysis), both carry four '+' calipers on the nodule: the
+  in-ROI artifact is present.
+- The same project reports 126 exact-duplicate images in 119 groups, 65 groups crossing the official splits; no
+  patient IDs are released (pHash grouping, as for the main thyroid cohort, would be needed).
+- The frozen rule-based caliper detector (`wtss.data.us_markers.marker_mask`) found **no** markers on the two
+  screenshot crops, although the calipers are clearly visible. The crops are resampled screenshots, so this is not
+  conclusive, but it is the failure that excluded ThyUS2Path: the detector would need re-validation on TN5000.
+- Unknown until download: the share of caliper-free images (if almost every nodule is measured there is no
+  artifact-free group, the reason breast ultrasound was dropped).
+
+## Verdict
+No new dataset can be confirmed to strengthen the paper now. DERM12345 would weaken it (device-confounded labels,
+98 melanoma patients). MILK10k is clean but its hair-outside melanoma cell is probably below the gate, and it has no
+patient IDs. TN5000 is promising (in-ROI calipers confirmed) but three things are unknown: whether caliper-free images
+exist, whether the detector transfers, and how much the duplicates matter. Checking them needs figshare
+(`figshare.com`, `ndownloader.figshare.com`, `springernature.figshare.com`) and, to run the encoder,
+`dl.fbaipublicfiles.com` added to the environment's allowed domains. EMBED needs a data-use agreement.
+
+Any new cohort would be a new confirmatory analysis and needs its own registration committed before labels are read.
