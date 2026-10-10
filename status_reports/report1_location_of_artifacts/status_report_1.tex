@@ -116,11 +116,11 @@ on the lesion & by lesion & 0 & 0.421 & $-0.129$ \\
 
 \section{Step 1: moving a ruler into the lesion}\label{sec:ruler}
 \paragraph{What we did} We first wanted to change \emph{only} the location of the artifact. We took 2,437 dermoscopy
-images with manual lesion masks (ISIC 2018 \citep{codella2019isic}; task: melanoma or not) and pasted the same small
+images with manual lesion masks (ISIC 2018 \citep{codella2019isic}; task: melanoma or not) and pasted the same
 ruler into each image at 0, 25, 50, 75 or 100\% overlap with the lesion (Figure~\ref{fig:ruler}). Everything else stays
 the same: same images, same ruler, same labels.
 \begin{figure}[!htb]\centering\includegraphics[width=0.6\linewidth]{figures/ruler_examples.pdf}
-\caption{The same image with the ruler at 0, 50 and 100\% overlap with the lesion (green: lesion mask). The pasted ruler is smaller than most real rulers so that it can lie fully inside the lesion; inside the lesion it covers about the same share of the lesion's area as real hair does (3.0\% vs 3.3\%).}
+\caption{The same image with the ruler at 0, 50 and 100\% overlap with the lesion (green: lesion mask).}
 \label{fig:ruler}\end{figure}
 
 \paragraph{What we found} When the ruler lies outside the lesion, masking removes it and helps a lot (+0.18). As soon
@@ -144,7 +144,7 @@ Masked model, correlated test & 0.849 & --- & 0.961 \\\midrule
 Blue: masked model; grey: standard model. Green and purple: two methods that remove the ruler itself (they need to
 know where the ruler is), shown for comparison.}\label{fig:sweep}\end{figure}
 
-\paragraph{Is it a fluke of one model or one ruler?} No. We repeated the experiment with a smaller image size, with a
+\paragraph{Is it a fluke of one model or one ruler?} No. We repeated the experiment with a lower image resolution (224 px), with a
 dermatology-specific encoder (DermLIP \citep{yan2025derm1m}), and with a ruler whose colour, ticks and size change from
 image to image. The pattern was the same every time (Table~\ref{tab:rep}). We summarise it with one number, the
 \emph{location effect}: the benefit of masking with the ruler outside minus its benefit with the ruler fully inside.
@@ -152,22 +152,24 @@ image to image. The pattern was the same every time (Table~\ref{tab:rep}). We su
 \caption{The ruler result repeated with other settings (masked $-$ standard, reversed test).}\label{tab:rep}
 \resizebox{\linewidth}{!}{\begin{tabular}{lccc}\toprule
 Setting & Ruler outside & Ruler fully inside & Location effect \\\midrule
-DINOv2, large images (main result) & $+0.184$ & $-0.129$ & $+0.313$ [$+0.258, +0.370$] \\
-DINOv2, small images & $+0.361$ & $-0.095$ & $+0.456$ [$+0.390, +0.525$] \\
+DINOv2, 518-px images (main result) & $+0.184$ & $-0.129$ & $+0.313$ [$+0.258, +0.370$] \\
+DINOv2, 224-px images & $+0.361$ & $-0.095$ & $+0.456$ [$+0.390, +0.525$] \\
 DermLIP (dermatology encoder) & $+0.161$ & $-0.263$ & $+0.424$ [$+0.335, +0.517$] \\
 DINOv2, randomised ruler & $+0.146$ & $-0.155$ & $+0.302$ [$+0.248, +0.357$] \\\midrule
-\multicolumn{4}{l}{\emph{The 1,314 images large enough to hold a long ruler fully inside the lesion:}} \\
-DINOv2, long thin ruler ($200\times10$ px, like a real one) & $+0.170$ & $-0.054$ & $+0.224$ [$+0.161, +0.285$] \\
-DINOv2, standard ruler, same images & $+0.160$ & $-0.102$ & $+0.262$ [$+0.200, +0.325$] \\
+\multicolumn{4}{l}{\emph{Two ruler sizes on the same 1,314 images:}} \\
+DINOv2, ruler 13\% of the image width & $+0.160$ & $-0.102$ & $+0.262$ [$+0.200, +0.325$] \\
+DINOv2, ruler 39\% of the image width & $+0.170$ & $-0.054$ & $+0.224$ [$+0.161, +0.285$] \\
+\textbf{Average of the two sizes} & $\mathbf{+0.165}$ & $\mathbf{-0.078}$ & $\mathbf{+0.243}$ [$+0.182, +0.304$] \\
 \bottomrule\end{tabular}}\end{table}
 
-\paragraph{Does the ruler's size matter?} The pasted ruler is smaller than most real rulers. We therefore repeated the
-experiment with a long, thin ruler of real proportions (39\% of the image width, with millimetre ticks), on the
-1,314 images whose lesion is large enough to hold it, and with the standard ruler on the same images for comparison
-(last two rows of Table~\ref{tab:rep}). We wrote down the design and the success criteria before running it. The
-location effect holds ($+0.224$). With the long ruler fully on the lesion, masking loses all its benefit, but it is not
-clearly worse than the standard model ($-0.054$; the interval includes zero). The masked model again reacts to the ruler
-on the lesion about twice as strongly as the standard model (0.43 vs 0.21; see check~3 below).
+\paragraph{Different ruler sizes} Real rulers come in different sizes, so we repeated the experiment with two ruler
+sizes, 13\% and 39\% of the image width (the wider one thin, with millimetre ticks, like a real scale bar), on the
+1,314 images whose lesions can hold both fully inside (last three rows of Table~\ref{tab:rep}). We wrote down the
+design and the success criteria before running it. Averaged over the two sizes, masking helps by $+0.165$ when the ruler
+is outside the lesion and hurts by $-0.078$ [$-0.149, -0.010$] when it is fully on the lesion; the location effect is
+$+0.243$. Both sizes show the effect on their own; for the 39\% ruler alone the harm at full overlap is not significant
+($-0.054$, interval includes zero). The masked model again reacts to the ruler on the lesion about twice as strongly as
+the standard model (0.43 vs 0.21 for the 39\% ruler; see check~3 below).
 
 \section{Step 2: why does masking fail?}
 Step~1 showed \emph{that} masking fails when the ruler is inside. There were three possible reasons:
