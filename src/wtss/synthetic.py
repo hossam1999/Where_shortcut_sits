@@ -23,6 +23,8 @@ OVERLAPS = [0.00, 0.25, 0.50, 0.75, 1.00]
 DEFAULT_SEEDS = [42, 123, 456]
 # Ruler geometry: ~0.45% of image area at both resolutions.
 ARTIFACT_GEOMETRY = {224: (28, 8), 518: (65, 19)}
+# Long, thin ruler with real proportions (39% of the image width; docs/PREREGISTRATION_LONG_RULER.md).
+LONG_RULER_GEOMETRY = {518: (200, 10)}
 
 ENV_RATES = {
     # env: (P(A=1 | Y=1), P(A=1 | Y=0))
@@ -112,6 +114,21 @@ def draw_ruler(img: Image.Image, x: int, y: int, w: int, h: int) -> Tuple[Image.
     for i, xx in enumerate(range(x + 2, x + w - 1, step)):
         tick = max(2, h - (2 if i % 2 == 0 else 4))
         d.line([xx, y + h - 1, xx, y + h - tick], fill=(15, 15, 15), width=1)
+    m = np.zeros((img.height, img.width), dtype=np.uint8)
+    m[y:y + h, x:x + w] = 1
+    return out, m
+
+
+def draw_ruler_long(img: Image.Image, x: int, y: int, w: int, h: int) -> Tuple[Image.Image, np.ndarray]:
+    """Thin dermoscopy scale bar inside box (x,y,w,h): a light strip with a dark outline and millimetre ticks
+    (short tick every ~6 px, long tick every fifth), drawn like the rulers seen in ISIC images."""
+    out = img.copy()
+    d = ImageDraw.Draw(out)
+    d.rectangle([x, y, x + w - 1, y + h - 1], fill=(236, 236, 236), outline=(20, 20, 20))
+    step = max(4, w // 32)
+    for i, xx in enumerate(range(x + 3, x + w - 2, step)):
+        tick = h - 2 if i % 5 == 0 else max(2, h // 2)
+        d.line([xx, y + h - 2, xx, y + h - 1 - tick], fill=(15, 15, 15), width=1)
     m = np.zeros((img.height, img.width), dtype=np.uint8)
     m[y:y + h, x:x + w] = 1
     return out, m

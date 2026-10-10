@@ -15,16 +15,27 @@ import torch
 
 from wtss import paths
 from wtss.experiments.synthetic import SynthConfig, analyse_synthetic, run_synthetic
-from wtss.synthetic import ARTIFACT_GEOMETRY
+from wtss.synthetic import ARTIFACT_GEOMETRY, LONG_RULER_GEOMETRY
 
 
-def cohort_and_placements(name: str, size: int):
-    if name == "isic2018":
+def cohort_and_placements(name: str, size: int, artifact: str = "ruler_fixed"):
+    if name in ("isic2018", "isic2018_longruler"):
         from wtss.data.isic2018 import isic2018_loaders, load_isic2018_pilot
 
-        w, h = ARTIFACT_GEOMETRY[size]
+        geom = LONG_RULER_GEOMETRY if artifact == "ruler_long" else ARTIFACT_GEOMETRY
+        w, h = geom[size]
         pl = json.loads((paths.FROZEN / f"placements_{size}_{w}x{h}.json").read_text())
-        return load_isic2018_pilot(), pl, isic2018_loaders(size), None
+        cohort = load_isic2018_pilot()
+        if name == "isic2018_longruler":
+            # the images that can hold the long ruler at every overlap (frozen; both rulers run on this subset)
+            import pandas as pd
+
+            keep = set(pd.read_csv(paths.FROZEN / "longruler_common_ids.csv").image_id)
+            cohort.df = cohort.df[cohort.df.image_id.isin(keep)].reset_index(drop=True)
+            cohort.name = "isic2018_longruler"
+        elif artifact == "ruler_long":
+            raise ValueError("ruler_long only fits the isic2018_longruler subset")
+        return cohort, pl, isic2018_loaders(size), (dict(geom) if artifact == "ruler_long" else None)
     if name == "nih_ptx":
         from wtss.data.cxr import load_nih_synthetic_cohort
 
@@ -64,7 +75,7 @@ def main():
     from wtss.backbones import BACKEND_SIZE
 
     size = BACKEND_SIZE[a.backbone]
-    cohort, placements, loaders, geometry = cohort_and_placements(a.cohort, size)
+    cohort, placements, loaders, geometry = cohort_and_placements(a.cohort, size, a.artifact)
     out = paths.RESULTS / "synthetic" / a.cohort / f"{a.backbone}_{a.artifact}_{a.phase}_{a.tag}"
     cfg = SynthConfig(phase=a.phase, overlaps=a.overlaps, seeds=a.seeds, arms=a.arms, artifact=a.artifact,
                       batch_size=a.batch_size, workers=a.workers, n_boot=a.n_boot)

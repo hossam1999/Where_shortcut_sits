@@ -24,7 +24,7 @@ from ..evaluation import evaluate, same_head_counterfactual, select_threshold_cl
 from ..features import ImageCache, assemble_env, extract_view
 from ..ops import apply_method
 from ..stats import hierarchical_interaction, hierarchical_paired_bootstrap, hierarchical_paired_mean_bootstrap
-from ..synthetic import (ARTIFACT_GEOMETRY, DEFAULT_SEEDS, draw_caliper, draw_debris, draw_ruler, draw_ruler_variable, draw_tube,
+from ..synthetic import (ARTIFACT_GEOMETRY, DEFAULT_SEEDS, draw_caliper, draw_debris, draw_ruler, draw_ruler_long, draw_ruler_variable, draw_tube,
                          presence_vector, sample_ruler_style)
 
 PIXEL_METHODS = {"erm", "mask", "inpaint", "dilate0", "dilate10", "dilate25", "dilate50"}
@@ -37,7 +37,7 @@ class SynthConfig:
     overlaps: Sequence[float] = (0.0, 0.25, 0.5, 0.75, 1.0)
     seeds: Sequence[int] = tuple(DEFAULT_SEEDS)
     arms: Sequence[str] = ("erm", "mask")
-    artifact: str = "ruler_fixed"  # ruler_fixed | ruler_variable | tube
+    artifact: str = "ruler_fixed"  # ruler_fixed | ruler_long | ruler_variable | tube | debris | caliper
     geometry: Dict[int, tuple] = field(default_factory=lambda: dict(ARTIFACT_GEOMETRY))
     batch_size: int = 64
     workers: int = 6
@@ -55,6 +55,8 @@ def _artifact_drawer(cfg: SynthConfig, size: int):
         x, y = int(pp["x"]), int(pp["y"])
         if cfg.artifact == "ruler_fixed":
             return draw_ruler(img, x, y, w, h)
+        if cfg.artifact == "ruler_long":
+            return draw_ruler_long(img, x, y, w, h)
         if cfg.artifact == "ruler_variable":
             return draw_ruler_variable(img, x, y, w, h, sample_ruler_style(image_id, ov))
         if cfg.artifact == "tube":

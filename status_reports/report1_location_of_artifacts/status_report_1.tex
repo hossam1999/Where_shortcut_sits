@@ -120,7 +120,7 @@ images with manual lesion masks (ISIC 2018 \citep{codella2019isic}; task: melano
 ruler into each image at 0, 25, 50, 75 or 100\% overlap with the lesion (Figure~\ref{fig:ruler}). Everything else stays
 the same: same images, same ruler, same labels.
 \begin{figure}[!htb]\centering\includegraphics[width=0.6\linewidth]{figures/ruler_examples.pdf}
-\caption{The same image with the ruler at 0, 50 and 100\% overlap with the lesion (green: lesion mask).}
+\caption{The same image with the ruler at 0, 50 and 100\% overlap with the lesion (green: lesion mask). The pasted ruler is smaller than most real rulers so that it can lie fully inside the lesion; inside the lesion it covers about the same share of the lesion's area as real hair does (3.0\% vs 3.3\%).}
 \label{fig:ruler}\end{figure}
 
 \paragraph{What we found} When the ruler lies outside the lesion, masking removes it and helps a lot (+0.18). As soon
