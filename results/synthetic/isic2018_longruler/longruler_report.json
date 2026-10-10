@@ -1,0 +1,30 @@
+{
+  "runs": {
+    "long": "results/synthetic/isic2018_longruler/dino518_ruler_long_corr_longruler",
+    "standard": "results/synthetic/isic2018_longruler/dino518_ruler_fixed_corr_longruler_subset"
+  },
+  "claims": {
+    "L1": {
+      "estimate": 0.2238209432454037,
+      "ci95_lo": 0.1613563850806624,
+      "ci95_hi": 0.2854732127200193,
+      "supported": true
+    },
+    "L2": {
+      "estimate": -0.0536570743405276,
+      "ci95_lo": -0.1232707419590642,
+      "ci95_hi": 0.0152033597489126,
+      "supported": false
+    },
+    "L3_descriptive": {
+      "estimate": -0.038119504396482796,
+      "ci95_lo": -0.07088764779996123,
+      "ci95_hi": -0.00512590217175626
+    },
+    "standard_subset_interaction": {
+      "estimate": 0.2619404476418865,
+      "ci95_lo": 0.1998998849313216,
+      "ci95_hi": 0.3254672799279765
+    }
+  }
+}
