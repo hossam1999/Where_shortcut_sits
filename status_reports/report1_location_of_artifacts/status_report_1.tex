@@ -139,7 +139,7 @@ Standard model, correlated test & 0.906 & --- & 0.937 \\
 Masked model, correlated test & 0.849 & --- & 0.961 \\\midrule
 \textbf{Masked $-$ standard (reversed)} & $\mathbf{+0.184}$ [$+0.117, +0.250$] & $\mathbf{-0.097}$ [$-0.164, -0.030$] & $\mathbf{-0.129}$ [$-0.195, -0.064$] \\
 \bottomrule\end{tabular}}\end{table}
-\begin{figure}[!htb]\centering\includegraphics[width=0.72\linewidth]{figures/ruler_sweep.pdf}
+\begin{figure}[!htb]\centering\includegraphics[width=0.62\linewidth]{figures/ruler_sweep.pdf}
 \caption{AUROC on the reversed test (left) and the correlated test (right) as the ruler moves into the lesion.
 Blue: masked model; grey: standard model. Green and purple: two methods that remove the ruler itself (they need to
 know where the ruler is), shown for comparison.}\label{fig:sweep}\end{figure}
@@ -155,8 +155,19 @@ Setting & Ruler outside & Ruler fully inside & Location effect \\\midrule
 DINOv2, large images (main result) & $+0.184$ & $-0.129$ & $+0.313$ [$+0.258, +0.370$] \\
 DINOv2, small images & $+0.361$ & $-0.095$ & $+0.456$ [$+0.390, +0.525$] \\
 DermLIP (dermatology encoder) & $+0.161$ & $-0.263$ & $+0.424$ [$+0.335, +0.517$] \\
-DINOv2, randomised ruler & $+0.146$ & $-0.155$ & $+0.302$ [$+0.248, +0.357$] \\
+DINOv2, randomised ruler & $+0.146$ & $-0.155$ & $+0.302$ [$+0.248, +0.357$] \\\midrule
+\multicolumn{4}{l}{\emph{The 1,314 images large enough to hold a long ruler fully inside the lesion:}} \\
+DINOv2, long thin ruler ($200\times10$ px, like a real one) & $+0.170$ & $-0.054$ & $+0.224$ [$+0.161, +0.285$] \\
+DINOv2, standard ruler, same images & $+0.160$ & $-0.102$ & $+0.262$ [$+0.200, +0.325$] \\
 \bottomrule\end{tabular}}\end{table}
+
+\paragraph{Does the ruler's size matter?} The pasted ruler is smaller than most real rulers. We therefore repeated the
+experiment with a long, thin ruler of real proportions (39\% of the image width, with millimetre ticks), on the
+1,314 images whose lesion is large enough to hold it, and with the standard ruler on the same images for comparison
+(last two rows of Table~\ref{tab:rep}). We wrote down the design and the success criteria before running it. The
+location effect holds ($+0.224$). With the long ruler fully on the lesion, masking loses all its benefit, but it is not
+clearly worse than the standard model ($-0.054$; the interval includes zero). The masked model again reacts to the ruler
+on the lesion about twice as strongly as the standard model (0.43 vs 0.21; see check~3 below).
 
 \section{Step 2: why does masking fail?}
 Step~1 showed \emph{that} masking fails when the ruler is inside. There were three possible reasons:
@@ -208,7 +219,7 @@ Capsule endoscopy, debris & DINOv2 & $+0.116$ & $-0.112$ & $+0.228$ [$+0.144, +0
 Chest X-ray, tube & DINOv2 & $+0.254$ & $-0.083$ & $+0.337$ [$+0.312, +0.364$] \\
  & RAD-DINO & $-0.002$ & $+0.111$ & $-0.113$ [$-0.129, -0.097$] \\
 \bottomrule\end{tabular}}\end{table}
-\begin{figure}[!htb]\centering\includegraphics[width=0.8\linewidth]{figures/all_sweeps.pdf}
+\begin{figure}[!htb]\centering\includegraphics[width=0.7\linewidth]{figures/all_sweeps.pdf}
 \caption{Effect on the reversed test (vs the standard model) as the artifact moves into the ROI, in every
 moving-artifact experiment. Blue: masking; green and purple: methods that remove the artifact itself. The blue line falls
 in every panel except the RAD-DINO chest tube.}\label{fig:all}\end{figure}
@@ -236,7 +247,7 @@ crossover means masking is worth more when the artifact is outside.
 images \citep{wegley2026artifacts}, a rule-based caliper detector for ultrasound, and a small detector trained on expert
 debris masks for capsule images. We checked them by eye: the caliper detector was right on 38 of 40 checked images.
 Detection errors cannot create a crossover: they weaken the shortcut in both traps equally.
-\begin{figure}[!htb]\centering\includegraphics[width=0.42\linewidth]{figures/real_examples.pdf}
+\begin{figure}[!htb]\centering\includegraphics[width=0.37\linewidth]{figures/real_examples.pdf}
 \caption{Real artifacts inside (Trap A) and outside (Trap B) the ROI. Green: ROI; red: detected artifact. (Thyroid
 images are not shown because the data licence is unclear; hair masks are not drawn for licence reasons.)}
 \label{fig:real}\end{figure}
