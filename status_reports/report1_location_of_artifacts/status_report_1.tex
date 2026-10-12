@@ -31,7 +31,7 @@ artifact shortcuts?}
 The usual defence is \emph{ROI masking}: keep only the region of interest (ROI), such as the lesion, and delete the
 rest of the image.
 \item Masking removes the artifact only when the artifact lies \emph{outside} the ROI. When it lies \emph{inside}, masking
-keeps it and deletes everything else, and the model relies on the artifact \emph{even more}.
+keeps it and deletes everything else; in most of our tests the model then relied on the artifact \emph{even more}.
 \item We showed this in four steps: (1) moving a pasted ruler into a skin lesion step by step; (2) four checks of
 \emph{why} it happens; (3) the same test in four other kinds of medical images; (4) real, unedited artifacts in four
 patient cohorts.
@@ -54,7 +54,7 @@ deleted. This is called \emph{region-of-interest (ROI) masking}. It is popular b
 which many pipelines already compute. Its hidden assumption is that the artifact lies in the background. Rulers,
 hair, calipers and debris often lie on or across the lesion. Figure~\ref{fig:idea} shows what masking then does.
 
-\begin{figure}[!htb]\centering\includegraphics[width=0.5\linewidth]{figures/masking_idea.pdf}
+\begin{figure}[!htb]\centering\includegraphics[width=0.42\linewidth]{figures/masking_idea.pdf}
 \caption{The idea. Top: an artifact outside the lesion is deleted by the mask. Bottom: an artifact on the lesion
 survives the mask, while everything that competed with it is deleted.}\label{fig:idea}\end{figure}
 
@@ -63,13 +63,16 @@ ROI? If so, why, and does it hold for real artifacts and other kinds of medical 
 
 \section{How we test it}
 \paragraph{Two models} Every experiment compares two models that use the same frozen image encoder (a pretrained
-foundation model such as DINOv2 \citep{oquab2024dinov2}) and the same simple classifier on top:
+foundation model; mainly DINOv2 ViT-B/14 at 518 px \citep{oquab2024dinov2}) and the same simple classifier on top
+(logistic regression whose settings are chosen on clean validation images):
 \begin{itemize}[leftmargin=1.2em,itemsep=1pt,topsep=2pt]
 \item the \textbf{standard model} sees the whole image;
 \item the \textbf{masked model} sees the image with everything outside the ROI replaced by the image's average
 colour, in training and in testing.
 \end{itemize}
-We keep the encoder frozen so that the only difference between the two models is the input.
+The two models share the frozen encoder, the classifier type and the training recipe; only the input differs. Each
+classifier is trained separately, three times (three random seeds) for the pasted-artifact experiments and five times
+on five patient- or lesion-grouped folds for the real-artifact experiments.
 
 \paragraph{The trap} To measure how much a model relies on the artifact, we build a ``trap''
 (Figure~\ref{fig:env}). In the training data the artifact appears on 90\% of the diseased images and 10\% of the
@@ -77,17 +80,19 @@ healthy ones, so it is a strong shortcut. We then test on three test sets:
 \begin{itemize}[leftmargin=1.2em,itemsep=1pt,topsep=2pt]
 \item \textbf{correlated test}: same 90/10 pattern as in training. A shortcut model looks good here.
 \item \textbf{reversed test}: the pattern is flipped (10/90). A model that uses the artifact \emph{fails} here.
-\item \textbf{clean test}: the artifact is unrelated to the disease. This shows how well the model knows the disease
-itself.
+\item \textbf{clean test}: the artifact tells nothing about the disease (pasted-artifact experiments: no artifact;
+real-artifact experiments: artifact on half of each class). This shows how well the model knows the disease itself.
 \end{itemize}
-\begin{figure}[!htb]\centering\includegraphics[width=0.45\linewidth]{figures/environments.pdf}
+\begin{figure}[!htb]\centering\includegraphics[width=0.38\linewidth]{figures/environments.pdf}
 \caption{The trap. Bars show how often the artifact appears among diseased (red) and healthy (grey) images in
 training and in each test set.}\label{fig:env}\end{figure}
 
 \paragraph{The score} We report AUROC (0.5 = guessing, 1.0 = perfect). Our main score is the AUROC on the
-\emph{reversed} test: it is high only if the model looks at the disease and not at the artifact. We usually report the
+\emph{reversed} test: it is high only if the model does not rely on the artifact (it cannot show what else the
+model uses). We usually report the
 \emph{difference} ``masked minus standard''. A positive number means masking helped; a negative number means it hurt.
-Square brackets give the 95\% confidence interval; if it does not include zero, the difference is significant.
+Square brackets give the 95\% confidence interval (10,000 bootstrap replicates; see ``Honest error bars''); if it
+does not include zero, the difference is significant.
 The \textbf{location effect} is this difference with the artifact outside the ROI minus the same difference with the
 artifact fully inside. A positive location effect means masking helps more when the artifact is outside.
 
@@ -183,9 +188,9 @@ relies on it more. We designed one check for each (Table~\ref{tab:why}).
 \caption{Four checks of why masking fails (ruler experiment, DINOv2).}\label{tab:why}
 \resizebox{\linewidth}{!}{\begin{tabular}{P{3.3cm}P{4.6cm}P{4.4cm}P{3.6cm}}\toprule
 Check & What we changed & Result & What it means \\\midrule
-1. Useless ruler & Ruler at the same places, but \emph{unrelated} to the diagnosis & Masking does not hurt at any position (all intervals include 0; e.g.\ $+0.039$ at 100\%) & Hiding parts of the image is not the problem (rules out a) \\
-2. Bigger mask & Grow the mask around the lesion: more skin comes back, and more of a half-covered ruler stays visible (50\% $\to$ 95\% of the ruler) & Harm gets \emph{worse}: $-0.097 \to -0.153$. When the ruler is already fully visible, a bigger mask changes nothing ($-0.129$ vs $-0.138$) & Harm follows how much of the ruler is visible, not how much skin is lost (b is not the main cause) \\
-3. Same-image test & Add or remove the ruler on the \emph{same} test image and measure how much the prediction changes & The masked model's prediction changes about twice as much as the standard model's (0.49 vs 0.24; with the 39\% ruler 0.43 vs 0.21) & The masked model leans more on the ruler (supports c) \\
+1. Useless ruler & Ruler at the same places, but \emph{unrelated} to the diagnosis & No harm from masking at any position (all intervals include 0; e.g.\ $+0.039$ at 100\%) & Hiding parts of the image does not explain the harm (speaks against a) \\
+2. Bigger mask & Grow the mask around the lesion: more skin comes back, and more of a half-covered ruler stays visible (50\% $\to$ 95\% of the ruler) & Harm gets \emph{worse}: $-0.097 \to -0.153$. When the ruler is already fully visible, a bigger mask changes nothing ($-0.129$ vs $-0.138$) & Harm follows how much of the ruler is visible, not how much skin is lost (speaks against b as the main cause) \\
+3. Same-image test & Add or remove the ruler on the \emph{same} test image and measure how much the predicted probability (0 to 1) changes & The masked model's prediction changes about twice as much as the standard model's (0.49 vs 0.24; with the 39\% ruler 0.43 vs 0.21) & The masked model leans more on the ruler (supports c) \\
 4. Lesion size & Split test images into small, medium and large lesions & Harm with the ruler inside: small $-0.36$, medium $-0.16$, large $+0.06$ (not significant) & Harm is largest where the ruler is big compared to the lesion \\
 \bottomrule\end{tabular}}\end{table}
 
@@ -197,13 +202,14 @@ artifact is missing or misleading.}
 \section{Step 3: is it only skin images?}
 \paragraph{What we did} We repeated the moving-artifact experiment in four other kinds of medical images, each with its
 own typical artifact and its own ROI (Figure~\ref{fig:sweepex}): a sonographer's caliper on \textbf{thyroid
-ultrasound} (TN3K, malignant or benign nodule \citep{gong2021tn3k}) and on \textbf{ovarian ultrasound} (MMOTU, tumour
-with or without a solid part \citep{zhao2022mmotu}); a debris blob on \textbf{capsule endoscopy} (SEE-AI, erosion or
+ultrasound} (TN3K, malignant or benign nodule \citep{gong2021tn3k}) and on \textbf{ovarian ultrasound} (MMOTU
+\citep{zhao2022mmotu}; tumour with a solid part: teratoma, theca cell tumour, mucinous cystadenoma, high-grade serous
+carcinoma; cystic: chocolate cyst, serous cystadenoma, simple cyst); a debris blob on \textbf{capsule endoscopy} (SEE-AI, erosion or
 polyp-like lesion \citep{seeai2023}); and a tube on \textbf{chest X-rays} (NIH ChestX-ray14, pneumothorax
 \citep{wang2017chestxray8}; ROI = the lungs). We used only images without a real artifact, so the pasted one was the only
 one. We also tested a second encoder where possible (MedSigLIP, a medical image model; RAD-DINO, a chest X-ray model
 \citep{perezgarcia2025raddino}).
-\begin{figure}[!htb]\centering\includegraphics[width=0.5\linewidth]{figures/sweep_examples.pdf}
+\begin{figure}[!htb]\centering\includegraphics[width=0.44\linewidth]{figures/sweep_examples.pdf}
 \caption{The pasted artifact at 0, 50 and 100\% overlap in three modalities (green: ROI; for capsule images the ROI is
 the expert's box around the lesion).}\label{fig:sweepex}\end{figure}
 
@@ -230,8 +236,9 @@ moving-artifact experiment. Blue: masking; purple: painting out the artifact; gr
 line falls in every panel except the RAD-DINO chest tube.}\label{fig:all}\end{figure}
 
 \paragraph{The one exception} With the chest X-ray encoder RAD-DINO, the standard model ignored a tube outside the
-lungs (reversed AUROC 0.913, the same as on the clean test, 0.915). Masking had nothing to remove outside, so the
-comparison does not apply. With DINOv2, which did use the outside tube, the usual pattern appeared.
+lungs (reversed AUROC 0.913, the same as on the clean test, 0.915), so masking gained nothing there, while it helped
+with the tube inside the lungs ($+0.111$). This is a real exception; the likely reason is that this encoder does not use
+a tube outside the lungs. With DINOv2, which did use it, the usual pattern appeared.
 
 \section{Step 4: real artifacts}
 Pasted artifacts let us control location exactly, but they are not the artifacts clinicians produce. So we next
@@ -239,20 +246,23 @@ asked whether the same thing happens with \emph{real, unedited} artifacts.
 
 \paragraph{The design} A real artifact cannot be moved, so we compare two groups of images: those whose artifact lies
 mostly inside the ROI (\textbf{Trap A}) and those whose artifact lies outside it (\textbf{Trap B}). Both traps share the
-\emph{same} artifact-free images (Figure~\ref{fig:traps}), so the designed difference between them is where the
-artifact sits. Each trap gets the 90/10 training set and the three test sets of Figure~\ref{fig:env}. The
+\emph{same} artifact-free images (Figure~\ref{fig:traps}). The two groups of artifact images can still differ in other
+ways (lesion size, diagnosis mix, hospital, the artifact's appearance); we matched the hospital mix where there were
+several hospitals, but the Trap A versus Trap B comparison remains an association with location, not a controlled
+move of the artifact. Each trap gets the 90/10 training set and the three test sets of Figure~\ref{fig:env}. The
 \textbf{crossover} is the benefit of masking in Trap~B minus its benefit in Trap~A; a positive crossover means masking
 helps more when the artifact is outside. (We first tried comparing in-ROI with out-of-ROI images directly, without an
 artifact-free group. That design cannot work: masking deletes exactly the out-of-ROI artifacts that define one side of
 the comparison, so it shows ``harm'' whatever the truth.)
-\begin{figure}[!htb]\centering\includegraphics[width=0.62\linewidth]{figures/two_traps.pdf}
+\begin{figure}[!htb]\centering\includegraphics[width=0.55\linewidth]{figures/two_traps.pdf}
 \caption{Two traps built from real images. Both share one group of artifact-free images.}\label{fig:traps}\end{figure}
 
-\paragraph{Cohorts} Table~\ref{tab:cohorts}. Artifacts were located automatically: published hair masks for skin
-images \citep{wegley2026artifacts}, a rule-based caliper detector for ultrasound, and a small detector trained on expert
-debris masks for capsule images. We checked them by eye: the caliper detector was right on 38 of 40 checked images.
-Detection errors that do not depend on the artifact's location weaken the shortcut in both traps; they cannot by
-themselves create a crossover.
+\paragraph{Cohorts} Table~\ref{tab:cohorts}. Artifacts were located automatically: for skin images, published masks
+that mark hair and rulers together \citep{wegley2026artifacts} (so the ``hair'' group includes some rulers); a
+rule-based caliper detector for ultrasound; and a small detector trained on expert debris masks for capsule images. We
+checked them by eye: the caliper detector was right on 38 of 40 checked images. Random detection errors make the two
+traps more alike and so shrink the crossover. Only errors that depend on both the artifact's location and the
+diagnosis could create one; no detector uses the diagnosis, but such errors cannot be fully excluded.
 \begin{figure}[!htb]\centering\includegraphics[width=0.37\linewidth]{figures/real_examples.pdf}
 \caption{Real artifacts inside (Trap A) and outside (Trap B) the ROI. Green: ROI; red: detected artifact. (Thyroid
 images are not shown because the data licence is unclear; hair masks are not drawn for licence reasons.)}
@@ -287,7 +297,7 @@ Thyroid, calipers & ConvNeXt & $-0.004$ & $+0.271$ & $+0.275$ [$+0.231, +0.320$]
 Capsule, debris & ConvNeXt & $+0.084$ & $+0.403$ & $+0.320$ [$+0.268, +0.372$] \\
 Skin, hair & DermLIP & $-0.104$ & $-0.090$ & $+0.014$ [$-0.037, +0.063$] \\
 \bottomrule\end{tabular}}\end{table}
-\begin{figure}[!htb]\centering\includegraphics[width=0.55\linewidth]{figures/crossover_real.pdf}
+\begin{figure}[!htb]\centering\includegraphics[width=0.5\linewidth]{figures/crossover_real.pdf}
 \caption{The crossover for every cohort and encoder (dots: estimate; lines: 95\% interval). Right of zero = masking
 is worth more when the artifact is outside the ROI.}\label{fig:forest}\end{figure}
 
@@ -301,18 +311,19 @@ masking also removes.
 \section{Other things we learned}\label{sec:other}
 \begin{itemize}[leftmargin=1.2em,itemsep=2pt]
 \item \textbf{Methods that know which images carry the artifact help in both traps.} Reweighting the training images
-so that the artifact no longer predicts the label, or retraining the last layer on balanced data (DFR
+so that the artifact no longer predicts the label, or retraining the last layer on a balanced subset (DFR
 \citep{kirichenko2023dfr}), helped in both traps of every cohort, wherever the artifact lay (Table~\ref{tab:arms}). The
-catch: they need an artifact label for every training image, which clinical datasets rarely have. Masking needs only the
-ROI.
+catch: reweighting needs an artifact label for every training image, and DFR for every image of its balanced subset;
+clinical datasets rarely have such labels. Masking needs only the ROI.
 \item \textbf{Painting out the artifact can backfire.} In capsule images, painting over the detected debris
-\emph{lowered} the score ($-0.17$ in Trap~A), because erosions contain yellow-white material that looks like debris.
-Deleting artifact pixels is only safe when the artifact does not look like the disease.
-\item \textbf{The hair shortcut is not only in the hair pixels.} Hair goes together with patient age, sex and body
-site. Painting out the hair pixels closed less than half of the standard model's shortcut gap (47\% in Trap~A, 44\% in
-Trap~B); the rest comes from these related factors, which masking cannot remove.
+\emph{lowered} the score ($-0.17$ in Trap~A). A likely reason is that erosions contain yellow-white material that
+looks like debris, so painting it out also removes disease evidence.
+\item \textbf{The hair shortcut is not only in the hair pixels.} Painting out the hair pixels closed less than half of
+the standard model's shortcut gap (47\% in Trap~A, 44\% in Trap~B). Hair goes together with patient age, sex and body
+site, so the rest is likely carried by such related features, which masking cannot remove.
 \item \textbf{DermLIP did not follow the rule.} With this dermatology encoder, masking hurt in \emph{both} hair traps
-and there was no crossover. It needs the skin around the lesion, so any mask costs disease information.
+and there was no crossover. A likely reason is that it needs the skin around the lesion: masking lowered its clean-test
+AUROC as well.
 \item \textbf{Chest X-rays are a boundary case.} Real chest drains lie inside the lungs and are an extreme shortcut
 (standard model, RAD-DINO: reversed AUROC 0.19 against 0.89 on the clean test). Lung masking barely helped (0.23),
 while DFR reached 0.67. With real devices (catheters in the lungs vs breathing tubes outside them), RAD-DINO showed no
@@ -339,7 +350,7 @@ Question & Answer & Evidence \\\midrule
 Does masking depend on where the artifact sits? & Yes: it helps when the artifact is outside the ROI and loses its benefit (often turns harmful) when it is inside & Steps 1 and 3: 10 of 11 experiments; both ruler sizes \\
 Why? & The artifact inside survives, its competitors are deleted, and the model relies on it more & Step 2: four checks \\
 Does it hold for real artifacts? & Yes, in all four cohorts and with three encoder types & Step 4: four planned tests, all significant \\
-Exceptions & DermLIP (needs the skin around the lesion); RAD-DINO (ignores the artifact outside the lungs) & Steps 3 and 4 \\
+Exceptions & DermLIP (likely needs the skin around the lesion); RAD-DINO (does not use a tube outside the lungs) & Steps 3 and 4 \\
 \bottomrule\end{tabular}}\end{table}
 
 \paragraph{Questions for discussion}
@@ -352,6 +363,7 @@ specificity) be added from the start?
 \item How should chest X-rays be presented: as a boundary case, or left out of the main text?
 \end{enumerate}
 
+\renewcommand{\bibfont}{\footnotesize}\setlength{\bibsep}{1pt}
 \bibliographystyle{plainnat}
 \bibliography{../../stages/common/references}
 \end{document}
