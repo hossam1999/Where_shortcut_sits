@@ -28,10 +28,10 @@ artifact shortcuts?}
 \keybox{\textbf{Summary.}
 \begin{itemize}[leftmargin=1.2em,itemsep=1pt,topsep=2pt]
 \item Medical image classifiers often learn \emph{artifacts} (rulers, hair, calipers, debris) instead of the disease.
-The usual defence is \emph{ROI masking}: keep only the region of interest (ROI), such as the lesion, and delete the
+A common approach is \emph{ROI masking}: keep only the region of interest (ROI), such as the lesion, and delete the
 rest of the image.
 \item Masking removes the artifact only when the artifact lies \emph{outside} the ROI. When it lies \emph{inside}, masking
-keeps it and deletes everything else; in most of our tests the model then relied on the artifact \emph{even more}.
+keeps it and removes only the background outside the ROI; in most of our tests the model then relied on the artifact \emph{even more}.
 \item We showed this in four steps: (1) moving a pasted ruler into a skin lesion step by step; (2) four checks of
 \emph{why} it happens; (3) the same test in four other kinds of medical images; (4) real, unedited artifacts in four
 patient cohorts.
@@ -49,7 +49,7 @@ patient with a collapsed lung \citep{jimenez2023shortcuts}. Because these artifa
 a model can score well by detecting the artifact. It then fails on exactly the patients whose images look different,
 for example a melanoma photographed without a ruler.
 
-A common defence is to segment the lesion and give the model only that region; the rest of the image is
+A common approach is to segment the lesion and give the model only that region; the rest of the image is
 deleted. This is called \emph{region-of-interest (ROI) masking}. It is popular because it needs only a lesion mask,
 which many pipelines already compute. Its hidden assumption is that the artifact lies in the background. Rulers,
 hair, calipers and debris often lie on or across the lesion. Figure~\ref{fig:idea} shows what masking then does.
@@ -71,8 +71,10 @@ foundation model; mainly DINOv2 ViT-B/14 at 518 px \citep{oquab2024dinov2}) and 
 colour, in training and in testing.
 \end{itemize}
 The two models share the frozen encoder, the classifier type and the training recipe; only the input differs. Each
-classifier is trained separately, three times (three random seeds) for the pasted-artifact experiments and five times
-on five patient- or lesion-grouped folds for the real-artifact experiments.
+classifier is trained with 3 random seeds in the pasted-artifact experiments. In the real-artifact experiments it is
+trained with 5 seeds, and for each seed on 5 grouped folds (25 fits per model). The folds are grouped by lesion for skin;
+the other datasets publish no patient identifiers, so there we group near-identical images (and, for capsule images,
+blocks of consecutive frames).
 
 \paragraph{The trap} To measure how much a model relies on the artifact, we build a ``trap''
 (Figure~\ref{fig:env}). In the training data the artifact appears on 90\% of the images of the target class (e.g.\ melanoma) and 10\%
@@ -89,9 +91,9 @@ training and in each test set. The clean test shown (50/50) is the one of the re
 pasted-artifact experiments the clean test has no artifact.}\label{fig:env}\end{figure}
 
 \paragraph{The score} We report AUROC (0.5 = guessing, 1.0 = perfect). Our main score is the AUROC on the
-\emph{reversed} test: a model that relies on the artifact loses AUROC there, so a higher reversed AUROC means less
-reliance on this artifact (it does not prove there is none, and it does not show what else the model uses). We usually
-report the
+\emph{reversed} test. A higher reversed-test AUROC means better discrimination when the artifact--label link is
+reversed. It does not directly measure reliance on the artifact: a model can rely on the artifact and still score well
+if it also knows the disease well. We usually report the
 \emph{difference} ``masked minus standard''. A positive number means masking helped; a negative number means it hurt.
 Square brackets give the 95\% confidence interval (10,000 bootstrap replicates; see ``Honest error bars''); if it
 does not include zero, the difference is significant.
@@ -106,11 +108,13 @@ never by single images. With random splits, 93 near-duplicate pairs crossed the 
 10--18\% too large (shortcut gap 0.284 vs 0.241 with the ruler outside, 0.465 vs 0.421 inside).
 \item \textbf{Honest error bars.} We train each model several times, and the runs share test images. In the
 pasted-artifact experiments, all three seeds score one fixed test set (356 images, 73 melanomas; training 1,735,
-validation 346). In the real-artifact experiments, each seed holds out every image once over five grouped folds, so the
+validation 346). In the real-artifact experiments, each of the 5 seeds tests every image once over its 5 folds, so the
 seeds' test sets overlap heavily. A common way of computing confidence intervals treats every run as if it had its own
 test set, which makes the intervals too narrow. Instead, each bootstrap replicate resamples the seeds and gives each
 test image one random weight that it keeps in every seed, in both models and (for the crossover) in both traps; the
-compared numbers are therefore always paired on the same images. Our intervals are about 1.5 times wider than the
+compared numbers are therefore always paired on the same images. The weights belong to single images, not to
+patients or lesions, so several images of one lesion or patient are not resampled together; where these exist, our
+intervals may still be somewhat too narrow. Our intervals are about 1.5 times wider than the
 common method's, and a few results that looked significant with it are not.
 \end{itemize}
 Before each main experiment we wrote down the design and what result would count as support, and stored it in the
@@ -183,8 +187,8 @@ relies on it more. We designed one check for each (Table~\ref{tab:why}).
 \caption{Four checks of why masking fails (ruler experiment, DINOv2).}\label{tab:why}
 \resizebox{\linewidth}{!}{\begin{tabular}{P{3.3cm}P{4.6cm}P{4.4cm}P{3.6cm}}\toprule
 Check & What we changed & Result & What it means \\\midrule
-1. Useless ruler & Ruler at the same places, but \emph{unrelated} to the diagnosis & No statistically clear harm at any position (all intervals include 0; e.g.\ $+0.039$ at 100\%) & Hiding parts of the image does not explain the harm (speaks against a) \\
-2. Bigger mask & Grow the mask around the lesion: more skin comes back, and more of a half-covered ruler stays visible (50\% $\to$ 95\% of the ruler) & Harm gets \emph{worse}: $-0.097 \to -0.153$. When the ruler is already fully visible, a bigger mask changes nothing ($-0.129$ vs $-0.138$) & At 50\% skin and ruler come back together; at 100\% only skin comes back and nothing changes. Speaks against b as the main cause \\
+1. Useless ruler & Ruler at the same places, but \emph{unrelated} to the diagnosis & No statistically clear harm at any position (all intervals include 0; e.g.\ $+0.039$ at 100\%) & Supports dependence on the ruler as a shortcut; does not exclude an effect of hiding image parts (speaks against a as the main cause) \\
+2. Bigger mask & Grow the mask around the lesion: more skin comes back, and more of a half-covered ruler stays visible (50\% $\to$ 95\% of the ruler) & Harm gets \emph{worse}: $-0.097 \to -0.153$. When the ruler is already fully visible, the point estimates were similar ($-0.129$ vs $-0.138$) & At 50\% skin and ruler come back together; at 100\% only skin comes back and the estimates were similar. Speaks against b as the main cause \\
 3. Same-image test & Add or remove the ruler on the \emph{same} test image and measure how much the predicted probability (0 to 1) changes & The masked model's prediction changes about twice as much as the standard model's (0.49 vs 0.24; with the 39\% ruler 0.43 vs 0.21) & The masked model leans more on the ruler (supports c) \\
 4. Lesion size & Split test images into small, medium and large lesions & Harm with the ruler inside: small $-0.36$, medium $-0.16$, large $+0.06$ (not significant) & Harm is largest where the ruler is big compared to the lesion \\
 \bottomrule\end{tabular}}\end{table}
@@ -274,8 +278,9 @@ Capsule endoscopy, SEE-AI & erosion vs polyp-like & debris, bubbles & 343 / 164 
 \bottomrule\end{tabular}}\end{table}
 
 \paragraph{What we found} The crossover was positive in all four cohorts with DINOv2 (Table~\ref{tab:real}). These four
-tests were planned in advance; each has a two-sided bootstrap $p = 0.0001$ (the smallest possible with 10,000
-replicates), and all four stay significant after Holm correction for four tests (adjusted $p = 0.0004$). It also held with MedSigLIP and with a convolutional network (ConvNeXt), so it is not specific to
+tests were planned in advance; in each of them, none of the 10,000 bootstrap replicates fell at or below zero. With the
+conservative two-sided formula $p = 2(k+1)/(B+1)$, where $k = 0$ replicates crossed zero and $B = 10{,}000$, this gives
+$p \approx 0.0002$, and $p \approx 0.0008$ after Holm correction for four tests. It also held with MedSigLIP and with a convolutional network (ConvNeXt), so it is not specific to
 one type of model; it did not hold with DermLIP (Figure~\ref{fig:forest}, Section~\ref{sec:other}).
 \begin{table}[!htb]\centering\small
 \caption{Real artifacts: effect of masking on the reversed test (masked $-$ standard) in each trap, and the crossover.}

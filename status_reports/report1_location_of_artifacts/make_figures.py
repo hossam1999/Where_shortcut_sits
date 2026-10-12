@@ -34,7 +34,7 @@ def masking_idea():
     panel(axs[0, 0], "Ruler outside the lesion", (7.6, 0.8), False)
     panel(axs[0, 1], "After masking: ruler removed", (7.6, 0.8), True)
     panel(axs[1, 0], "Ruler on the lesion", (4.2, 3.8), False)
-    panel(axs[1, 1], "After masking: ruler kept,\neverything else removed", (4.2, 3.8), True)
+    panel(axs[1, 1], "After masking: ruler kept,\nbackground outside the ROI replaced", (4.2, 3.8), True)
     for r in range(2):
         fig.add_artist(FancyArrowPatch((0.485, 0.75 - 0.47 * r), (0.535, 0.75 - 0.47 * r), transform=fig.transFigure,
                                        arrowstyle="-|>", mutation_scale=18, color="black"))
