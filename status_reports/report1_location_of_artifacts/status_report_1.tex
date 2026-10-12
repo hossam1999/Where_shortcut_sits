@@ -2,10 +2,10 @@
 %   pdflatex status_report_1 && bibtex status_report_1 && pdflatex status_report_1 && pdflatex status_report_1
 % Figures: figures/ (two diagrams drawn by make_figures.py; the others are result figures of the experiments).
 \documentclass[11pt,a4paper]{article}
-\usepackage[margin=2.0cm]{geometry}
+\usepackage[margin=1.9cm]{geometry}
 \usepackage[T1]{fontenc}
 \usepackage{lmodern}
-\usepackage{amsmath,booktabs,graphicx,xcolor,float,caption,enumitem,array}
+\usepackage{amsmath,booktabs,graphicx,xcolor,float,caption,enumitem,array,needspace,placeins}
 \usepackage[round]{natbib}
 \usepackage[hidelinks]{hyperref}
 \setlength{\parskip}{4pt}
@@ -49,7 +49,7 @@ patient with a collapsed lung \citep{jimenez2023shortcuts}. Because these artifa
 a model can score well by detecting the artifact. It then fails on exactly the patients whose images look different,
 for example a melanoma photographed without a ruler.
 
-The most common defence is to segment the lesion and give the model only that region; the rest of the image is
+A common defence is to segment the lesion and give the model only that region; the rest of the image is
 deleted. This is called \emph{region-of-interest (ROI) masking}. It is popular because it needs only a lesion mask,
 which many pipelines already compute. Its hidden assumption is that the artifact lies in the background. Rulers,
 hair, calipers and debris often lie on or across the lesion. Figure~\ref{fig:idea} shows what masking then does.
@@ -75,8 +75,8 @@ classifier is trained separately, three times (three random seeds) for the paste
 on five patient- or lesion-grouped folds for the real-artifact experiments.
 
 \paragraph{The trap} To measure how much a model relies on the artifact, we build a ``trap''
-(Figure~\ref{fig:env}). In the training data the artifact appears on 90\% of the diseased images and 10\% of the
-healthy ones, so it is a strong shortcut. We then test on three test sets:
+(Figure~\ref{fig:env}). In the training data the artifact appears on 90\% of the images of the target class (e.g.\ melanoma) and 10\%
+of the other class, so it is a strong shortcut. We then test on three test sets:
 \begin{itemize}[leftmargin=1.2em,itemsep=1pt,topsep=2pt]
 \item \textbf{correlated test}: same 90/10 pattern as in training. A shortcut model looks good here.
 \item \textbf{reversed test}: the pattern is flipped (10/90). A model that uses the artifact \emph{fails} here.
@@ -84,51 +84,46 @@ healthy ones, so it is a strong shortcut. We then test on three test sets:
 real-artifact experiments: artifact on half of each class). This shows how well the model knows the disease itself.
 \end{itemize}
 \begin{figure}[!htb]\centering\includegraphics[width=0.38\linewidth]{figures/environments.pdf}
-\caption{The trap. Bars show how often the artifact appears among diseased (red) and healthy (grey) images in
-training and in each test set.}\label{fig:env}\end{figure}
+\caption{The trap. Bars show how often the artifact appears in the target class (red) and the other class (grey) in
+training and in each test set. The clean test shown (50/50) is the one of the real-artifact experiments; in the
+pasted-artifact experiments the clean test has no artifact.}\label{fig:env}\end{figure}
 
 \paragraph{The score} We report AUROC (0.5 = guessing, 1.0 = perfect). Our main score is the AUROC on the
-\emph{reversed} test: it is high only if the model does not rely on the artifact (it cannot show what else the
-model uses). We usually report the
+\emph{reversed} test: a model that relies on the artifact loses AUROC there, so a higher reversed AUROC means less
+reliance on this artifact (it does not prove there is none, and it does not show what else the model uses). We usually
+report the
 \emph{difference} ``masked minus standard''. A positive number means masking helped; a negative number means it hurt.
 Square brackets give the 95\% confidence interval (10,000 bootstrap replicates; see ``Honest error bars''); if it
 does not include zero, the difference is significant.
 The \textbf{location effect} is this difference with the artifact outside the ROI minus the same difference with the
 artifact fully inside. A positive location effect means masking helps more when the artifact is outside.
 
-\paragraph{Measuring fairly} Two details turned out to matter.
+\needspace{8\baselineskip}\paragraph{Measuring fairly} Two details turned out to matter.
 \begin{itemize}[leftmargin=1.2em,itemsep=1pt,topsep=2pt]
 \item \textbf{Near-duplicate images.} Skin-lesion datasets contain several photos of the same lesion. If one copy is in
 training and another in testing, the test partly measures memory. We always split by lesion (and by image similarity),
 never by single images. With random splits, 93 near-duplicate pairs crossed the split and the measured shortcut was
-10--18\% too large (Table~\ref{tab:leak}).
-\item \textbf{Honest error bars.} We train each model several times (different random seeds), but all runs are tested
-on the \emph{same} test images. A common way of computing confidence intervals treats these runs as if each had its own
-test set, which makes the intervals too narrow. We resample the seeds and the test images together, so the test set
-counts only once. Our intervals are about 1.5 times wider, and a few results that looked significant with the common
-method are not.
+10--18\% too large (shortcut gap 0.284 vs 0.241 with the ruler outside, 0.465 vs 0.421 inside).
+\item \textbf{Honest error bars.} We train each model several times, and the runs share test images. In the
+pasted-artifact experiments, all three seeds score one fixed test set (356 images, 73 melanomas; training 1,735,
+validation 346). In the real-artifact experiments, each seed holds out every image once over five grouped folds, so the
+seeds' test sets overlap heavily. A common way of computing confidence intervals treats every run as if it had its own
+test set, which makes the intervals too narrow. Instead, each bootstrap replicate resamples the seeds and gives each
+test image one random weight that it keeps in every seed, in both models and (for the crossover) in both traps; the
+compared numbers are therefore always paired on the same images. Our intervals are about 1.5 times wider than the
+common method's, and a few results that looked significant with it are not.
 \end{itemize}
 Before each main experiment we wrote down the design and what result would count as support, and stored it in the
 project repository. Results are reported whichever way they went.
 
-\begin{table}[!htb]\centering\small
-\caption{Why we split by lesion: random image-level splits leak near-duplicates and inflate the shortcut (ruler
-experiment of Section~\ref{sec:ruler}, DINOv2). ``Shortcut gap'' = correlated minus reversed AUROC of the standard
-model.}\label{tab:leak}
-\resizebox{\linewidth}{!}{\begin{tabular}{lcccc}\toprule
-Ruler position & Split & Near-duplicate pairs across the split & Shortcut gap & Masked $-$ standard \\\midrule
-outside the lesion & by lesion & 0 & 0.241 & $+0.184$ \\
- & random (mean of 5) & 93 & 0.284 & $+0.223$ \\
-on the lesion & by lesion & 0 & 0.421 & $-0.129$ \\
- & random (mean of 5) & 93 & 0.465 & $-0.088$ \\
-\bottomrule\end{tabular}}\end{table}
+
 
 \section{Step 1: moving a ruler into the lesion}\label{sec:ruler}
 \paragraph{What we did} We first wanted to change \emph{only} the location of the artifact. We took 2,437 dermoscopy
 images with manual lesion masks (ISIC 2018 \citep{codella2019isic}; task: melanoma or not) and pasted the same
 ruler into each image at 0, 25, 50, 75 or 100\% overlap with the lesion (Figure~\ref{fig:ruler}). Only the ruler's
 position changes: same images, same ruler, same labels.
-\begin{figure}[!htb]\centering\includegraphics[width=0.6\linewidth]{figures/ruler_examples.pdf}
+\begin{figure}[!htb]\centering\includegraphics[width=0.52\linewidth]{figures/ruler_examples.pdf}
 \caption{The same image with the ruler at 0, 50 and 100\% overlap with the lesion (green: lesion mask).}
 \label{fig:ruler}\end{figure}
 
@@ -148,7 +143,7 @@ Standard model, correlated test & 0.906 & --- & 0.937 \\
 Masked model, correlated test & 0.849 & --- & 0.961 \\\midrule
 \textbf{Masked $-$ standard (reversed)} & $\mathbf{+0.184}$ [$+0.117, +0.250$] & $\mathbf{-0.097}$ [$-0.164, -0.030$] & $\mathbf{-0.129}$ [$-0.195, -0.064$] \\
 \bottomrule\end{tabular}}\end{table}
-\begin{figure}[!htb]\centering\includegraphics[width=0.62\linewidth]{figures/ruler_sweep.pdf}
+\begin{figure}[!htb]\centering\includegraphics[width=0.58\linewidth]{figures/ruler_sweep.pdf}
 \caption{AUROC on the reversed test (left) and the correlated test (right) as the ruler moves into the lesion.
 Blue: masked model; grey: standard model. For comparison: purple, painting out the ruler (needs the ruler's
 outline); green, balanced reweighting (needs to know which images have a ruler).}\label{fig:sweep}\end{figure}
@@ -188,8 +183,8 @@ relies on it more. We designed one check for each (Table~\ref{tab:why}).
 \caption{Four checks of why masking fails (ruler experiment, DINOv2).}\label{tab:why}
 \resizebox{\linewidth}{!}{\begin{tabular}{P{3.3cm}P{4.6cm}P{4.4cm}P{3.6cm}}\toprule
 Check & What we changed & Result & What it means \\\midrule
-1. Useless ruler & Ruler at the same places, but \emph{unrelated} to the diagnosis & No harm from masking at any position (all intervals include 0; e.g.\ $+0.039$ at 100\%) & Hiding parts of the image does not explain the harm (speaks against a) \\
-2. Bigger mask & Grow the mask around the lesion: more skin comes back, and more of a half-covered ruler stays visible (50\% $\to$ 95\% of the ruler) & Harm gets \emph{worse}: $-0.097 \to -0.153$. When the ruler is already fully visible, a bigger mask changes nothing ($-0.129$ vs $-0.138$) & Harm follows how much of the ruler is visible, not how much skin is lost (speaks against b as the main cause) \\
+1. Useless ruler & Ruler at the same places, but \emph{unrelated} to the diagnosis & No statistically clear harm at any position (all intervals include 0; e.g.\ $+0.039$ at 100\%) & Hiding parts of the image does not explain the harm (speaks against a) \\
+2. Bigger mask & Grow the mask around the lesion: more skin comes back, and more of a half-covered ruler stays visible (50\% $\to$ 95\% of the ruler) & Harm gets \emph{worse}: $-0.097 \to -0.153$. When the ruler is already fully visible, a bigger mask changes nothing ($-0.129$ vs $-0.138$) & At 50\% skin and ruler come back together; at 100\% only skin comes back and nothing changes. Speaks against b as the main cause \\
 3. Same-image test & Add or remove the ruler on the \emph{same} test image and measure how much the predicted probability (0 to 1) changes & The masked model's prediction changes about twice as much as the standard model's (0.49 vs 0.24; with the 39\% ruler 0.43 vs 0.21) & The masked model leans more on the ruler (supports c) \\
 4. Lesion size & Split test images into small, medium and large lesions & Harm with the ruler inside: small $-0.36$, medium $-0.16$, large $+0.06$ (not significant) & Harm is largest where the ruler is big compared to the lesion \\
 \bottomrule\end{tabular}}\end{table}
@@ -203,7 +198,7 @@ artifact is missing or misleading.}
 \paragraph{What we did} We repeated the moving-artifact experiment in four other kinds of medical images, each with its
 own typical artifact and its own ROI (Figure~\ref{fig:sweepex}): a sonographer's caliper on \textbf{thyroid
 ultrasound} (TN3K, malignant or benign nodule \citep{gong2021tn3k}) and on \textbf{ovarian ultrasound} (MMOTU
-\citep{zhao2022mmotu}; tumour with a solid part: teratoma, theca cell tumour, mucinous cystadenoma, high-grade serous
+\citep{zhao2022mmotu}; our grouping of its diagnoses, normal ovaries excluded; tumour with a solid part: teratoma, theca cell tumour, mucinous cystadenoma, high-grade serous
 carcinoma; cystic: chocolate cyst, serous cystadenoma, simple cyst); a debris blob on \textbf{capsule endoscopy} (SEE-AI, erosion or
 polyp-like lesion \citep{seeai2023}); and a tube on \textbf{chest X-rays} (NIH ChestX-ray14, pneumothorax
 \citep{wang2017chestxray8}; ROI = the lungs). We used only images without a real artifact, so the pasted one was the only
@@ -230,9 +225,9 @@ Capsule endoscopy, debris & DINOv2 & $+0.116$ & $-0.112$ & $+0.228$ [$+0.144, +0
 Chest X-ray, tube & DINOv2 & $+0.254$ & $-0.083$ & $+0.337$ [$+0.312, +0.364$] \\
  & RAD-DINO & $-0.002$ & $+0.111$ & $-0.113$ [$-0.129, -0.097$] \\
 \bottomrule\end{tabular}}\end{table}
-\begin{figure}[!htb]\centering\includegraphics[width=0.7\linewidth]{figures/all_sweeps.pdf}
-\caption{Effect on the reversed test (vs the standard model) as the artifact moves into the ROI, in every
-moving-artifact experiment. Blue: masking; purple: painting out the artifact; green: balanced reweighting. The blue
+\begin{figure}[!htb]\centering\includegraphics[width=0.64\linewidth]{figures/all_sweeps.pdf}
+\caption{Effect on the reversed test (vs the standard model) as the artifact moves into the ROI, in nine of the eleven
+moving-artifact experiments (the 224-px and randomised-ruler runs are in Table~\ref{tab:rep} only). Blue: masking; purple: painting out the artifact; green: balanced reweighting. The blue
 line falls in every panel except the RAD-DINO chest tube.}\label{fig:all}\end{figure}
 
 \paragraph{The one exception} With the chest X-ray encoder RAD-DINO, the standard model ignored a tube outside the
@@ -258,35 +253,36 @@ the comparison, so it shows ``harm'' whatever the truth.)
 \caption{Two traps built from real images. Both share one group of artifact-free images.}\label{fig:traps}\end{figure}
 
 \paragraph{Cohorts} Table~\ref{tab:cohorts}. Artifacts were located automatically: for skin images, published masks
-that mark hair and rulers together \citep{wegley2026artifacts} (so the ``hair'' group includes some rulers); a
+that mark hair and rulers together \citep{wegley2026artifacts}, so this artifact is called ``hair/ruler''; a
 rule-based caliper detector for ultrasound; and a small detector trained on expert debris masks for capsule images. We
-checked them by eye: the caliper detector was right on 38 of 40 checked images. Random detection errors make the two
-traps more alike and so shrink the crossover. Only errors that depend on both the artifact's location and the
-diagnosis could create one; no detector uses the diagnosis, but such errors cannot be fully excluded.
-\begin{figure}[!htb]\centering\includegraphics[width=0.37\linewidth]{figures/real_examples.pdf}
-\caption{Real artifacts inside (Trap A) and outside (Trap B) the ROI. Green: ROI; red: detected artifact. (Thyroid
-images are not shown because the data licence is unclear; hair masks are not drawn for licence reasons.)}
+checked them by eye: the caliper detector was right on 38 of 40 checked images. Errors in detecting the artifact or in
+deciding inside versus outside may bias the crossover in either direction; measuring that needs a check of the masks
+per trap and class, which we have not done yet.
+\begin{figure}[!htb]\centering\includegraphics[width=0.34\linewidth]{figures/real_examples.pdf}
+\caption{Real artifacts inside (Trap A) and outside (Trap B) the ROI. Green: ROI; red: detected artifact. (``Dermoscopy hair'' = hair/ruler masks. Thyroid images are not shown because the data licence is unclear; the
+skin masks are not drawn for licence reasons.)}
 \label{fig:real}\end{figure}
 \begin{table}[!htb]\centering\small
-\caption{The four real-artifact cohorts (number of images, diseased / not diseased).}\label{tab:cohorts}
+\caption{The four real-artifact cohorts (number of images, target class / other class). The real-artifact
+experiments use five grouped folds, so there is no fixed test split.}\label{tab:cohorts}
 \resizebox{\linewidth}{!}{\begin{tabular}{P{3.6cm}P{2.6cm}P{2.6cm}ccc}\toprule
 Cohort & Task & Artifact & No artifact & Trap A (inside) & Trap B (outside) \\\midrule
-Skin lesions, ISIC 2019 (3 hospitals) & melanoma vs other & hair & 157 / 706 & 942 / 2,655 & 969 / 4,412 \\
+Skin lesions, ISIC 2019 (3 hospitals) & melanoma vs other & hair/ruler & 157 / 706 & 942 / 2,655 & 969 / 4,412 \\
 Thyroid ultrasound, TN3K & malignant vs benign & calipers & 749 / 1,052 & 292 / 858 & 99 / 227 \\
 Ovarian ultrasound, MMOTU & solid part vs cystic & calipers & 178 / 170 & 276 / 341 & 103 / 91 \\
 Capsule endoscopy, SEE-AI & erosion vs polyp-like & debris, bubbles & 343 / 164 & 412 / 404 & 1,009 / 231 \\
 \bottomrule\end{tabular}}\end{table}
 
 \paragraph{What we found} The crossover was positive in all four cohorts with DINOv2 (Table~\ref{tab:real}). These four
-tests were planned in advance, and all four stay significant after Holm correction for testing four cohorts (adjusted
-$p = 0.0004$ each). It also held with MedSigLIP and with a convolutional network (ConvNeXt), so it is not specific to
+tests were planned in advance; each has a two-sided bootstrap $p = 0.0001$ (the smallest possible with 10,000
+replicates), and all four stay significant after Holm correction for four tests (adjusted $p = 0.0004$). It also held with MedSigLIP and with a convolutional network (ConvNeXt), so it is not specific to
 one type of model; it did not hold with DermLIP (Figure~\ref{fig:forest}, Section~\ref{sec:other}).
 \begin{table}[!htb]\centering\small
 \caption{Real artifacts: effect of masking on the reversed test (masked $-$ standard) in each trap, and the crossover.}
 \label{tab:real}
 \resizebox{\linewidth}{!}{\begin{tabular}{llccc}\toprule
 Cohort & Encoder & Trap A (inside) & Trap B (outside) & Crossover (B $-$ A) \\\midrule
-Skin, hair & DINOv2 & $-0.049$ & $+0.098$ & $+0.147$ [$+0.111, +0.185$] \\
+Skin, hair/ruler & DINOv2 & $-0.049$ & $+0.098$ & $+0.147$ [$+0.111, +0.185$] \\
 Thyroid, calipers & DINOv2 & $+0.109$ & $+0.348$ & $+0.239$ [$+0.196, +0.280$] \\
 Ovary, calipers & DINOv2 & $+0.132$ & $+0.302$ & $+0.170$ [$+0.087, +0.252$] \\
 Capsule, debris & DINOv2 & $+0.084$ & $+0.461$ & $+0.377$ [$+0.327, +0.426$] \\\midrule
@@ -295,13 +291,13 @@ Ovary, calipers & MedSigLIP & $+0.002$ & $+0.180$ & $+0.178$ [$+0.109, +0.248$] 
 Capsule, debris & MedSigLIP & $+0.117$ & $+0.452$ & $+0.335$ [$+0.286, +0.383$] \\
 Thyroid, calipers & ConvNeXt & $-0.004$ & $+0.271$ & $+0.275$ [$+0.231, +0.320$] \\
 Capsule, debris & ConvNeXt & $+0.084$ & $+0.403$ & $+0.320$ [$+0.268, +0.372$] \\
-Skin, hair & DermLIP & $-0.104$ & $-0.090$ & $+0.014$ [$-0.037, +0.063$] \\
+Skin, hair/ruler & DermLIP & $-0.104$ & $-0.090$ & $+0.014$ [$-0.037, +0.063$] \\
 \bottomrule\end{tabular}}\end{table}
-\begin{figure}[!htb]\centering\includegraphics[width=0.5\linewidth]{figures/crossover_real.pdf}
+\begin{figure}[!htb]\centering\includegraphics[width=0.46\linewidth]{figures/crossover_real.pdf}
 \caption{The crossover for every cohort and encoder (dots: estimate; lines: 95\% interval). Right of zero = masking
-is worth more when the artifact is outside the ROI.}\label{fig:forest}\end{figure}
+is worth more when the artifact is outside the ROI. ``Dermoscopy hair'' = hair/ruler masks.}\label{fig:forest}\end{figure}
 
-\paragraph{How to read it} For skin hair, masking \emph{hurt} when the hair lay on the lesion. For calipers and debris,
+\paragraph{How to read it} For skin hair/ruler artifacts, masking \emph{hurt} when they lay on the lesion. For calipers and debris,
 masking still helped in Trap~A, because it removes other on-screen marks and clutter, but much less than in Trap~B, and
 a large part of the shortcut stayed. In thyroid Trap~A, the masked model scored 0.908 on the correlated test but only
 0.398 on the reversed one; in Trap~B masking closed this gap (0.785 vs 0.752). The general rule is: \emph{masking helps
@@ -318,11 +314,12 @@ clinical datasets rarely have such labels. Masking needs only the ROI.
 \item \textbf{Painting out the artifact can backfire.} In capsule images, painting over the detected debris
 \emph{lowered} the score ($-0.17$ in Trap~A). A likely reason is that erosions contain yellow-white material that
 looks like debris, so painting it out also removes disease evidence.
-\item \textbf{The hair shortcut is not only in the hair pixels.} Painting out the hair pixels closed less than half of
-the standard model's shortcut gap (47\% in Trap~A, 44\% in Trap~B). Hair goes together with patient age, sex and body
-site, so the rest is likely carried by such related features, which masking cannot remove.
-\item \textbf{DermLIP did not follow the rule.} With this dermatology encoder, masking hurt in \emph{both} hair traps
-and there was no crossover. A likely reason is that it needs the skin around the lesion: masking lowered its clean-test
+\item \textbf{The hair/ruler shortcut is not only in the marked pixels.} Painting out the marked pixels closed less than
+half of the standard model's shortcut gap (47\% in Trap~A, 44\% in Trap~B). The rest may come from incomplete masks,
+from other artifacts, or from features that go with hair, such as age, sex and body site, which differ between the
+groups; these are hypotheses we have not tested.
+\item \textbf{DermLIP did not follow the rule.} With this dermatology encoder, masking hurt in \emph{both} hair/ruler
+traps and there was no statistically clear crossover ($+0.014$ [$-0.037, +0.063$]). A likely reason is that it needs the skin around the lesion: masking lowered its clean-test
 AUROC as well.
 \item \textbf{Chest X-rays are a boundary case.} Real chest drains lie inside the lungs and are an extreme shortcut
 (standard model, RAD-DINO: reversed AUROC 0.19 against 0.89 on the clean test). Lung masking barely helped (0.23),
@@ -334,7 +331,7 @@ devices are present, so we do not count chest X-rays as a confirmation.
 \caption{Masking against methods that use artifact labels (reversed test, change vs the standard model, DINOv2).}
 \label{tab:arms}
 \resizebox{\linewidth}{!}{\begin{tabular}{lcccccc}\toprule
- & \multicolumn{2}{c}{Skin, hair} & \multicolumn{2}{c}{Thyroid, calipers} & \multicolumn{2}{c}{Capsule, debris} \\
+ & \multicolumn{2}{c}{Skin, hair/ruler} & \multicolumn{2}{c}{Thyroid, calipers} & \multicolumn{2}{c}{Capsule, debris} \\
 Method & Trap A & Trap B & Trap A & Trap B & Trap A & Trap B \\\midrule
 ROI masking (needs ROI only) & $-0.049$ & $+0.098$ & $+0.109$ & $+0.348$ & $+0.084$ & $+0.461$ \\
 Balanced reweighting (needs labels) & $+0.213$ & $+0.204$ & $+0.388$ & $+0.254$ & $+0.179$ & $+0.244$ \\
@@ -345,25 +342,25 @@ Painting out the artifact (needs its mask) & $+0.098$ & $+0.100$ & $+0.102$ & $+
 \section{Where we are}
 \begin{table}[!htb]\centering\small
 \caption{What the work so far shows.}\label{tab:sofar}
-\resizebox{\linewidth}{!}{\begin{tabular}{P{5.0cm}P{6.6cm}P{4.0cm}}\toprule
+\resizebox{\linewidth}{!}{\begin{tabular}{P{4.4cm}P{8.4cm}P{4.2cm}}\toprule
 Question & Answer & Evidence \\\midrule
 Does masking depend on where the artifact sits? & Yes: it helps when the artifact is outside the ROI and loses its benefit (often turns harmful) when it is inside & Steps 1 and 3: 10 of 11 experiments; both ruler sizes \\
 Why? & The artifact inside survives, its competitors are deleted, and the model relies on it more & Step 2: four checks \\
-Does it hold for real artifacts? & Yes, in all four cohorts and with three encoder types & Step 4: four planned tests, all significant \\
+Does it hold for real artifacts? & Yes, in all four cohorts with DINOv2, and in every cohort tested with MedSigLIP (3) and ConvNeXt (2) & Step 4: four planned tests, all significant \\
 Exceptions & DermLIP (likely needs the skin around the lesion); RAD-DINO (does not use a tube outside the lungs) & Steps 3 and 4 \\
 \bottomrule\end{tabular}}\end{table}
 
-\paragraph{Questions for discussion}
+\FloatBarrier\paragraph{Questions for discussion}
 \begin{enumerate}[itemsep=1pt,topsep=2pt]
 \item Is the reversed-test AUROC acceptable as the main score, or should a clinical measure (sensitivity at a fixed
 specificity) be added from the start?
 \item Should the rule be stated as ``masking is worth less inside the ROI'' (true in all real cohorts) rather than
-``masking hurts inside the ROI'' (true for skin hair and in 7 of 11 moving-artifact experiments)?
+``masking hurts inside the ROI'' (true for skin hair/ruler artifacts and in 7 of 11 moving-artifact experiments)?
 \item The artifact masks were checked by eye by a non-clinician. Should a clinician check a sample?
 \item How should chest X-rays be presented: as a boundary case, or left out of the main text?
 \end{enumerate}
 
-\renewcommand{\bibfont}{\footnotesize}\setlength{\bibsep}{1pt}
+\renewcommand{\bibfont}{\footnotesize}\setlength{\bibsep}{0pt}
 \bibliographystyle{plainnat}
 \bibliography{../../stages/common/references}
 \end{document}
