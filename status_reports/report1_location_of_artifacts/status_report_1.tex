@@ -36,7 +36,7 @@ keeps it and removes only the background outside the ROI; in most of our tests t
 \emph{why} it happens; (3) the same test in four other kinds of medical images; (4) real, unedited artifacts in four
 patient cohorts.
 \item With real artifacts, masking helped much more when the artifact was outside the ROI than when it was inside, in
-all four cohorts (all four planned tests significant after correction for multiple testing). Two image encoders were
+all four cohorts (all four planned tests significant after correction for multiple testing; preliminary, see Section~2). Two image encoders were
 exceptions (Section~\ref{sec:other}).
 \end{itemize}}
 
@@ -72,9 +72,9 @@ colour, in training and in testing.
 \end{itemize}
 The two models share the frozen encoder, the classifier type and the training recipe; only the input differs. Each
 classifier is trained with 3 random seeds in the pasted-artifact experiments. In the real-artifact experiments it is
-trained with 5 seeds, and for each seed on 5 grouped folds (25 fits per model). The folds are grouped by lesion for skin;
-the other datasets publish no patient identifiers, so there we group near-identical images (and, for capsule images,
-blocks of consecutive frames).
+trained with 5 seeds, and for each seed on 5 grouped folds (25 fits per model). The folds are grouped by lesion for skin (ISIC lesion IDs, plus near-identical images) and by patient for chest
+X-rays (NIH patient IDs). Our copies of the thyroid, ovarian and capsule datasets carry no patient identifiers, so there
+we group near-identical images (and, for capsule images, blocks of consecutive frames).
 
 \paragraph{The trap} To measure how much a model relies on the artifact, we build a ``trap''
 (Figure~\ref{fig:env}). In the training data the artifact appears on 90\% of the images of the target class (e.g.\ melanoma) and 10\%
@@ -114,8 +114,9 @@ test set, which makes the intervals too narrow. Instead, each bootstrap replicat
 test image one random weight that it keeps in every seed, in both models and (for the crossover) in both traps; the
 compared numbers are therefore always paired on the same images. The weights belong to single images, not to
 patients or lesions, so several images of one lesion or patient are not resampled together; where these exist, our
-intervals may still be somewhat too narrow. Our intervals are about 1.5 times wider than the
-common method's, and a few results that looked significant with it are not.
+intervals may still be too narrow. Our intervals are about 1.5 times wider than the common method's, and a few results
+that looked significant with it are not. Still, \textbf{all intervals and significance statements in this report are
+preliminary} until we repeat the bootstrap with one weight per lesion, patient or near-duplicate group.
 \end{itemize}
 Before each main experiment we wrote down the design and what result would count as support, and stored it in the
 project repository. Results are reported whichever way they went.
@@ -152,7 +153,7 @@ Masked model, correlated test & 0.849 & --- & 0.961 \\\midrule
 Blue: masked model; grey: standard model. For comparison: purple, painting out the ruler (needs the ruler's
 outline); green, balanced reweighting (needs to know which images have a ruler).}\label{fig:sweep}\end{figure}
 
-\paragraph{Is it a fluke of one model or one ruler?} No. We repeated the experiment with a lower image resolution (224 px), with a
+\FloatBarrier\paragraph{Is it a fluke of one model or one ruler?} No. We repeated the experiment with a lower image resolution (224 px), with a
 dermatology-specific encoder (DermLIP \citep{yan2025derm1m}), and with a ruler whose colour, ticks and size change from
 image to image. The location effect was large and positive every time (Table~\ref{tab:rep}, first four rows).
 \begin{table}[!htb]\centering\small
@@ -208,11 +209,11 @@ polyp-like lesion \citep{seeai2023}); and a tube on \textbf{chest X-rays} (NIH C
 \citep{wang2017chestxray8}; ROI = the lungs). We used only images without a real artifact, so the pasted one was the only
 one. We also tested a second encoder where possible (MedSigLIP, a medical image model; RAD-DINO, a chest X-ray model
 \citep{perezgarcia2025raddino}).
-\begin{figure}[!htb]\centering\includegraphics[width=0.44\linewidth]{figures/sweep_examples.pdf}
+\begin{figure}[!htb]\centering\includegraphics[width=0.36\linewidth]{figures/sweep_examples.pdf}
 \caption{The pasted artifact at 0, 50 and 100\% overlap in three modalities (green: ROI; for capsule images the ROI is
 the expert's box around the lesion).}\label{fig:sweepex}\end{figure}
 
-\paragraph{What we found} Counting the first four rows of Table~\ref{tab:rep} and the seven rows of
+\FloatBarrier\paragraph{What we found} Counting the first four rows of Table~\ref{tab:rep} and the seven rows of
 Table~\ref{tab:other}, the location effect was positive in 10 of 11 experiments (Figure~\ref{fig:all}). Masking helped
 clearly when the artifact was outside and lost most or all of its benefit when it was inside. Whether masking actually
 \emph{hurt} at full overlap depended on the setting: it hurt significantly in 7 of the 11. In thyroid ultrasound, for
@@ -229,12 +230,12 @@ Capsule endoscopy, debris & DINOv2 & $+0.116$ & $-0.112$ & $+0.228$ [$+0.144, +0
 Chest X-ray, tube & DINOv2 & $+0.254$ & $-0.083$ & $+0.337$ [$+0.312, +0.364$] \\
  & RAD-DINO & $-0.002$ & $+0.111$ & $-0.113$ [$-0.129, -0.097$] \\
 \bottomrule\end{tabular}}\end{table}
-\begin{figure}[!htb]\centering\includegraphics[width=0.64\linewidth]{figures/all_sweeps.pdf}
+\begin{figure}[!htb]\centering\includegraphics[width=0.58\linewidth]{figures/all_sweeps.pdf}
 \caption{Effect on the reversed test (vs the standard model) as the artifact moves into the ROI, in nine of the eleven
 moving-artifact experiments (the 224-px and randomised-ruler runs are in Table~\ref{tab:rep} only). Blue: masking; purple: painting out the artifact; green: balanced reweighting. The blue
 line falls in every panel except the RAD-DINO chest tube.}\label{fig:all}\end{figure}
 
-\paragraph{The one exception} With the chest X-ray encoder RAD-DINO, the standard model ignored a tube outside the
+\FloatBarrier\paragraph{The one exception} With the chest X-ray encoder RAD-DINO, the standard model ignored a tube outside the
 lungs (reversed AUROC 0.913, the same as on the clean test, 0.915), so masking gained nothing there, while it helped
 with the tube inside the lungs ($+0.111$). This is a real exception; the likely reason is that this encoder does not use
 a tube outside the lungs. With DINOv2, which did use it, the usual pattern appeared.
@@ -277,10 +278,10 @@ Ovarian ultrasound, MMOTU & solid part vs cystic & calipers & 178 / 170 & 276 / 
 Capsule endoscopy, SEE-AI & erosion vs polyp-like & debris, bubbles & 343 / 164 & 412 / 404 & 1,009 / 231 \\
 \bottomrule\end{tabular}}\end{table}
 
-\paragraph{What we found} The crossover was positive in all four cohorts with DINOv2 (Table~\ref{tab:real}). These four
+\FloatBarrier\paragraph{What we found} The crossover was positive in all four cohorts with DINOv2 (Table~\ref{tab:real}). These four
 tests were planned in advance; in each of them, none of the 10,000 bootstrap replicates fell at or below zero. With the
 conservative two-sided formula $p = 2(k+1)/(B+1)$, where $k = 0$ replicates crossed zero and $B = 10{,}000$, this gives
-$p \approx 0.0002$, and $p \approx 0.0008$ after Holm correction for four tests. It also held with MedSigLIP and with a convolutional network (ConvNeXt), so it is not specific to
+$p \approx 0.0002$, and $p \approx 0.0008$ after Holm correction for four tests (preliminary: image-level bootstrap, see ``Honest error bars''). It also held with MedSigLIP and with a convolutional network (ConvNeXt), so it is not specific to
 one type of model; it did not hold with DermLIP (Figure~\ref{fig:forest}, Section~\ref{sec:other}).
 \begin{table}[!htb]\centering\small
 \caption{Real artifacts: effect of masking on the reversed test (masked $-$ standard) in each trap, and the crossover.}
@@ -351,7 +352,7 @@ Painting out the artifact (needs its mask) & $+0.098$ & $+0.100$ & $+0.102$ & $+
 Question & Answer & Evidence \\\midrule
 Does masking depend on where the artifact sits? & Yes: it helps when the artifact is outside the ROI and loses its benefit (often turns harmful) when it is inside & Steps 1 and 3: 10 of 11 experiments; both ruler sizes \\
 Why? & The artifact inside survives, its competitors are deleted, and the model relies on it more & Step 2: four checks \\
-Does it hold for real artifacts? & Yes, in all four cohorts with DINOv2, and in every cohort tested with MedSigLIP (3) and ConvNeXt (2) & Step 4: four planned tests, all significant \\
+Does it hold for real artifacts? & Yes, in all four cohorts with DINOv2, and in every cohort tested with MedSigLIP (3) and ConvNeXt (2) & Step 4: four planned tests, all significant (preliminary) \\
 Exceptions & DermLIP (likely needs the skin around the lesion); RAD-DINO (does not use a tube outside the lungs) & Steps 3 and 4 \\
 \bottomrule\end{tabular}}\end{table}
 
