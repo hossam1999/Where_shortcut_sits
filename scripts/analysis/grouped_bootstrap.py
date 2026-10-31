@@ -38,7 +38,7 @@ CROSSOVERS = [
     ("Ovary calipers, DINOv2", "ovary/dino518_main", "ovary", True),
     ("Capsule debris, DINOv2", "capsule/dino518_main", "capsule", True),
     ("Thyroid calipers, MedSigLIP", "thyroid/medsiglip448_main", "thyroid", False),
-    ("Ovary calipers, MedSigLIP", "ovary/medsiglip448_feat", "ovary", False),
+    ("Ovary calipers, MedSigLIP", "ovary/medsiglip448_universal", "ovary", False),
     ("Capsule debris, MedSigLIP", "capsule/medsiglip448_main", "capsule", False),
     ("Thyroid calipers, ConvNeXt", "thyroid/convnext384_universal", "thyroid", False),
     ("Capsule debris, ConvNeXt", "capsule/convnext384_universal", "capsule", False),
@@ -100,6 +100,15 @@ def group_map(key: str) -> dict:
     raise ValueError(key)
 
 
+def predictions(run: str):
+    """results/<run>/predictions.csv.gz, else the archived copy under results/rerun_2026-09-28/<run>/ (the archive
+    restores the regenerated runs there; the reported numbers come from them)."""
+    for f in (R / run / "predictions.csv.gz", R / "rerun_2026-09-28" / run / "predictions.csv.gz"):
+        if f.exists():
+            return f
+    return None
+
+
 def regroup(terms, gmap):
     missing = {i for t in terms for i in t[2] if i not in gmap}
     if missing:
@@ -133,22 +142,22 @@ def main():
     a = ap.parse_args()
     maps, rows = {}, []
     for label, run, key, primary in CROSSOVERS:
-        f = R / run / "predictions.csv.gz"
-        if not f.exists():
-            print(f"[skip] {label}: {f} not found", flush=True)
+        f = predictions(run)
+        if f is None:
+            print(f"[skip] {label}: no predictions.csv.gz for {run}", flush=True)
             continue
         maps.setdefault(key, group_map(key))
         p = pd.read_csv(f)
         pA, pB = p[p.trap == "trapA"], p[p.trap == "trapB"]
         terms = X._pair_terms(pB, "mask", "erm", "test_rev", "seed", +1.0) + \
             X._pair_terms(pA, "mask", "erm", "test_rev", "seed", -1.0)
-        rows.append(summarise(label, "crossover (B - A), masked - standard, reversed test", terms, maps[key],
-                              a.n_boot, 20260927, primary))
+        rows.append({**summarise(label, "crossover (B - A), masked - standard, reversed test", terms, maps[key],
+                                 a.n_boot, 20260927, primary), "predictions": str(f.relative_to(R))})
         print(rows[-1], flush=True)
     for label, run, key in SWEEPS:
-        f = R / run / "predictions.csv.gz"
-        if not f.exists():
-            print(f"[skip] {label}: {f} not found", flush=True)
+        f = predictions(run)
+        if f is None:
+            print(f"[skip] {label}: no predictions.csv.gz for {run}", flush=True)
             continue
         maps.setdefault(key, group_map(key))
         p = pd.read_csv(f)
@@ -156,7 +165,8 @@ def main():
         ov = p.overlap.astype(float)
         terms = X._pair_terms(p[np.isclose(ov, 0.0)], "mask", "erm", "test_rev", "seed", +1.0) + \
             X._pair_terms(p[np.isclose(ov, 1.0)], "mask", "erm", "test_rev", "seed", -1.0)
-        rows.append(summarise(label, "location effect, overlap 0% - 100%", terms, maps[key], a.n_boot, 20260918, False))
+        rows.append({**summarise(label, "location effect, overlap 0% - 100%", terms, maps[key], a.n_boot, 20260918, False),
+                     "predictions": str(f.relative_to(R))})
         print(rows[-1], flush=True)
     if not rows:
         raise SystemExit("no predictions found under " + str(R))
