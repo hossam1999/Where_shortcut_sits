@@ -1,0 +1,17 @@
+experiment,check,n_images,n_patients,n_shared_patients
+NIH metadata,image name starts with Patient ID,112120.0,30805,0
+moving tube (nih_ptx),train/val/test,7624.0,6591,0
+chest drains,the 5 test folds,29687.0,20400,0
+chest drains,fold 0: train/val/test,,20399,0
+chest drains,fold 1: train/val/test,,20400,0
+chest drains,fold 2: train/val/test,,20400,0
+chest drains,fold 3: train/val/test,,20398,0
+chest drains,fold 4: train/val/test,,20400,0
+device traps (Infiltration),trapA: 5 seeds x 5 folds,22396.0,3083,0
+device traps (Infiltration),trapB: 5 seeds x 5 folds,22396.0,3083,0
+device traps (Effusion),trapA: 5 seeds x 5 folds,22396.0,3083,0
+device traps (Effusion),trapB: 5 seeds x 5 folds,22396.0,3083,0
+device traps (Atelectasis),trapA: 5 seeds x 5 folds,22396.0,3083,0
+device traps (Atelectasis),trapB: 5 seeds x 5 folds,22396.0,3083,0
+device traps (Consolidation),trapA: 5 seeds x 5 folds,22396.0,3083,0
+device traps (Consolidation),trapB: 5 seeds x 5 folds,22396.0,3083,0
