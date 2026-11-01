@@ -16,8 +16,8 @@ D = Path(os.environ.get("WTSS_DATA", "/root/data"))
 # name, paths (relative to D), source, licence, how obtained
 ROWS = [
     ("ISIC 2019 training images, ground truth, metadata", ["isic2019/ISIC_2019_Training_Input", "isic2019/ISIC_2019_Training_GroundTruth.csv", "isic2019/ISIC_2019_Training_Metadata.csv"],
-     "https://isic-challenge-data.s3.amazonaws.com/2019/", "CC BY-NC 4.0", "open"),
-    ("ISIC 2018 Task 1/2 images and Task 1 masks", ["isic2018"], "https://isic-challenge-data.s3.amazonaws.com/2018/", "CC BY-NC 4.0", "open"),
+     "https://isic-archive.s3.amazonaws.com/challenges/2019/", "CC BY-NC 4.0", "open"),
+    ("ISIC 2018 Task 1/2 images and Task 1 masks", ["isic2018"], "https://isic-archive.s3.amazonaws.com/challenges/2018/", "CC BY-NC 4.0", "open"),
     ("HAM10000 lesion segmentations", ["ham_seg"], "https://doi.org/10.7910/DVN/DBW86T (Harvard Dataverse)", "CC BY-NC 4.0", "open"),
     ("ISIC 2019 artifact masks (Wegley et al.)", ["artifact_masks"], "https://doi.org/10.71674/man1-qa33 (Scholars' Mine)", "no licence stated on the repository page", "open"),
     ("Kabir hair masks", ["mendeley_hair"], "https://data.mendeley.com/datasets/j5ywpd2p27/2", "CC BY 4.0", "open"),

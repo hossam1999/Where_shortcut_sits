@@ -3,9 +3,19 @@
 set -euo pipefail
 D=${WTSS_DATA:-/root/data}
 mkdir -p $D/{isic2019,isic2018,artifact_masks,ham_seg,cxr/nih,cxr/neatx}
-S=https://isic-challenge-data.s3.amazonaws.com
+# ISIC challenge files moved on 2026-10-28 from isic-challenge-data.s3.amazonaws.com/<year>/ to the address below; the
+# old address now answers 200 with a small HTML "moved" page, which dl() below refuses.
+S=https://isic-archive.s3.amazonaws.com/challenges
 # skip archives whose extracted folder already exists (archives are deleted after extraction to save disk)
-dl(){ [ -s "$2" ] && return; [ -n "${3:-}" ] && [ -d "$3" ] && return; wget -q -c -O "$2.part" "$1" && mv "$2.part" "$2"; }
+dl(){
+  [ -s "$2" ] && return; [ -n "${3:-}" ] && [ -d "$3" ] && return
+  wget -q -c -O "$2.part" "$1"
+  # a moved or error page instead of the data: stop instead of saving it under the data file's name
+  if [ "$(head -c 512 "$2.part" | tr -d '[:space:]' | head -c 1)" = "<" ] && [ "$(stat -c %s "$2.part")" -lt 65536 ]; then
+    echo "ERROR: $1 returned an HTML page, not the file (moved?); see docs/DATA_MANIFEST.md" >&2; rm -f "$2.part"; return 1
+  fi
+  mv "$2.part" "$2"
+}
 # ISIC 2019 (CC-BY-NC) and ISIC 2018 Task 1/2 (CC-BY-NC)
 dl $S/2019/ISIC_2019_Training_Input.zip $D/isic2019/ISIC_2019_Training_Input.zip $D/isic2019/ISIC_2019_Training_Input &
 dl $S/2019/ISIC_2019_Training_GroundTruth.csv $D/isic2019/ISIC_2019_Training_GroundTruth.csv
