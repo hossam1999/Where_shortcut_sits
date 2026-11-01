@@ -113,6 +113,7 @@ td.n { font-family: var(--mono); font-variant-numeric: tabular-nums; text-align:
 .dl { display: grid; grid-template-columns: max-content minmax(0, 1fr); gap: 6px 14px; font-size: 15.5px; line-height: 1.45; }
 .dl dt { font-weight: 700; color: var(--muted); font-size: 13px; text-transform: uppercase; letter-spacing: 0.05em; padding-top: 3px; }
 .dl dd { min-width: 0; }
+.dotkey { display: inline-block; width: 14px; height: 14px; border-radius: 50%; vertical-align: -2px; }
 .likeours { background: var(--roi-soft); border-radius: 6px; padding: 4px 8px; }
 .ref { font-size: 14px; color: var(--muted); border-top: 1px solid var(--line); padding-top: 10px; overflow-wrap: anywhere; }
 .ref a { color: var(--roi); }
@@ -323,20 +324,33 @@ td.n { font-family: var(--mono); font-variant-numeric: tabular-nums; text-align:
 
   <section class="slide" id="step-4" data-name="Step 4">
     <p class="eyebrow">Step 4 · real artifacts</p>
-    <h2>Real artifacts behave the same way</h2>
-    <div class="cols">
+    <h2>Real artifacts: masking helps far more when the artifact is outside the ROI</h2>
+    <div class="cols lit">
       <div>
-        <p>A real artifact cannot be moved. So we build two traps from the same artifact-free images: <b>Trap A</b> uses images with the artifact inside the ROI, <b>Trap B</b> images with it outside.</p>
-        <p>The <b>crossover</b> is masking’s benefit in Trap B minus its benefit in Trap A. Positive = masking helps more when the artifact is outside.</p>
-        <div class="panel">
-          <p>Positive in all four cohorts with DINOv2 (the four planned tests, all significant after correction), and in every cohort tested with MedSigLIP and ConvNeXt. Not with DermLIP.</p>
-          <p class="small muted">Switch to “per lesion or group” for the stricter intervals computed this month: images of one lesion, or near-duplicates, share one weight.</p>
+        <p>A real artifact cannot be moved, so we compare two groups of real images, both trained and tested with the same trap:</p>
+        <ul class="plain">
+          <li><b class="neg">Trap A:</b> images whose artifact lies <b>inside</b> the ROI.</li>
+          <li><b class="pos">Trap B:</b> images whose artifact lies <b>outside</b> the ROI.</li>
+        </ul>
+        <p>Each row shows what masking did in each trap. The <b>gap</b> between the two dots is the <b>crossover</b>: how much more masking helps when the artifact is outside.</p>
+        <div class="panel small">
+          <p>All four planned DINOv2 tests show a clear gap, also with the stricter per-lesion intervals. The same holds for MedSigLIP and ConvNeXt; DermLIP shows no clear gap.</p>
         </div>
       </div>
       <div class="panel">
-        <div class="seg" role="group" aria-label="Interval type" id="ciTabs">
-          <button type="button" data-ci="img" aria-pressed="true">Per image</button>
-          <button type="button" data-ci="grp" aria-pressed="false">Per lesion or group</button>
+        <div style="display:flex;flex-wrap:wrap;gap:10px">
+          <div class="seg" role="group" aria-label="Which models" id="encTabs">
+            <button type="button" data-e="dino" aria-pressed="true">DINOv2: 4 planned tests</button>
+            <button type="button" data-e="all" aria-pressed="false">All encoders</button>
+          </div>
+          <div class="seg" role="group" aria-label="Interval type" id="ciTabs">
+            <button type="button" data-ci="img" aria-pressed="true">Intervals per image</button>
+            <button type="button" data-ci="grp" aria-pressed="false">Per lesion or group</button>
+          </div>
+        </div>
+        <div style="display:flex;flex-wrap:wrap;gap:18px;font-size:16px">
+          <span><span class="dotkey" style="background:var(--artifact)"></span> Artifact <b>inside</b> the ROI (Trap A)</span>
+          <span><span class="dotkey" style="background:var(--roi)"></span> Artifact <b>outside</b> the ROI (Trap B)</span>
         </div>
         <div class="chart" id="realChart"></div>
       </div>
@@ -932,28 +946,52 @@ td.n { font-family: var(--mono); font-variant-numeric: tabular-nums; text-align:
   }
   drawMod();
 
-  /* ---------------- step 4 ---------------- */
+  /* ---------------- step 4: dumbbell of masking effect in each trap ---------------- */
+  // A, B = masked − standard on the reversed test in Trap A (inside) and Trap B (outside); gap = B − A = crossover
   const REAL = [
-    { label: "Skin hair/ruler · DINOv2", est: 0.147, img: [0.110, 0.185], grp: [0.110, 0.197], planned: true },
-    { label: "Thyroid calipers · DINOv2", est: 0.239, img: [0.195, 0.280], grp: [0.196, 0.279], planned: true },
-    { label: "Ovary calipers · DINOv2", est: 0.170, img: [0.088, 0.252], grp: [0.086, 0.254], planned: true },
-    { label: "Capsule debris · DINOv2", est: 0.377, img: [0.327, 0.425], grp: [0.304, 0.451], planned: true },
-    { label: "Thyroid · MedSigLIP", est: 0.195, img: [0.153, 0.236], grp: [0.153, 0.237] },
-    { label: "Ovary · MedSigLIP", est: 0.178, img: [0.109, 0.248], grp: [0.107, 0.252] },
-    { label: "Capsule · MedSigLIP", est: 0.335, img: [0.286, 0.383], grp: [0.251, 0.408] },
-    { label: "Thyroid · ConvNeXt", est: 0.275, img: [0.230, 0.320], grp: [0.230, 0.322] },
-    { label: "Capsule · ConvNeXt", est: 0.320, img: [0.269, 0.372], grp: [0.248, 0.391] },
-    { label: "Skin hair/ruler · DermLIP", est: 0.014, img: [-0.037, 0.063], grp: [-0.035, 0.095] },
+    { c: "Skin, hair/ruler", e: "DINOv2", A: -0.049, B: 0.098, est: 0.147, img: [0.110, 0.185], grp: [0.110, 0.197], planned: true },
+    { c: "Thyroid, calipers", e: "DINOv2", A: 0.109, B: 0.348, est: 0.239, img: [0.195, 0.280], grp: [0.196, 0.279], planned: true },
+    { c: "Ovary, calipers", e: "DINOv2", A: 0.132, B: 0.302, est: 0.170, img: [0.088, 0.252], grp: [0.086, 0.254], planned: true },
+    { c: "Capsule, debris", e: "DINOv2", A: 0.084, B: 0.461, est: 0.377, img: [0.327, 0.425], grp: [0.304, 0.451], planned: true },
+    { c: "Thyroid, calipers", e: "MedSigLIP", A: 0.053, B: 0.248, est: 0.195, img: [0.153, 0.236], grp: [0.153, 0.237] },
+    { c: "Ovary, calipers", e: "MedSigLIP", A: 0.002, B: 0.180, est: 0.178, img: [0.109, 0.248], grp: [0.107, 0.252] },
+    { c: "Capsule, debris", e: "MedSigLIP", A: 0.117, B: 0.452, est: 0.335, img: [0.286, 0.383], grp: [0.251, 0.408] },
+    { c: "Thyroid, calipers", e: "ConvNeXt", A: -0.004, B: 0.271, est: 0.275, img: [0.230, 0.320], grp: [0.230, 0.322] },
+    { c: "Capsule, debris", e: "ConvNeXt", A: 0.084, B: 0.403, est: 0.320, img: [0.269, 0.372], grp: [0.248, 0.391] },
+    { c: "Skin, hair/ruler", e: "DermLIP", A: -0.104, B: -0.090, est: 0.014, img: [-0.037, 0.063], grp: [-0.035, 0.095] },
   ];
-  let ciMode = "img";
-  const ciTabs = $("ciTabs");
+  let ciMode = "img", encMode = "dino";
+  const ciTabs = $("ciTabs"), encTabs = $("encTabs");
   function drawReal() {
     [...ciTabs.children].forEach(b => b.setAttribute("aria-pressed", b.dataset.ci === ciMode ? "true" : "false"));
-    const rows = REAL.map(r => ({ label: r.label, est: r.est, lo: r[ciMode][0], hi: r[ciMode][1], open: !r.planned, bold: r.planned }));
-    $("realChart").innerHTML = intervals(rows, -0.1, 0.5, "Crossover of masking in real-artifact cohorts", { left: 240, right: "masking helps more outside", leftText: "inside" }) +
-      `<p class="small muted">Filled dots, bold labels = the four planned tests. Bar = 95% interval; a bar that does not touch 0 is significant.</p>`;
+    [...encTabs.children].forEach(b => b.setAttribute("aria-pressed", b.dataset.e === encMode ? "true" : "false"));
+    const rows = encMode === "dino" ? REAL.filter(r => r.planned) : REAL;
+    const W = 720, L = 190, R = W - 170, top = 36, rowH = rows.length > 4 ? 52 : 70, H = top + rows.length * rowH + 44;
+    const x = lin(-0.15, 0.5, L, R);
+    let s = `<rect x="${x(-0.15)}" y="${top - 8}" width="${x(0) - x(-0.15)}" height="${rows.length * rowH + 8}" style="fill:var(--artifact-soft);opacity:0.55"/>`;
+    s += `<text x="${x(0) - 8}" y="${top - 14}" text-anchor="end" class="art b">← masking hurts</text><text x="${x(0) + 8}" y="${top - 14}" class="roi b">masking helps →</text>`;
+    [-0.1, 0, 0.1, 0.2, 0.3, 0.4, 0.5].forEach(v => {
+      s += `<line x1="${x(v)}" x2="${x(v)}" y1="${top - 8}" y2="${top + rows.length * rowH}" style="stroke:${v === 0 ? "var(--ink)" : "var(--line)"};stroke-width:${v === 0 ? 2 : 1}"/>`;
+      s += `<text x="${x(v)}" y="${top + rows.length * rowH + 20}" text-anchor="middle">${v === 0 ? "0" : f2(v).replace("+", "")}</text>`;
+    });
+    s += `<text x="${(L + R) / 2}" y="${H - 4}" text-anchor="middle" class="ink">Effect of masking on the reversed test (masked − standard AUROC)</text>`;
+    s += `<text x="${R + 18}" y="${top - 14}" class="ink b">Gap (crossover)</text>`;
+    rows.forEach((r, i) => {
+      const cy = top + i * rowH + rowH / 2, [lo, hi] = r[ciMode], clear = lo > 0;
+      s += `<text x="${L - 14}" y="${cy - 2}" text-anchor="end" class="ink b">${r.c}</text><text x="${L - 14}" y="${cy + 16}" text-anchor="end">${r.e}${r.planned ? " · planned" : ""}</text>`;
+      s += `<line x1="${x(r.A)}" x2="${x(r.B)}" y1="${cy}" y2="${cy}" style="stroke:var(--muted);stroke-width:5;opacity:0.45;stroke-linecap:round"/>`;
+      s += `<circle cx="${x(r.A)}" cy="${cy}" r="10" style="fill:var(--artifact);stroke:var(--surface);stroke-width:2"/>`;
+      s += `<circle cx="${x(r.B)}" cy="${cy}" r="10" style="fill:var(--roi);stroke:var(--surface);stroke-width:2"/>`;
+      const near = Math.abs(x(r.B) - x(r.A)) < 46;
+      s += `<text x="${x(r.A)}" y="${cy - 16}" text-anchor="${near ? "end" : "middle"}" class="art">${f2(r.A)}</text>`;
+      s += `<text x="${x(r.B)}" y="${cy - 16}" text-anchor="${near ? "start" : "middle"}" class="roi">${f2(r.B)}</text>`;
+      s += `<text x="${R + 18}" y="${cy - 2}" class="ink b">${f2(r.est)} ${clear ? "clear" : "not clear"}</text><text x="${R + 18}" y="${cy + 16}">[${f2(lo)}, ${f2(hi)}]</text>`;
+    });
+    $("realChart").innerHTML = svg(W, H, s, "Effect of masking with the artifact inside versus outside the ROI, per cohort") +
+      `<p class="small muted">Read each row from orange to teal: the further right the teal dot, the more masking helps when the artifact is outside. “Clear” = the 95% interval of the gap stays above 0.</p>`;
   }
   ciTabs.addEventListener("click", e => { const b = e.target.closest("button"); if (b) { ciMode = b.dataset.ci; drawReal(); } });
+  encTabs.addEventListener("click", e => { const b = e.target.closest("button"); if (b) { encMode = b.dataset.e; drawReal(); } });
   drawReal();
 
   /* ---------------- statistics checks ---------------- */
