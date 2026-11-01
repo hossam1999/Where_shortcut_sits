@@ -177,8 +177,8 @@ td.n { font-family: var(--mono); font-variant-numeric: tabular-nums; text-align:
   </section>
 
   <section class="slide" id="papers" data-name="Related work">
-    <p class="eyebrow">What others found · 2022 to 2025</p>
-    <h2>Fourteen key papers, 2022 to 2025</h2>
+    <p class="eyebrow">What others found · 2022 to 2026</p>
+    <h2>Sixteen key papers, 2022 to 2026</h2>
     <div style="display:flex;gap:12px;flex-wrap:wrap;align-items:center">
       <div class="seg" role="group" aria-label="View" id="litViewTabs">
         <button type="button" data-v="one" aria-pressed="true">One paper at a time</button>
@@ -192,7 +192,7 @@ td.n { font-family: var(--mono); font-variant-numeric: tabular-nums; text-align:
     </div>
     <div class="tablewrap panel" id="litAll" hidden></div>
     <p class="small"><b>Where the reversed test comes from:</b> Colored MNIST (Arjovsky et al., 2019, <i>Invariant risk minimization</i>, a preprint) colours digits so that colour predicts the label in 80–90% of training images but in only 10% of test images. Our 90/10 training and 10/90 reversed test apply the same idea to medical artifacts, scored with AUROC, together with correlated and clean tests on the same images.</p>
-    <p class="small muted">Selected from the 68 peer-reviewed studies in our literature review. Each was checked against its publisher’s page. Venues: Nature family journals, CVPR, ICLR, MICCAI, Medical Image Analysis, and others.</p>
+    <p class="small muted">Selected from the 68 peer-reviewed studies in our literature review, plus RoentMod (2026), found after it. Each was checked against its publisher’s page. Venues: Nature family journals, CVPR, ICLR, MICCAI, Medical Image Analysis, and others.</p>
   </section>
 
   <section class="slide" id="gap" data-name="The gap">
@@ -613,6 +613,26 @@ td.n { font-family: var(--mono); font-variant-numeric: tabular-nums; text-align:
       results: "Leakage affected at least 294 papers across 17 fields. In civil-war prediction, once leakage was fixed, complex models did no better than decades-old logistic regression.",
       us: "Why our splits are grouped by lesion, patient or near-duplicate group, and why this is checked in code.",
       ref: "Kapoor S, Narayanan A. Patterns 4(9):100804 (2023).", doi: "10.1016/j.patter.2023.100804" },
+    { id: "germani", y: 2026, t: "evidence", short: "Pooled data hide shortcuts", who: "Germani et al.", venue: "Medical Image Analysis",
+      title: "When multi-institutional dataset aggregation masks shortcut-like behavior in foundation models for medical imaging",
+      q: "Does pooling data from many hospitals hide shortcuts in foundation-model features?",
+      method: "Extracted features with frozen foundation models, trained simple probes on top, and compared how easily the probes recover the dataset (hospital) versus the clinical label; added an exploratory analysis of patient metadata.",
+      data: "Mammography datasets from several institutions (the same group’s MICCAI 2025 study of this setting used ten datasets plus an in-house set from Lebanon).",
+      models: "Frozen medical and general foundation models with linear probes (their 2025 study used MammoCLIP, MedCLIP, GLORIA, CLIP and DINOv2).",
+      metrics: "How separable the dataset identity is versus the clinical label in the embeddings (a task-to-dataset signal ratio); per-site versus pooled evaluation.",
+      results: "Dataset identity was easy to recover from the embeddings while clinical labels were harder to separate: a low task-to-dataset signal ratio, i.e. shortcut-like behaviour. Pooling sites can hide this; per-site evaluation reveals it. Age-related, label-dependent shifts in predictions were found as possible mediators.",
+      us: "Same set-up as ours: frozen encoders (including DINOv2) with linear heads. Why we evaluate each cohort separately instead of pooling.",
+      ref: "Germani E, Zeineddine F, Mourad C, Albarqouni S. Medical Image Analysis 114:104258 (2026).", doi: "10.1016/j.media.2026.104258" },
+    { id: "roentmod", y: 2026, t: "evidence", short: "RoentMod counterfactual X-rays", who: "Cooke, Jung, Brendel et al.", venue: "npj Digital Medicine",
+      title: "RoentMod: a synthetic chest X-ray modification model to identify and correct image interpretation model shortcuts",
+      q: "Do chest X-ray models use findings other than the target one as shortcuts?",
+      method: "Combined an open chest X-ray image generator (RoentGen) with an image-to-image editing model, without retraining, to add a chosen finding to a real X-ray while keeping the patient’s anatomy. Checked realism with radiologist readers, then measured how models’ predictions shift on the edited images; also used the edits as training data.",
+      data: "NIH ChestX-ray14: real normal scans paired with versions that have a pathology added.",
+      models: "State-of-the-art multi-task chest X-ray models and foundation models.",
+      metrics: "Reader study (realism, whether the finding was added, anatomy preserved); change in model predictions on edited versus original images; AUC when the edits are used in training.",
+      results: "93% of edited images looked realistic and 89–99% correctly showed the requested finding. The models often used other, off-target findings as shortcuts, which limits their specificity; training with the edits improved discrimination.",
+      us: "A same-image counterfactual test, like ours: change one thing on the same image and watch the prediction.",
+      ref: "Cooke L, Jung M, Brendel J, et al. npj Digital Medicine 9:324 (2026).", doi: "10.1038/s41746-026-02497-6" },
   ];
   // Which of our metrics each paper's measure resembles (only where one does)
   const LIKE = {
@@ -625,6 +645,8 @@ td.n { font-family: var(--mono); font-variant-numeric: tabular-nums; text-align:
     brown: "Varying age encoding step by step and watching fairness is the same “turn the dial” logic as our 0–100% ruler sweep.",
     lin: "The change in output on the same frozen frame when calipers are removed is very close to our same-image test (change in probability when the ruler is added).",
     ci: "Their call for confidence intervals is what our crossed and grouped bootstrap intervals answer.",
+    germani: "Same measurement set-up: frozen foundation-model features (including DINOv2) with linear probes, evaluated per site rather than pooled.",
+    roentmod: "Editing the same image and measuring the change in prediction is the same idea as our same-image test.",
   };
   PAPERS.forEach(p => { if (LIKE[p.id]) p.like = LIKE[p.id]; });
   // Test sets built like our correlated / reversed / clean tests (only where a paper has one)
@@ -653,7 +675,7 @@ td.n { font-family: var(--mono); font-variant-numeric: tabular-nums; text-align:
       return;
     }
     let h = "";
-    [2022, 2023, 2024, 2025].forEach(y => {
+    [2022, 2023, 2024, 2025, 2026].forEach(y => {
       h += `<div class="year"><h3>${y}</h3><div class="yearpapers">`;
       PAPERS.filter(p => p.y === y).forEach(p => {
         const dim = litTheme !== "all" && p.t !== litTheme;
