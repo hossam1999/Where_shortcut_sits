@@ -60,10 +60,13 @@ need different remedies. We find this framing useful: the artifacts in the thesi
 taken on suspicion, so they are part of how the data are generated and cannot be cleaned away as noise.
 
 Several groups study shortcuts under controlled conditions. \citet{stanley2024simba} built synthetic brain images with
-known disease and bias effects, compared three mitigation strategies and found reweighing to work best;
+known disease and bias effects, placed the bias either next to the disease region or far from it, and found that this
+distance changed the performance gaps and how well three mitigation strategies worked (reweighing worked best);
 \citet{sun2023right} added a tag, hyperintensities or an obstruction to chest radiographs and found that explanation
-methods differ widely in whether they reveal the injected signal. These designs fix where the bias is placed. None of
-them varies its position relative to the region that matters, which is the variable the thesis manipulates.
+methods differ widely in whether they reveal the injected signal. Stanley
+et al.\ are therefore the closest precedent for the thesis: they show that where a bias lies matters. They do not study
+ROI masking, and their bias is synthetic. The thesis varies an artifact's position relative to the ROI that masking keeps,
+with pasted and real artifacts.
 
 \section{Artifacts documented in practice}
 Dermoscopy has the richest record. Ruler scale bars changed the melanoma predictions of a market-approved classifier
@@ -174,7 +177,7 @@ training across settings. Table~\ref{tab:gaps} lists what remained open and how 
 \caption{Open questions in the reviewed work and the corresponding contribution of the thesis.}\label{tab:gaps}
 \begin{tabular}{P{4.6cm}P{4.6cm}P{5.6cm}}\toprule
 Open question & Closest prior work & Thesis \\\midrule
-Does the artifact's location relative to the ROI decide whether masking works? & \citet{sourget2025mask,maron2021confounding,bassi2024isnet}: masking studies that assume a background shortcut & Location varied directly: controlled sweeps, traps built from real artifacts, and a transplant of the same artifact across the ROI boundary \\
+Does the artifact's location relative to the ROI decide whether masking works? & \citet{sourget2025mask,maron2021confounding,bassi2024isnet}: masking studies that assume a background shortcut; \citet{stanley2024simba}: a synthetic bias's distance from the disease region matters (no masking) & Location varied directly: controlled sweeps, traps built from real artifacts, and a transplant of the same artifact across the ROI boundary \\
 Can masking increase reliance on an artifact? & \citet{li2023whacamole}: removing one shortcut amplifies others (natural images) & Reliance on an in-ROI artifact grows after masking, in four cohorts and three modalities \\
 Can the harm be predicted? & \citet{hermann2024foundations,puli2023dontblame}: explanatory theories & A two-parameter account with predictions registered before the results \\
 What should be used instead of masking? & \citet{veitch2021counterfactual,makar2022causally,zong2023medfair} & A registered test against masking; a class-conditional constraint comes closest, none dominates \\

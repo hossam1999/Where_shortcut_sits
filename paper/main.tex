@@ -101,7 +101,10 @@ chest radiography, hospital signals limit generalisation \citep{zech2018variable
 NIH-CXR14 and CheXpert \citep{oakden2020hidden,jimenez2023shortcuts}, reduced by training with in-image annotations
 \citep{rueckel2021pneumothorax}, localised to late layers of probed encoders \citep{pedersen2026probes} and mitigated
 by prevalence-equalised recalibration, which needs the artifact label at test time \citep{kina2026prevalence}. These
-works treat an artifact's presence; none treats its location relative to the ROI as a variable.
+works treat an artifact's presence. Location has been varied with a synthetic bias: placing it near to or far from the
+disease region in brain MRI changed performance gaps and how well mitigation worked \citep{stanley2024simba}. Within
+our search, no study varies an artifact's position relative to the ROI used for masking, or does so with real
+artifacts.
 \paragraph{Restricting the model to the ROI} Medical images often remain classifiable with the ROI removed, and models
 trained on full chest radiographs performed better on images without the ROI than on the ROI alone
 \citep{sourget2025mask}. Training on segmented dermoscopy images improved balanced accuracy for one training set but

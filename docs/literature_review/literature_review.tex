@@ -33,8 +33,8 @@ acquisition signals, devices, markings and demographic correlates; it documents 
 dermoscopy and chest radiography; it shows that image backgrounds carry predictive signal and that ROI restriction
 sometimes helps; and it offers group-robustness, invariance, erasure, explanation-guided and generative mitigations,
 none of which is uniformly better than standard training. Every masking and background-removal study we found assumes
-that the shortcut lies outside the ROI. None treats the artifact's location relative to the ROI as an experimental
-variable. Only one study, in natural images, reports that removing one shortcut can amplify another. The review ends
+that the shortcut lies outside the ROI. One synthetic-bias study varies the bias's distance from the disease region;
+none varies an artifact's location relative to the ROI used for masking. Only one study, in natural images, reports that removing one shortcut can amplify another. The review ends
 with a gap analysis that positions the thesis against the closest prior work and states what is and is not new.
 \end{abstract}
 
@@ -124,15 +124,16 @@ per-site evaluation reveals \citep{germani2026aggregation}.
 
 \subsection{Controlled, synthetic bias}
 Several studies inject a known bias to study its effect. \citet{stanley2024simba} generate synthetic brain images with
-known disease and bias effects, compare three mitigations (reweighing worked best) and show how explanations reveal the
-bias; a follow-up locates where in a convolutional network the bias is encoded and finds that strong encoding does not
+known disease and bias effects, place the bias either next to the disease region or far from it (opposite hemisphere),
+and show that this distance changes the performance gaps and how well three mitigations work (reweighing worked best); a follow-up locates where in a convolutional network the bias is encoded and finds that strong encoding does not
 always mean the model uses it \citep{stanley2025where}. \citet{sun2023right} contaminate chest radiographs with a tag,
 hyperintensities or an obstruction and find that explanation methods differ strongly in whether they reveal the
 spurious signal. \citet{boland2024shortcuts} study shortcuts such as text labels added to images and locate where in the network the
 shortcut is used.
-\takeaway{The traps of the thesis belong to this controlled tradition, but every synthetic-bias design above fixes where
-the bias is placed (or makes it global, such as an intensity shift); none varies the artifact's position relative to the
-ROI, which is the variable the thesis manipulates.}
+\takeaway{The traps of the thesis belong to this controlled tradition. \citet{stanley2024simba} are the closest precedent:
+they vary where a synthetic bias lies relative to the disease region (near or far) and find that it matters. They do not
+study ROI masking, and their bias is synthetic. The thesis varies an artifact's position relative to the ROI that
+masking keeps, and measures how masking's benefit changes with it, with pasted and real artifacts.}
 
 %======================================================================================================================
 \section{Artifact shortcuts by modality (RQ2)}\label{sec:modality}
@@ -216,7 +217,8 @@ mitigation of exactly this kind: it removes background shortcuts and, if an arti
 dilemma predicts greater reliance on it. Li et~al.\ did not study masking or medical images.
 \takeaway{The prior work supports both halves of the problem---backgrounds carry shortcuts, and masking often
 helps---but every ROI-restriction study assumes the shortcut is in the background. Within our search, no study varies
-the artifact's location relative to the ROI, and none tests whether masking increases reliance on an in-ROI artifact
+the artifact's location relative to the ROI used for masking (the closest, \citealp{stanley2024simba}, varies a synthetic
+bias's distance from the disease region without masking), and none tests whether masking increases reliance on an in-ROI artifact
 in medical images.}
 
 %======================================================================================================================
@@ -336,7 +338,7 @@ Table~\ref{tab:gap} sets each contribution of the thesis against the closest pee
 Question & Established in 2021--2026 & Open & Thesis contribution \\\midrule\endfirsthead
 \toprule Question & Established in 2021--2026 & Open & Thesis contribution \\\midrule\endhead
 \bottomrule\endfoot
-Where does the shortcut sit? & Artifacts are documented by presence \citep{winkler2021scalebars,rueckel2021pneumothorax,lin2024segshortcut,wang2024hair}; backgrounds carry signal \citep{maguolo2021critic,sourget2025mask,xiao2021noise} & Location relative to the ROI as an experimental variable & Overlap $r$ controlled in sweeps; real traps with in-ROI and out-of-ROI artifacts; transplant of the same real artifact across the ROI boundary of the same images \\
+Where does the shortcut sit? & Artifacts are documented by presence \citep{winkler2021scalebars,rueckel2021pneumothorax,lin2024segshortcut,wang2024hair}; backgrounds carry signal \citep{maguolo2021critic,sourget2025mask,xiao2021noise}; a synthetic bias's distance from the disease region changes performance gaps \citep{stanley2024simba} & Location relative to the masking ROI as an experimental variable, with real artifacts & Overlap $r$ controlled in sweeps; real traps with in-ROI and out-of-ROI artifacts; transplant of the same real artifact across the ROI boundary of the same images \\
 Does ROI masking fix it? & Sometimes \citep{maron2021confounding,bassi2024isnet}; every study assumes a background shortcut & When and why masking fails & Location law: masking removes out-of-ROI shortcuts and leaves in-ROI ones, in four cohorts and three modalities \\
 Can a mitigation amplify a shortcut? & Yes, for multiple shortcuts in natural images \citep{li2023whacamole} & Whether masking amplifies an in-ROI artifact in medical images, and by what mechanism & Reliance on the in-ROI artifact grows after masking because competing evidence is removed \\
 Can it be predicted? & Explanatory theories of feature choice \citep{nagarajan2021understanding,puli2023dontblame,hermann2024foundations} & Quantitative, prospectively tested predictions & Two-parameter linear-Gaussian account; predictions registered before the results \\
@@ -383,7 +385,7 @@ Study & Venue & Tier & Modality & Finding or contribution & Relevance to the the
 \citet{yang2025demographic} & Sci.\ Adv. & A & CXR & VLM foundation models underdiagnose & foundation models \\
 \citet{jones2024causal} & Nat.\ Mach.\ Intell. & A & -- & three causal bias mechanisms & choice of remedy \\
 \citet{ongly2024shortcut} & npj Digit.\ Med. & A & medical & generalisation estimated without external data & reliance estimation \\
-\citet{stanley2024simba} & JAMIA & A & brain MRI & synthetic bias framework; reweighing best & controlled design \\
+\citet{stanley2024simba} & JAMIA & A & brain MRI & synthetic bias near or far from the disease region; distance matters; reweighing best & closest location precedent \\
 \citet{stanley2025where} & eBioMedicine & A & brain MRI & where bias is encoded & encoding vs use \\
 \citet{sun2023right} & MICCAI & A & CXR & explanations vary in detecting injected confounders & limits of heatmaps \\
 \citet{boland2024shortcuts} & MIDL & B & medical & layer-wise shortcut localisation & detection \\

@@ -178,7 +178,7 @@ td.n { font-family: var(--mono); font-variant-numeric: tabular-nums; text-align:
 
   <section class="slide" id="papers" data-name="Related work">
     <p class="eyebrow">What others found · 2022 to 2026</p>
-    <h2>Sixteen key papers, 2022 to 2026</h2>
+    <h2>Seventeen key papers, 2022 to 2026</h2>
     <div style="display:flex;gap:12px;flex-wrap:wrap;align-items:center">
       <div class="seg" role="group" aria-label="View" id="litViewTabs">
         <button type="button" data-v="one" aria-pressed="true">One paper at a time</button>
@@ -197,11 +197,12 @@ td.n { font-family: var(--mono); font-variant-numeric: tabular-nums; text-align:
 
   <section class="slide" id="gap" data-name="The gap">
     <p class="eyebrow">What nobody tested</p>
-    <h2>Prior work assumes the shortcut is in the background</h2>
+    <h2>Masking studies assume the shortcut is in the background</h2>
     <div class="tablewrap">
       <table id="gapTable"></table>
     </div>
-    <p class="statement">Within our search, no study treats the artifact’s position relative to the ROI as an experimental variable. Li et al. (CVPR 2023) showed in natural images that removing one shortcut can amplify another; we test this for masking in medical images.</p>
+    <p class="statement">Where a bias sits has been studied once: Stanley et al. (JAMIA 2024) placed a synthetic bias near to or far from the disease region in brain MRI and found that the distance matters. They did not study masking. Within our search, no study varies an artifact’s position relative to the ROI used for masking, or does so with real artifacts.</p>
+    <p class="small muted">Li et al. (CVPR 2023) showed in natural images that removing one shortcut can amplify another; we study the analogous effect of ROI masking in medical images.</p>
   </section>
 
   <section class="slide" id="data" data-name="Datasets">
@@ -513,6 +514,16 @@ td.n { font-family: var(--mono); font-variant-numeric: tabular-nums; text-align:
       results: "Mitigated several dataset-intrinsic and synthetic artifacts without introducing new biases; success varied by architecture and artifact.",
       us: "Same skin dataset and artifacts. Their corrections need artifact labels or masks; masking needs only the ROI.",
       ref: "Pahde F, Dreyer M, Samek W, Lapuschkin S. MICCAI 2023, LNCS 14221.", doi: "10.1007/978-3-031-43895-0_56" },
+    { id: "stanley", y: 2024, t: "evidence", short: "Bias near or far (SimBA)", who: "Stanley et al.", venue: "JAMIA",
+      title: "Towards objective and systematic evaluation of bias in artificial intelligence for medical imaging",
+      q: "Can bias in medical imaging AI be studied under fully known, controlled conditions?",
+      method: "SimBA: generate synthetic brain MRI with a known disease effect and a known bias effect, as counterfactuals (the same subjects with no bias, a bias near the disease region, or a bias far from it). The bias is on 70% of disease images and 30% of the others, so it is a shortcut. Then compare three bias-mitigation strategies and look at explanations.",
+      data: "Synthetic T1-weighted brain MRI. Disease effect in the left insular cortex; bias either near it (left putamen) or far from it (right postcentral gyrus, other hemisphere).",
+      models: "Convolutional neural networks.",
+      metrics: "Performance in biased and unbiased subgroups and the gap between them; the effect of each mitigation; explanation maps.",
+      results: "Performance gaps and how well the mitigations worked differed between the near and far scenarios: where the bias lies matters. Reweighing worked best of the three mitigations.",
+      us: "The closest precedent for our location variable. Differences: their bias is synthetic, its distance is to the disease region (not to a masking ROI), and they do not study masking.",
+      ref: "Stanley EAM, Souza R, Winder A, Gulve V, Amador K, Wilms M, Forkert ND. Journal of the American Medical Informatics Association 31(11):2613–2621 (2024).", doi: "10.1093/jamia/ocae165" },
     { id: "lin", y: 2024, t: "artifacts", short: "Calipers in ultrasound", who: "Lin, Weng et al.", venue: "MICCAI",
       title: "Shortcut learning in medical image segmentation",
       q: "Do shortcuts also affect segmentation, not only classification?",
@@ -645,6 +656,7 @@ td.n { font-family: var(--mono); font-variant-numeric: tabular-nums; text-align:
     brown: "Varying age encoding step by step and watching fairness is the same “turn the dial” logic as our 0–100% ruler sweep.",
     lin: "The change in output on the same frozen frame when calipers are removed is very close to our same-image test (change in probability when the ruler is added).",
     ci: "Their call for confidence intervals is what our crossed and grouped bootstrap intervals answer.",
+    stanley: "Their 70% vs 30% bias prevalence is a correlated training set like our 90/10 trap, and near versus far is a location variable like our overlap sweep, but measured to the disease region, not to a masking ROI.",
     germani: "Same measurement set-up: frozen foundation-model features (including DINOv2) with linear probes, evaluated per site rather than pooled.",
     roentmod: "Editing the same image and measuring the change in prediction is the same idea as our same-image test.",
   };
@@ -696,16 +708,18 @@ td.n { font-family: var(--mono); font-variant-numeric: tabular-nums; text-align:
 
   /* ---------------- gap table ---------------- */
   const GAP = [
-    ["Sourget et al. 2025, J. Imaging Inform. Med.", 1, 0, 1, 0],
-    ["Bassi et al. 2024, Nature Communications", 1, 0, 1, 0],
-    ["Lin, Weng et al. 2024, MICCAI", 1, 1, 0, 0],
-    ["Jiménez-Sánchez et al. 2023, ISBI", 1, 1, 0, 0],
-    ["Li et al. 2023, CVPR", 0, 1, 0, 0],
-    ["This thesis", 1, 1, 1, 1],
+    ["Sourget et al. 2025, J. Imaging Inform. Med.", 1, 0, 1, 0, 0],
+    ["Bassi et al. 2024, Nature Communications", 1, 0, 1, 0, 0],
+    ["Stanley et al. 2024, JAMIA", 1, 0, 0, 1, 0],
+    ["Lin, Weng et al. 2024, MICCAI", 1, 1, 0, 0, 0],
+    ["Jiménez-Sánchez et al. 2023, ISBI", 1, 1, 0, 0, 0],
+    ["Li et al. 2023, CVPR", 0, 1, 0, 0, 0],
+    ["This thesis", 1, 1, 1, 1, 1],
   ];
+  const GAPNOTE = { "Stanley et al. 2024, JAMIA": [null, "synthetic bias", null, "near or far from the disease region", null] };
   const yn = v => v ? `<span class="yes">Yes</span>` : `<span class="no">No</span>`;
-  $("gapTable").innerHTML = `<tr><th>Study</th><th>Medical images</th><th>A named artifact (ruler, caliper, drain…)</th><th>Keeps only the ROI</th><th>Varies where the artifact sits</th></tr>` +
-    GAP.map(r => `<tr${r[0] === "This thesis" ? ' class="cell-pos"' : ""}><td><b>${r[0]}</b></td>${r.slice(1).map(v => `<td>${yn(v)}</td>`).join("")}</tr>`).join("");
+  $("gapTable").innerHTML = `<tr><th>Study</th><th>Medical images</th><th>A named artifact (ruler, caliper, drain…)</th><th>Keeps only the ROI</th><th>Varies where the bias sits</th><th>Links that position to masking</th></tr>` +
+    GAP.map(r => `<tr${r[0] === "This thesis" ? ' class="cell-pos"' : ""}><td><b>${r[0]}</b></td>${r.slice(1).map((v, j) => { const n = (GAPNOTE[r[0]] || [])[j]; return `<td>${yn(v)}${n ? `<br><span class="small muted">${n}</span>` : ""}</td>`; }).join("")}</tr>`).join("");
 
   /* ---------------- datasets ---------------- */
   const DATA = [
