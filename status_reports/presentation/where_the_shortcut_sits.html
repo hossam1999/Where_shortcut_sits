@@ -191,6 +191,7 @@ td.n { font-family: var(--mono); font-variant-numeric: tabular-nums; text-align:
       <div class="panel" id="paperCard" aria-live="polite"></div>
     </div>
     <div class="tablewrap panel" id="litAll" hidden></div>
+    <p class="small"><b>Where the reversed test comes from:</b> Colored MNIST (Arjovsky et al., 2019, <i>Invariant risk minimization</i>, a preprint) colours digits so that colour predicts the label in 80–90% of training images but in only 10% of test images. Our 90/10 training and 10/90 reversed test apply the same idea to medical artifacts, scored with AUROC, together with correlated and clean tests on the same images.</p>
     <p class="small muted">Selected from the 68 peer-reviewed studies in our literature review. Each was checked against its publisher’s page. Venues: Nature family journals, CVPR, ICLR, MICCAI, Medical Image Analysis, and others.</p>
   </section>
 
@@ -626,6 +627,15 @@ td.n { font-family: var(--mono); font-variant-numeric: tabular-nums; text-align:
     ci: "Their call for confidence intervals is what our crossed and grouped bootstrap intervals answer.",
   };
   PAPERS.forEach(p => { if (LIKE[p.id]) p.like = LIKE[p.id]; });
+  // Test sets built like our correlated / reversed / clean tests (only where a paper has one)
+  const TESTS = {
+    dfr: "Waterbirds: in training, 95% of water birds are on water backgrounds (correlated); the test set is balanced (like our clean test), and the worst group, e.g. water birds on land, is where the shortcut is wrong (like our reversed test).",
+    li: "UrbanCars: the cues are correlated with the label in training; at test time each cue is common (like our correlated test) or uncommon (like our reversed test). The closest test design to ours, but in natural images.",
+    brown: "“Biased” and “balanced” versions of the NIH chest X-ray data: like our correlated and clean tests. No reversed test.",
+    pahde: "Test images with and without the artifact: like our correlated and clean tests. No reversed test.",
+    jimenez: "Pneumothorax test images split by drain present or absent: a split by artifact, but the strength of the drain–label link is not controlled.",
+  };
+  PAPERS.forEach(p => { if (TESTS[p.id]) p.tests = TESTS[p.id]; });
   let litTheme = "all", litSel = "li", litView = "one";
   const litTabs = $("litTabs"), litView$ = $("litViewTabs");
   Object.entries(THEMES).forEach(([k, v]) => { const b = document.createElement("button"); b.type = "button"; b.dataset.k = k; b.textContent = v; litTabs.appendChild(b); });
@@ -639,7 +649,7 @@ td.n { font-family: var(--mono); font-variant-numeric: tabular-nums; text-align:
     const shown = PAPERS.filter(p => litTheme === "all" || p.t === litTheme);
     if (litView === "all") {
       $("litAll").innerHTML = `<table><tr><th style="width:17%">Paper</th><th style="width:24%">Data</th><th style="width:22%">Metrics</th><th>Main result</th></tr>` +
-        shown.map(p => `<tr><td><b>${esc(p.short)}</b><br><span class="small muted">${esc(p.who)}<br>${esc(p.venue)} ${p.y}</span></td><td class="small">${esc(p.data)}</td><td class="small">${esc(p.metrics)}${p.like ? `<div class="likeours" style="margin-top:6px"><b>Like ours:</b> ${esc(p.like)}</div>` : ""}</td><td class="small">${esc(p.results)}</td></tr>`).join("") + `</table>`;
+        shown.map(p => `<tr><td><b>${esc(p.short)}</b><br><span class="small muted">${esc(p.who)}<br>${esc(p.venue)} ${p.y}</span></td><td class="small">${esc(p.data)}</td><td class="small">${esc(p.metrics)}${p.like ? `<div class="likeours" style="margin-top:6px"><b>Like ours:</b> ${esc(p.like)}</div>` : ""}${p.tests ? `<div class="likeours" style="margin-top:6px"><b>Tests like ours:</b> ${esc(p.tests)}</div>` : ""}</td><td class="small">${esc(p.results)}</td></tr>`).join("") + `</table>`;
       return;
     }
     let h = "";
@@ -656,7 +666,7 @@ td.n { font-family: var(--mono); font-variant-numeric: tabular-nums; text-align:
     $("paperCard").innerHTML = `<div style="display:flex;gap:8px;flex-wrap:wrap"><span class="badge">${esc(p.venue)} · ${p.y}</span><span class="badge">${THEMES[p.t]}</span>${p.like ? `<span class="badge pos" style="border-color:var(--roi)">Metric like ours</span>` : ""}</div>
       <h3>${esc(p.title)}</h3>
       <p class="small"><i>${esc(p.q)}</i></p>
-      <dl class="dl"><dt>Method</dt><dd>${esc(p.method)}</dd><dt>Data</dt><dd>${esc(p.data)}</dd><dt>Models</dt><dd>${esc(p.models)}</dd><dt>Metrics</dt><dd>${esc(p.metrics)}</dd>${p.like ? `<dt class="pos">Like our metric</dt><dd class="likeours">${esc(p.like)}</dd>` : ""}<dt>Results</dt><dd>${esc(p.results)}</dd><dt>For us</dt><dd><b>${esc(p.us)}</b></dd></dl>
+      <dl class="dl"><dt>Method</dt><dd>${esc(p.method)}</dd><dt>Data</dt><dd>${esc(p.data)}</dd><dt>Models</dt><dd>${esc(p.models)}</dd><dt>Metrics</dt><dd>${esc(p.metrics)}</dd>${p.like ? `<dt class="pos">Like our metric</dt><dd class="likeours">${esc(p.like)}</dd>` : ""}${p.tests ? `<dt class="pos">Tests like ours</dt><dd class="likeours">${esc(p.tests)}</dd>` : ""}<dt>Results</dt><dd>${esc(p.results)}</dd><dt>For us</dt><dd><b>${esc(p.us)}</b></dd></dl>
       <p class="ref">${esc(p.ref)}${p.doi ? ` DOI: <a href="${url}" target="_blank" rel="noopener">${p.doi}</a>` : ` <a href="${url}" target="_blank" rel="noopener">Paper link</a>`}</p>`;
   }
   $("years").addEventListener("click", e => { const b = e.target.closest(".paper"); if (b) { litSel = b.dataset.id; drawLit(); } });
