@@ -54,6 +54,7 @@ p { max-width: 64ch; }
 .lead { font-size: 21px; color: var(--muted); max-width: 56ch; }
 .cols { display: grid; grid-template-columns: minmax(0, 5fr) minmax(0, 6fr); gap: 32px; align-items: start; }
 .cols.even { grid-template-columns: minmax(0, 1fr) minmax(0, 1fr); }
+.cols.lit { grid-template-columns: minmax(0, 4fr) minmax(0, 7fr); }
 .cols > * { min-width: 0; display: flex; flex-direction: column; gap: 14px; }
 .panel { background: var(--surface); border: 1px solid var(--line); border-radius: 10px; padding: 18px; display: flex; flex-direction: column; gap: 12px; min-width: 0; }
 .muted { color: var(--muted); }
@@ -109,7 +110,7 @@ td.n { font-family: var(--mono); font-variant-numeric: tabular-nums; text-align:
 .paper small { color: var(--muted); font-size: 13px; }
 .paper[aria-pressed="true"] { border-color: var(--roi); box-shadow: inset 0 0 0 1px var(--roi); }
 .paper.dim { opacity: 0.35; }
-.dl { display: grid; grid-template-columns: max-content minmax(0, 1fr); gap: 6px 14px; font-size: 16px; }
+.dl { display: grid; grid-template-columns: max-content minmax(0, 1fr); gap: 6px 14px; font-size: 15.5px; line-height: 1.45; }
 .dl dt { font-weight: 700; color: var(--muted); font-size: 13px; text-transform: uppercase; letter-spacing: 0.05em; padding-top: 3px; }
 .dl dd { min-width: 0; }
 .ref { font-size: 14px; color: var(--muted); border-top: 1px solid var(--line); padding-top: 10px; overflow-wrap: anywhere; }
@@ -132,7 +133,7 @@ td.n { font-family: var(--mono); font-variant-numeric: tabular-nums; text-align:
 .mm button.cur::after { background: var(--artifact); width: 3px; height: 30px; }
 .counter { font-family: var(--mono); font-size: 13px; color: var(--muted); white-space: nowrap; }
 @media (max-width: 900px) {
-  .cols, .cols.even { grid-template-columns: minmax(0, 1fr); }
+  .cols, .cols.even, .cols.lit { grid-template-columns: minmax(0, 1fr); }
   .cards, .cards.three { grid-template-columns: minmax(0, 1fr); }
   .slide { justify-content: flex-start; }
 }
@@ -175,13 +176,20 @@ td.n { font-family: var(--mono); font-variant-numeric: tabular-nums; text-align:
   </section>
 
   <section class="slide" id="papers" data-name="Related work">
-    <p class="eyebrow">What others found · 2022 to 2026</p>
+    <p class="eyebrow">What others found · 2022 to 2025</p>
     <h2>Fourteen key papers, 2022 to 2025</h2>
-    <div class="seg" role="group" aria-label="Filter papers by theme" id="litTabs"></div>
-    <div class="cols even">
+    <div style="display:flex;gap:12px;flex-wrap:wrap;align-items:center">
+      <div class="seg" role="group" aria-label="View" id="litViewTabs">
+        <button type="button" data-v="one" aria-pressed="true">One paper at a time</button>
+        <button type="button" data-v="all" aria-pressed="false">Compare all (table)</button>
+      </div>
+      <div class="seg" role="group" aria-label="Filter papers by theme" id="litTabs"></div>
+    </div>
+    <div class="cols lit" id="litOne">
       <div class="years" id="years"></div>
       <div class="panel" id="paperCard" aria-live="polite"></div>
     </div>
+    <div class="tablewrap panel" id="litAll" hidden></div>
     <p class="small muted">Selected from the 68 peer-reviewed studies in our literature review. Each was checked against its publisher’s page. Venues: Nature family journals, CVPR, ICLR, MICCAI, Medical Image Analysis, and others.</p>
   </section>
 
@@ -459,127 +467,167 @@ td.n { font-family: var(--mono); font-variant-numeric: tabular-nums; text-align:
   drawProblem();
 
   /* ---------------- literature explorer ---------------- */
+  // Every field below was checked against the paper, its publisher page, or its official code page (Nov 2026).
+  // Numbers taken only from a preprint are marked as such in the text.
   const THEMES = { all: "All", evidence: "Shortcuts exist", artifacts: "Artifacts", masking: "Masking and backgrounds", fixes: "Fixes", eval: "How to evaluate" };
   const PAPERS = [
-    { id: "brown", y: 2023, t: "evidence", short: "Shortcut testing", who: "Brown et al.", venue: "Nature Communications",
+    { id: "brown", y: 2023, t: "evidence", short: "Shortcut testing (ShorT)", who: "Brown et al.", venue: "Nature Communications",
       title: "Detecting shortcut learning for fair medical AI using shortcut testing",
-      did: "Proposed ShorT: with multitask learning, they vary how strongly a model encodes a sensitive attribute and watch what happens to fairness.",
-      data: "NIH chest X-rays (effusion, atelectasis, abnormal) and a dermatology diagnosis task; the attribute is patient age.",
-      measured: "Fairness gap between age groups, together with model performance.",
-      found: "Gives a direct test of whether a fairness gap comes from shortcut learning.",
-      us: "A test of reliance, not just presence; our same-image test has the same aim.",
+      q: "Is a model unfair across age groups because it uses age as a shortcut?",
+      method: "A multitask network predicts the disease and the patient’s age. Scaling the gradient from the age head changes how strongly the features encode age (positive scaling = more age, gradient reversal = less). If fairness changes with age encoding, the model uses age as a shortcut.",
+      data: "NIH ChestX-ray (effusion, atelectasis, “abnormal”), with deliberately biased and balanced versions to validate the test; a multiclass dermatology diagnosis task.",
+      models: "Multitask deep classifiers with a disease head and an age head.",
+      metrics: "Fairness gap between age groups; Spearman correlation between age encoding and unfairness; overall diagnostic performance.",
+      results: "On the biased chest X-ray data, age encoding and unfairness were strongly correlated (Spearman ρ = −0.668). Gradient reversal roughly halved the unfairness with negligible loss of accuracy. In some tasks no correlation was found, so the unfairness had other causes.",
+      us: "A test of reliance, not just presence. Our same-image test serves the same aim for artifacts.",
       ref: "Brown A, Tomasev N, Freyberg J, Liu Y, Karthikesalingam A, Schrouff J. Nature Communications 14:4314 (2023).", doi: "10.1038/s41467-023-39902-7" },
     { id: "yang24", y: 2024, t: "evidence", short: "Limits of fair imaging AI", who: "Yang et al.", venue: "Nature Medicine",
       title: "The limits of fair medical imaging AI in real-world generalization",
-      did: "Trained more than 3,000 models across radiology, dermatology and ophthalmology.",
-      data: "Six chest X-ray datasets, ISIC dermatology and ophthalmology data.",
-      measured: "Disease AUROC and fairness gaps between demographic groups, in and out of distribution.",
-      found: "Models use demographic shortcuts; models that were fair at their own site were not fair at new sites.",
-      us: "Shortcuts are real in exactly the encoders and data types we study.",
+      q: "Do models use demographic shortcuts, and does fixing fairness at one hospital carry over to others?",
+      method: "Trained more than 3,000 models across tasks, architectures and debiasing algorithms (for example DANN and CDANN), measured how strongly each encodes demographics, and tested them in and out of distribution.",
+      data: "Radiology: trained mainly on MIMIC-CXR and CheXpert, tested on six chest X-ray datasets (MIMIC-CXR, CheXpert, NIH, SIIM, PadChest, VinDr). Also ISIC (dermatology) and ODIR (ophthalmology).",
+      models: "Deep classifiers with standard training and several debiasing algorithms.",
+      metrics: "AUROC; fairness gap = gap in false-positive rate for “No Finding” (underdiagnosis) and in false-negative rate for other findings; demographic encoding (how well the attribute can be predicted from the features).",
+      results: "Models that encode demographics more strongly had larger fairness gaps. Debiasing closed the gaps in distribution with little AUROC loss, but the gaps reappeared at new hospitals. Models with less demographic encoding were often fairest out of distribution.",
+      us: "Shortcuts are real in the encoders and image types we use, and in-distribution results can mislead. That is why we test on reversed and new-patient data.",
       ref: "Yang Y, Zhang H, Gichoya JW, Katabi D, Ghassemi M. Nature Medicine 30:2838–2848 (2024).", doi: "10.1038/s41591-024-03113-4" },
     { id: "jimenez", y: 2023, t: "artifacts", short: "Chest drains as shortcut", who: "Jiménez-Sánchez et al.", venue: "IEEE ISBI",
       title: "Detecting shortcuts in medical images – a case study in chest X-rays",
-      did: "Re-examined pneumothorax classifiers and collected non-expert labels for chest drains (the NEATX annotations).",
-      data: "NIH ChestX-ray14 (about 3,500 drain annotations) and PadChest (tube annotations).",
-      measured: "AUROC on pneumothorax images with and without a drain.",
-      found: "Classifiers detect the drain that treats the condition; performance depends on whether a drain is present.",
-      us: "We use their NEATX drain labels for our chest-drain trap.",
-      ref: "Jiménez-Sánchez A, Juodelyte D, Chamberlain B, Cheplygina V. IEEE International Symposium on Biomedical Imaging (2023).", doi: "" , link: "https://arxiv.org/abs/2211.04279" },
+      q: "Do pneumothorax classifiers detect the chest drain that treats the condition?",
+      method: "Systematic experiments on two large public benchmarks, comparing performance on images with and without a chest drain; released non-expert drain labels and code.",
+      data: "CheXpert and NIH ChestX-ray14 (pneumothorax). The group’s NEATX labels later added about 3,500 drain labels for NIH and about 1,000 labels of four tube types for PadChest.",
+      models: "Deep chest X-ray classifiers.",
+      metrics: "AUROC for pneumothorax, overall and split by drain presence.",
+      results: "Performance was over-optimistic and biased: AUROC was clearly higher on images with a drain than on images without one, confirming earlier single-dataset findings on two benchmarks.",
+      us: "Our chest-drain trap uses their NEATX drain labels.",
+      ref: "Jiménez-Sánchez A, Juodelyte D, Chamberlain B, Cheplygina V. IEEE ISBI (2023).", doi: "10.1109/ISBI53787.2023.10230572" },
     { id: "pahde", y: 2023, t: "artifacts", short: "Reveal to Revise", who: "Pahde et al.", venue: "MICCAI",
       title: "Reveal to Revise: an explainable AI life cycle for iterative bias correction of deep models",
-      did: "A four-step cycle: find a bias with explanation methods (SpRAy), label and localise the artifact, correct the model (RRR, CDEP, ClArC), and re-evaluate.",
-      data: "ISIC 2019 skin images and the Pediatric Bone Age X-rays, with real and synthetic artifacts.",
-      measured: "Whether the corrected model still uses the artifact, and its performance.",
-      found: "Mitigated several dataset-intrinsic and synthetic artifacts without introducing new biases.",
-      us: "Same skin dataset; their fixes need artifact labels, while masking needs only the ROI.",
+      q: "Can explanation methods find a model’s artifact shortcuts and then remove them?",
+      method: "A four-step cycle: reveal the bias with explanation methods (Spectral Relevance Analysis), label and localise the artifact, correct the model, and re-evaluate. Corrections: RRR and CDEP (penalise relevance on artifact masks) and ClArC (remove the artifact direction in the latent space).",
+      data: "ISIC 2019 (melanoma; artifacts: band-aids, rulers, skin markers, plus a synthetic artifact) and the Pediatric Bone Age X-rays.",
+      models: "VGG-16, ResNet-18, EfficientNet-B0.",
+      metrics: "Task performance on clean and artifact images, and how much of the model’s explanation falls on the artifact.",
+      results: "Mitigated several dataset-intrinsic and synthetic artifacts without introducing new biases; success varied by architecture and artifact.",
+      us: "Same skin dataset and artifacts. Their corrections need artifact labels or masks; masking needs only the ROI.",
       ref: "Pahde F, Dreyer M, Samek W, Lapuschkin S. MICCAI 2023, LNCS 14221.", doi: "10.1007/978-3-031-43895-0_56" },
     { id: "lin", y: 2024, t: "artifacts", short: "Calipers in ultrasound", who: "Lin, Weng et al.", venue: "MICCAI",
       title: "Shortcut learning in medical image segmentation",
-      did: "Showed that calipers and on-screen text in training images act as shortcuts for segmentation.",
-      data: "3,775 third-trimester fetal ultrasound images from four anatomical views; skin lesion segmentation.",
-      measured: "Segmentation quality with and without the annotations.",
-      found: "Predictions change when calipers or text are removed from the same frozen frame.",
-      us: "Calipers are a shortcut in ultrasound; we study them for classification in thyroid and ovary.",
+      q: "Do shortcuts also affect segmentation, not only classification?",
+      method: "Two case studies. Fetal ultrasound: training images contain calipers and on-screen text that are absent during live scanning. Skin lesions: zero-padded convolutions plus centre-cropped training images act as a shortcut. Proposed mitigation strategies for both.",
+      data: "3,775 third-trimester fetal ultrasound images from four anatomical views; a dermoscopy lesion segmentation set.",
+      models: "Deep segmentation networks.",
+      metrics: "Segmentation accuracy with and without the shortcut, and stability of predictions on the same frame.",
+      results: "Predictions changed when calipers or text were removed from the same frozen frame, causing failures such as false negatives; the proposed strategies improved generalisation.",
+      us: "Calipers are a shortcut in ultrasound. We study them for classification in thyroid and ovarian ultrasound, and where they sit.",
       ref: "Lin M, Weng N, Mikolaj K, et al. MICCAI 2024, LNCS 15008, 623–633.", doi: "10.1007/978-3-031-72111-3_59" },
     { id: "cassidy", y: 2022, t: "eval", short: "ISIC duplicates", who: "Cassidy et al.", venue: "Medical Image Analysis",
       title: "Analysis of the ISIC image datasets: usage, benchmarks and recommendations",
-      did: "Analysed the yearly ISIC releases (2016–2020) and proposed a duplicate-removal strategy.",
-      data: "ISIC 2016–2020; benchmarks on the ISIC 2020 and 2017 test sets.",
-      measured: "Duplicate images within and between releases, and across training and test sets.",
-      found: "Many duplicates, including copies that cross the training and test split.",
-      us: "Why we split by lesion and image similarity, never by single image.",
+      q: "Are the ISIC skin datasets clean enough for fair benchmarking?",
+      method: "Analysed how the yearly ISIC releases are used, searched for duplicate images within and between releases, proposed a multi-step duplicate-removal strategy and a curated training list, and ran benchmarks.",
+      data: "ISIC 2016–2020; benchmarks on the ISIC 2020 and ISIC 2017 test sets.",
+      models: "Standard CNN classifiers for the benchmarks.",
+      metrics: "Number and location of duplicates; classification performance on the benchmark test sets.",
+      results: "Many duplicates, both within and between releases, including copies that cross the training and test split. They recommend the curated, duplicate-free list.",
+      us: "Why we split by lesion and image similarity, never by single image. In our data a random split inflated the shortcut by 10–18%.",
       ref: "Cassidy B, Kendrick C, Brodzicki A, Jaworek-Korjakowska J, Yap MH. Medical Image Analysis 75:102305 (2022).", doi: "10.1016/j.media.2021.102305" },
     { id: "sourget", y: 2025, t: "masking", short: "Mask of truth", who: "Sourget et al.", venue: "J. Imaging Informatics in Medicine",
       title: "Mask of truth: model sensitivity to unexpected regions of medical images",
-      did: "Trained and tested classifiers with different masks: full image, region of interest only, region of interest removed.",
-      data: "Chest X-rays (including PadChest) and the Chákṣu glaucoma fundus dataset.",
-      measured: "AUC, SHAP explanations, embedding analysis, and a radiology resident reading masked images.",
-      found: "Models trained on full images did well on images with the ROI removed, sometimes better than on ROI-only images.",
-      us: "The closest masking study; it assumes the shortcut is outside the ROI.",
-      ref: "Sourget T, Hestbek-Møller M, Jiménez-Sánchez A, Xu JJ, Cheplygina V. Journal of Imaging Informatics in Medicine (2025).", doi: "10.1007/s10278-025-01531-5" },
+      q: "Can classifiers still predict the label when the clinically relevant region is masked out?",
+      method: "Trained and tested CNNs on full images, on the region of interest only, and with the region of interest removed. Looked inside with SHAP explanations and embedding analysis, and had a clinician read the masked chest X-rays.",
+      data: "PadChest chest X-rays with CheXmask lung masks; the Chákṣu glaucoma fundus dataset.",
+      models: "Convolutional neural networks.",
+      metrics: "AUC under each masking setting; SHAP maps; embeddings; the clinician’s reading.",
+      results: "On PadChest every model, whatever the mask, scored above chance; models trained on full images did well on images without the lungs, sometimes better than on lung-only images: strong evidence of shortcuts. In glaucoma the evidence was weaker, with a possible spurious correlation in Chákṣu.",
+      us: "The closest masking study, on the PadChest data of our future option. It assumes the shortcut lies outside the ROI.",
+      ref: "Sourget T, Hestbek-Møller M, Jiménez-Sánchez A, Xu JJ, Cheplygina V. Journal of Imaging Informatics in Medicine 39(1):767–784 (2025).", doi: "10.1007/s10278-025-01531-5" },
     { id: "bassi", y: 2024, t: "masking", short: "ISNet", who: "Bassi et al.", venue: "Nature Communications",
       title: "Improving deep neural network generalization and robustness to background bias via layer-wise relevance propagation optimization",
-      did: "Penalised explanation relevance outside the segmentation mask during training (ISNet), so the classifier implicitly focuses on the lungs.",
-      data: "Chest X-rays for COVID-19 and tuberculosis from mixed sources, plus synthetic background bias; compared with eight networks.",
-      measured: "Classification performance on test data from other sources.",
-      found: "Focusing on the lungs reduced shortcut learning from background bias, at no extra cost at run time.",
-      us: "A mask-based fix; like masking, it assumes the bias lies outside the mask.",
+      q: "Can a classifier be trained to ignore the background without a segmenter at test time?",
+      method: "Background Relevance Minimisation: during training, penalise explanation relevance (layer-wise relevance propagation) that falls outside the segmentation mask. The resulting ISNet focuses on the lungs implicitly and costs nothing extra at run time.",
+      data: "Chest X-rays for COVID-19 and tuberculosis assembled from mixed sources, tested on external data; images with synthetic background bias; Stanford Dogs (natural images).",
+      models: "ISNet built on DenseNet-121 (chest X-rays) and ResNet-50 (dogs); compared with a U-Net + classifier pipeline and other bias-reduction methods.",
+      metrics: "Macro F1 on in-distribution and out-of-distribution test sets.",
+      results: "ISNet was the best model on the out-of-distribution tuberculosis test; for COVID-19 the U-Net + classifier pipeline was second best after ISNet. With synthetic bias, only ISNet and the segment-then-classify pipeline resisted the background shortcut.",
+      us: "A mask-based fix. Like masking, it assumes the bias lies outside the mask, which is the assumption we test.",
       ref: "Bassi PRAS, Dertkigil SSJ, Cavalli A. Nature Communications 15:291 (2024).", doi: "10.1038/s41467-023-44371-z" },
     { id: "li", y: 2023, t: "masking", short: "Whac-A-Mole dilemma", who: "Li et al.", venue: "CVPR",
       title: "A Whac-A-Mole dilemma: shortcuts come in multiples where mitigating one amplifies others",
-      did: "Built benchmarks with several shortcuts at once and tested many models and mitigation methods; proposed Last Layer Ensemble.",
-      data: "UrbanCars (controlled spurious cues) and ImageNet-W (watermark shortcut); natural images only.",
-      measured: "Accuracy gaps caused by each shortcut.",
-      found: "Mitigating one shortcut often makes the model rely more on another.",
-      us: "Closest idea to ours: masking removes background shortcuts and can amplify the one left inside the ROI.",
-      ref: "Li Z, Evtimov I, Gordo A, et al. CVPR 2023, 20071–20082.", doi: "", link: "https://openaccess.thecvf.com/content/CVPR2023/papers/Li_A_Whac-a-Mole_Dilemma_Shortcuts_Come_in_Multiples_Where_Mitigating_One_CVPR_2023_paper.pdf" },
+      q: "What happens to other shortcuts when a method removes one?",
+      method: "Built benchmarks with several known shortcuts at once and tested many models, including large foundation models, and shortcut-mitigation methods. Proposed Last Layer Ensemble: one last layer per shortcut, each trained with augmentations that break it.",
+      data: "UrbanCars (two controlled cues: background and co-occurring object) and ImageNet-W (watermark shortcut), built from ImageNet. Natural images only.",
+      models: "Many vision models, including foundation models; several mitigation methods.",
+      metrics: "Accuracy gaps: the drop when only the background is uncommon (BG gap), when only the co-occurring object is uncommon (CoObj gap), and on watermarked images.",
+      results: "Models struggled whenever several shortcuts were present. Methods that reduced one shortcut increased reliance on another. Nearly every modern model relied on watermarks. Last Layer Ensemble reduced several shortcuts together.",
+      us: "The closest idea to ours: masking removes background shortcuts and can amplify the one left inside the ROI. We show this in medical images and explain when it happens.",
+      ref: "Li Z, Evtimov I, Gordo A, Hazirbas C, Hassner T, Canton Ferrer C, Xu C, Ibrahim M. CVPR 2023, 20071–20082.", doi: "", link: "https://openaccess.thecvf.com/content/CVPR2023/papers/Li_A_Whac-a-Mole_Dilemma_Shortcuts_Come_in_Multiples_Where_Mitigating_One_CVPR_2023_paper.pdf" },
     { id: "dfr", y: 2023, t: "fixes", short: "Last-layer retraining (DFR)", who: "Kirichenko et al.", venue: "ICLR",
       title: "Last layer re-training is sufficient for robustness to spurious correlations",
-      did: "Retrained only the last layer of a standard model on a small set where the spurious correlation does not hold.",
-      data: "Waterbirds and CelebA benchmarks.",
-      measured: "Worst-group accuracy.",
-      found: "Last-layer retraining alone recovers much of the robustness of more complex methods.",
-      us: "DFR is one of our comparison methods; it needs artifact labels.",
+      q: "Do standard models already contain the features needed for robustness?",
+      method: "Keep the features of a standard model and retrain only its last layer on a small reweighting set in which the spurious correlation does not hold.",
+      data: "Waterbirds and CelebA (spurious-correlation benchmarks); ImageNet models for background and texture reliance.",
+      models: "ImageNet-pretrained CNNs and vision transformers.",
+      metrics: "Worst-group accuracy (the accuracy on the hardest group, e.g. water birds on land backgrounds).",
+      results: "Competitive with Group DRO on Waterbirds and matched it on CelebA, at a fraction of the cost. On ImageNet, last-layer retraining reduced reliance on background and texture.",
+      us: "DFR is one of our comparison methods. It works in both traps, but needs artifact labels.",
       ref: "Kirichenko P, Izmailov P, Wilson AG. International Conference on Learning Representations (ICLR 2023).", doi: "", link: "https://arxiv.org/abs/2204.02937" },
     { id: "medfair", y: 2023, t: "fixes", short: "MEDFAIR benchmark", who: "Zong et al.", venue: "ICLR",
       title: "MEDFAIR: benchmarking fairness for medical imaging",
-      did: "Benchmarked eleven bias-mitigation algorithms across ten medical datasets, four sensitive attributes and three model-selection rules.",
-      data: "Ten medical imaging datasets.",
-      measured: "AUC overall, AUC of the worst subgroup, and the gap between best and worst subgroup.",
-      found: "Mitigation algorithms did not clearly beat standard training; model selection mattered more.",
-      us: "Why we choose every model the same way, on clean validation data.",
+      q: "Do bias-mitigation algorithms really beat standard training on medical images?",
+      method: "A common benchmark of eleven algorithms from five families (subgroup rebalancing, domain independence, adversarial training, disentanglement, domain generalisation), four sensitive attributes and three model-selection rules, in and out of distribution.",
+      data: "Ten medical datasets, including CheXpert, MIMIC-CXR, HAM10000, Fitzpatrick17k, PAPILA, OCT, COVID-CT-MD and ADNI.",
+      models: "The same backbone for every algorithm, so only the algorithm changes.",
+      metrics: "Overall AUC, AUC of the worst subgroup, and the AUC gap between best and worst subgroup.",
+      results: "No algorithm clearly beat standard training (ERM), in or out of distribution. The model-selection rule changed fairness more than the algorithm did.",
+      us: "Why every model in our study is selected the same way, on clean validation data, and why we do not expect one method to win everywhere.",
       ref: "Zong Y, Yang Y, Hospedales T. International Conference on Learning Representations (ICLR 2023).", doi: "", link: "https://arxiv.org/abs/2210.01725" },
     { id: "ktena", y: 2024, t: "fixes", short: "Generative data for fairness", who: "Ktena et al.", venue: "Nature Medicine",
       title: "Generative models improve fairness of medical classifiers under distribution shifts",
-      did: "Added diffusion-generated synthetic images to the training data.",
-      data: "Histopathology, chest X-rays and dermatology.",
-      measured: "Diagnostic accuracy and fairness gaps, especially out of distribution.",
-      found: "Synthetic data improved robustness and fairness in all three tasks, mostly for under-represented groups.",
-      us: "A data-side fix; it needs a generative model, while masking needs only the ROI.",
+      q: "Can synthetic images make medical classifiers fairer under distribution shift?",
+      method: "Trained diffusion models on the available (partly unlabelled) data and added their synthetic images, especially of under-represented groups, to the classifier’s training data.",
+      data: "Histopathology (CAMELYON17, shift between hospitals); chest X-rays (trained on CheXpert; tested on CheXpert and, out of distribution, on ChestX-ray14); dermatology.",
+      models: "Diffusion models for generation; standard deep classifiers.",
+      metrics: "Diagnostic accuracy or AUC, and the fairness gap between groups, in and out of distribution.",
+      results: "Synthetic data improved robustness and fairness in all three tasks, mostly by helping under-represented groups out of distribution. Preprint figures: +7.7% accuracy in histopathology; +5.2% in chest X-rays with a 44.6% smaller fairness gap.",
+      us: "A data-side fix. It needs a generative model; masking needs only the ROI.",
       ref: "Ktena I, Wiles O, Albuquerque I, et al. Nature Medicine 30:1166–1173 (2024).", doi: "10.1038/s41591-024-02838-6" },
     { id: "ci", y: 2024, t: "eval", short: "Confidence intervals uncovered", who: "Christodoulou et al.", venue: "MICCAI",
       title: "Confidence intervals uncovered: are we ready for real-world medical imaging AI?",
-      did: "Reviewed how 221 MICCAI 2023 segmentation papers report uncertainty, and reconstructed the missing intervals.",
-      data: "221 MICCAI 2023 papers; Medical Segmentation Decathlon data for the reconstruction.",
-      measured: "Whether intervals are reported, and their width versus the gap between ranked methods (Dice).",
-      found: "Only one paper (0.5%) reported confidence intervals; the typical interval was three times wider than the gap between the top two methods.",
-      us: "Why every number in our report comes with an interval.",
+      q: "Do MICCAI papers report how uncertain their results are?",
+      method: "Reviewed the uncertainty reporting of MICCAI 2023 segmentation papers and reconstructed the missing 95% intervals, estimating the spread from the mean Dice with a model fitted on Medical Segmentation Decathlon data.",
+      data: "221 MICCAI 2023 segmentation papers; Medical Segmentation Decathlon results for the reconstruction.",
+      models: "Not applicable (a review of reporting).",
+      metrics: "Share of papers reporting variability or intervals; reconstructed interval width versus the gap between the first- and second-ranked methods (Dice).",
+      results: "More than half of the papers reported no variability; only one (0.5%) reported confidence intervals. The median interval (0.03 Dice) was three times the median gap between the top two methods; in over 60% of papers the second method lay inside the winner’s interval.",
+      us: "Why every number in our report has an interval, and why we made the intervals honest (crossed and grouped bootstrap).",
       ref: "Christodoulou E, Reinke A, Houhou R, et al. MICCAI 2024, LNCS 15010, 124–133.", doi: "10.1007/978-3-031-72117-5_12" },
     { id: "kapoor", y: 2023, t: "eval", short: "Leakage crisis", who: "Kapoor & Narayanan", venue: "Patterns",
       title: "Leakage and the reproducibility crisis in machine-learning-based science",
-      did: "Collected and classified data-leakage errors across published machine-learning studies.",
-      data: "Published studies from 17 fields.",
-      measured: "Kinds of leakage and how many papers they affect.",
-      found: "Leakage, including non-independent training and test data, affected at least 294 papers.",
-      us: "Why our splits are grouped and checked in code.",
+      q: "How common is data leakage in published machine-learning research?",
+      method: "Surveyed published reports of leakage, built a taxonomy of eight leakage types, proposed “model info sheets” to check for each, and re-examined a civil-war prediction literature.",
+      data: "Published studies from 17 fields; a case study of civil-war prediction papers.",
+      models: "Not applicable (methodological review and case study).",
+      metrics: "Number of affected papers; performance before and after fixing leakage.",
+      results: "Leakage affected at least 294 papers across 17 fields. In civil-war prediction, once leakage was fixed, complex models did no better than decades-old logistic regression.",
+      us: "Why our splits are grouped by lesion, patient or near-duplicate group, and why this is checked in code.",
       ref: "Kapoor S, Narayanan A. Patterns 4(9):100804 (2023).", doi: "10.1016/j.patter.2023.100804" },
   ];
-  let litTheme = "all", litSel = "li";
-  const litTabs = $("litTabs");
+  let litTheme = "all", litSel = "li", litView = "one";
+  const litTabs = $("litTabs"), litView$ = $("litViewTabs");
   Object.entries(THEMES).forEach(([k, v]) => { const b = document.createElement("button"); b.type = "button"; b.dataset.k = k; b.textContent = v; litTabs.appendChild(b); });
   litTabs.addEventListener("click", e => { const b = e.target.closest("button"); if (!b) return; litTheme = b.dataset.k; const first = PAPERS.find(p => litTheme === "all" || p.t === litTheme); if (first && litTheme !== "all") litSel = first.id; drawLit(); });
+  litView$.addEventListener("click", e => { const b = e.target.closest("button"); if (!b) return; litView = b.dataset.v; drawLit(); });
+  const paperUrl = p => p.doi ? `https://doi.org/${p.doi}` : p.link;
   function drawLit() {
     [...litTabs.children].forEach(b => b.setAttribute("aria-pressed", b.dataset.k === litTheme ? "true" : "false"));
+    [...litView$.children].forEach(b => b.setAttribute("aria-pressed", b.dataset.v === litView ? "true" : "false"));
+    $("litOne").hidden = litView !== "one"; $("litAll").hidden = litView !== "all";
+    const shown = PAPERS.filter(p => litTheme === "all" || p.t === litTheme);
+    if (litView === "all") {
+      $("litAll").innerHTML = `<table><tr><th style="width:17%">Paper</th><th style="width:24%">Data</th><th style="width:22%">Metrics</th><th>Main result</th></tr>` +
+        shown.map(p => `<tr><td><b>${esc(p.short)}</b><br><span class="small muted">${esc(p.who)}<br>${esc(p.venue)} ${p.y}</span></td><td class="small">${esc(p.data)}</td><td class="small">${esc(p.metrics)}</td><td class="small">${esc(p.results)}</td></tr>`).join("") + `</table>`;
+      return;
+    }
     let h = "";
     [2022, 2023, 2024, 2025].forEach(y => {
       h += `<div class="year"><h3>${y}</h3><div class="yearpapers">`;
@@ -590,11 +638,11 @@ td.n { font-family: var(--mono); font-variant-numeric: tabular-nums; text-align:
       h += `</div></div>`;
     });
     $("years").innerHTML = h;
-    const p = PAPERS.find(q => q.id === litSel);
-    const url = p.doi ? `https://doi.org/${p.doi}` : p.link;
+    const p = PAPERS.find(q => q.id === litSel), url = paperUrl(p);
     $("paperCard").innerHTML = `<div style="display:flex;gap:8px;flex-wrap:wrap"><span class="badge">${esc(p.venue)} · ${p.y}</span><span class="badge">${THEMES[p.t]}</span></div>
       <h3>${esc(p.title)}</h3>
-      <dl class="dl"><dt>What they did</dt><dd>${esc(p.did)}</dd><dt>Data</dt><dd>${esc(p.data)}</dd><dt>Measured</dt><dd>${esc(p.measured)}</dd><dt>Found</dt><dd>${esc(p.found)}</dd><dt>For us</dt><dd><b>${esc(p.us)}</b></dd></dl>
+      <p class="small"><i>${esc(p.q)}</i></p>
+      <dl class="dl"><dt>Method</dt><dd>${esc(p.method)}</dd><dt>Data</dt><dd>${esc(p.data)}</dd><dt>Models</dt><dd>${esc(p.models)}</dd><dt>Metrics</dt><dd>${esc(p.metrics)}</dd><dt>Results</dt><dd>${esc(p.results)}</dd><dt>For us</dt><dd><b>${esc(p.us)}</b></dd></dl>
       <p class="ref">${esc(p.ref)}${p.doi ? ` DOI: <a href="${url}" target="_blank" rel="noopener">${p.doi}</a>` : ` <a href="${url}" target="_blank" rel="noopener">Paper link</a>`}</p>`;
   }
   $("years").addEventListener("click", e => { const b = e.target.closest(".paper"); if (b) { litSel = b.dataset.id; drawLit(); } });
