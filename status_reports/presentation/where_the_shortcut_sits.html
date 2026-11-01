@@ -14,7 +14,7 @@
   --line: #c6d0d3;
   --roi: #1b6a88;
   --roi-soft: #d4e6ee;
-  --artifact: #c25a12;
+  --artifact: #b8540f;
   --artifact-soft: #f6dfcd;
   --std: #5d6c78;
   --skin: #e6c6b1;
@@ -27,90 +27,116 @@
 }
 @media (prefers-color-scheme: dark) {
   :root:not([data-theme="light"]) {
-    --paper: #0f161c; --surface: #16212a; --ink: #e4ebee; --muted: #9fb0bb; --line: #2b3a45;
+    --paper: #0f161c; --surface: #16212a; --ink: #e4ebee; --muted: #a3b3bd; --line: #2f3e49;
     --roi: #5cb3d6; --roi-soft: #173445; --artifact: #f08a3c; --artifact-soft: #3d2615; --std: #9aaab6;
     --maskgrey: #59636a; color-scheme: dark;
   }
 }
 :root[data-theme="dark"] {
-  --paper: #0f161c; --surface: #16212a; --ink: #e4ebee; --muted: #9fb0bb; --line: #2b3a45;
+  --paper: #0f161c; --surface: #16212a; --ink: #e4ebee; --muted: #a3b3bd; --line: #2f3e49;
   --roi: #5cb3d6; --roi-soft: #173445; --artifact: #f08a3c; --artifact-soft: #3d2615; --std: #9aaab6;
   --maskgrey: #59636a; color-scheme: dark;
 }
 html, body { height: 100%; }
-body { background: var(--paper); color: var(--ink); font-family: var(--body); font-size: 17px; line-height: 1.5; }
+body { background: var(--paper); color: var(--ink); font-family: var(--body); font-size: 18px; line-height: 1.5; }
 .deck { height: 100%; display: flex; flex-direction: column; }
 .topbar, .slides, .navbar { padding-left: max(16px, env(safe-area-inset-left, 0px)); padding-right: max(16px, env(safe-area-inset-right, 0px)); }
 .topbar { display: flex; align-items: baseline; justify-content: space-between; gap: 12px; padding-block: 12px 4px; font-size: 13px; color: var(--muted); letter-spacing: 0.04em; text-transform: uppercase; }
 .topbar b { color: var(--ink); font-weight: 700; }
 .slides { flex: 1; min-height: 0; overflow-y: auto; padding-block: 8px 24px; }
-.slide { max-width: 1180px; margin-inline: auto; display: flex; flex-direction: column; gap: 20px; min-height: 100%; justify-content: center; }
+.slide { max-width: 1200px; margin-inline: auto; display: flex; flex-direction: column; gap: 18px; min-height: 100%; justify-content: center; }
 .eyebrow { font-family: var(--mono); font-size: 13px; letter-spacing: 0.08em; text-transform: uppercase; color: var(--roi); }
 h1, h2, h3 { font-family: var(--display); font-weight: 600; text-wrap: balance; }
 h1 { font-size: clamp(38px, 6vw, 68px); line-height: 1.05; }
-h2 { font-size: clamp(28px, 3.6vw, 42px); line-height: 1.12; }
-h3 { font-size: 20px; line-height: 1.25; }
-p { max-width: 62ch; }
-.lead { font-size: 20px; color: var(--muted); max-width: 56ch; }
+h2 { font-size: clamp(28px, 3.5vw, 42px); line-height: 1.12; }
+h3 { font-size: 21px; line-height: 1.25; }
+p { max-width: 64ch; }
+.lead { font-size: 21px; color: var(--muted); max-width: 56ch; }
 .cols { display: grid; grid-template-columns: minmax(0, 5fr) minmax(0, 6fr); gap: 32px; align-items: start; }
+.cols.even { grid-template-columns: minmax(0, 1fr) minmax(0, 1fr); }
 .cols > * { min-width: 0; display: flex; flex-direction: column; gap: 14px; }
-.panel { background: var(--surface); border: 1px solid var(--line); border-radius: 10px; padding: 18px; display: flex; flex-direction: column; gap: 12px; }
+.panel { background: var(--surface); border: 1px solid var(--line); border-radius: 10px; padding: 18px; display: flex; flex-direction: column; gap: 12px; min-width: 0; }
 .muted { color: var(--muted); }
-.small { font-size: 14px; }
+.small { font-size: 15px; }
 .num { font-family: var(--mono); font-variant-numeric: tabular-nums; }
-.big { font-family: var(--mono); font-size: clamp(34px, 5vw, 52px); line-height: 1; font-variant-numeric: tabular-nums; }
+.big { font-family: var(--mono); font-size: clamp(36px, 5vw, 56px); line-height: 1; font-variant-numeric: tabular-nums; }
 .pos { color: var(--roi); } .neg { color: var(--artifact); }
-.key { display: inline-flex; align-items: center; gap: 6px; font-size: 14px; color: var(--muted); }
-.key i { width: 18px; height: 4px; border-radius: 2px; display: inline-block; }
-.keys { display: flex; flex-wrap: wrap; gap: 16px; }
 ul.plain { list-style: none; padding: 0; display: flex; flex-direction: column; gap: 10px; }
-ul.plain li { padding-left: 18px; position: relative; max-width: 62ch; }
-ul.plain li::before { content: ""; position: absolute; left: 0; top: 0.62em; width: 8px; height: 2px; background: var(--roi); }
+ul.plain li { padding-left: 18px; position: relative; max-width: 64ch; }
+ul.plain li::before { content: ""; position: absolute; left: 0; top: 0.65em; width: 8px; height: 2px; background: var(--roi); }
 button { font: inherit; cursor: pointer; }
-.btn { border: 1px solid var(--line); background: var(--surface); color: var(--ink); border-radius: 8px; padding: 8px 14px; font-size: 15px; }
+.btn { border: 1px solid var(--line); background: var(--surface); color: var(--ink); border-radius: 8px; padding: 9px 15px; font-size: 16px; }
 .btn[aria-pressed="true"], .seg button[aria-pressed="true"] { background: var(--roi); border-color: var(--roi); color: var(--surface); }
 .seg { display: inline-flex; flex-wrap: wrap; border: 1px solid var(--line); border-radius: 8px; overflow: hidden; align-self: flex-start; }
-.seg button { border: 0; border-right: 1px solid var(--line); background: var(--surface); color: var(--ink); padding: 8px 12px; font-size: 14px; }
+.seg button { border: 0; border-right: 1px solid var(--line); background: var(--surface); color: var(--ink); padding: 8px 13px; font-size: 15px; }
 .seg button:last-child { border-right: 0; }
 :focus-visible { outline: 3px solid var(--artifact); outline-offset: 2px; }
+.chart { overflow-x: auto; }
+.chart svg { min-width: 520px; }
 svg { display: block; width: 100%; height: auto; }
-svg text { font-family: var(--body); fill: var(--muted); font-size: 12px; }
+svg text { font-family: var(--body); fill: var(--muted); font-size: 15px; }
 svg .ink { fill: var(--ink); }
+svg .b { font-weight: 700; }
+svg .roi { fill: var(--roi); } svg .art { fill: var(--artifact); } svg .std { fill: var(--std); }
 .scenes { display: grid; grid-template-columns: 1fr 1fr; gap: 14px; }
 .scene { display: flex; flex-direction: column; gap: 6px; }
-.scene figcaption { font-size: 14px; color: var(--muted); }
+.scene figcaption { font-size: 15px; color: var(--muted); }
 .slider { display: flex; flex-direction: column; gap: 6px; }
-.slider input { width: 100%; accent-color: var(--roi); }
-.ticks { display: flex; justify-content: space-between; font-family: var(--mono); font-size: 13px; color: var(--muted); }
+.slider input { width: 100%; accent-color: var(--roi); height: 28px; }
+.ticks { display: flex; justify-content: space-between; font-family: var(--mono); font-size: 14px; color: var(--muted); }
 .readout { display: flex; align-items: baseline; gap: 14px; flex-wrap: wrap; }
 .tablewrap { overflow-x: auto; }
-table { border-collapse: collapse; width: 100%; font-size: 15px; }
-th, td { text-align: left; padding: 8px 10px; border-bottom: 1px solid var(--line); vertical-align: top; }
+table { border-collapse: collapse; width: 100%; font-size: 16px; }
+th, td { text-align: left; padding: 9px 10px; border-bottom: 1px solid var(--line); vertical-align: top; }
 th { font-size: 13px; text-transform: uppercase; letter-spacing: 0.05em; color: var(--muted); font-weight: 700; }
 td.n { font-family: var(--mono); font-variant-numeric: tabular-nums; text-align: right; white-space: nowrap; }
 .cell-pos { background: var(--roi-soft); } .cell-neg { background: var(--artifact-soft); }
+.yes { color: var(--roi); font-weight: 700; } .no { color: var(--muted); }
 .cards { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 12px; }
+.cards.three { grid-template-columns: repeat(3, minmax(0, 1fr)); }
 .card { text-align: left; background: var(--surface); border: 1px solid var(--line); border-radius: 10px; padding: 14px; color: var(--ink); display: flex; flex-direction: column; gap: 6px; }
-.card[aria-expanded="true"] { border-color: var(--roi); }
-.card .more { color: var(--muted); font-size: 15px; }
+.card[aria-expanded="true"], .card[aria-pressed="true"] { border-color: var(--roi); box-shadow: inset 0 0 0 1px var(--roi); }
+.card .more { color: var(--muted); font-size: 16px; }
 .statement { border-left: 4px solid var(--roi); padding: 4px 0 4px 16px; font-family: var(--display); font-size: clamp(20px, 2.4vw, 26px); line-height: 1.3; max-width: 46ch; }
 .title-slide h1 { max-width: 14ch; }
+/* literature explorer */
+.years { display: flex; flex-direction: column; gap: 10px; }
+.year { display: grid; grid-template-columns: 52px minmax(0, 1fr); gap: 10px; align-items: start; border-top: 2px solid var(--line); padding-top: 8px; }
+.year h3 { font-family: var(--mono); font-size: 16px; color: var(--muted); padding-top: 6px; }
+.yearpapers { display: flex; flex-wrap: wrap; gap: 8px; min-width: 0; }
+.yearpapers .paper { flex: 1 1 160px; max-width: 230px; }
+.paper { text-align: left; border: 1px solid var(--line); background: var(--surface); color: var(--ink); border-radius: 8px; padding: 8px 10px; display: flex; flex-direction: column; gap: 2px; font-size: 15px; line-height: 1.3; }
+.paper small { color: var(--muted); font-size: 13px; }
+.paper[aria-pressed="true"] { border-color: var(--roi); box-shadow: inset 0 0 0 1px var(--roi); }
+.paper.dim { opacity: 0.35; }
+.dl { display: grid; grid-template-columns: max-content minmax(0, 1fr); gap: 6px 14px; font-size: 16px; }
+.dl dt { font-weight: 700; color: var(--muted); font-size: 13px; text-transform: uppercase; letter-spacing: 0.05em; padding-top: 3px; }
+.dl dd { min-width: 0; }
+.ref { font-size: 14px; color: var(--muted); border-top: 1px solid var(--line); padding-top: 10px; overflow-wrap: anywhere; }
+.ref a { color: var(--roi); }
+.badge { display: inline-block; font-family: var(--mono); font-size: 13px; padding: 2px 8px; border-radius: 99px; border: 1px solid var(--line); color: var(--muted); }
+/* leakage demo */
+.split { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; }
+.bin { border: 1px dashed var(--line); border-radius: 8px; padding: 10px; display: flex; flex-direction: column; gap: 8px; }
+.bin h3 { font-size: 16px; font-family: var(--body); }
+.dots { display: flex; flex-wrap: wrap; gap: 6px; }
+.dot { width: 30px; height: 30px; border-radius: 50%; display: grid; place-items: center; font-family: var(--mono); font-size: 12px; color: var(--surface); }
+.dot.leak { outline: 3px solid var(--artifact); outline-offset: 2px; }
 .navbar { display: flex; align-items: center; gap: 12px; padding-block: 8px calc(10px + env(safe-area-inset-bottom, 0px)); border-top: 1px solid var(--line); background: var(--surface); }
 .navbar .btn { padding: 6px 12px; }
-.mm { flex: 1; min-width: 0; display: flex; align-items: flex-end; height: 34px; gap: 0; }
+.mm { flex: 1; min-width: 0; display: flex; align-items: flex-end; height: 34px; }
 .mm button { flex: 1; height: 100%; border: 0; background: transparent; position: relative; padding: 0; }
 .mm button::after { content: ""; position: absolute; left: 0; bottom: 0; width: 2px; height: 12px; background: var(--line); }
 .mm button.major::after { height: 22px; }
 .mm button.done::after { background: var(--roi); }
 .mm button.cur::after { background: var(--artifact); width: 3px; height: 30px; }
 .counter { font-family: var(--mono); font-size: 13px; color: var(--muted); white-space: nowrap; }
-.pill { display: inline-block; font-family: var(--mono); font-size: 12px; padding: 2px 8px; border-radius: 99px; border: 1px solid currentColor; }
-@media (max-width: 820px) {
-  .cols { grid-template-columns: minmax(0, 1fr); }
-  .cards { grid-template-columns: minmax(0, 1fr); }
+@media (max-width: 900px) {
+  .cols, .cols.even { grid-template-columns: minmax(0, 1fr); }
+  .cards, .cards.three { grid-template-columns: minmax(0, 1fr); }
   .slide { justify-content: flex-start; }
 }
-@media (max-width: 480px) { .scenes { grid-template-columns: minmax(0, 1fr); } body { font-size: 16px; } }
+@media (max-width: 480px) { .scenes, .split { grid-template-columns: minmax(0, 1fr); } body { font-size: 17px; } }
 @media (prefers-reduced-motion: no-preference) { .slide { animation: in 0.35s ease both; } @keyframes in { from { opacity: 0.4; transform: translateY(6px); } to { opacity: 1; transform: none; } } }
 </style>
 
@@ -118,26 +144,22 @@ td.n { font-family: var(--mono); font-variant-numeric: tabular-nums; text-align:
   <div class="topbar"><span><b>Where the Shortcut Sits</b> · MSc thesis progress</span><span id="secname"></span></div>
   <main class="slides" id="slides" tabindex="-1">
 
-  <!-- 1 title -->
   <section class="slide title-slide" id="start" data-name="Start">
-    <p class="eyebrow">MSc thesis · progress, October 2026</p>
+    <p class="eyebrow">MSc thesis · progress, November 2026</p>
     <h1>Where the Shortcut Sits</h1>
     <p class="lead">Does masking the region of interest remove artifact shortcuts from medical image classifiers? It depends on where the artifact sits.</p>
     <div class="cols">
       <div><p class="statement">Masking helps when the artifact is outside the region of interest. When the artifact is inside, masking loses its benefit and often makes the shortcut worse.</p></div>
-      <div class="panel small">
-        <span class="muted">Use the arrow keys, the buttons below, or click the ruler to move between slides. Several slides are interactive: try the toggles and the slider.</span>
-      </div>
+      <div class="panel small"><span class="muted">Move with the arrow keys, the buttons below, or by clicking the ruler at the bottom. Most slides are interactive: click the papers, flip the toggles, drag the slider.</span></div>
     </div>
   </section>
 
-  <!-- 2 problem -->
   <section class="slide" id="problem" data-name="The problem">
     <p class="eyebrow">The problem</p>
     <h2>Classifiers learn the ruler, not the disease</h2>
     <div class="cols">
       <div>
-        <p>A deep classifier learns whatever predicts the label. In skin images, doctors often place a ruler next to a suspicious mole. A model can then score well by detecting the ruler. This is a <b>shortcut</b>.</p>
+        <p>A deep classifier learns whatever predicts the label. In skin images, doctors often place a ruler next to a suspicious mole, so a model can score well by detecting the ruler. This is a <b>shortcut</b>.</p>
         <p>A common fix is <b>ROI masking</b>: keep only the region of interest (ROI), such as the lesion, and replace the rest of the image.</p>
         <p class="muted">Its hidden assumption: the artifact lies in the background. Rulers, hair, calipers and debris often lie on the lesion too.</p>
       </div>
@@ -147,34 +169,80 @@ td.n { font-family: var(--mono); font-variant-numeric: tabular-nums; text-align:
           <figure class="scene"><div id="sceneIn"></div><figcaption>Ruler on the lesion</figcaption></figure>
         </div>
         <button class="btn" id="maskToggle" aria-pressed="false">Apply ROI mask</button>
-        <p class="small muted" id="maskNote">Press the button. Teal line = ROI, orange = the artifact.</p>
+        <p class="small muted" id="maskNote"></p>
       </div>
     </div>
   </section>
 
-  <!-- 3 how we test -->
+  <section class="slide" id="papers" data-name="Related work">
+    <p class="eyebrow">What others found · 2022 to 2026</p>
+    <h2>Fourteen key papers, 2022 to 2025</h2>
+    <div class="seg" role="group" aria-label="Filter papers by theme" id="litTabs"></div>
+    <div class="cols even">
+      <div class="years" id="years"></div>
+      <div class="panel" id="paperCard" aria-live="polite"></div>
+    </div>
+    <p class="small muted">Selected from the 68 peer-reviewed studies in our literature review. Each was checked against its publisher’s page. Venues: Nature family journals, CVPR, ICLR, MICCAI, Medical Image Analysis, and others.</p>
+  </section>
+
+  <section class="slide" id="gap" data-name="The gap">
+    <p class="eyebrow">What nobody tested</p>
+    <h2>Prior work assumes the shortcut is in the background</h2>
+    <div class="tablewrap">
+      <table id="gapTable"></table>
+    </div>
+    <p class="statement">Within our search, no study treats the artifact’s position relative to the ROI as an experimental variable. Li et al. (CVPR 2023) showed in natural images that removing one shortcut can amplify another; we test this for masking in medical images.</p>
+  </section>
+
+  <section class="slide" id="data" data-name="Datasets">
+    <p class="eyebrow">Datasets we used</p>
+    <h2>Six public datasets, four kinds of medical images</h2>
+    <div class="cols">
+      <div class="cards" id="dataCards"></div>
+      <div class="panel" id="dataDetail" aria-live="polite"></div>
+    </div>
+  </section>
+
   <section class="slide" id="method" data-name="How we test it">
     <p class="eyebrow">How we test it</p>
     <h2>Two models, one trap</h2>
     <div class="cols">
       <div>
         <p>Both models use the same frozen image encoder (mainly DINOv2) and the same simple classifier. Only the input differs: the <b>standard model</b> sees the whole image, the <b>masked model</b> sees only the ROI.</p>
-        <p>To measure reliance on the artifact we build a <b>trap</b>. In training the artifact appears on 90% of the disease images and 10% of the others, so it is a strong shortcut.</p>
+        <p>To measure reliance on the artifact we build a <b>trap</b>: in training, the artifact is on 90% of disease images and 10% of the others.</p>
         <div class="panel">
           <h3>The score</h3>
-          <p>AUROC on the <b>reversed test</b>, where the artifact–label link is flipped. 0.5 is guessing, 1.0 is perfect. We report <b>masked minus standard</b>: positive means masking helped.</p>
+          <p>AUROC on the <b>reversed test</b>, where the artifact–label link is flipped (0.5 = guessing, 1.0 = perfect). We report <b>masked minus standard</b>: positive means masking helped.</p>
           <p class="small muted">The <b>location effect</b> is that difference with the artifact outside the ROI minus the difference with it fully inside.</p>
         </div>
       </div>
       <div class="panel">
         <div class="seg" role="group" aria-label="Choose a data set" id="trapTabs"></div>
-        <div id="trapChart"></div>
+        <div class="chart" id="trapChart"></div>
         <p id="trapText"></p>
       </div>
     </div>
   </section>
 
-  <!-- 4 step 1 -->
+  <section class="slide" id="leakage" data-name="No data leakage">
+    <p class="eyebrow">How we prevented data leakage</p>
+    <h2>The same lesion or patient never sits in both training and test</h2>
+    <div class="cols even">
+      <div class="panel">
+        <div class="seg" role="group" aria-label="Split type" id="splitTabs">
+          <button type="button" data-s="random" aria-pressed="false">Random split</button>
+          <button type="button" data-s="grouped" aria-pressed="true">Grouped split (ours)</button>
+        </div>
+        <div class="split">
+          <div class="bin"><h3>Training</h3><div class="dots" id="binTrain"></div></div>
+          <div class="bin"><h3>Test</h3><div class="dots" id="binTest"></div></div>
+        </div>
+        <p id="splitText"></p>
+      </div>
+      <div class="cards" id="leakCards"></div>
+    </div>
+  </section>
+
   <section class="slide" id="step-1" data-name="Step 1">
     <p class="eyebrow">Step 1 · moving a ruler into the lesion</p>
     <h2>Drag the ruler into the lesion</h2>
@@ -188,78 +256,70 @@ td.n { font-family: var(--mono); font-variant-numeric: tabular-nums; text-align:
             <div class="ticks"><span>0%</span><span>25%</span><span>50%</span><span>75%</span><span>100%</span></div>
           </div>
         </div>
-        <p class="small muted">2,437 ISIC 2018 skin images, the same ruler pasted at five positions. Only its position changes. DINOv2, mean of 3 seeds.</p>
+        <p class="small muted">2,437 ISIC 2018 skin images; the same ruler pasted at five positions. Only its position changes. DINOv2, mean of 3 seeds.</p>
       </div>
       <div class="panel">
         <div class="readout"><span class="big" id="sweepDelta"></span><span id="sweepVerdict"></span></div>
         <p class="small muted" id="sweepCI"></p>
-        <div id="sweepChart"></div>
-        <div class="keys">
-          <span class="key"><i style="background:var(--std)"></i>Standard model</span>
-          <span class="key"><i style="background:var(--roi)"></i>Masked model</span>
-          <span class="key"><i style="background:repeating-linear-gradient(90deg,var(--muted) 0 4px,transparent 4px 7px)"></i>Clean test</span>
-        </div>
+        <div class="chart" id="sweepChart"></div>
+        <button class="btn" id="cleanToggle" aria-pressed="false" style="align-self:flex-start">Also show the clean test</button>
       </div>
     </div>
   </section>
 
-  <!-- 5 fluke -->
   <section class="slide" id="robust" data-name="Is it a fluke?">
     <p class="eyebrow">Step 1 · is it a fluke?</p>
     <h2>The location effect survives every change we tried</h2>
     <div class="cols">
       <div>
         <p>We repeated the ruler experiment at a lower resolution, with a dermatology encoder (DermLIP), with a ruler whose colour, ticks and size change from image to image, and with a long thin ruler like real scale bars.</p>
-        <p>The location effect stayed large and positive every time. Click a bar to see what masking did at each end.</p>
-        <div class="panel small" id="robustDetail"></div>
+        <p>The location effect stayed clearly above zero every time. Click a row to see what masking did at each end.</p>
+        <div class="panel" id="robustDetail"></div>
       </div>
-      <div class="panel"><div id="robustChart"></div><p class="small muted">Location effect with its 95% interval (reversed test). Right of zero = masking is worth more when the ruler is outside.</p></div>
+      <div class="panel"><div class="chart" id="robustChart"></div></div>
     </div>
   </section>
 
-  <!-- 6 step 2 -->
   <section class="slide" id="step-2" data-name="Step 2">
     <p class="eyebrow">Step 2 · why does masking fail?</p>
     <h2>The ruler survives, its competitors are deleted</h2>
     <div class="cols">
       <div>
-        <p>Three possible reasons: (a) masking simply hides useful parts of the image; (b) the background holds disease information; (c) the ruler inside the lesion survives, and because masking deletes everything that competed with it, the model relies on it more.</p>
+        <p>Three possible reasons: (a) masking simply hides useful parts of the image; (b) the background holds disease information; (c) the ruler inside the lesion survives, and because masking deletes what competed with it, the model relies on it more.</p>
         <p class="statement">Four checks point to (c).</p>
         <div class="panel">
-          <h3>Same image, ruler added or removed</h3>
-          <div id="cfChart"></div>
-          <p class="small muted">Average change in the predicted probability (0 to 1) when the ruler is added to the same test image.</p>
+          <h3>Same image, ruler added</h3>
+          <div class="chart" id="cfChart"></div>
+          <p class="small muted">How much the predicted probability (0 to 1) changes when the ruler is added to the same test image. Larger = the model leans more on the ruler.</p>
         </div>
       </div>
       <div class="cards" id="checks"></div>
     </div>
   </section>
 
-  <!-- 7 step 3 -->
   <section class="slide" id="step-3" data-name="Step 3">
     <p class="eyebrow">Step 3 · is it only skin images?</p>
     <h2>The same pattern in ultrasound, capsule endoscopy and chest X-rays</h2>
     <div class="cols">
       <div>
         <p>We moved a typical artifact into the ROI in four kinds of medical images: a caliper in thyroid and ovarian ultrasound, debris in capsule endoscopy, a tube in chest X-rays.</p>
-        <p>The location effect was positive in <b>10 of 11</b> experiments. The one exception is RAD-DINO, a chest X-ray encoder that ignored a tube outside the lungs, so there was nothing for masking to remove.</p>
-        <div class="panel small" id="modDetail"><span class="muted">Click a row to see the numbers.</span></div>
+        <p>The location effect was positive in <b>10 of 11</b> experiments. The exception is RAD-DINO, a chest X-ray encoder that ignored a tube outside the lungs, so masking had nothing to remove.</p>
+        <div class="panel" id="modDetail"><span class="muted small">Click a row to see the numbers.</span></div>
       </div>
-      <div class="panel"><div id="modChart"></div></div>
+      <div class="panel"><div class="chart" id="modChart"></div></div>
     </div>
   </section>
 
-  <!-- 8 step 4 -->
   <section class="slide" id="step-4" data-name="Step 4">
     <p class="eyebrow">Step 4 · real artifacts</p>
     <h2>Real artifacts behave the same way</h2>
     <div class="cols">
       <div>
         <p>A real artifact cannot be moved. So we build two traps from the same artifact-free images: <b>Trap A</b> uses images with the artifact inside the ROI, <b>Trap B</b> images with it outside.</p>
-        <p>The <b>crossover</b> is masking's benefit in Trap B minus its benefit in Trap A. Positive = masking helps more when the artifact is outside.</p>
+        <p>The <b>crossover</b> is masking’s benefit in Trap B minus its benefit in Trap A. Positive = masking helps more when the artifact is outside.</p>
         <div class="panel">
           <p>Positive in all four cohorts with DINOv2 (the four planned tests, all significant after correction), and in every cohort tested with MedSigLIP and ConvNeXt. Not with DermLIP.</p>
-          <p class="small muted">Switch to “per lesion or group” to see the stricter intervals we computed this month: images of one lesion or near-duplicates share one weight.</p>
+          <p class="small muted">Switch to “per lesion or group” for the stricter intervals computed this month: images of one lesion, or near-duplicates, share one weight.</p>
         </div>
       </div>
       <div class="panel">
@@ -267,20 +327,17 @@ td.n { font-family: var(--mono); font-variant-numeric: tabular-nums; text-align:
           <button type="button" data-ci="img" aria-pressed="true">Per image</button>
           <button type="button" data-ci="grp" aria-pressed="false">Per lesion or group</button>
         </div>
-        <div id="realChart"></div>
-        <p class="small muted">Crossover with 95% interval. Filled dots = the four planned tests.</p>
+        <div class="chart" id="realChart"></div>
       </div>
     </div>
   </section>
 
-  <!-- 9 checks -->
   <section class="slide" id="checks-done" data-name="Error bars">
     <p class="eyebrow">Are the error bars honest?</p>
     <h2>We tested our own statistics</h2>
-    <div class="cards" id="stats"></div>
+    <div class="cards three" id="stats"></div>
   </section>
 
-  <!-- 10 learned -->
   <section class="slide" id="learned" data-name="Other findings">
     <p class="eyebrow">Other things we learned</p>
     <h2>Methods that know the artifact help in both traps, but need labels</h2>
@@ -296,18 +353,17 @@ td.n { font-family: var(--mono); font-variant-numeric: tabular-nums; text-align:
       <div class="panel">
         <div class="seg" role="group" aria-label="Cohort" id="armTabs"></div>
         <div class="tablewrap" id="armTable"></div>
-        <p class="small muted">Change in reversed-test AUROC vs the standard model, DINOv2. Teal = better, orange = worse.</p>
+        <p class="small muted">Change in reversed-test AUROC vs the standard model, DINOv2. Shaded teal = better, orange = worse.</p>
       </div>
     </div>
   </section>
 
-  <!-- 11 where we are -->
   <section class="slide" id="status" data-name="Where we are">
     <p class="eyebrow">Where we are</p>
     <h2>What the work so far shows</h2>
     <div class="tablewrap">
       <table>
-        <tr><th style="width:24%">Question</th><th>Answer</th><th style="width:26%">Evidence</th></tr>
+        <tr><th style="width:24%">Question</th><th>Answer</th><th style="width:28%">Evidence</th></tr>
         <tr><td><b>Does masking depend on where the artifact sits?</b></td><td>Yes. It helps when the artifact is outside the ROI and loses its benefit (often turns harmful) when it is inside.</td><td>Steps 1 and 3: 10 of 11 experiments; both ruler sizes</td></tr>
         <tr><td><b>Why?</b></td><td>The artifact inside survives, its competitors are deleted, and the model relies on it more.</td><td>Step 2: four checks</td></tr>
         <tr><td><b>Does it hold for real artifacts?</b></td><td>Yes, in all four cohorts with DINOv2, and in every cohort tested with MedSigLIP (3) and ConvNeXt (2).</td><td>Step 4: four planned tests, all significant, also with grouped intervals</td></tr>
@@ -316,7 +372,6 @@ td.n { font-family: var(--mono); font-variant-numeric: tabular-nums; text-align:
     </div>
   </section>
 
-  <!-- 12 questions -->
   <section class="slide" id="discuss" data-name="Questions">
     <p class="eyebrow">Questions for discussion</p>
     <h2>Where we would like your view</h2>
@@ -339,19 +394,18 @@ td.n { font-family: var(--mono); font-variant-numeric: tabular-nums; text-align:
 
 <script>
 (function () {
-  const NS = "http://www.w3.org/2000/svg";
   const f3 = v => (v > 0 ? "+" : v < 0 ? "−" : "") + Math.abs(v).toFixed(3);
+  const f2 = v => (v > 0 ? "+" : v < 0 ? "−" : "") + Math.abs(v).toFixed(2);
   const lin = (d0, d1, r0, r1) => v => r0 + (v - d0) / (d1 - d0) * (r1 - r0);
   const svg = (w, h, inner, label) => `<svg viewBox="0 0 ${w} ${h}" role="img" aria-label="${label}">${inner}</svg>`;
+  const esc = s => String(s).replace(/&/g, "&amp;").replace(/</g, "&lt;");
+  const $ = id => document.getElementById(id);
 
-  /* ---------- the lesion scene (problem slide and step 1) ---------- */
+  /* ---------------- lesion scene ---------------- */
   const CX = 200, CY = 150, RX = 95, RY = 70, ROIX = 104, ROIY = 79;
   function ruler(x, y, w, h) {
     let t = `<rect x="${x}" y="${y}" width="${w}" height="${h}" rx="2" style="fill:var(--rulerbody);stroke:var(--artifact);stroke-width:2.5"/>`;
-    for (let i = 1; i < 14; i++) {
-      const tx = x + i * w / 14, th = i % 5 === 0 ? h * 0.6 : h * 0.35;
-      t += `<line x1="${tx}" y1="${y}" x2="${tx}" y2="${y + th}" stroke="#3a3a3a" stroke-width="1"/>`;
-    }
+    for (let i = 1; i < 14; i++) { const tx = x + i * w / 14, th = i % 5 === 0 ? h * 0.6 : h * 0.35; t += `<line x1="${tx}" y1="${y}" x2="${tx}" y2="${y + th}" stroke="#3a3a3a" stroke-width="1"/>`; }
     return t;
   }
   function scene(rx, ry, masked, label) {
@@ -364,21 +418,194 @@ td.n { font-family: var(--mono); font-variant-numeric: tabular-nums; text-align:
     s += `<ellipse cx="${CX}" cy="${CY}" rx="${ROIX}" ry="${ROIY}" style="fill:none;stroke:var(--roi);stroke-width:3;stroke-dasharray:${masked ? "0" : "7 5"}"/>`;
     return svg(400, 300, s, label);
   }
-
-  const maskBtn = document.getElementById("maskToggle");
+  const maskBtn = $("maskToggle");
   function drawProblem() {
     const m = maskBtn.getAttribute("aria-pressed") === "true";
-    document.getElementById("sceneOut").innerHTML = scene(300, 250, m, m ? "Masked: the ruler outside the lesion is removed" : "A ruler outside the lesion");
-    document.getElementById("sceneIn").innerHTML = scene(165, 141, m, m ? "Masked: the ruler on the lesion is kept" : "A ruler on the lesion");
-    document.getElementById("maskNote").innerHTML = m
-      ? "Left: the ruler is gone, the shortcut is removed. Right: the ruler survives and everything around the lesion is gone, so the ruler is now one of the few cues left."
+    $("sceneOut").innerHTML = scene(300, 250, m, m ? "Masked: the ruler outside the lesion is removed" : "A ruler outside the lesion");
+    $("sceneIn").innerHTML = scene(165, 141, m, m ? "Masked: the ruler on the lesion is kept" : "A ruler on the lesion");
+    $("maskNote").innerHTML = m
+      ? "<b>Left:</b> the ruler is gone, so the shortcut is removed. <b>Right:</b> the ruler survives and everything around the lesion is gone, so the ruler is now one of the few cues left."
       : "Press the button. Teal line = ROI, orange = the artifact.";
     maskBtn.textContent = m ? "Show original images" : "Apply ROI mask";
   }
   maskBtn.addEventListener("click", () => { maskBtn.setAttribute("aria-pressed", maskBtn.getAttribute("aria-pressed") === "true" ? "false" : "true"); drawProblem(); });
   drawProblem();
 
-  /* ---------- the trap ---------- */
+  /* ---------------- literature explorer ---------------- */
+  const THEMES = { all: "All", evidence: "Shortcuts exist", artifacts: "Artifacts", masking: "Masking and backgrounds", fixes: "Fixes", eval: "How to evaluate" };
+  const PAPERS = [
+    { id: "brown", y: 2023, t: "evidence", short: "Shortcut testing", who: "Brown et al.", venue: "Nature Communications",
+      title: "Detecting shortcut learning for fair medical AI using shortcut testing",
+      did: "Proposed ShorT: with multitask learning, they vary how strongly a model encodes a sensitive attribute and watch what happens to fairness.",
+      data: "NIH chest X-rays (effusion, atelectasis, abnormal) and a dermatology diagnosis task; the attribute is patient age.",
+      measured: "Fairness gap between age groups, together with model performance.",
+      found: "Gives a direct test of whether a fairness gap comes from shortcut learning.",
+      us: "A test of reliance, not just presence; our same-image test has the same aim.",
+      ref: "Brown A, Tomasev N, Freyberg J, Liu Y, Karthikesalingam A, Schrouff J. Nature Communications 14:4314 (2023).", doi: "10.1038/s41467-023-39902-7" },
+    { id: "yang24", y: 2024, t: "evidence", short: "Limits of fair imaging AI", who: "Yang et al.", venue: "Nature Medicine",
+      title: "The limits of fair medical imaging AI in real-world generalization",
+      did: "Trained more than 3,000 models across radiology, dermatology and ophthalmology.",
+      data: "Six chest X-ray datasets, ISIC dermatology and ophthalmology data.",
+      measured: "Disease AUROC and fairness gaps between demographic groups, in and out of distribution.",
+      found: "Models use demographic shortcuts; models that were fair at their own site were not fair at new sites.",
+      us: "Shortcuts are real in exactly the encoders and data types we study.",
+      ref: "Yang Y, Zhang H, Gichoya JW, Katabi D, Ghassemi M. Nature Medicine 30:2838–2848 (2024).", doi: "10.1038/s41591-024-03113-4" },
+    { id: "jimenez", y: 2023, t: "artifacts", short: "Chest drains as shortcut", who: "Jiménez-Sánchez et al.", venue: "IEEE ISBI",
+      title: "Detecting shortcuts in medical images – a case study in chest X-rays",
+      did: "Re-examined pneumothorax classifiers and collected non-expert labels for chest drains (the NEATX annotations).",
+      data: "NIH ChestX-ray14 (about 3,500 drain annotations) and PadChest (tube annotations).",
+      measured: "AUROC on pneumothorax images with and without a drain.",
+      found: "Classifiers detect the drain that treats the condition; performance depends on whether a drain is present.",
+      us: "We use their NEATX drain labels for our chest-drain trap.",
+      ref: "Jiménez-Sánchez A, Juodelyte D, Chamberlain B, Cheplygina V. IEEE International Symposium on Biomedical Imaging (2023).", doi: "" , link: "https://arxiv.org/abs/2211.04279" },
+    { id: "pahde", y: 2023, t: "artifacts", short: "Reveal to Revise", who: "Pahde et al.", venue: "MICCAI",
+      title: "Reveal to Revise: an explainable AI life cycle for iterative bias correction of deep models",
+      did: "A four-step cycle: find a bias with explanation methods (SpRAy), label and localise the artifact, correct the model (RRR, CDEP, ClArC), and re-evaluate.",
+      data: "ISIC 2019 skin images and the Pediatric Bone Age X-rays, with real and synthetic artifacts.",
+      measured: "Whether the corrected model still uses the artifact, and its performance.",
+      found: "Mitigated several dataset-intrinsic and synthetic artifacts without introducing new biases.",
+      us: "Same skin dataset; their fixes need artifact labels, while masking needs only the ROI.",
+      ref: "Pahde F, Dreyer M, Samek W, Lapuschkin S. MICCAI 2023, LNCS 14221.", doi: "10.1007/978-3-031-43895-0_56" },
+    { id: "lin", y: 2024, t: "artifacts", short: "Calipers in ultrasound", who: "Lin, Weng et al.", venue: "MICCAI",
+      title: "Shortcut learning in medical image segmentation",
+      did: "Showed that calipers and on-screen text in training images act as shortcuts for segmentation.",
+      data: "3,775 third-trimester fetal ultrasound images from four anatomical views; skin lesion segmentation.",
+      measured: "Segmentation quality with and without the annotations.",
+      found: "Predictions change when calipers or text are removed from the same frozen frame.",
+      us: "Calipers are a shortcut in ultrasound; we study them for classification in thyroid and ovary.",
+      ref: "Lin M, Weng N, Mikolaj K, et al. MICCAI 2024, LNCS 15008, 623–633.", doi: "10.1007/978-3-031-72111-3_59" },
+    { id: "cassidy", y: 2022, t: "eval", short: "ISIC duplicates", who: "Cassidy et al.", venue: "Medical Image Analysis",
+      title: "Analysis of the ISIC image datasets: usage, benchmarks and recommendations",
+      did: "Analysed the yearly ISIC releases (2016–2020) and proposed a duplicate-removal strategy.",
+      data: "ISIC 2016–2020; benchmarks on the ISIC 2020 and 2017 test sets.",
+      measured: "Duplicate images within and between releases, and across training and test sets.",
+      found: "Many duplicates, including copies that cross the training and test split.",
+      us: "Why we split by lesion and image similarity, never by single image.",
+      ref: "Cassidy B, Kendrick C, Brodzicki A, Jaworek-Korjakowska J, Yap MH. Medical Image Analysis 75:102305 (2022).", doi: "10.1016/j.media.2021.102305" },
+    { id: "sourget", y: 2025, t: "masking", short: "Mask of truth", who: "Sourget et al.", venue: "J. Imaging Informatics in Medicine",
+      title: "Mask of truth: model sensitivity to unexpected regions of medical images",
+      did: "Trained and tested classifiers with different masks: full image, region of interest only, region of interest removed.",
+      data: "Chest X-rays (including PadChest) and the Chákṣu glaucoma fundus dataset.",
+      measured: "AUC, SHAP explanations, embedding analysis, and a radiology resident reading masked images.",
+      found: "Models trained on full images did well on images with the ROI removed, sometimes better than on ROI-only images.",
+      us: "The closest masking study; it assumes the shortcut is outside the ROI.",
+      ref: "Sourget T, Hestbek-Møller M, Jiménez-Sánchez A, Xu JJ, Cheplygina V. Journal of Imaging Informatics in Medicine (2025).", doi: "10.1007/s10278-025-01531-5" },
+    { id: "bassi", y: 2024, t: "masking", short: "ISNet", who: "Bassi et al.", venue: "Nature Communications",
+      title: "Improving deep neural network generalization and robustness to background bias via layer-wise relevance propagation optimization",
+      did: "Penalised explanation relevance outside the segmentation mask during training (ISNet), so the classifier implicitly focuses on the lungs.",
+      data: "Chest X-rays for COVID-19 and tuberculosis from mixed sources, plus synthetic background bias; compared with eight networks.",
+      measured: "Classification performance on test data from other sources.",
+      found: "Focusing on the lungs reduced shortcut learning from background bias, at no extra cost at run time.",
+      us: "A mask-based fix; like masking, it assumes the bias lies outside the mask.",
+      ref: "Bassi PRAS, Dertkigil SSJ, Cavalli A. Nature Communications 15:291 (2024).", doi: "10.1038/s41467-023-44371-z" },
+    { id: "li", y: 2023, t: "masking", short: "Whac-A-Mole dilemma", who: "Li et al.", venue: "CVPR",
+      title: "A Whac-A-Mole dilemma: shortcuts come in multiples where mitigating one amplifies others",
+      did: "Built benchmarks with several shortcuts at once and tested many models and mitigation methods; proposed Last Layer Ensemble.",
+      data: "UrbanCars (controlled spurious cues) and ImageNet-W (watermark shortcut); natural images only.",
+      measured: "Accuracy gaps caused by each shortcut.",
+      found: "Mitigating one shortcut often makes the model rely more on another.",
+      us: "Closest idea to ours: masking removes background shortcuts and can amplify the one left inside the ROI.",
+      ref: "Li Z, Evtimov I, Gordo A, et al. CVPR 2023, 20071–20082.", doi: "", link: "https://openaccess.thecvf.com/content/CVPR2023/papers/Li_A_Whac-a-Mole_Dilemma_Shortcuts_Come_in_Multiples_Where_Mitigating_One_CVPR_2023_paper.pdf" },
+    { id: "dfr", y: 2023, t: "fixes", short: "Last-layer retraining (DFR)", who: "Kirichenko et al.", venue: "ICLR",
+      title: "Last layer re-training is sufficient for robustness to spurious correlations",
+      did: "Retrained only the last layer of a standard model on a small set where the spurious correlation does not hold.",
+      data: "Waterbirds and CelebA benchmarks.",
+      measured: "Worst-group accuracy.",
+      found: "Last-layer retraining alone recovers much of the robustness of more complex methods.",
+      us: "DFR is one of our comparison methods; it needs artifact labels.",
+      ref: "Kirichenko P, Izmailov P, Wilson AG. International Conference on Learning Representations (ICLR 2023).", doi: "", link: "https://arxiv.org/abs/2204.02937" },
+    { id: "medfair", y: 2023, t: "fixes", short: "MEDFAIR benchmark", who: "Zong et al.", venue: "ICLR",
+      title: "MEDFAIR: benchmarking fairness for medical imaging",
+      did: "Benchmarked eleven bias-mitigation algorithms across ten medical datasets, four sensitive attributes and three model-selection rules.",
+      data: "Ten medical imaging datasets.",
+      measured: "AUC overall, AUC of the worst subgroup, and the gap between best and worst subgroup.",
+      found: "Mitigation algorithms did not clearly beat standard training; model selection mattered more.",
+      us: "Why we choose every model the same way, on clean validation data.",
+      ref: "Zong Y, Yang Y, Hospedales T. International Conference on Learning Representations (ICLR 2023).", doi: "", link: "https://arxiv.org/abs/2210.01725" },
+    { id: "ktena", y: 2024, t: "fixes", short: "Generative data for fairness", who: "Ktena et al.", venue: "Nature Medicine",
+      title: "Generative models improve fairness of medical classifiers under distribution shifts",
+      did: "Added diffusion-generated synthetic images to the training data.",
+      data: "Histopathology, chest X-rays and dermatology.",
+      measured: "Diagnostic accuracy and fairness gaps, especially out of distribution.",
+      found: "Synthetic data improved robustness and fairness in all three tasks, mostly for under-represented groups.",
+      us: "A data-side fix; it needs a generative model, while masking needs only the ROI.",
+      ref: "Ktena I, Wiles O, Albuquerque I, et al. Nature Medicine 30:1166–1173 (2024).", doi: "10.1038/s41591-024-02838-6" },
+    { id: "ci", y: 2024, t: "eval", short: "Confidence intervals uncovered", who: "Christodoulou et al.", venue: "MICCAI",
+      title: "Confidence intervals uncovered: are we ready for real-world medical imaging AI?",
+      did: "Reviewed how 221 MICCAI 2023 segmentation papers report uncertainty, and reconstructed the missing intervals.",
+      data: "221 MICCAI 2023 papers; Medical Segmentation Decathlon data for the reconstruction.",
+      measured: "Whether intervals are reported, and their width versus the gap between ranked methods (Dice).",
+      found: "Only one paper (0.5%) reported confidence intervals; the typical interval was three times wider than the gap between the top two methods.",
+      us: "Why every number in our report comes with an interval.",
+      ref: "Christodoulou E, Reinke A, Houhou R, et al. MICCAI 2024, LNCS 15010, 124–133.", doi: "10.1007/978-3-031-72117-5_12" },
+    { id: "kapoor", y: 2023, t: "eval", short: "Leakage crisis", who: "Kapoor & Narayanan", venue: "Patterns",
+      title: "Leakage and the reproducibility crisis in machine-learning-based science",
+      did: "Collected and classified data-leakage errors across published machine-learning studies.",
+      data: "Published studies from 17 fields.",
+      measured: "Kinds of leakage and how many papers they affect.",
+      found: "Leakage, including non-independent training and test data, affected at least 294 papers.",
+      us: "Why our splits are grouped and checked in code.",
+      ref: "Kapoor S, Narayanan A. Patterns 4(9):100804 (2023).", doi: "10.1016/j.patter.2023.100804" },
+  ];
+  let litTheme = "all", litSel = "li";
+  const litTabs = $("litTabs");
+  Object.entries(THEMES).forEach(([k, v]) => { const b = document.createElement("button"); b.type = "button"; b.dataset.k = k; b.textContent = v; litTabs.appendChild(b); });
+  litTabs.addEventListener("click", e => { const b = e.target.closest("button"); if (!b) return; litTheme = b.dataset.k; const first = PAPERS.find(p => litTheme === "all" || p.t === litTheme); if (first && litTheme !== "all") litSel = first.id; drawLit(); });
+  function drawLit() {
+    [...litTabs.children].forEach(b => b.setAttribute("aria-pressed", b.dataset.k === litTheme ? "true" : "false"));
+    let h = "";
+    [2022, 2023, 2024, 2025].forEach(y => {
+      h += `<div class="year"><h3>${y}</h3><div class="yearpapers">`;
+      PAPERS.filter(p => p.y === y).forEach(p => {
+        const dim = litTheme !== "all" && p.t !== litTheme;
+        h += `<button type="button" class="paper${dim ? " dim" : ""}" data-id="${p.id}" aria-pressed="${p.id === litSel}">${esc(p.short)}<small>${esc(p.who)} · ${esc(p.venue)}</small></button>`;
+      });
+      h += `</div></div>`;
+    });
+    $("years").innerHTML = h;
+    const p = PAPERS.find(q => q.id === litSel);
+    const url = p.doi ? `https://doi.org/${p.doi}` : p.link;
+    $("paperCard").innerHTML = `<div style="display:flex;gap:8px;flex-wrap:wrap"><span class="badge">${esc(p.venue)} · ${p.y}</span><span class="badge">${THEMES[p.t]}</span></div>
+      <h3>${esc(p.title)}</h3>
+      <dl class="dl"><dt>What they did</dt><dd>${esc(p.did)}</dd><dt>Data</dt><dd>${esc(p.data)}</dd><dt>Measured</dt><dd>${esc(p.measured)}</dd><dt>Found</dt><dd>${esc(p.found)}</dd><dt>For us</dt><dd><b>${esc(p.us)}</b></dd></dl>
+      <p class="ref">${esc(p.ref)}${p.doi ? ` DOI: <a href="${url}" target="_blank" rel="noopener">${p.doi}</a>` : ` <a href="${url}" target="_blank" rel="noopener">Paper link</a>`}</p>`;
+  }
+  $("years").addEventListener("click", e => { const b = e.target.closest(".paper"); if (b) { litSel = b.dataset.id; drawLit(); } });
+  drawLit();
+
+  /* ---------------- gap table ---------------- */
+  const GAP = [
+    ["Sourget et al. 2025, J. Imaging Inform. Med.", 1, 0, 1, 0],
+    ["Bassi et al. 2024, Nature Communications", 1, 0, 1, 0],
+    ["Lin, Weng et al. 2024, MICCAI", 1, 1, 0, 0],
+    ["Jiménez-Sánchez et al. 2023, ISBI", 1, 1, 0, 0],
+    ["Li et al. 2023, CVPR", 0, 1, 0, 0],
+    ["This thesis", 1, 1, 1, 1],
+  ];
+  const yn = v => v ? `<span class="yes">Yes</span>` : `<span class="no">No</span>`;
+  $("gapTable").innerHTML = `<tr><th>Study</th><th>Medical images</th><th>A named artifact (ruler, caliper, drain…)</th><th>Keeps only the ROI</th><th>Varies where the artifact sits</th></tr>` +
+    GAP.map(r => `<tr${r[0] === "This thesis" ? ' class="cell-pos"' : ""}><td><b>${r[0]}</b></td>${r.slice(1).map(v => `<td>${yn(v)}</td>`).join("")}</tr>`).join("");
+
+  /* ---------------- datasets ---------------- */
+  const DATA = [
+    { k: "ISIC 2018", mod: "Skin (dermoscopy)", use: "Step 1: pasted ruler", task: "Melanoma vs other", n: "2,437 images (train 1,735 / val 346 / test 356; 73 test melanomas)", art: "A ruler pasted by us at controlled positions", roi: "Expert lesion masks (Task 1)", group: "Near-identical images (perceptual hash)", lic: "CC BY-NC" },
+    { k: "ISIC 2019", mod: "Skin (dermoscopy), 3 hospitals", use: "Step 4: real hair/ruler", task: "Melanoma vs other", n: "No artifact 157 / 706; Trap A 942 / 2,655; Trap B 969 / 4,412 (melanoma / other)", art: "Hair and rulers, from the published hair/ruler masks of Wegley et al.", roi: "HAM10000 manual masks or a U-Net trained on ISIC 2018", group: "Lesion ID plus near-identical images", lic: "CC BY-NC" },
+    { k: "TN3K + TNCD", mod: "Thyroid ultrasound", use: "Steps 3 and 4: calipers", task: "Malignant vs benign nodule", n: "3,493 images (1,210 malignant)", art: "Sonographer calipers, found by a rule-based detector (frozen before its audit)", roi: "Manual nodule masks", group: "Near-identical images (no patient IDs in our copy)", lic: "Not stated (so no thyroid images are shown)" },
+    { k: "MMOTU OTU_2d", mod: "Ovarian ultrasound", use: "Steps 3 and 4: calipers", task: "Lesion with a solid part vs cystic", n: "1,202 images (normal ovaries excluded)", art: "Calipers, same frozen detector as thyroid", roi: "Lesion masks", group: "Near-identical images", lic: "CC BY 4.0" },
+    { k: "SEE-AI", mod: "Capsule endoscopy", use: "Steps 3 and 4: debris", task: "Erosion vs polyp-like lesion", n: "5,481 frames", art: "Debris and bubbles: expert masks plus a probe trained on 2,160 expert-masked frames", roi: "Expert lesion boxes", group: "Blocks of 100 consecutive frames plus near-identical frames", lic: "CC BY 4.0" },
+    { k: "NIH ChestX-ray14", mod: "Chest X-ray", use: "Steps 3 and other findings: tubes, drains, devices", task: "Pneumothorax; four findings for device traps", n: "112,120 images from 30,805 patients (subsets used)", art: "Pasted tube; real drains (NEATX labels); devices (RANZCR-CLiP)", roi: "Lungs (PSPNet lung segmentation)", group: "NIH patient ID", lic: "Public (NIH)" },
+  ];
+  let dataSel = 0;
+  const dataCards = $("dataCards");
+  DATA.forEach((d, i) => { const b = document.createElement("button"); b.type = "button"; b.className = "card"; b.innerHTML = `<h3>${d.k}</h3><span class="small muted">${d.mod}</span><span class="small pos">${d.use}</span>`; b.addEventListener("click", () => { dataSel = i; drawData(); }); dataCards.appendChild(b); });
+  function drawData() {
+    [...dataCards.children].forEach((b, i) => b.setAttribute("aria-pressed", i === dataSel ? "true" : "false"));
+    const d = DATA[dataSel];
+    $("dataDetail").innerHTML = `<h3>${d.k}</h3><dl class="dl"><dt>Images</dt><dd>${d.mod}</dd><dt>Task</dt><dd>${d.task}</dd><dt>Size</dt><dd>${d.n}</dd><dt>Artifact</dt><dd>${d.art}</dd><dt>ROI</dt><dd>${d.roi}</dd><dt>Grouped by</dt><dd><b>${d.group}</b></dd><dt>Licence</dt><dd>${d.lic}</dd></dl>`;
+  }
+  drawData();
+
+  /* ---------------- the trap ---------------- */
   const TRAP = [
     { k: "Training", t: 0.9, o: 0.1, text: "Training: the artifact is on 90% of disease images and 10% of the others. A model can learn it as a shortcut." },
     { k: "Correlated test", t: 0.9, o: 0.1, text: "Correlated test: the same 90/10 pattern. A shortcut model looks good here." },
@@ -386,131 +613,172 @@ td.n { font-family: var(--mono); font-variant-numeric: tabular-nums; text-align:
     { k: "Clean test", t: 0.5, o: 0.5, text: "Clean test: the artifact says nothing about the disease (real artifacts: on half of each class; pasted artifacts: no artifact at all). It shows how well the model knows the disease itself." },
   ];
   let trapSel = 2;
-  const trapTabs = document.getElementById("trapTabs");
+  const trapTabs = $("trapTabs");
   TRAP.forEach((d, i) => { const b = document.createElement("button"); b.type = "button"; b.textContent = d.k; b.addEventListener("click", () => { trapSel = i; drawTrap(); }); trapTabs.appendChild(b); });
   function drawTrap() {
     [...trapTabs.children].forEach((b, i) => b.setAttribute("aria-pressed", i === trapSel ? "true" : "false"));
-    const W = 460, H = 230, y = lin(0, 1, 190, 20);
-    let s = "";
-    [0, 0.5, 1].forEach(v => { s += `<line x1="40" x2="${W - 10}" y1="${y(v)}" y2="${y(v)}" style="stroke:var(--line)"/><text x="34" y="${y(v) + 4}" text-anchor="end">${v * 100}%</text>`; });
-    TRAP.forEach((d, i) => {
-      const gx = 60 + i * 100, op = i === trapSel ? 1 : 0.35;
-      s += `<rect x="${gx}" y="${y(d.t)}" width="34" height="${190 - y(d.t)}" style="fill:var(--artifact);opacity:${op}"/>`;
-      s += `<rect x="${gx + 38}" y="${y(d.o)}" width="34" height="${190 - y(d.o)}" style="fill:var(--std);opacity:${op}"/>`;
-      s += `<text x="${gx + 36}" y="210" text-anchor="middle" class="${i === trapSel ? "ink" : ""}">${d.k.replace(" test", "")}</text>`;
+    const d = TRAP[trapSel], W = 560, H = 230, x = lin(0, 1, 190, W - 60);
+    let s = `<text x="190" y="22" class="ink b">Share of images that carry the artifact</text>`;
+    [["Disease images", d.t, "--artifact", 60], ["Other images", d.o, "--std", 130]].forEach(([lab, v, c, y]) => {
+      s += `<text x="178" y="${y + 27}" text-anchor="end" class="ink">${lab}</text>`;
+      s += `<rect x="190" y="${y}" width="${x(1) - 190}" height="40" rx="4" style="fill:var(--line);opacity:0.5"/>`;
+      s += `<rect x="190" y="${y}" width="${x(v) - 190}" height="40" rx="4" style="fill:var(${c})"/>`;
+      s += `<text x="${x(v) + 10}" y="${y + 27}" class="ink b">${Math.round(v * 100)}%</text>`;
     });
-    document.getElementById("trapChart").innerHTML = svg(W, H, s, "How often the artifact appears in each data set") +
-      `<div class="keys"><span class="key"><i style="background:var(--artifact)"></i>Disease images with the artifact</span><span class="key"><i style="background:var(--std)"></i>Other images with the artifact</span></div>`;
-    document.getElementById("trapText").textContent = TRAP[trapSel].text;
+    $("trapChart").innerHTML = svg(W, 190, s, `${d.k}: artifact on ${d.t * 100}% of disease images and ${d.o * 100}% of others`);
+    $("trapText").textContent = d.text;
   }
   drawTrap();
 
-  /* ---------- step 1: the ruler sweep (reversed and clean AUROC, DINOv2 518 px, mean of 3 seeds) ---------- */
+  /* ---------------- leakage demo ---------------- */
+  // 8 lesions, some photographed twice or three times (letters = lesion, copies share a colour)
+  const LES = [["A", 2], ["B", 1], ["C", 3], ["D", 1], ["E", 2], ["F", 1], ["G", 2], ["H", 1]];
+  const COLS = ["#1b6a88", "#7a5aa6", "#b8540f", "#2f7d4f", "#a03e5e", "#4b5a65", "#8a6d1c", "#335c9e"];
+  const RANDOM_TEST = new Set(["A2", "C2", "E1", "F1", "G2"]); // a fixed example of a random image-level split
+  const GROUPED_TEST = new Set(["B", "E", "G"]);                 // whole lesions go to test
+  let splitMode = "grouped";
+  const splitTabs = $("splitTabs");
+  function drawSplit() {
+    [...splitTabs.children].forEach(b => b.setAttribute("aria-pressed", b.dataset.s === splitMode ? "true" : "false"));
+    const imgs = []; LES.forEach(([l, n], i) => { for (let k = 1; k <= n; k++) imgs.push({ l, id: l + k, c: COLS[i] }); });
+    const inTest = im => splitMode === "random" ? RANDOM_TEST.has(im.id) : GROUPED_TEST.has(im.l);
+    const testL = new Set(imgs.filter(inTest).map(im => im.l)), trainL = new Set(imgs.filter(im => !inTest(im)).map(im => im.l));
+    const leaked = new Set([...testL].filter(l => trainL.has(l)));
+    const dot = im => `<span class="dot${leaked.has(im.l) ? " leak" : ""}" style="background:${im.c}" title="Lesion ${im.l}, photo ${im.id.slice(1)}">${im.id}</span>`;
+    $("binTrain").innerHTML = imgs.filter(im => !inTest(im)).map(dot).join("");
+    $("binTest").innerHTML = imgs.filter(inTest).map(dot).join("");
+    $("splitText").innerHTML = splitMode === "random"
+      ? `<b class="neg">${leaked.size} lesions leak:</b> another photo of the same lesion is in training (orange ring), so the test partly measures memory. In our skin data a random split let 93 near-duplicate pairs cross, and the shortcut looked <b>10–18% larger</b> (gap 0.284 vs 0.241 with the ruler outside; 0.465 vs 0.421 inside).`
+      : `<b class="pos">No leaks:</b> every photo of a lesion goes to the same side. Each letter is one lesion; its photos share a colour.`;
+  }
+  splitTabs.addEventListener("click", e => { const b = e.target.closest("button"); if (b) { splitMode = b.dataset.s; drawSplit(); } });
+  drawSplit();
+  const LEAK = [
+    { h: "Group before splitting", m: "Skin: lesion ID plus near-identical images (perceptual hash). Thyroid and ovary: near-identical images (no patient IDs). Capsule: blocks of 100 consecutive frames plus near-identical frames. Chest X-rays: NIH patient ID." },
+    { h: "Checked in code", m: "The splitting code stops with an error if a group crosses splits. Tests check that no patient appears in two splits or folds. On the real NIH data: 0 shared patients among 30,805." },
+    { h: "Test data never used to choose", m: "Classifier settings and the decision threshold are chosen on validation data, which is also grouped. The test sets are only scored." },
+    { h: "Frozen encoders, fixed rules", m: "The image encoders are frozen; only a small classifier is trained on our training folds. The thyroid caliper detector was tuned on 36 images and frozen before its audit; artifact groups were fixed before any model was fitted." },
+  ];
+  $("leakCards").innerHTML = LEAK.map(c => `<div class="panel"><h3>${c.h}</h3><p class="small">${c.m}</p></div>`).join("");
+
+  /* ---------------- step 1: ruler sweep ---------------- */
   const OV = [0, 25, 50, 75, 100];
   const STD_REV = [0.665, 0.581, 0.573, 0.570, 0.515], MSK_REV = [0.849, 0.523, 0.475, 0.458, 0.386];
   const STD_CLN = [0.797, 0.794, 0.793, 0.795, 0.792], MSK_CLN = [0.849, 0.828, 0.829, 0.830, 0.825];
   const CI = { 0: "95% interval [+0.117, +0.250]", 2: "95% interval [−0.164, −0.030]", 4: "95% interval [−0.195, −0.064]" };
   const RULER_X = [306, 277, 260, 242, 165];
-  const ov = document.getElementById("overlap");
+  const ov = $("overlap"), cleanBtn = $("cleanToggle");
   function drawSweep() {
-    const i = +ov.value;
-    document.getElementById("sweepScene").innerHTML = scene(RULER_X[i], 141, true, `Masked image with ${OV[i]}% of the ruler on the lesion`);
+    const i = +ov.value, showClean = cleanBtn.getAttribute("aria-pressed") === "true";
+    $("sweepScene").innerHTML = scene(RULER_X[i], 141, true, `Masked image with ${OV[i]}% of the ruler on the lesion`);
     const d = MSK_REV[i] - STD_REV[i];
-    const el = document.getElementById("sweepDelta");
-    el.textContent = f3(d); el.className = "big " + (d >= 0 ? "pos" : "neg");
-    document.getElementById("sweepVerdict").innerHTML = `masked − standard on the reversed test:<br><b>${d >= 0 ? "masking helps" : "masking hurts"}</b> at ${OV[i]}% overlap`;
-    document.getElementById("sweepCI").textContent = CI[i] || "Interval reported for 0, 50 and 100% overlap.";
-    const W = 480, H = 270, x = lin(0, 100, 52, W - 16), y = lin(0.35, 0.9, 225, 14);
-    let s = "";
-    [0.4, 0.5, 0.6, 0.7, 0.8, 0.9].forEach(v => { s += `<line x1="52" x2="${W - 16}" y1="${y(v)}" y2="${y(v)}" style="stroke:var(--line)"/><text x="44" y="${y(v) + 4}" text-anchor="end">${v.toFixed(1)}</text>`; });
-    OV.forEach(v => { s += `<text x="${x(v)}" y="248" text-anchor="middle">${v}%</text>`; });
-    s += `<text x="${(52 + W - 16) / 2}" y="266" text-anchor="middle">ruler on the lesion</text><text x="12" y="${y(0.62)}" transform="rotate(-90 12 ${y(0.62)})" text-anchor="middle">AUROC</text>`;
-    s += `<line x1="${x(OV[i])}" x2="${x(OV[i])}" y1="14" y2="225" style="stroke:var(--artifact);stroke-width:1.5;stroke-dasharray:4 4"/>`;
-    const path = (arr, col, dash) => `<polyline points="${arr.map((v, j) => x(OV[j]) + "," + y(v)).join(" ")}" style="fill:none;stroke:var(${col});stroke-width:${dash ? 1.8 : 3};${dash ? "stroke-dasharray:5 4" : ""}"/>`;
-    s += path(STD_CLN, "--std", true) + path(MSK_CLN, "--roi", true) + path(STD_REV, "--std") + path(MSK_REV, "--roi");
-    [[STD_REV, "--std"], [MSK_REV, "--roi"]].forEach(([a, c]) => { s += `<circle cx="${x(OV[i])}" cy="${y(a[i])}" r="6" style="fill:var(${c});stroke:var(--surface);stroke-width:2"/>`; });
-    s += `<text x="${x(OV[i]) + 9}" y="${y(MSK_REV[i]) + 4}" class="ink">${MSK_REV[i].toFixed(3)}</text><text x="${x(OV[i]) + 9}" y="${y(STD_REV[i]) + 4}" class="ink">${STD_REV[i].toFixed(3)}</text>`;
-    s += `<text x="${x(0) + 4}" y="${y(0.84) - 12}">clean test</text><text x="${x(100) - 4}" y="${y(0.40) + 18}" text-anchor="end">reversed test</text>`;
-    document.getElementById("sweepChart").innerHTML = svg(W, H, s, "Reversed and clean test AUROC across ruler positions");
+    $("sweepDelta").textContent = f3(d); $("sweepDelta").className = "big " + (d >= 0 ? "pos" : "neg");
+    $("sweepVerdict").innerHTML = `masked − standard on the reversed test:<br><b>${d >= 0 ? "masking helps" : "masking hurts"}</b> at ${OV[i]}% overlap`;
+    $("sweepCI").textContent = CI[i] || "Intervals were computed at 0, 50 and 100% overlap.";
+    const W = 600, H = 330, L = 64, R = W - 150, x = lin(0, 100, L, R), y = lin(0.3, 0.9, 270, 20);
+    let s = `<rect x="${L}" y="${y(0.5)}" width="${R - L}" height="${y(0.3) - y(0.5)}" style="fill:var(--artifact-soft);opacity:0.7"/>`;
+    s += `<text x="${L + 8}" y="${y(0.3) - 10}" class="art">below 0.5: worse than guessing</text>`;
+    [0.3, 0.5, 0.7, 0.9].forEach(v => { s += `<line x1="${L}" x2="${R}" y1="${y(v)}" y2="${y(v)}" style="stroke:var(--line)"/><text x="${L - 8}" y="${y(v) + 5}" text-anchor="end">${v.toFixed(1)}</text>`; });
+    OV.forEach(v => { s += `<text x="${x(v)}" y="${y(0.3) + 24}" text-anchor="middle">${v}%</text>`; });
+    s += `<text x="${(L + R) / 2}" y="${H - 4}" text-anchor="middle" class="ink">Share of the ruler on the lesion →</text>`;
+    s += `<text x="16" y="${y(0.6)}" transform="rotate(-90 16 ${y(0.6)})" text-anchor="middle" class="ink">Score on reversed test (AUROC)</text>`;
+    s += `<line x1="${x(OV[i])}" x2="${x(OV[i])}" y1="20" y2="270" style="stroke:var(--ink);stroke-width:1.2;stroke-dasharray:4 4;opacity:0.5"/>`;
+    const path = (arr, col, dash) => `<polyline points="${arr.map((v, j) => x(OV[j]) + "," + y(v)).join(" ")}" style="fill:none;stroke:var(${col});stroke-width:${dash ? 2 : 4};stroke-linejoin:round;${dash ? "stroke-dasharray:6 5;opacity:0.8" : ""}"/>`;
+    if (showClean) s += path(STD_CLN, "--std", true) + path(MSK_CLN, "--roi", true) + `<text x="${R + 10}" y="${y(MSK_CLN[4]) - 2}" class="roi">masked, clean</text><text x="${R + 10}" y="${y(STD_CLN[4]) + 14}" class="std">standard, clean</text>`;
+    s += path(STD_REV, "--std") + path(MSK_REV, "--roi");
+    s += `<text x="${R + 10}" y="${y(STD_REV[4]) + 5}" class="std b">Standard</text><text x="${R + 10}" y="${y(MSK_REV[4]) + 5}" class="roi b">Masked</text>`;
+    [[STD_REV, "--std"], [MSK_REV, "--roi"]].forEach(([a, c]) => { s += `<circle cx="${x(OV[i])}" cy="${y(a[i])}" r="8" style="fill:var(${c});stroke:var(--surface);stroke-width:2.5"/>`; });
+    const hi = Math.max(MSK_REV[i], STD_REV[i]), lo = Math.min(MSK_REV[i], STD_REV[i]);
+    const tx = i === 4 ? x(OV[i]) - 12 : x(OV[i]) + 12, anc = i === 4 ? "end" : "start";
+    s += `<text x="${tx}" y="${y(hi) - 10}" text-anchor="${anc}" class="ink b">${hi.toFixed(2)}</text><text x="${tx}" y="${y(lo) + 24}" text-anchor="${anc}" class="ink b">${lo.toFixed(2)}</text>`;
+    $("sweepChart").innerHTML = svg(W, H, s, "Reversed-test AUROC of the standard and masked model across ruler positions");
   }
   ov.addEventListener("input", drawSweep);
+  cleanBtn.addEventListener("click", () => { cleanBtn.setAttribute("aria-pressed", cleanBtn.getAttribute("aria-pressed") === "true" ? "false" : "true"); cleanBtn.textContent = cleanBtn.getAttribute("aria-pressed") === "true" ? "Hide the clean test" : "Also show the clean test"; drawSweep(); });
   drawSweep();
 
-  /* ---------- interval chart helper ---------- */
+  /* ---------------- interval chart helper ---------------- */
+  // rows: {label, est, lo, hi, open, bold}; arrows explain the direction in words
   function intervals(rows, lo, hi, label, opts) {
-    const W = 520, rowH = 30, top = 10, left = opts.left || 210, H = top + rows.length * rowH + 34;
-    const x = lin(lo, hi, left, W - 14);
+    const W = 640, rowH = 38, top = 8, left = opts.left || 240, right = W - 70, H = top + rows.length * rowH + 70;
+    const x = lin(lo, hi, left, right);
     let s = "";
-    for (let v = Math.ceil(lo * 10) / 10; v <= hi + 1e-9; v += 0.1) {
-      const vv = Math.round(v * 10) / 10;
-      s += `<line x1="${x(vv)}" x2="${x(vv)}" y1="${top}" y2="${H - 26}" style="stroke:${vv === 0 ? "var(--ink)" : "var(--line)"};stroke-width:${vv === 0 ? 1.5 : 1}"/><text x="${x(vv)}" y="${H - 10}" text-anchor="middle">${vv === 0 ? "0" : vv.toFixed(1)}</text>`;
+    const step = opts.step || 0.1;
+    for (let v = lo; v <= hi + 1e-9; v += step) {
+      const vv = Math.round(v * 100) / 100;
+      s += `<line x1="${x(vv)}" x2="${x(vv)}" y1="${top}" y2="${H - 62}" style="stroke:${vv === 0 ? "var(--ink)" : "var(--line)"};stroke-width:${vv === 0 ? 2 : 1}"/><text x="${x(vv)}" y="${H - 42}" text-anchor="middle">${vv === 0 ? "0" : vv.toFixed(1)}</text>`;
     }
+    const z = x(0), yA = H - 14;
+    s += `<text x="${z + 10}" y="${yA}" class="roi b">${opts.right || "masking helps more outside"} →</text>`;
+    if (lo < 0) s += `<text x="${z - 10}" y="${yA}" text-anchor="end" class="art b">← ${opts.leftText || "helps more inside"}</text>`;
     rows.forEach((r, i) => {
-      const cy = top + i * rowH + rowH / 2, sel = opts.sel === i;
-      const col = r.est >= 0 ? "--roi" : "--artifact";
-      s += `<g data-i="${i}" style="cursor:${opts.click ? "pointer" : "default"}" tabindex="${opts.click ? 0 : -1}" role="${opts.click ? "button" : "presentation"}" aria-label="${r.label}: ${f3(r.est)}">`;
+      const cy = top + i * rowH + rowH / 2, sel = opts.sel === i, col = r.lo > 0 ? "--roi" : r.hi < 0 ? "--artifact" : "--std";
+      s += `<g data-i="${i}" style="cursor:${opts.click ? "pointer" : "default"}"${opts.click ? ` tabindex="0" role="button" aria-label="${r.label}: ${f3(r.est)}"` : ""}>`;
       s += `<rect x="0" y="${cy - rowH / 2}" width="${W}" height="${rowH}" style="fill:${sel ? "var(--roi-soft)" : "transparent"}"/>`;
-      s += `<text x="${left - 10}" y="${cy + 4}" text-anchor="end" class="${sel || r.bold ? "ink" : ""}">${r.label}</text>`;
-      s += `<line x1="${x(r.lo)}" x2="${x(r.hi)}" y1="${cy}" y2="${cy}" style="stroke:var(${col});stroke-width:2.5"/>`;
-      s += `<circle cx="${x(r.est)}" cy="${cy}" r="6" style="fill:${r.open ? "var(--surface)" : "var(" + col + ")"};stroke:var(${col});stroke-width:2.5"/>`;
+      s += `<text x="${left - 14}" y="${cy + 5}" text-anchor="end" class="ink${r.bold || sel ? " b" : ""}">${r.label}</text>`;
+      s += `<line x1="${x(r.lo)}" x2="${x(r.hi)}" y1="${cy}" y2="${cy}" style="stroke:var(${col});stroke-width:4;stroke-linecap:round"/>`;
+      s += `<circle cx="${x(r.est)}" cy="${cy}" r="8" style="fill:${r.open ? "var(--surface)" : "var(" + col + ")"};stroke:var(${col});stroke-width:3"/>`;
+      s += `<text x="${right + 12}" y="${cy + 5}" class="ink">${f2(r.est)}</text>`;
       s += `</g>`;
     });
     return svg(W, H, s, label);
   }
-  function wire(container, n, onSel) {
+  function wire(container, onSel) {
     container.querySelectorAll("g[data-i]").forEach(g => {
       const go = () => onSel(+g.dataset.i);
       g.addEventListener("click", go);
       g.addEventListener("keydown", e => { if (e.key === "Enter" || e.key === " ") { e.preventDefault(); go(); } });
     });
   }
+  const detail = r => `<h3>${r.label.replace("*", "")}</h3><div class="readout"><span><span class="small muted">Masking, artifact outside</span><br><span class="big ${r.out >= 0 ? "pos" : "neg"}" style="font-size:34px">${f3(r.out)}</span></span><span><span class="small muted">Masking, artifact fully inside</span><br><span class="big ${r.inn >= 0 ? "pos" : "neg"}" style="font-size:34px">${f3(r.inn)}</span></span></div><p class="small">Location effect <b class="num">${f3(r.est)}</b> [${f3(r.lo)}, ${f3(r.hi)}]: the difference between the two.</p>`;
 
-  /* ---------- fluke ---------- */
+  /* ---------------- fluke ---------------- */
   const ROB = [
-    { label: "DINOv2, 518 px (main)", est: 0.313, lo: 0.258, hi: 0.370, out: 0.184, inn: -0.129 },
+    { label: "Main: DINOv2, 518 px", est: 0.313, lo: 0.258, hi: 0.370, out: 0.184, inn: -0.129, bold: true },
     { label: "DINOv2, 224 px", est: 0.456, lo: 0.390, hi: 0.525, out: 0.361, inn: -0.095 },
-    { label: "DermLIP", est: 0.424, lo: 0.335, hi: 0.517, out: 0.161, inn: -0.263 },
+    { label: "DermLIP encoder", est: 0.424, lo: 0.335, hi: 0.517, out: 0.161, inn: -0.263 },
     { label: "Randomised ruler", est: 0.302, lo: 0.248, hi: 0.357, out: 0.146, inn: -0.155 },
-    { label: "Ruler 13% of width*", est: 0.262, lo: 0.200, hi: 0.325, out: 0.160, inn: -0.102 },
-    { label: "Ruler 39% of width*", est: 0.224, lo: 0.161, hi: 0.285, out: 0.170, inn: -0.054 },
-    { label: "Average of both sizes*", est: 0.243, lo: 0.182, hi: 0.304, out: 0.165, inn: -0.078, bold: true },
+    { label: "Short ruler (13%)*", est: 0.262, lo: 0.200, hi: 0.325, out: 0.160, inn: -0.102 },
+    { label: "Long ruler (39%)*", est: 0.224, lo: 0.161, hi: 0.285, out: 0.170, inn: -0.054 },
+    { label: "Average of both*", est: 0.243, lo: 0.182, hi: 0.304, out: 0.165, inn: -0.078, bold: true },
   ];
   let robSel = 0;
   function drawRob() {
-    const c = document.getElementById("robustChart");
-    c.innerHTML = intervals(ROB, 0, 0.6, "Location effect in each robustness setting", { sel: robSel, click: true, left: 190 }) + `<p class="small muted">* the same 1,314 images, where a long ruler fits inside the lesion.</p>`;
-    wire(c, ROB.length, i => { robSel = i; drawRob(); });
-    const r = ROB[robSel];
-    document.getElementById("robustDetail").innerHTML = `<b>${r.label.replace("*", "")}</b><span>Masking with the ruler outside: <span class="num pos">${f3(r.out)}</span>. Fully inside: <span class="num neg">${f3(r.inn)}</span>. Location effect <span class="num">${f3(r.est)}</span> [${f3(r.lo)}, ${f3(r.hi)}].</span>`;
+    const c = $("robustChart");
+    c.innerHTML = intervals(ROB, 0, 0.6, "Location effect in each robustness setting", { sel: robSel, click: true, left: 220, right: "masking worth more with the ruler outside" }) +
+      `<p class="small muted">Dot = location effect; bar = 95% interval. * Same 1,314 images; ruler width as a share of the image width.</p>`;
+    wire(c, i => { robSel = i; drawRob(); });
+    $("robustDetail").innerHTML = detail(ROB[robSel]);
   }
   drawRob();
 
-  /* ---------- step 2 ---------- */
-  const W2 = 460, cfx = lin(0, 0.6, 150, W2 - 20);
-  const cfBar = (y, v, col, lab) => `<text x="140" y="${y + 15}" text-anchor="end" class="ink">${lab}</text><rect x="150" y="${y}" width="${cfx(v) - 150}" height="22" rx="3" style="fill:var(${col})"/><text x="${cfx(v) + 6}" y="${y + 15}" class="ink">${v.toFixed(2)}</text>`;
-  document.getElementById("cfChart").innerHTML = svg(W2, 120,
-    `<text x="150" y="12">ruler 13% of width</text>` + cfBar(18, 0.24, "--std", "Standard model") + cfBar(44, 0.49, "--roi", "Masked model") +
-    `<text x="150" y="88">ruler 39% of width: 0.21 vs 0.43</text>`, "Masked model's prediction changes about twice as much");
+  /* ---------------- step 2 ---------------- */
+  (function () {
+    const W = 560, x = lin(0, 0.6, 170, W - 70);
+    const bar = (y, v, col, lab) => `<text x="160" y="${y + 21}" text-anchor="end" class="ink">${lab}</text><rect x="170" y="${y}" width="${x(v) - 170}" height="30" rx="4" style="fill:var(${col})"/><text x="${x(v) + 10}" y="${y + 21}" class="ink b">${v.toFixed(2)}</text>`;
+    $("cfChart").innerHTML = svg(W, 96, bar(6, 0.24, "--std", "Standard model") + bar(50, 0.49, "--roi", "Masked model"), "Masked model's prediction changes about twice as much (0.49 vs 0.24)") +
+      `<p class="small muted">With the long ruler: 0.43 vs 0.21.</p>`;
+  })();
   const CHECKS = [
-    { h: "1. A useless ruler", r: "No statistically clear harm", m: "We put the ruler at the same places but made it unrelated to the diagnosis. No harm at any position (e.g. +0.039 at 100%). So hiding image parts is not the main cause (against a); the harm needs the ruler to be a shortcut." },
-    { h: "2. A bigger mask", r: "Harm gets worse", m: "Growing the mask brings skin back. With a half-covered ruler more of the ruler also returns, and harm grows (−0.097 → −0.153). With the ruler fully visible, the estimates were similar (−0.129 vs −0.138). Against b as the main cause." },
-    { h: "3. Same-image test", r: "Masked model leans on the ruler twice as much", m: "Adding the ruler to the same image moves the masked model's prediction about twice as much (0.49 vs 0.24). Supports c." },
+    { h: "1. A useless ruler", r: "No statistically clear harm", m: "Same positions, but the ruler is unrelated to the diagnosis. No clear harm at any position (e.g. +0.039 at 100%). So hiding image parts is not the main cause (against a); the harm needs the ruler to be a shortcut." },
+    { h: "2. A bigger mask", r: "Harm gets worse", m: "Growing the mask brings skin back. With a half-covered ruler more of the ruler also returns, and harm grows (−0.097 → −0.153). With the ruler fully visible the estimates were similar (−0.129 vs −0.138). Against b as the main cause." },
+    { h: "3. Same-image test", r: "Masked model leans on the ruler twice as much", m: "Adding the ruler to the same image moves the masked model’s prediction about twice as much (0.49 vs 0.24). Supports c." },
     { h: "4. Lesion size", r: "Harm is largest on small lesions", m: "With the ruler inside: small lesions −0.36, medium −0.16, large +0.06 (not significant). The ruler matters most where it is big compared with the lesion." },
   ];
-  const checksEl = document.getElementById("checks");
-  CHECKS.forEach(c => {
-    const b = document.createElement("button"); b.type = "button"; b.className = "card"; b.setAttribute("aria-expanded", "false");
-    b.innerHTML = `<h3>${c.h}</h3><span class="num small pos">${c.r}</span><span class="more" hidden>${c.m}</span><span class="small muted hint">Click for details</span>`;
-    b.addEventListener("click", () => { const open = b.getAttribute("aria-expanded") !== "true"; b.setAttribute("aria-expanded", open); b.querySelector(".more").hidden = !open; b.querySelector(".hint").hidden = open; });
-    checksEl.appendChild(b);
-  });
+  function expandable(container, items) {
+    items.forEach(c => {
+      const b = document.createElement("button"); b.type = "button"; b.className = "card"; b.setAttribute("aria-expanded", "false");
+      b.innerHTML = `<h3>${c.h}</h3><span class="small pos"><b>${c.r}</b></span><span class="more" hidden>${c.m}</span><span class="small muted hint">Click for details</span>`;
+      b.addEventListener("click", () => { const open = b.getAttribute("aria-expanded") !== "true"; b.setAttribute("aria-expanded", open); b.querySelector(".more").hidden = !open; b.querySelector(".hint").hidden = open; });
+      container.appendChild(b);
+    });
+  }
+  expandable($("checks"), CHECKS);
 
-  /* ---------- step 3 ---------- */
+  /* ---------------- step 3 ---------------- */
   const MOD = [
-    { label: "Skin ruler · DINOv2 518", est: 0.313, lo: 0.258, hi: 0.370, out: 0.184, inn: -0.129 },
-    { label: "Skin ruler · DINOv2 224", est: 0.456, lo: 0.390, hi: 0.525, out: 0.361, inn: -0.095 },
+    { label: "Skin ruler · DINOv2", est: 0.313, lo: 0.258, hi: 0.370, out: 0.184, inn: -0.129 },
     { label: "Skin ruler · DermLIP", est: 0.424, lo: 0.335, hi: 0.517, out: 0.161, inn: -0.263 },
-    { label: "Skin, random ruler · DINOv2", est: 0.302, lo: 0.248, hi: 0.357, out: 0.146, inn: -0.155 },
     { label: "Thyroid caliper · DINOv2", est: 0.433, lo: 0.362, hi: 0.507, out: 0.402, inn: -0.030 },
     { label: "Thyroid caliper · MedSigLIP", est: 0.470, lo: 0.388, hi: 0.556, out: 0.514, inn: 0.044 },
     { label: "Ovary caliper · DINOv2", est: 0.238, lo: 0.144, hi: 0.340, out: 0.041, inn: -0.197 },
@@ -521,85 +789,70 @@ td.n { font-family: var(--mono); font-variant-numeric: tabular-nums; text-align:
   ];
   let modSel = -1;
   function drawMod() {
-    const c = document.getElementById("modChart");
-    c.innerHTML = intervals(MOD, -0.2, 0.6, "Location effect in 11 moving-artifact experiments", { sel: modSel, click: true, left: 220 }) +
-      `<p class="small muted">Location effect, reversed test, 95% interval. Right of zero = masking is worth more when the artifact is outside.</p>`;
-    wire(c, MOD.length, i => { modSel = i; drawMod(); });
-    if (modSel >= 0) {
-      const r = MOD[modSel];
-      document.getElementById("modDetail").innerHTML = `<b>${r.label}</b><span>Masking with the artifact outside: <span class="num ${r.out >= 0 ? "pos" : "neg"}">${f3(r.out)}</span>. Fully inside: <span class="num ${r.inn >= 0 ? "pos" : "neg"}">${f3(r.inn)}</span>. Location effect <span class="num">${f3(r.est)}</span> [${f3(r.lo)}, ${f3(r.hi)}].</span>`;
-    }
+    const c = $("modChart");
+    c.innerHTML = intervals(MOD, -0.2, 0.6, "Location effect in moving-artifact experiments", { sel: modSel, click: true, left: 240, right: "worth more outside" , leftText: "worth more inside" }) +
+      `<p class="small muted">Dot = location effect; bar = 95% interval. Two more skin rows (224 px, randomised ruler) are on the previous slide.</p>`;
+    wire(c, i => { modSel = i; drawMod(); });
+    if (modSel >= 0) $("modDetail").innerHTML = detail(MOD[modSel]);
   }
   drawMod();
 
-  /* ---------- step 4: crossovers, per-image and grouped intervals ---------- */
+  /* ---------------- step 4 ---------------- */
   const REAL = [
     { label: "Skin hair/ruler · DINOv2", est: 0.147, img: [0.110, 0.185], grp: [0.110, 0.197], planned: true },
     { label: "Thyroid calipers · DINOv2", est: 0.239, img: [0.195, 0.280], grp: [0.196, 0.279], planned: true },
     { label: "Ovary calipers · DINOv2", est: 0.170, img: [0.088, 0.252], grp: [0.086, 0.254], planned: true },
     { label: "Capsule debris · DINOv2", est: 0.377, img: [0.327, 0.425], grp: [0.304, 0.451], planned: true },
-    { label: "Thyroid calipers · MedSigLIP", est: 0.195, img: [0.153, 0.236], grp: [0.153, 0.237] },
-    { label: "Ovary calipers · MedSigLIP", est: 0.178, img: [0.109, 0.248], grp: [0.107, 0.252] },
-    { label: "Capsule debris · MedSigLIP", est: 0.335, img: [0.286, 0.383], grp: [0.251, 0.408] },
-    { label: "Thyroid calipers · ConvNeXt", est: 0.275, img: [0.230, 0.320], grp: [0.230, 0.322] },
-    { label: "Capsule debris · ConvNeXt", est: 0.320, img: [0.269, 0.372], grp: [0.248, 0.391] },
+    { label: "Thyroid · MedSigLIP", est: 0.195, img: [0.153, 0.236], grp: [0.153, 0.237] },
+    { label: "Ovary · MedSigLIP", est: 0.178, img: [0.109, 0.248], grp: [0.107, 0.252] },
+    { label: "Capsule · MedSigLIP", est: 0.335, img: [0.286, 0.383], grp: [0.251, 0.408] },
+    { label: "Thyroid · ConvNeXt", est: 0.275, img: [0.230, 0.320], grp: [0.230, 0.322] },
+    { label: "Capsule · ConvNeXt", est: 0.320, img: [0.269, 0.372], grp: [0.248, 0.391] },
     { label: "Skin hair/ruler · DermLIP", est: 0.014, img: [-0.037, 0.063], grp: [-0.035, 0.095] },
   ];
   let ciMode = "img";
-  const ciTabs = document.getElementById("ciTabs");
+  const ciTabs = $("ciTabs");
   function drawReal() {
     [...ciTabs.children].forEach(b => b.setAttribute("aria-pressed", b.dataset.ci === ciMode ? "true" : "false"));
     const rows = REAL.map(r => ({ label: r.label, est: r.est, lo: r[ciMode][0], hi: r[ciMode][1], open: !r.planned, bold: r.planned }));
-    document.getElementById("realChart").innerHTML = intervals(rows, -0.1, 0.5, "Crossover of masking in real-artifact cohorts", { left: 220 });
+    $("realChart").innerHTML = intervals(rows, -0.1, 0.5, "Crossover of masking in real-artifact cohorts", { left: 240, right: "masking helps more outside", leftText: "inside" }) +
+      `<p class="small muted">Filled dots, bold labels = the four planned tests. Bar = 95% interval; a bar that does not touch 0 is significant.</p>`;
   }
   ciTabs.addEventListener("click", e => { const b = e.target.closest("button"); if (b) { ciMode = b.dataset.ci; drawReal(); } });
   drawReal();
 
-  /* ---------- statistics checks ---------- */
-  const STATS = [
-    { h: "Near-duplicate images", r: "Split by lesion, never by image", m: "Skin datasets hold several photos of one lesion. With random splits, 93 near-duplicate pairs crossed the split and the shortcut looked 10–18% larger (0.284 vs 0.241 outside, 0.465 vs 0.421 inside)." },
-    { h: "Runs share test images", r: "Crossed bootstrap, about 1.5× wider", m: "Each bootstrap replicate resamples the seeds and gives each test image one weight that it keeps in every seed, model and trap. Our intervals are about 1.5 times wider than the common method's, and a few results that looked significant with it are not." },
-    { h: "Several images per lesion", r: "Grouped bootstrap: all four tests still significant", m: "New this month: one weight per lesion or near-duplicate group instead of per image. Interval widths changed by 0.97–1.50× (most for capsule frames, 1,476 frames in 129 groups). All four planned tests stay significant: Holm-adjusted p ≈ 0.0008." },
-    { h: "Chest X-ray patients", r: "No patient in two splits", m: "New this month: we rebuilt every chest X-ray cohort from the NIH data and checked patient IDs. No patient appears in two splits or folds in any experiment (30,805 patients checked)." },
-    { h: "Planned in advance", r: "Design written down first", m: "Before each main experiment we stored the design and what result would count as support in the project repository. Results are reported whichever way they went." },
+  /* ---------------- statistics checks ---------------- */
+  expandable($("stats"), [
+    { h: "Runs share test images", r: "Crossed bootstrap, about 1.5× wider", m: "Each bootstrap replicate resamples the seeds and gives each test image one weight that it keeps in every seed, model and trap. Our intervals are about 1.5 times wider than the common method’s, and a few results that looked significant with it are not." },
+    { h: "Several images per lesion", r: "Grouped bootstrap: all four tests still significant", m: "New this month: one weight per lesion or near-duplicate group instead of per image. Interval widths changed by 0.97–1.50× (most for capsule: 1,476 frames in 129 groups). All four planned tests stay significant: Holm-adjusted p ≈ 0.0008." },
+    { h: "Chest X-ray patients", r: "No patient in two splits", m: "New this month: every chest X-ray cohort rebuilt from the NIH data and checked by patient ID. 0 shared patients among 30,805, in every split and fold." },
     { h: "p values", r: "Conservative formula", m: "None of the 10,000 replicates crossed zero in the four planned tests. With p = 2(k+1)/(B+1), k = 0, this gives p ≈ 0.0002, and ≈ 0.0008 after Holm correction for four tests." },
-  ];
-  const statsEl = document.getElementById("stats");
-  STATS.forEach(c => {
-    const b = document.createElement("button"); b.type = "button"; b.className = "card"; b.setAttribute("aria-expanded", "false");
-    b.innerHTML = `<h3>${c.h}</h3><span class="num small pos">${c.r}</span><span class="more" hidden>${c.m}</span><span class="small muted hint">Click for details</span>`;
-    b.addEventListener("click", () => { const open = b.getAttribute("aria-expanded") !== "true"; b.setAttribute("aria-expanded", open); b.querySelector(".more").hidden = !open; b.querySelector(".hint").hidden = open; });
-    statsEl.appendChild(b);
-  });
+    { h: "Planned in advance", r: "Design written down first", m: "Before each main experiment we stored the design and what result would count as support in the project repository. Results are reported whichever way they went." },
+    { h: "Reproducible", r: "Numbers recomputed on a new machine", m: "This month the archived predictions were restored on a fresh machine; the recomputed intervals matched the report to within 0.001." },
+  ]);
 
-  /* ---------- other methods ---------- */
-  const ARMS = [
-    { m: "ROI masking", needs: "ROI only" },
-    { m: "Balanced reweighting", needs: "artifact labels" },
-    { m: "DFR (last-layer retraining)", needs: "artifact labels" },
-    { m: "Painting out the artifact", needs: "artifact mask" },
-  ];
+  /* ---------------- other methods ---------------- */
+  const ARMS = [{ m: "ROI masking", needs: "ROI only" }, { m: "Balanced reweighting", needs: "artifact labels" }, { m: "DFR (last-layer retraining)", needs: "artifact labels" }, { m: "Painting out the artifact", needs: "artifact mask" }];
   const ARMV = {
     "Skin, hair/ruler": [[-0.049, 0.098], [0.213, 0.204], [0.196, 0.196], [0.098, 0.100]],
     "Thyroid, calipers": [[0.109, 0.348], [0.388, 0.254], [0.463, 0.312], [0.102, 0.039]],
     "Capsule, debris": [[0.084, 0.461], [0.179, 0.244], [0.234, 0.287], [-0.172, -0.115]],
   };
   let armSel = "Skin, hair/ruler";
-  const armTabs = document.getElementById("armTabs");
+  const armTabs = $("armTabs");
   Object.keys(ARMV).forEach(k => { const b = document.createElement("button"); b.type = "button"; b.textContent = k; b.addEventListener("click", () => { armSel = k; drawArms(); }); armTabs.appendChild(b); });
   function drawArms() {
     [...armTabs.children].forEach(b => b.setAttribute("aria-pressed", b.textContent === armSel ? "true" : "false"));
     const cls = v => v >= 0 ? "cell-pos" : "cell-neg";
     let t = `<table><tr><th>Method</th><th>Needs</th><th style="text-align:right">Trap A (inside)</th><th style="text-align:right">Trap B (outside)</th></tr>`;
     ARMS.forEach((a, i) => { const [A, B] = ARMV[armSel][i]; t += `<tr><td>${a.m}</td><td class="muted">${a.needs}</td><td class="n ${cls(A)}">${f3(A)}</td><td class="n ${cls(B)}">${f3(B)}</td></tr>`; });
-    document.getElementById("armTable").innerHTML = t + `</table>`;
+    $("armTable").innerHTML = t + `</table>`;
   }
   drawArms();
 
-  /* ---------- navigation ---------- */
+  /* ---------------- navigation ---------------- */
   const slides = [...document.querySelectorAll(".slide")];
-  const mm = document.getElementById("mm"), counter = document.getElementById("counter"), secname = document.getElementById("secname");
-  const box = document.getElementById("slides");
+  const mm = $("mm"), counter = $("counter"), secname = $("secname"), box = $("slides");
   let cur = 0;
   slides.forEach((s, i) => {
     const b = document.createElement("button"); b.type = "button"; b.setAttribute("aria-label", `Go to slide ${i + 1}: ${s.dataset.name}`);
@@ -615,8 +868,8 @@ td.n { font-family: var(--mono); font-variant-numeric: tabular-nums; text-align:
     box.scrollTop = 0;
     if (push && location.hash.slice(1) !== slides[cur].id) { try { history.replaceState(null, "", "#" + slides[cur].id); } catch (e) { location.hash = slides[cur].id; } }
   }
-  document.getElementById("prev").addEventListener("click", () => show(cur - 1, true));
-  document.getElementById("next").addEventListener("click", () => show(cur + 1, true));
+  $("prev").addEventListener("click", () => show(cur - 1, true));
+  $("next").addEventListener("click", () => show(cur + 1, true));
   document.addEventListener("keydown", e => {
     if (e.target.matches("input, textarea")) return;
     if (e.key === "ArrowRight" || e.key === "PageDown") { e.preventDefault(); show(cur + 1, true); }
