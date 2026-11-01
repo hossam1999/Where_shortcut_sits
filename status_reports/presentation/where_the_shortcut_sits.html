@@ -113,6 +113,7 @@ td.n { font-family: var(--mono); font-variant-numeric: tabular-nums; text-align:
 .dl { display: grid; grid-template-columns: max-content minmax(0, 1fr); gap: 6px 14px; font-size: 15.5px; line-height: 1.45; }
 .dl dt { font-weight: 700; color: var(--muted); font-size: 13px; text-transform: uppercase; letter-spacing: 0.05em; padding-top: 3px; }
 .dl dd { min-width: 0; }
+.likeours { background: var(--roi-soft); border-radius: 6px; padding: 4px 8px; }
 .ref { font-size: 14px; color: var(--muted); border-top: 1px solid var(--line); padding-top: 10px; overflow-wrap: anywhere; }
 .ref a { color: var(--roi); }
 .badge { display: inline-block; font-family: var(--mono); font-size: 13px; padding: 2px 8px; border-radius: 99px; border: 1px solid var(--line); color: var(--muted); }
@@ -612,6 +613,19 @@ td.n { font-family: var(--mono); font-variant-numeric: tabular-nums; text-align:
       us: "Why our splits are grouped by lesion, patient or near-duplicate group, and why this is checked in code.",
       ref: "Kapoor S, Narayanan A. Patterns 4(9):100804 (2023).", doi: "10.1016/j.patter.2023.100804" },
   ];
+  // Which of our metrics each paper's measure resembles (only where one does)
+  const LIKE = {
+    sourget: "Closest overall: AUC of masked versus full-image models, like our masked − standard comparison. But they never move the artifact or flip its link to the label.",
+    dfr: "Worst-group accuracy scores the model where the shortcut points the wrong way, the same idea as our reversed test (we flip the 90/10 pattern to 10/90 instead of using an existing hard group).",
+    medfair: "AUC of the worst subgroup is close to our reversed-test AUROC: both score the model where the shortcut fails.",
+    li: "Their accuracy drop when one cue is uncommon resembles our reversed test, and showing that fixing one shortcut changes another resembles our crossover. They use accuracy, not AUROC, and do not vary location.",
+    jimenez: "AUROC on images with versus without a drain is like our correlated versus clean comparison, but without controlling how strongly the drain predicts the label.",
+    pahde: "Performance on clean versus artifact images resembles our clean and correlated tests.",
+    brown: "Varying age encoding step by step and watching fairness is the same “turn the dial” logic as our 0–100% ruler sweep.",
+    lin: "The change in output on the same frozen frame when calipers are removed is very close to our same-image test (change in probability when the ruler is added).",
+    ci: "Their call for confidence intervals is what our crossed and grouped bootstrap intervals answer.",
+  };
+  PAPERS.forEach(p => { if (LIKE[p.id]) p.like = LIKE[p.id]; });
   let litTheme = "all", litSel = "li", litView = "one";
   const litTabs = $("litTabs"), litView$ = $("litViewTabs");
   Object.entries(THEMES).forEach(([k, v]) => { const b = document.createElement("button"); b.type = "button"; b.dataset.k = k; b.textContent = v; litTabs.appendChild(b); });
@@ -625,7 +639,7 @@ td.n { font-family: var(--mono); font-variant-numeric: tabular-nums; text-align:
     const shown = PAPERS.filter(p => litTheme === "all" || p.t === litTheme);
     if (litView === "all") {
       $("litAll").innerHTML = `<table><tr><th style="width:17%">Paper</th><th style="width:24%">Data</th><th style="width:22%">Metrics</th><th>Main result</th></tr>` +
-        shown.map(p => `<tr><td><b>${esc(p.short)}</b><br><span class="small muted">${esc(p.who)}<br>${esc(p.venue)} ${p.y}</span></td><td class="small">${esc(p.data)}</td><td class="small">${esc(p.metrics)}</td><td class="small">${esc(p.results)}</td></tr>`).join("") + `</table>`;
+        shown.map(p => `<tr><td><b>${esc(p.short)}</b><br><span class="small muted">${esc(p.who)}<br>${esc(p.venue)} ${p.y}</span></td><td class="small">${esc(p.data)}</td><td class="small">${esc(p.metrics)}${p.like ? `<div class="likeours" style="margin-top:6px"><b>Like ours:</b> ${esc(p.like)}</div>` : ""}</td><td class="small">${esc(p.results)}</td></tr>`).join("") + `</table>`;
       return;
     }
     let h = "";
@@ -633,16 +647,16 @@ td.n { font-family: var(--mono); font-variant-numeric: tabular-nums; text-align:
       h += `<div class="year"><h3>${y}</h3><div class="yearpapers">`;
       PAPERS.filter(p => p.y === y).forEach(p => {
         const dim = litTheme !== "all" && p.t !== litTheme;
-        h += `<button type="button" class="paper${dim ? " dim" : ""}" data-id="${p.id}" aria-pressed="${p.id === litSel}">${esc(p.short)}<small>${esc(p.who)} · ${esc(p.venue)}</small></button>`;
+        h += `<button type="button" class="paper${dim ? " dim" : ""}" data-id="${p.id}" aria-pressed="${p.id === litSel}">${esc(p.short)}<small>${esc(p.who)} · ${esc(p.venue)}${p.like ? ` · <span class="pos">metric like ours</span>` : ""}</small></button>`;
       });
       h += `</div></div>`;
     });
     $("years").innerHTML = h;
     const p = PAPERS.find(q => q.id === litSel), url = paperUrl(p);
-    $("paperCard").innerHTML = `<div style="display:flex;gap:8px;flex-wrap:wrap"><span class="badge">${esc(p.venue)} · ${p.y}</span><span class="badge">${THEMES[p.t]}</span></div>
+    $("paperCard").innerHTML = `<div style="display:flex;gap:8px;flex-wrap:wrap"><span class="badge">${esc(p.venue)} · ${p.y}</span><span class="badge">${THEMES[p.t]}</span>${p.like ? `<span class="badge pos" style="border-color:var(--roi)">Metric like ours</span>` : ""}</div>
       <h3>${esc(p.title)}</h3>
       <p class="small"><i>${esc(p.q)}</i></p>
-      <dl class="dl"><dt>Method</dt><dd>${esc(p.method)}</dd><dt>Data</dt><dd>${esc(p.data)}</dd><dt>Models</dt><dd>${esc(p.models)}</dd><dt>Metrics</dt><dd>${esc(p.metrics)}</dd><dt>Results</dt><dd>${esc(p.results)}</dd><dt>For us</dt><dd><b>${esc(p.us)}</b></dd></dl>
+      <dl class="dl"><dt>Method</dt><dd>${esc(p.method)}</dd><dt>Data</dt><dd>${esc(p.data)}</dd><dt>Models</dt><dd>${esc(p.models)}</dd><dt>Metrics</dt><dd>${esc(p.metrics)}</dd>${p.like ? `<dt class="pos">Like our metric</dt><dd class="likeours">${esc(p.like)}</dd>` : ""}<dt>Results</dt><dd>${esc(p.results)}</dd><dt>For us</dt><dd><b>${esc(p.us)}</b></dd></dl>
       <p class="ref">${esc(p.ref)}${p.doi ? ` DOI: <a href="${url}" target="_blank" rel="noopener">${p.doi}</a>` : ` <a href="${url}" target="_blank" rel="noopener">Paper link</a>`}</p>`;
   }
   $("years").addEventListener("click", e => { const b = e.target.closest(".paper"); if (b) { litSel = b.dataset.id; drawLit(); } });
