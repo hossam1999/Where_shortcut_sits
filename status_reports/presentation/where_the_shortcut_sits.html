@@ -412,8 +412,8 @@ td.n { font-family: var(--mono); font-variant-numeric: tabular-nums; text-align:
 
   <section class="slide" id="next-steps" data-name="Next steps">
     <p class="eyebrow">Next steps</p>
-    <h2>Six questions that would make the result convincing</h2>
-    <p class="muted">Each card names the objection or question it answers. Click a card to see why it matters and how it can be tested.</p>
+    <h2>Six questions a sceptical reader would ask</h2>
+    <p class="muted">Click a card to see the worry behind each question and how it can be tested.</p>
     <div class="cards three" id="nextCards"></div>
   </section>
 
@@ -1105,18 +1105,18 @@ td.n { font-family: var(--mono); font-variant-numeric: tabular-nums; text-align:
 
   /* ---------------- next steps ---------------- */
   expandable($("nextCards"), [
-    { h: "1. Is it really location?", r: "Or just which images carry the artifact?",
-      m: "Why: in real data, artifacts inside the ROI may sit on different kinds of lesions (for example larger ones) than artifacts outside it. How: compare Trap A and Trap B on matched images with similar size, source and diagnosis mix, and move the same real artifact inside or outside the ROI of the same image." },
-    { h: "2. Does it matter in clinical use?", r: "Beyond the artificial trap",
-      m: "Why: the trap exaggerates the shortcut on purpose. How: test on unaltered test sets and new patients, look at the cases where the artifact points the wrong way, and report sensitivity at a fixed specificity, chosen on validation data." },
-    { h: "3. Can we predict when masking fails?", r: "A simple model of the effect",
-      m: "Why: a rule is more useful if it says in advance how much harm to expect. How: describe each setting by a few measurable quantities (how strong the artifact signal is, how much disease signal masking removes) and check whether they predict the measured effect on held-out settings." },
-    { h: "4. How robust is the rule?", r: "Other masks, other overlaps, other data",
-      m: "Why: the result should not depend on one way of masking or one threshold. How: repeat with other masking styles (black fill, blurred background, cropping), treat overlap as a continuous measure, and test on an external dataset." },
-    { h: "5. What should be used instead?", r: "Alternatives that need no artifact labels",
-      m: "Why: reweighting and DFR work but need labels clinics rarely have. How: compare label-free alternatives with masking under one fair protocol, with the comparison and its success criterion written down before running it." },
-    { h: "6. Are the artifact labels right?", r: "Independent checks of the masks",
-      m: "Why: automatic artifact masks can be wrong, and errors could bias the result. How: compare them with independent public annotations and labellers, and, if you agree (question 3 for discussion), have a clinician check a sample." },
+    { h: "1. Is it really where the artifact sits?", r: "Or is it the kind of lesion?",
+      m: "The worry: rulers on the lesion may appear mostly on big lesions, and rulers off the lesion on small ones. Then the difference could come from lesion size, not from position. The test: compare images that are alike (same size, same hospital), or move the same ruler on and off the lesion in the same image." },
+    { h: "2. Does it matter for real patients?", r: "Our trap is artificial",
+      m: "The worry: we made the ruler appear on 90% of melanomas to force a shortcut; real data is not that extreme. The test: use normal, untouched test images and new patients, and ask a clinical question: of the real cancers, how many does the model still catch?" },
+    { h: "3. Can we predict it in advance?", r: "Before running the experiment",
+      m: "The worry: today we only know the answer after the experiment. The test: build a simple formula from a few things we can measure (how strongly the artifact points to the label, how much useful information masking removes) and check whether it predicts results it has not seen." },
+    { h: "4. Does it hold if we change the details?", r: "Other masking styles, other data",
+      m: "The worry: we masked by filling the background with one colour. What if we blur it, crop it, or use another dataset? The test: repeat with other masking styles and on a new dataset and see whether the same pattern appears." },
+    { h: "5. What should be used instead?", r: "Without labelling every artifact",
+      m: "The worry: reweighting and DFR work, but someone must label which images have the artifact, and hospitals rarely have that. The test: try methods that need no such labels and compare them fairly with masking, with the rules of the comparison fixed before seeing results." },
+    { h: "6. Are our artifact masks correct?", r: "The computer found the artifacts",
+      m: "The worry: rulers, hair and calipers were found automatically and the computer can make mistakes, which could bias our results. The test: compare our masks with masks made by other people or tools, and ideally have a doctor check a sample." },
   ]);
   /* ---------------- navigation ---------------- */
   const slides = [...document.querySelectorAll(".slide")];
