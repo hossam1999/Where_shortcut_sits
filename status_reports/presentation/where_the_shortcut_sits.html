@@ -114,6 +114,15 @@ td.n { font-family: var(--mono); font-variant-numeric: tabular-nums; text-align:
 .dl dt { font-weight: 700; color: var(--muted); font-size: 13px; text-transform: uppercase; letter-spacing: 0.05em; padding-top: 3px; }
 .dl dd { min-width: 0; }
 .dotkey { display: inline-block; width: 14px; height: 14px; border-radius: 50%; vertical-align: -2px; }
+.gtiles { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; width: min(100%, 360px); }
+.gtile { display: flex; align-items: center; justify-content: center; text-align: center; border-radius: 6px; font-size: 14px; line-height: 1.25; padding: 4px; transition: height 0.6s ease, opacity 0.6s ease; overflow: hidden; }
+.gtile.art { background: var(--artifact-soft); border: 2px solid var(--artifact); }
+.gtile.clean { background: var(--roi-soft); border: 2px solid var(--roi); }
+.pipe { display: flex; align-items: center; gap: 6px; flex-wrap: wrap; font-size: 15px; }
+.pipe .box { border: 2px solid var(--line); border-radius: 8px; padding: 8px 10px; background: var(--surface); transition: border-color 0.4s, box-shadow 0.4s; }
+.pipe .box.hot { border-color: var(--roi); box-shadow: 0 0 0 3px var(--roi-soft); }
+.chip { display: inline-block; border: 1px solid var(--line); border-radius: 99px; padding: 3px 10px; font-size: 14px; margin: 2px 6px 2px 0; }
+@media (prefers-reduced-motion: reduce) { .gtile, .pipe .box { transition: none; } }
 .likeours { background: var(--roi-soft); border-radius: 6px; padding: 4px 8px; }
 .ref { font-size: 14px; color: var(--muted); border-top: 1px solid var(--line); padding-top: 10px; overflow-wrap: anywhere; }
 .ref a { color: var(--roi); }
@@ -364,22 +373,26 @@ td.n { font-family: var(--mono); font-variant-numeric: tabular-nums; text-align:
   </section>
 
   <section class="slide" id="learned" data-name="Other findings">
-    <p class="eyebrow">Other things we learned</p>
+    <p class="eyebrow">Other things we learned · four ways to fight the artifact</p>
     <h2>Methods that know the artifact help in both traps, but need labels</h2>
-    <div class="cols">
-      <div>
-        <ul class="plain">
-          <li><b>Reweighting and DFR</b> helped in both traps of every cohort, wherever the artifact lay. The catch: they need an artifact label for training images, which clinical datasets rarely have. Masking needs only the ROI.</li>
-          <li><b>Painting out the artifact can backfire.</b> In capsule images it lowered the score (−0.17 in Trap A), likely because erosions contain material that looks like debris.</li>
-          <li><b>DermLIP did not follow the rule.</b> It seems to need the skin around the lesion: masking lowered its clean-test score too.</li>
-          <li><b>Chest X-rays are a boundary case.</b> The device groups also differ in other devices present, so we do not count them as a confirmation.</li>
-        </ul>
+    <div class="seg" role="group" aria-label="Method" id="armTabs"></div>
+    <div class="cols even">
+      <div class="panel">
+        <h3 id="armName"></h3>
+        <p id="armIdea"></p>
+        <div id="armDemo"></div>
+        <button class="btn" id="armRun" aria-pressed="false" style="align-self:flex-start"></button>
+        <p class="small muted" id="armDemoNote"></p>
       </div>
       <div class="panel">
-        <div class="seg" role="group" aria-label="Cohort" id="armTabs"></div>
-        <div class="tablewrap" id="armTable"></div>
-        <p class="small muted">Change in reversed-test AUROC vs the standard model, DINOv2. Shaded teal = better, orange = worse.</p>
+        <div id="armNeeds"></div>
+        <div class="chart" id="armChart"></div>
+        <p id="armVerdict"></p>
       </div>
+    </div>
+    <div class="cards">
+      <div class="panel small"><b>DermLIP did not follow the rule.</b> This dermatology encoder seems to need the skin around the lesion: masking lowered its clean-test score too.</div>
+      <div class="panel small"><b>Chest X-rays are a boundary case.</b> The device groups also differ in which other devices are present, so we do not count them as a confirmation.</div>
     </div>
   </section>
 
@@ -460,12 +473,13 @@ td.n { font-family: var(--mono); font-variant-numeric: tabular-nums; text-align:
     for (let i = 1; i < 14; i++) { const tx = x + i * w / 14, th = i % 5 === 0 ? h * 0.6 : h * 0.35; t += `<line x1="${tx}" y1="${y}" x2="${tx}" y2="${y + th}" stroke="#3a3a3a" stroke-width="1"/>`; }
     return t;
   }
-  function scene(rx, ry, masked, label) {
+  function scene(rx, ry, masked, label, painted) {
     const hole = `M${CX - ROIX},${CY} a${ROIX},${ROIY} 0 1,0 ${2 * ROIX},0 a${ROIX},${ROIY} 0 1,0 ${-2 * ROIX},0 Z`;
     let s = `<rect x="0" y="0" width="400" height="300" style="fill:var(--skin)"/>`;
     s += `<ellipse cx="${CX}" cy="${CY}" rx="${RX}" ry="${RY}" style="fill:var(--lesion)"/>`;
     s += `<ellipse cx="${CX - 22}" cy="${CY - 14}" rx="34" ry="24" style="fill:#5e3a2e;opacity:0.7"/>`;
-    s += ruler(rx, ry, 70, 18);
+    if (painted) s += `<rect x="${rx}" y="${ry}" width="70" height="18" style="fill:var(--lesion);opacity:0.92"/><rect x="${rx}" y="${ry}" width="70" height="18" style="fill:none;stroke:var(--artifact);stroke-width:2;stroke-dasharray:4 3"/>`;
+    else s += ruler(rx, ry, 70, 18);
     if (masked) s += `<path d="M0,0 H400 V300 H0 Z ${hole}" fill-rule="evenodd" style="fill:var(--maskgrey)"/>`;
     s += `<ellipse cx="${CX}" cy="${CY}" rx="${ROIX}" ry="${ROIY}" style="fill:none;stroke:var(--roi);stroke-width:3;stroke-dasharray:${masked ? "0" : "7 5"}"/>`;
     return svg(400, 300, s, label);
@@ -1004,22 +1018,81 @@ td.n { font-family: var(--mono); font-variant-numeric: tabular-nums; text-align:
     { h: "Reproducible", r: "Numbers recomputed on a new machine", m: "This month the archived predictions were restored on a fresh machine; the recomputed intervals matched the report to within 0.001." },
   ]);
 
-  /* ---------------- other methods ---------------- */
-  const ARMS = [{ m: "ROI masking", needs: "ROI only" }, { m: "Balanced reweighting", needs: "artifact labels" }, { m: "DFR (last-layer retraining)", needs: "artifact labels" }, { m: "Painting out the artifact", needs: "artifact mask" }];
-  const ARMV = {
-    "Skin, hair/ruler": [[-0.049, 0.098], [0.213, 0.204], [0.196, 0.196], [0.098, 0.100]],
-    "Thyroid, calipers": [[0.109, 0.348], [0.388, 0.254], [0.463, 0.312], [0.102, 0.039]],
-    "Capsule, debris": [[0.084, 0.461], [0.179, 0.244], [0.234, 0.287], [-0.172, -0.115]],
+  /* ---------------- other methods: explorer ---------------- */
+  // Results: masked/arm − standard on the reversed test, DINOv2, [Trap A inside, Trap B outside] (report Table 7)
+  const ARMS = {
+    mask: { name: "ROI masking", idea: "Replace everything outside the region of interest with the image’s average colour, in training and in testing. An artifact outside the ROI disappears; one inside stays.",
+      needs: ["ROI mask (lesion, nodule, lungs)"], run: ["Apply the mask", "Show the original"],
+      res: [[-0.049, 0.098], [0.109, 0.348], [0.084, 0.461]],
+      verdict: "Strong when the artifact is outside the ROI (Trap B), much weaker inside (Trap A); for skin hair/ruler it even hurts inside. It needs no artifact labels." },
+    bal: { name: "Balanced reweighting", idea: "Keep the whole image, but in training give each of the four groups (with or without the artifact × disease or not) the same total weight. After weighting, the artifact no longer predicts the label.",
+      needs: ["An artifact label for every training image"], run: ["Apply the weights", "Show the raw counts"],
+      res: [[0.213, 0.204], [0.388, 0.254], [0.179, 0.244]],
+      verdict: "Helps in both traps, wherever the artifact lies, because it removes the shortcut from the training data. The catch: someone must label which training images carry the artifact." },
+    dfr: { name: "DFR (last-layer retraining)", idea: "Keep the frozen encoder and its features; refit only the final classifier on a small held-out set with equal numbers of images from each of the four groups.",
+      needs: ["Artifact labels for a small balanced held-out set"], run: ["Retrain the last layer", "Show standard training"],
+      res: [[0.196, 0.196], [0.463, 0.312], [0.234, 0.287]],
+      verdict: "Helps in both traps of every cohort, often the most. It needs fewer labels than reweighting (only the small balanced set), but still needs them." },
+    paint: { name: "Painting out the artifact", idea: "Find the artifact’s pixels and fill them from the surrounding image (inpainting), in training and testing, then classify the whole image.",
+      needs: ["An artifact mask for every image, including test images"], run: ["Paint out the ruler", "Show the original"],
+      res: [[0.098, 0.100], [0.102, 0.039], [-0.172, -0.115]],
+      verdict: "Small gains in skin and thyroid, and harm in capsule images: erosions contain yellow-white material that looks like debris, so painting out “debris” also removes disease evidence." },
   };
-  let armSel = "Skin, hair/ruler";
-  const armTabs = $("armTabs");
-  Object.keys(ARMV).forEach(k => { const b = document.createElement("button"); b.type = "button"; b.textContent = k; b.addEventListener("click", () => { armSel = k; drawArms(); }); armTabs.appendChild(b); });
+  const COH = ["Skin, hair/ruler", "Thyroid, calipers", "Capsule, debris"];
+  let armSel = "mask", armOn = false;
+  const armTabs = $("armTabs"), armRun = $("armRun");
+  Object.entries(ARMS).forEach(([k, v]) => { const b = document.createElement("button"); b.type = "button"; b.dataset.k = k; b.textContent = v.name; armTabs.appendChild(b); });
+  armTabs.addEventListener("click", e => { const b = e.target.closest("button"); if (b) { armSel = b.dataset.k; armOn = false; drawArms(); } });
+  armRun.addEventListener("click", () => { armOn = !armOn; drawArmDemo(); });
+  function tiles(on) {
+    // 90/10 trap: disease 90 with artifact, 10 without; other 10 with, 90 without. Weighted: 25% each.
+    const T = [["Disease + artifact", 90, "art"], ["Disease, no artifact", 10, "clean"], ["Other + artifact", 10, "art"], ["Other, no artifact", 90, "clean"]];
+    return `<div class="gtiles">` + T.map(([lab, n, c]) => {
+      const h = on ? 92 : Math.round(26 + n * 1.4);
+      return `<div class="gtile ${c}" style="height:${h}px">${lab}<br>${on ? "weight 25%" : n + " images"}</div>`;
+    }).join("") + `</div>`;
+  }
+  function drawArmDemo() {
+    const m = ARMS[armSel];
+    armRun.textContent = armOn ? m.run[1] : m.run[0];
+    armRun.setAttribute("aria-pressed", armOn ? "true" : "false");
+    let demo = "", note = "";
+    if (armSel === "mask") {
+      demo = `<div class="scenes"><figure class="scene">${scene(300, 250, armOn, "Ruler outside")}<figcaption>Ruler outside</figcaption></figure><figure class="scene">${scene(165, 141, armOn, "Ruler inside")}<figcaption>Ruler inside</figcaption></figure></div>`;
+      note = armOn ? "Outside: the ruler is gone. Inside: the ruler survives, and its competitors are gone." : "Press the button to apply the mask.";
+    } else if (armSel === "bal") {
+      demo = tiles(armOn);
+      note = armOn ? "Each group now counts equally: the artifact is on half the weight of each class, so it predicts nothing." : "The 90/10 trap: the artifact is on 90% of disease images and 10% of the others.";
+    } else if (armSel === "dfr") {
+      demo = `<div class="pipe"><span class="box">Image</span>→<span class="box">Frozen encoder</span>→<span class="box">Features</span>→<span class="box${armOn ? " hot" : ""}">Last layer</span></div>
+        <div style="margin-top:12px">${armOn ? `<div class="small"><b>Trained on:</b> a small held-out set with equal numbers from each group</div><div class="gtiles" style="margin-top:6px">${["Disease + artifact", "Disease, no artifact", "Other + artifact", "Other, no artifact"].map((l, i) => `<div class="gtile ${i === 0 || i === 2 ? "art" : "clean"}" style="height:56px">${l}</div>`).join("")}</div>` : `<div class="small"><b>Trained on:</b> all training images, with the 90/10 shortcut</div>`}</div>`;
+      note = armOn ? "Only the last layer changes; the features stay as they are." : "Press the button to retrain only the last layer.";
+    } else {
+      demo = `<div class="scenes"><figure class="scene">${scene(165, 141, false, "Ruler on the lesion", armOn)}<figcaption>${armOn ? "Ruler pixels filled from the surroundings" : "Ruler on the lesion"}</figcaption></figure></div>`;
+      note = armOn ? "The dashed outline marks where the ruler was. If the “artifact” looks like disease (capsule debris vs erosions), this removes disease evidence too." : "Press the button to paint out the ruler.";
+    }
+    $("armDemo").innerHTML = demo; $("armDemoNote").textContent = note;
+  }
   function drawArms() {
-    [...armTabs.children].forEach(b => b.setAttribute("aria-pressed", b.textContent === armSel ? "true" : "false"));
-    const cls = v => v >= 0 ? "cell-pos" : "cell-neg";
-    let t = `<table><tr><th>Method</th><th>Needs</th><th style="text-align:right">Trap A (inside)</th><th style="text-align:right">Trap B (outside)</th></tr>`;
-    ARMS.forEach((a, i) => { const [A, B] = ARMV[armSel][i]; t += `<tr><td>${a.m}</td><td class="muted">${a.needs}</td><td class="n ${cls(A)}">${f3(A)}</td><td class="n ${cls(B)}">${f3(B)}</td></tr>`; });
-    $("armTable").innerHTML = t + `</table>`;
+    [...armTabs.children].forEach(b => b.setAttribute("aria-pressed", b.dataset.k === armSel ? "true" : "false"));
+    const m = ARMS[armSel];
+    $("armName").textContent = m.name; $("armIdea").textContent = m.idea;
+    $("armNeeds").innerHTML = `<span class="small muted">Needs:</span> ` + m.needs.map(n => `<span class="chip">${n}</span>`).join("");
+    drawArmDemo();
+    const W = 600, L = 170, R = W - 30, top = 34, rowH = 66, H = top + 3 * rowH + 44, x = lin(-0.2, 0.5, L, R);
+    let g = `<rect x="${x(-0.2)}" y="${top - 6}" width="${x(0) - x(-0.2)}" height="${3 * rowH + 6}" style="fill:var(--artifact-soft);opacity:0.55"/>`;
+    g += `<text x="${x(0) - 8}" y="${top - 12}" text-anchor="end" class="art b">← hurts</text><text x="${x(0) + 8}" y="${top - 12}" class="roi b">helps →</text>`;
+    [-0.2, -0.1, 0, 0.1, 0.2, 0.3, 0.4, 0.5].forEach(v => { g += `<line x1="${x(v)}" x2="${x(v)}" y1="${top - 6}" y2="${top + 3 * rowH}" style="stroke:${v === 0 ? "var(--ink)" : "var(--line)"};stroke-width:${v === 0 ? 2 : 1}"/><text x="${x(v)}" y="${top + 3 * rowH + 20}" text-anchor="middle">${v === 0 ? "0" : f2(v).replace("+", "")}</text>`; });
+    g += `<text x="${(L + R) / 2}" y="${H - 4}" text-anchor="middle" class="ink">Change vs the standard model (reversed-test AUROC)</text>`;
+    m.res.forEach(([A, B], i) => {
+      const cy = top + i * rowH + rowH / 2, near = Math.abs(x(B) - x(A)) < 46;
+      g += `<text x="${L - 12}" y="${cy + 5}" text-anchor="end" class="ink b">${COH[i]}</text>`;
+      g += `<line x1="${x(A)}" x2="${x(B)}" y1="${cy}" y2="${cy}" style="stroke:var(--muted);stroke-width:5;opacity:0.45;stroke-linecap:round"/>`;
+      g += `<circle cx="${x(A)}" cy="${cy}" r="10" style="fill:var(--artifact);stroke:var(--surface);stroke-width:2"/><circle cx="${x(B)}" cy="${cy}" r="10" style="fill:var(--roi);stroke:var(--surface);stroke-width:2"/>`;
+      g += `<text x="${x(A)}" y="${cy + 27}" text-anchor="middle" class="art">${f2(A)}</text><text x="${x(B)}" y="${cy - 15}" text-anchor="middle" class="roi">${f2(B)}</text>`;
+    });
+    $("armChart").innerHTML = `<div style="display:flex;flex-wrap:wrap;gap:16px;font-size:15px"><span><span class="dotkey" style="background:var(--artifact)"></span> Artifact inside (Trap A)</span><span><span class="dotkey" style="background:var(--roi)"></span> Artifact outside (Trap B)</span></div>` + svg(W, H, g, `${m.name}: change in reversed-test AUROC in each trap`);
+    $("armVerdict").innerHTML = `<b>${m.verdict}</b>`;
   }
   drawArms();
 
