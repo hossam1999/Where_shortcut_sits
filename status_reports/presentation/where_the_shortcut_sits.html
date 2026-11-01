@@ -372,6 +372,33 @@ td.n { font-family: var(--mono); font-variant-numeric: tabular-nums; text-align:
     </div>
   </section>
 
+  <section class="slide" id="padchest" data-name="Future option">
+    <p class="eyebrow">A future option · second chest X-ray hospital</p>
+    <h2>PadChest could test the chest X-ray result at another hospital</h2>
+    <p>About 160,000 chest X-rays from about 67,000 patients (San Juan Hospital, Spain, 2009–2017). It would give a second device trap: drains or catheters <b>inside</b> the lungs (Trap A) against endotracheal or tracheostomy tubes <b>outside</b> them (Trap B).</p>
+    <div class="cols even">
+      <div class="panel">
+        <h3 class="pos">What it has</h3>
+        <ul class="plain">
+          <li><b>Device labels</b> from the reports: endotracheal tube, nasogastric tube, chest drain, central venous catheter.</li>
+          <li><b>NEATX tube labels</b> (about 1,000; chest drain, tracheostomy, nasogastric and endotracheal tubes), the same source as our NIH drain labels.</li>
+          <li><b>Patient IDs</b>, so we can keep each patient on one side of the split.</li>
+          <li><b>Lung masks</b> through CheXmask, for the ROI.</li>
+        </ul>
+      </div>
+      <div class="panel">
+        <h3 class="neg">What it lacks</h3>
+        <ul class="plain">
+          <li><b>No pixel masks of the devices:</b> labels say a tube is present, not where. Location comes from the device type, as in our NIH device traps.</li>
+          <li><b>Noisy labels:</b> 73% come from a text model reading Spanish reports; 27% were labelled by physicians.</li>
+          <li><b>Few NEATX labels</b> per tube type: probably too few for our minimum trap sizes on their own.</li>
+          <li><b>Heavy access:</b> about 1 TB, research-use agreement with BIMCV, no redistribution of images.</li>
+        </ul>
+      </div>
+    </div>
+    <p class="statement">Worth doing only if chest X-rays stay in the main text. Cheap first step: request access and count the device groups from the label file before downloading any images.</p>
+  </section>
+
   <section class="slide" id="discuss" data-name="Questions">
     <p class="eyebrow">Questions for discussion</p>
     <h2>Where we would like your view</h2>
@@ -379,7 +406,7 @@ td.n { font-family: var(--mono); font-variant-numeric: tabular-nums; text-align:
       <li class="panel"><h3>1. The main score</h3><p>Is the reversed-test AUROC acceptable as the main score, or should a clinical measure (sensitivity at a fixed specificity) be added from the start?</p></li>
       <li class="panel"><h3>2. How to state the rule</h3><p>“Masking is worth less inside the ROI” (true in all real cohorts) or “masking hurts inside the ROI” (true for skin hair/ruler artifacts and in 7 of 11 moving-artifact experiments)?</p></li>
       <li class="panel"><h3>3. The artifact masks</h3><p>The masks were checked by eye by a non-clinician. Should a clinician check a sample?</p></li>
-      <li class="panel"><h3>4. Chest X-rays</h3><p>Present them as a boundary case, or leave them out of the main text?</p></li>
+      <li class="panel"><h3>4. Chest X-rays</h3><p>Present them as a boundary case, or leave them out of the main text? If they stay, should we add PadChest as a second hospital?</p></li>
     </ol>
   </section>
 
