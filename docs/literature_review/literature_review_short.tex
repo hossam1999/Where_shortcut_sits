@@ -77,11 +77,13 @@ dark corners, adding synthetic ones during training helped more than removing th
 ISIC collections also contain duplicate images across releases, which can leak between training and test sets
 \citep{cassidy2022isic}. Read together, these studies show that the artifacts sit in different places: patches and dark
 corners lie mostly outside the lesion, rulers near the image edge, markings around the lesion, and hair crosses it. The
-studies report the effect of an artifact being present; none asks whether its position matters.
+studies report the effect of an artifact being present; none of those we reviewed asks whether its position matters.
 
 In ultrasound the evidence is thinner. \citet{lin2024segshortcut} showed that calipers and on-screen text act as
-shortcuts in fetal ultrasound, even for segmentation. We found no peer-reviewed study that treats calipers as a
-classification shortcut in thyroid or ovarian ultrasound, although calipers are placed on the nodule border by design.
+shortcuts in fetal ultrasound, even for segmentation. For thyroid ultrasound, one validation study considered calipers
+as a possible confound and judged that differences in their appearance between scanners did not explain its results
+\citep{weng2023thyroid}; we found no study that measures calipers as a classification shortcut in thyroid or ovarian
+ultrasound, although calipers are placed on the nodule border by design.
 In chest radiography, pneumothorax classifiers respond to the chest tube that treats the condition.
 \citet{rueckel2021pneumothorax} reduced this confounding by training with in-image annotations, and
 \citet{jimenez2023shortcuts} labelled drains on a public dataset to expose the shortcut. A drain projects over the lung
@@ -97,7 +99,7 @@ classifiers trained on HAM10000 but not for those trained on ISIC \citep{maron20
 easy to overlook. ISNet takes a softer route and penalises relevance outside the segmentation mask during training,
 which made chest-radiograph classifiers more robust to background bias \citep{bassi2024isnet}.
 
-All of these studies assume that the shortcut lies in the background. The one result that points the other way comes
+All of these studies assume that the shortcut lies in the background. The clearest result pointing the other way comes
 from natural images: when several shortcuts are present, removing one can make the model rely more on the others
 \citep{li2023whacamole}. ROI masking is a mitigation of exactly this kind. If an artifact remains inside the ROI, the
 same reasoning predicts that masking will increase reliance on it. To our knowledge this has not been tested in medical

@@ -192,7 +192,7 @@ td.n { font-family: var(--mono); font-variant-numeric: tabular-nums; text-align:
     </div>
     <div class="tablewrap panel" id="litAll" hidden></div>
     <p class="small"><b>Where the reversed test comes from:</b> Colored MNIST (Arjovsky et al., 2019, <i>Invariant risk minimization</i>, a preprint) colours digits so that colour predicts the label in 80–90% of training images but in only 10% of test images. Our 90/10 training and 10/90 reversed test apply the same idea to medical artifacts, scored with AUROC, together with correlated and clean tests on the same images.</p>
-    <p class="small muted">Selected from the 68 peer-reviewed studies in our literature review, plus RoentMod (2026), found after it. Each was checked against its publisher’s page. Venues: Nature family journals, CVPR, ICLR, MICCAI, Medical Image Analysis, and others.</p>
+    <p class="small muted">Selected from the 69 peer-reviewed studies in our literature review, plus RoentMod (2026), found after it. Each was checked against its publisher’s page. Venues: Nature family journals, CVPR, ICLR, MICCAI, Medical Image Analysis, and others.</p>
   </section>
 
   <section class="slide" id="gap" data-name="The gap">
@@ -201,7 +201,7 @@ td.n { font-family: var(--mono); font-variant-numeric: tabular-nums; text-align:
     <div class="tablewrap">
       <table id="gapTable"></table>
     </div>
-    <p class="statement">Where a bias sits has been studied once: Stanley et al. (JAMIA 2024) placed a synthetic bias near to or far from the disease region in brain MRI and found that the distance matters. They did not study masking. Within our search, no study varies an artifact’s position relative to the ROI used for masking, or does so with real artifacts.</p>
+    <p class="statement">Where a bias sits has been studied before: Stanley et al. (JAMIA 2024) placed a synthetic bias near to or far from the disease region in brain MRI and found that the distance matters. They did not study masking. Within our search, no study varies an artifact’s position relative to the ROI used for masking, or does so with real artifacts.</p>
     <p class="small muted">Li et al. (CVPR 2023) showed in natural images that removing one shortcut can amplify another; we study the analogous effect of ROI masking in medical images.</p>
   </section>
 

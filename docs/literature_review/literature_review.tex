@@ -26,7 +26,7 @@ classification: a review of the 2021--2026 literature}
 \noindent This review collects the peer-reviewed work published from January 2021 to October 2026 that bears on one
 question: when an image artifact that is correlated with the diagnosis lies inside or outside the region of interest
 (ROI), does restricting the classifier to the ROI remove the shortcut, and what should be used instead? We included
-68 studies from journals and conferences of recognised standing (Nature, Lancet and Science families, Medical Image
+69 studies from journals and conferences of recognised standing (Nature, Lancet and Science families, Medical Image
 Analysis, MICCAI, CVPR, ECCV, NeurIPS, ICML, ICLR and others), verified each against its publisher or proceedings page
 and excluded preprints and workshop papers. The literature establishes firmly that medical classifiers exploit
 acquisition signals, devices, markings and demographic correlates; it documents artifacts per modality, mostly in
@@ -34,7 +34,7 @@ dermoscopy and chest radiography; it shows that image backgrounds carry predicti
 sometimes helps; and it offers group-robustness, invariance, erasure, explanation-guided and generative mitigations,
 none of which is uniformly better than standard training. Every masking and background-removal study we found assumes
 that the shortcut lies outside the ROI. One synthetic-bias study varies the bias's distance from the disease region;
-none varies an artifact's location relative to the ROI used for masking. Only one study, in natural images, reports that removing one shortcut can amplify another. The review ends
+none varies an artifact's location relative to the ROI used for masking. The clearest report that removing one shortcut can amplify another comes from natural images. The review ends
 with a gap analysis that positions the thesis against the closest prior work and states what is and is not new.
 \end{abstract}
 
@@ -151,14 +151,16 @@ diseases \citep{daneshjou2022disparities}. Lesion segmentation, the source of de
 \citet{mirikharaji2023survey}.
 
 \emph{Location.} Calibration patches and dark corners lie mostly outside the lesion; rulers usually lie near the image
-edge and markings around the lesion, sometimes overlapping its border; hair crosses it. The published studies report the effect of an artifact's presence, not of where it lies.
+edge and markings around the lesion, sometimes overlapping its border; hair crosses it. The studies we reviewed report the effect of an artifact's presence, not of where it lies.
 
 \subsection{Ultrasound}
 In fetal ultrasound, calipers and on-screen text act as shortcuts even for segmentation \citep{lin2024segshortcut}.
 The public thyroid datasets used in the thesis \citep{gong2021tn3k,hou2024thyus2path} contain sonographer calipers,
-mostly on or around the nodule (our observation; the dataset papers do not study them). Within our search we found no peer-reviewed study that quantifies
-calipers as a \emph{classification} shortcut in thyroid or ovarian ultrasound, or that relates the caliper's position to
-the nodule ROI.
+mostly on or around the nodule (our observation; the dataset papers do not study them). The closest work we found is a
+thyroid validation study that considered calipers as a possible confound and judged that differences in their appearance
+between scanners did not explain its performance difference \citep{weng2023thyroid}. Within our search, no peer-reviewed
+study measures calipers as a \emph{classification} shortcut in thyroid or ovarian ultrasound, or relates the caliper's
+position to the nodule ROI.
 
 \subsection{Chest radiography}
 Pneumothorax classifiers detect the chest tube that treats the condition. \citet{rueckel2021pneumothorax} reduced this
@@ -366,7 +368,7 @@ should be repeated before submission.
 \section{Summary of included studies}\label{sec:table}
 \begingroup\footnotesize\setlength{\tabcolsep}{3pt}
 \begin{longtable}{P{2.5cm}P{2.5cm}P{0.6cm}P{1.6cm}P{4.15cm}P{4.2cm}}
-\caption{All 68 included studies (2021--2026), grouped by theme. Tier: A or B as defined in Sec.~\ref{sec:method}.
+\caption{All 69 included studies (2021--2026), grouped by theme. Tier: A or B as defined in Sec.~\ref{sec:method}.
 CXR: chest radiograph; US: ultrasound; NI: natural images; --: not modality-specific.}\label{tab:all}\\\toprule
 Study & Venue & Tier & Modality & Finding or contribution & Relevance to the thesis \\\midrule\endfirsthead
 \toprule Study & Venue & Tier & Modality & Finding or contribution & Relevance to the thesis \\\midrule\endhead
@@ -405,6 +407,7 @@ Study & Venue & Tier & Modality & Finding or contribution & Relevance to the the
 \citet{pahde2025ensuring} & Mach.\ Learn. & B & 4 tasks & semi-automated bias annotation & artifact labels \\
 \multicolumn{6}{l}{\textit{Ultrasound and chest radiography}}\\
 \citet{lin2024segshortcut} & MICCAI & A & US & calipers and text as segmentation shortcuts & ultrasound calipers \\
+\citet{weng2023thyroid} & Clin.\ Imaging & B & US & thyroid model validated on other scanners; caliper differences judged not to explain results & calipers as a confound \\
 \citet{rueckel2021pneumothorax} & Eur.\ Radiol. & B & CXR & annotations reduce chest-tube confounding & in-ROI device \\
 \citet{sugibayashi2023pneumothorax} & Eur.\ Respir.\ Rev. & B & CXR & meta-analysis; high risk of bias & drain context \\
 \citet{jimenez2023shortcuts} & IEEE ISBI & B & CXR & drain labels expose a shortcut & chest boundary case \\
