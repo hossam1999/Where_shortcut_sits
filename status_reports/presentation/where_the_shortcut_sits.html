@@ -333,19 +333,20 @@ td.n { font-family: var(--mono); font-variant-numeric: tabular-nums; text-align:
 
   <section class="slide" id="step-4" data-name="Step 4">
     <p class="eyebrow">Step 4 · real artifacts</p>
-    <h2>Real artifacts: masking helps far more when the artifact is outside the ROI</h2>
-    <div class="cols lit">
-      <div>
-        <p>A real artifact cannot be moved, so we compare two groups of real images, both trained and tested with the same trap:</p>
-        <ul class="plain">
-          <li><b class="neg">Trap A:</b> images whose artifact lies <b>inside</b> the ROI.</li>
-          <li><b class="pos">Trap B:</b> images whose artifact lies <b>outside</b> the ROI.</li>
-        </ul>
-        <p>Each row shows what masking did in each trap. The <b>gap</b> between the two dots is the <b>crossover</b>: how much more masking helps when the artifact is outside.</p>
-        <div class="panel small">
-          <p>All four planned DINOv2 tests show a clear gap, also with the stricter per-lesion intervals. The same holds for MedSigLIP and ConvNeXt; DermLIP shows no clear gap.</p>
-        </div>
+    <h2>With real artifacts, masking helps much more when the artifact is away from the lesion</h2>
+    <p class="lead" style="font-size:18px">Real rulers, hair and calipers cannot be moved. So we split real images into two groups: the artifact <b class="neg">on the lesion</b>, or <b class="pos">away from it</b>. In each group we compare the normal model with the masked model, on the hard test where the artifact points to the wrong answer.</p>
+    <div style="display:flex;flex-wrap:wrap;gap:10px;align-items:center">
+      <div class="seg" role="group" aria-label="Dataset" id="storyTabs"></div>
+      <button class="btn" id="allToggle" aria-pressed="false">Show all datasets and models</button>
+    </div>
+    <div id="storyView">
+      <div class="cols even">
+        <div class="panel" id="storyIn"></div>
+        <div class="panel" id="storyOut"></div>
       </div>
+      <div class="panel" id="storySum" style="margin-top:14px"></div>
+    </div>
+    <div id="allView" hidden>
       <div class="panel">
         <div style="display:flex;flex-wrap:wrap;gap:10px">
           <div class="seg" role="group" aria-label="Which models" id="encTabs">
@@ -358,8 +359,8 @@ td.n { font-family: var(--mono); font-variant-numeric: tabular-nums; text-align:
           </div>
         </div>
         <div style="display:flex;flex-wrap:wrap;gap:18px;font-size:16px">
-          <span><span class="dotkey" style="background:var(--artifact)"></span> Artifact <b>inside</b> the ROI (Trap A)</span>
-          <span><span class="dotkey" style="background:var(--roi)"></span> Artifact <b>outside</b> the ROI (Trap B)</span>
+          <span><span class="dotkey" style="background:var(--artifact)"></span> How much masking helped with the artifact <b>on</b> the lesion</span>
+          <span><span class="dotkey" style="background:var(--roi)"></span> … with the artifact <b>away</b> from it</span>
         </div>
         <div class="chart" id="realChart"></div>
       </div>
@@ -969,6 +970,41 @@ td.n { font-family: var(--mono); font-variant-numeric: tabular-nums; text-align:
   }
   drawMod();
 
+  /* ---------------- step 4: one dataset at a time ---------------- */
+  // Reversed-test AUROC, DINOv2, mean of 5 seeds (results/rerun_2026-09-28/*/metrics_per_seed.csv)
+  const STORY = {
+    "Skin, hair/ruler": { art: "hair or ruler", roi: "lesion", A: [0.510, 0.460], B: [0.510, 0.608], gap: 0.147, ci: [0.111, 0.185] },
+    "Thyroid, calipers": { art: "caliper", roi: "nodule", A: [0.289, 0.398], B: [0.405, 0.752], gap: 0.239, ci: [0.196, 0.280] },
+    "Ovary, calipers": { art: "caliper", roi: "lesion", A: [0.413, 0.545], B: [0.423, 0.725], gap: 0.170, ci: [0.087, 0.252] },
+    "Capsule, debris": { art: "debris", roi: "lesion", A: [0.581, 0.665], B: [0.429, 0.890], gap: 0.377, ci: [0.327, 0.426] },
+  };
+  let storySel = "Thyroid, calipers", showAll = false;
+  const storyTabs = $("storyTabs"), allToggle = $("allToggle");
+  Object.keys(STORY).forEach(k => { const b = document.createElement("button"); b.type = "button"; b.textContent = k; b.dataset.k = k; storyTabs.appendChild(b); });
+  storyTabs.addEventListener("click", e => { const b = e.target.closest("button"); if (b) { storySel = b.dataset.k; drawStory(); } });
+  allToggle.addEventListener("click", () => { showAll = !showAll; drawStory(); });
+  function pair(title, cls, [std, msk]) {
+    const W = 460, x = lin(0, 1, 120, W - 60);
+    const bar = (y, v, col, lab) => `<text x="110" y="${y + 24}" text-anchor="end" class="ink">${lab}</text><rect x="120" y="${y}" width="${x(v) - 120}" height="36" rx="4" style="fill:var(${col})"/><text x="${x(v) + 8}" y="${y + 24}" class="ink b">${v.toFixed(2)}</text>`;
+    let g = `<line x1="${x(0.5)}" x2="${x(0.5)}" y1="0" y2="104" style="stroke:var(--ink);stroke-dasharray:4 4;opacity:0.6"/><text x="${x(0.5)}" y="122" text-anchor="middle">0.5 = guessing</text>`;
+    g += bar(6, std, "--std", "Normal model") + bar(56, msk, "--roi", "Masked model");
+    const d = msk - std;
+    return `<h3 class="${cls}">${title}</h3>` + svg(W, 128, g, `${title}: normal ${std.toFixed(2)}, masked ${msk.toFixed(2)}`) +
+      `<p>Masking changed the score by <b class="num ${d >= 0 ? "pos" : "neg"}" style="font-size:22px">${f2(d)}</b>${d < 0 ? " (it made things worse)" : ""}</p>`;
+  }
+  function drawStory() {
+    [...storyTabs.children].forEach(b => b.setAttribute("aria-pressed", b.dataset.k === storySel ? "true" : "false"));
+    allToggle.setAttribute("aria-pressed", showAll ? "true" : "false");
+    allToggle.textContent = showAll ? "Back to one dataset" : "Show all datasets and models";
+    storyTabs.hidden = showAll; $("storyView").hidden = showAll; $("allView").hidden = !showAll;
+    if (showAll) { drawReal(); return; }
+    const c = STORY[storySel], dA = c.A[1] - c.A[0], dB = c.B[1] - c.B[0];
+    $("storyIn").innerHTML = pair(`${c.art[0].toUpperCase() + c.art.slice(1)} ON the ${c.roi} (inside the ROI)`, "neg", c.A);
+    $("storyOut").innerHTML = pair(`${c.art[0].toUpperCase() + c.art.slice(1)} AWAY from the ${c.roi} (outside the ROI)`, "pos", c.B);
+    $("storySum").innerHTML = `<p style="font-size:20px">Masking helped <b class="pos">${f2(dB)}</b> with the ${c.art} away from the ${c.roi}, but only <b class="neg">${f2(dA)}</b> with it on the ${c.roi}.<br>
+      Difference: ${f2(dB)} − (${f2(dA)}) = <b class="num">${f2(c.gap)}</b> &nbsp;<span class="small muted">(95% interval ${f2(c.ci[0])} to ${f2(c.ci[1])}: clearly above 0)</span></p>
+      <p class="small muted">Scores are AUROC on the hard test (0.5 = guessing, 1 = perfect). Many normal models score below 0.5 there: the artifact fools them. The same pattern holds in all four datasets.</p>`;
+  }
   /* ---------------- step 4: dumbbell of masking effect in each trap ---------------- */
   // A, B = masked − standard on the reversed test in Trap A (inside) and Trap B (outside); gap = B − A = crossover
   const REAL = [
@@ -1015,7 +1051,7 @@ td.n { font-family: var(--mono); font-variant-numeric: tabular-nums; text-align:
   }
   ciTabs.addEventListener("click", e => { const b = e.target.closest("button"); if (b) { ciMode = b.dataset.ci; drawReal(); } });
   encTabs.addEventListener("click", e => { const b = e.target.closest("button"); if (b) { encMode = b.dataset.e; drawReal(); } });
-  drawReal();
+  drawStory();
 
   /* ---------------- statistics checks ---------------- */
   expandable($("stats"), [
