@@ -123,6 +123,15 @@ td.n { font-family: var(--mono); font-variant-numeric: tabular-nums; text-align:
 .pipe .box.hot { border-color: var(--roi); box-shadow: 0 0 0 3px var(--roi-soft); }
 .chip { display: inline-block; border: 1px solid var(--line); border-radius: 99px; padding: 3px 10px; font-size: 14px; margin: 2px 6px 2px 0; }
 @media (prefers-reduced-motion: reduce) { .gtile, .pipe .box { transition: none; } }
+.tdot { display: inline-block; width: 10px; height: 10px; border-radius: 50%; margin-right: 6px; vertical-align: 0; }
+.pq { font-family: var(--display); font-size: 21px; line-height: 1.35; }
+.pgrid { display: grid; grid-template-columns: minmax(0, 1fr) minmax(0, 1fr); gap: 14px; }
+.psecs { display: flex; flex-direction: column; gap: 10px; }
+.psec h4 { font-size: 12px; text-transform: uppercase; letter-spacing: 0.06em; color: var(--muted); border-left: 3px solid var(--roi); padding-left: 8px; margin-bottom: 4px; }
+.psec > div { font-size: 16px; line-height: 1.5; }
+.pnums { display: flex; flex-wrap: wrap; gap: 4px; }
+.likeours p { font-size: 15.5px; margin: 4px 0; max-width: none; }
+@media (max-width: 700px) { .pgrid { grid-template-columns: minmax(0, 1fr); } }
 .likeours { background: var(--roi-soft); border-radius: 6px; padding: 4px 8px; }
 .ref { font-size: 14px; color: var(--muted); border-top: 1px solid var(--line); padding-top: 10px; overflow-wrap: anywhere; }
 .ref a { color: var(--roi); }
@@ -695,6 +704,47 @@ td.n { font-family: var(--mono); font-variant-numeric: tabular-nums; text-align:
     jimenez: "Pneumothorax test images split by drain present or absent: a split by artifact, but the strength of the drain–label link is not controlled.",
   };
   PAPERS.forEach(p => { if (TESTS[p.id]) p.tests = TESTS[p.id]; });
+  // Key numbers (from the checked fields above) and what each paper does not cover
+  const NUMS = {
+    brown: ["ρ = −0.668 (age encoding vs unfairness)", "unfairness ≈ halved", "2 tasks: chest X-ray, skin"],
+    yang24: [">3,000 models", "6 chest X-ray datasets", "3 specialties"],
+    jimenez: ["2 benchmarks", "≈3,500 NIH drain labels", "≈1,000 PadChest tube labels"],
+    pahde: ["3 architectures", "2 datasets", "3 correction methods"],
+    lin: ["3,775 ultrasound images", "4 anatomical views", "2 shortcut types"],
+    cassidy: ["ISIC 2016–2020", "duplicates across train/test"],
+    sourget: ["3 mask settings", "2 datasets", "1 clinician reader"],
+    bassi: ["2 chest X-ray diseases", "no extra cost at test time", "compared with a U-Net pipeline"],
+    li: ["2 new benchmarks", "watermark shortcut in nearly all models"],
+    dfr: ["only the last layer retrained", "2 benchmarks"],
+    medfair: ["11 algorithms", "10 datasets", "4 attributes", "3 selection rules"],
+    ktena: ["3 modalities", "+7.7% histopathology (preprint)", "44.6% smaller CXR gap (preprint)"],
+    ci: ["221 papers", "0.5% reported intervals", "interval = 3× the top-2 gap"],
+    kapoor: ["294 papers", "17 fields", "8 leakage types"],
+    stanley: ["bias on 70% vs 30% of classes", "near vs far placement", "3 mitigations"],
+    germani: ["frozen foundation models", "per-site vs pooled evaluation"],
+    roentmod: ["93% judged realistic", "89–99% finding correctly added"],
+  };
+  const NOTCOV = {
+    brown: "Age as the shortcut, not image artifacts; no masking.",
+    yang24: "Demographic shortcuts, not artifacts; no masking or artifact location.",
+    jimenez: "Whether a drain is present, not where it lies; no masking.",
+    pahde: "Needs artifact labels or masks; no ROI masking; location not varied.",
+    lin: "Segmentation, not classification; caliper position not varied.",
+    cassidy: "Data quality of ISIC only; no shortcut or masking experiments.",
+    sourget: "Never moves an artifact or flips its link to the label; assumes the shortcut is outside the ROI.",
+    bassi: "Assumes the bias lies outside the mask; no artifact inside the ROI.",
+    li: "Natural images only; no masking; location not varied.",
+    dfr: "Natural-image benchmarks; needs group labels; no masking.",
+    medfair: "Demographic fairness, not artifacts; no masking.",
+    ktena: "Needs a generative model; demographic fairness, not artifacts.",
+    ci: "Reporting practice in segmentation; no shortcut experiments.",
+    kapoor: "Not imaging-specific; no shortcut experiments.",
+    stanley: "Synthetic bias in brain MRI; distance to the disease region, not to a masking ROI; no masking.",
+    germani: "Dataset identity as the shortcut; mammography only; no masking.",
+    roentmod: "Off-target findings, not artifacts; no masking.",
+  };
+  const THEMECOL = { evidence: "#7a5aa6", artifacts: "var(--artifact)", masking: "var(--roi)", fixes: "#2f7d4f", eval: "#8a6d1c" };
+  PAPERS.forEach(p => { p.nums = NUMS[p.id] || []; p.notcov = NOTCOV[p.id] || ""; });
   let litTheme = "all", litSel = "li", litView = "one";
   const litTabs = $("litTabs"), litView$ = $("litViewTabs");
   Object.entries(THEMES).forEach(([k, v]) => { const b = document.createElement("button"); b.type = "button"; b.dataset.k = k; b.textContent = v; litTabs.appendChild(b); });
@@ -716,17 +766,29 @@ td.n { font-family: var(--mono); font-variant-numeric: tabular-nums; text-align:
       h += `<div class="year"><h3>${y}</h3><div class="yearpapers">`;
       PAPERS.filter(p => p.y === y).forEach(p => {
         const dim = litTheme !== "all" && p.t !== litTheme;
-        h += `<button type="button" class="paper${dim ? " dim" : ""}" data-id="${p.id}" aria-pressed="${p.id === litSel}">${esc(p.short)}<small>${esc(p.who)} · ${esc(p.venue)}${p.like ? ` · <span class="pos">metric like ours</span>` : ""}</small></button>`;
+        h += `<button type="button" class="paper${dim ? " dim" : ""}" data-id="${p.id}" aria-pressed="${p.id === litSel}"><span><span class="tdot" style="background:${THEMECOL[p.t]}"></span>${esc(p.short)}</span><small>${esc(p.who)} · ${esc(p.venue)}${p.like ? ` · <span class="pos">metric like ours</span>` : ""}</small></button>`;
       });
       h += `</div></div>`;
     });
     $("years").innerHTML = h;
     const p = PAPERS.find(q => q.id === litSel), url = paperUrl(p);
-    $("paperCard").innerHTML = `<div style="display:flex;gap:8px;flex-wrap:wrap"><span class="badge">${esc(p.venue)} · ${p.y}</span><span class="badge">${THEMES[p.t]}</span>${p.like ? `<span class="badge pos" style="border-color:var(--roi)">Metric like ours</span>` : ""}</div>
+    const order = PAPERS.filter(q => litTheme === "all" || q.t === litTheme).map((q, i) => [q, i]).sort((u, v) => u[0].y - v[0].y || u[1] - v[1]).map(u => u[0]), pos = order.findIndex(q => q.id === p.id);
+    const sec = (label, body, extra) => `<div class="psec"${extra || ""}><h4>${label}</h4><div>${body}</div></div>`;
+    const ours = [p.us ? `<p><b>Why it matters for us:</b> ${esc(p.us)}</p>` : "", p.like ? `<p><b>Metric like ours:</b> ${esc(p.like)}</p>` : "", p.tests ? `<p><b>Tests like ours:</b> ${esc(p.tests)}</p>` : ""].join("");
+    $("paperCard").innerHTML = `<div style="display:flex;gap:8px;flex-wrap:wrap;align-items:center"><span class="badge">${esc(p.venue)} · ${p.y}</span><span class="badge"><span class="tdot" style="background:${THEMECOL[p.t]}"></span>${THEMES[p.t]}</span>${p.like ? `<span class="badge pos" style="border-color:var(--roi)">Metric like ours</span>` : ""}<span class="small muted" style="margin-left:auto">paper ${pos + 1} of ${order.length}</span></div>
       <h3>${esc(p.title)}</h3>
-      <p class="small"><i>${esc(p.q)}</i></p>
-      <dl class="dl"><dt>Method</dt><dd>${esc(p.method)}</dd><dt>Data</dt><dd>${esc(p.data)}</dd><dt>Models</dt><dd>${esc(p.models)}</dd><dt>Metrics</dt><dd>${esc(p.metrics)}</dd>${p.like ? `<dt class="pos">Like our metric</dt><dd class="likeours">${esc(p.like)}</dd>` : ""}${p.tests ? `<dt class="pos">Tests like ours</dt><dd class="likeours">${esc(p.tests)}</dd>` : ""}<dt>Results</dt><dd>${esc(p.results)}</dd><dt>For us</dt><dd><b>${esc(p.us)}</b></dd></dl>
-      <p class="ref">${esc(p.ref)}${p.doi ? ` DOI: <a href="${url}" target="_blank" rel="noopener">${p.doi}</a>` : ` <a href="${url}" target="_blank" rel="noopener">Paper link</a>`}</p>`;
+      <p class="pq">${esc(p.q)}</p>
+      <div class="pgrid">
+        ${sec("What they did", esc(p.method))}
+        <div class="psecs">${sec("Data", esc(p.data))}${sec("Models", esc(p.models))}${sec("Metrics", esc(p.metrics))}</div>
+      </div>
+      ${p.nums.length ? `<div class="pnums">${p.nums.map(n => `<span class="chip">${esc(n)}</span>`).join("")}</div>` : ""}
+      ${sec("What they found", esc(p.results))}
+      ${p.notcov ? sec("Not covered (where our work fits)", esc(p.notcov)) : ""}
+      <div class="likeours">${ours}</div>
+      <p class="ref">${esc(p.ref)}${p.doi ? ` DOI: <a href="${url}" target="_blank" rel="noopener">${p.doi}</a>` : ` <a href="${url}" target="_blank" rel="noopener">Paper link</a>`}</p>
+      <div style="display:flex;justify-content:space-between;gap:8px"><button type="button" class="btn" data-go="${pos - 1}" ${pos <= 0 ? "disabled" : ""}>← Previous paper</button><button type="button" class="btn" data-go="${pos + 1}" ${pos >= order.length - 1 ? "disabled" : ""}>Next paper →</button></div>`;
+    $("paperCard").querySelectorAll("button[data-go]").forEach(b => b.addEventListener("click", () => { const q = order[+b.dataset.go]; if (q) { litSel = q.id; drawLit(); } }));
   }
   $("years").addEventListener("click", e => { const b = e.target.closest(".paper"); if (b) { litSel = b.dataset.id; drawLit(); } });
   drawLit();
