@@ -197,7 +197,7 @@ td.n { font-family: var(--mono); font-variant-numeric: tabular-nums; text-align:
 
   <section class="slide" id="papers" data-name="Related work">
     <p class="eyebrow">What others found · 2022 to 2026</p>
-    <h2>Seventeen key papers, 2022 to 2026</h2>
+    <h2>Nineteen key papers, 2022 to 2026</h2>
     <div style="display:flex;gap:12px;flex-wrap:wrap;align-items:center">
       <div class="seg" role="group" aria-label="View" id="litViewTabs">
         <button type="button" data-v="one" aria-pressed="true">One paper at a time</button>
@@ -211,17 +211,17 @@ td.n { font-family: var(--mono); font-variant-numeric: tabular-nums; text-align:
     </div>
     <div class="tablewrap panel" id="litAll" hidden></div>
     <p class="small"><b>Where the reversed test comes from:</b> Colored MNIST (Arjovsky et al., 2019, <i>Invariant risk minimization</i>, a preprint) colours digits so that colour predicts the label in 80–90% of training images but in only 10% of test images. Our 90/10 training and 10/90 reversed test apply the same idea to medical artifacts, scored with AUROC, together with correlated and clean tests on the same images.</p>
-    <p class="small muted">Selected from the 69 peer-reviewed studies in our literature review, plus RoentMod (2026), found after it. Each was checked against its publisher’s page. Venues: Nature family journals, CVPR, ICLR, MICCAI, Medical Image Analysis, and others.</p>
+    <p class="small muted">Selected from the 69 peer-reviewed studies in our literature review, plus RoentMod, NuRD and Corbetta et al., added after a full-text check of every card (November 2026). Each was checked against its publisher’s page. Venues: Nature family journals, CVPR, ICLR, MICCAI, Medical Image Analysis, and others.</p>
   </section>
 
   <section class="slide" id="gap" data-name="The gap">
-    <p class="eyebrow">What nobody tested</p>
-    <h2>Masking studies assume the shortcut is in the background</h2>
+    <p class="eyebrow">What is new in our design</p>
+    <h2>Earlier work did the parts, not the combination</h2>
     <div class="tablewrap">
       <table id="gapTable"></table>
     </div>
-    <p class="statement">Where a bias sits has been studied before: Stanley et al. (JAMIA 2024) placed a synthetic bias near to or far from the disease region in brain MRI and found that the distance matters. They did not study masking. Within our search, no study varies an artifact’s position relative to the ROI used for masking, or does so with real artifacts.</p>
-    <p class="small muted">Li et al. (CVPR 2023) showed in natural images that removing one shortcut can amplify another; we study the analogous effect of ROI masking in medical images.</p>
+    <p class="statement">Reversed tests and moving a cue have been done before. What we did not find is the full combination: the same artifact placed inside versus outside the ROI, crossed with ROI masking, and each condition tested on correlated, reversed and clean tests.</p>
+    <p class="small muted">Closest precedents: Bassi et al. (matched, reversed and clean tests; the mark is always outside the lungs), Puli et al. (90/10 → 10/90 on chest X-rays), Bissoto et al. (reversed skin artifacts, with masking; workshop), Corbetta et al. (inverted artifacts, MICCAI 2026), Stanley et al. and Boland et al. (bias near vs far, or fixed vs random position, not relative to a masking ROI). Li et al. (CVPR 2023) showed in natural images that removing one shortcut can amplify another.</p>
   </section>
 
   <section class="slide" id="data" data-name="Datasets">
@@ -744,6 +744,147 @@ td.n { font-family: var(--mono); font-variant-numeric: tabular-nums; text-align:
     roentmod: "Off-target findings, not artifacts; no masking.",
   };
   const THEMECOL = { evidence: "#7a5aa6", artifacts: "var(--artifact)", masking: "var(--roi)", fixes: "#2f7d4f", eval: "#8a6d1c" };
+  // ---- Corrections from the full-text audit (13 Nov 2026): every field below was checked in the paper itself ----
+  const FIX = {
+    brown: { models: "BiT ResNet-101×3 with a shared trunk, a disease head and an age head; a frozen linear probe measures how much age the features hold.",
+      data: "NIH ChestX-ray14 (65,394 training images; effusion, atelectasis, “abnormal”), with biased and balanced versions; a dermatology task (12,027 training cases, 1,925 test patients).",
+      metrics: "Disease AUROC; age encoding = mean absolute error of the age probe (lower error = more age in the features); separation gap = how strongly predictions change with age within positive and within negative cases; Spearman correlation between the two.",
+      results: "On the biased effusion data, age-probe error and separation gap correlated strongly (Spearman ρ = −0.668, i.e. more age encoded → more unfair), versus −0.224 on the original and +0.116 on the balanced data. Negative gradient scaling roughly halved the separation gap in the illustrated comparison." },
+    yang24: { method: "Trained six algorithms (ERM, ReSample, GroupDRO, DANN, CDANN, moving average) across tasks, measured how well frozen features predict demographics, and compared disease performance and group gaps inside and outside the training hospital. The MIMIC-CXR grid alone has 3,456 models.",
+      data: "MIMIC-CXR (357,167), CheXpert (222,792), NIH (112,120), SIIM (11,582), PadChest (144,478), VinDr (6,354), ISIC (32,259), ODIR (6,800). Main training on MIMIC-CXR; the other chest sets serve as external tests.",
+      models: "DenseNet-121 classifiers; logistic probes on frozen features for demographics.",
+      metrics: "Disease AUROC; underdiagnosis = false-positive rate for “No Finding” and false-negative rate for specific findings; fairness gap = the difference between demographic groups; calibration error.",
+      results: "Demographic encoding and fairness gap were correlated (R = 0.82 for age / No Finding, R = 0.71 for race / effusion). Example: a CheXpert-trained model had a sex gap of −0.1 points at home but 3.2 points on MIMIC-CXR. Whether fairness transfers varied with task, group and dataset." },
+    jimenez: { method: "Trained pneumothorax classifiers on growing CheXpert subsets and tested them on CheXpert and NIH with controlled proportions of visible chest drains.",
+      data: "Trained on CheXpert (4,000 to 24,000 images, resampled 3 times); tested on CheXpert and NIH-CXR14. The authors annotated 300 CheXpert pneumothorax images with drains for the tests.",
+      models: "DenseNet-121 with class-activation-map pooling.",
+      metrics: "Pneumothorax AUROC, mean ± SD over runs; t-SNE of the features.",
+      results: "With 24,000 training images, CheXpert AUROC was 84.7% on test sets where the positives have drains versus 76.7% where they have none; on NIH 81.1% versus 65.5%. The model scores well partly because it detects the drain.",
+      us: "Shows the chest-drain shortcut we study. Our drain labels (NEATX) come from a separate paper by the same group (Cheplygina et al., MIUA 2025: 3,543 NIH drain annotations; 1,011 PadChest images with four tube types)." },
+    pahde: { data: "ISIC 2019 (25,331 images, 8 classes; band-aids, rulers, skin markers, plus inserted text) and Pediatric Bone Age (12,611 images in 5 age groups; a natural “L” marker plus a synthetic artifact).",
+      models: "VGG-16, ResNet-18, EfficientNet-B0 (CDEP not run on EfficientNet-B0).",
+      metrics: "Accuracy and F1; share of explanation relevance that falls on the artifact.",
+      results: "On the ISIC test with synthetic text added to every image, F1 rose from 7.7 to 39.2 (VGG-16, RRR) and from 39.0 to 70.4 (ResNet-18). Ruler relevance fell from 24.2% to 8.5% over iterations. On Bone Age, VGG-16 F1 rose from 16.2 to 55.1 (a-ClArC)." },
+    lin: { data: "3,775 third-trimester fetal ultrasound stills (13 structures, head, abdomen, femur and cervix views; 110 videos); ISIC 2017 skin lesions (2,000 train / 600 test).",
+      models: "DTU-Net (ultrasound), U-Net (skin).",
+      metrics: "Dice against the ground truth (still images); “video Dice” = agreement between frames of a video (temporal consistency).",
+      results: "Removing calipers and text lowered still-image Dice: head 76.97 → 70.85%, abdomen 82.06 → 78.85%, femur 93.82 → 91.84%, cervix 76.29 → 71.81%. Their mitigation made video predictions more consistent (head 89.07 → 98.39%, cervix 82.42 → 97.00%)." },
+    cassidy: { models: "19 standard CNNs (DenseNet, EfficientNet, Inception, ResNet, VGG, Xception families).",
+      data: "ISIC releases 2016–2020 (e.g. 2019: 25,331 train / 8,238 test; 2020: 33,126 / 10,982). After de-duplication: 57,062 training images.",
+      metrics: "Counts of exact and down-sampled duplicates; AUROC on the ISIC 2020 benchmark.",
+      results: "Pooling all releases gives 13,976 exact duplicates and 2,263 down-sampled matches; 14,310 training files were removed. Within one release, train/test overlap was small (3 in 2016, 2 in 2017, none later): the risk is mainly when releases are combined. Best ISIC 2020 AUROC: 0.80 (VGG-19)." },
+    sourget: { method: "Crossed five training inputs with five test inputs: full image, exact ROI only, exact ROI removed, ROI box only, ROI box removed. Studied predictions, SHAP maps and embeddings, and had a radiology resident read masked images.",
+      data: "PadChest (93,203 frontal chest X-rays) with CheXmask lung masks; Chákṣu (1,345 fundus images) with optic-disc masks; external tests: NIH (22,004) and AIROGS (18,000).",
+      models: "DenseNet-121.",
+      metrics: "AUROC per finding; SHAP maps; t-SNE and cosine similarity of embeddings; the resident’s reading.",
+      results: "A model trained on full chest X-rays scored AUROC 0.95 for effusion on full images, 0.86 with the lungs removed and 0.47 with only the lungs: much of the signal lies outside the ROI. For glaucoma the pattern was weaker (0.68 / 0.59 / 0.66). The resident found 2 of 35 findings in ROI-removed images.",
+      ref: "Sourget T, Hestbek-Møller M, Jiménez-Sánchez A, Xu JJ, Cheplygina V. Journal of Imaging Informatics in Medicine 39(1):767–784 (2026; online May 2025)." },
+    bassi: { method: "During training, penalise explanation relevance (LRP) outside the lung mask; at test time ISNet sees the whole image. Compared with 8 alternatives, including a U-Net that segments the lungs before a classifier.",
+      data: "COVID-19 chest X-rays (4,644 per class for development; 3,126 external), tuberculosis (6,728 + 6,728 for development; 753 external), Stanford Dogs, CelebA-HQ; plus synthetic background marks.",
+      models: "DenseNet-121 (chest X-rays, CelebA-HQ), VGG-19 (Stanford Dogs); U-Net + DenseNet-121 pipeline as a comparison.",
+      metrics: "Macro-F1 and AUROC with 95% confidence intervals.",
+      results: "External tuberculosis macro-F1: ISNet 0.738, U-Net pipeline 0.576, plain DenseNet 0.566. With synthetic marks, ISNet scored 0.775 on matched, clean and reversed tests alike; the plain DenseNet fell from 0.775 (matched) to 0.434 (clean) and 0.195 (reversed); the U-Net pipeline stayed at about 0.62 on all three." },
+    li: { data: "UrbanCars (8,000 train, 500 validation, 500 test images; two controlled cues: background and co-occurring object) and ImageNet-W (the 50,000 ImageNet validation images with a watermark).",
+      models: "ResNet-50 (controlled experiments); ViT, ConvNeXt, RegNet and others on ImageNet.",
+      results: "Standard training: accuracy drops of −15.3 (background), −11.2 (co-object) and −69.2 points (both). Last Layer Ensemble: −2.1, −2.7, −5.9. EIIL cut the background gap to −4.2 but widened the co-object gap to −24.7: fixing one shortcut made another worse." },
+    dfr: { data: "Waterbirds (4,795 train) and CelebA (162,770 train), plus other benchmarks; ImageNet models for background and texture reliance.",
+      models: "ImageNet-pretrained ResNet-50 (Waterbirds, CelebA).",
+      results: "Worst-group accuracy: Waterbirds 92.9% (Group DRO 91.4%, standard training 74.9%); CelebA 88.3% (Group DRO 88.9%, standard 46.9%)." },
+    medfair: { data: "CheXpert (222,793), MIMIC-CXR (370,955), PAPILA (420), HAM10000 (9,948), Fitzpatrick17k (16,012), OL3I (8,139), COVID-CT-MD (308), OCT (384), ADNI 1.5T (550), ADNI 3T (110). Attributes: age, sex, race, skin type.",
+      models: "2D and 3D ResNet-18.",
+      results: "Across the benchmark, no algorithm significantly improved fairness over standard training (ERM); single wins exist, e.g. HAM10000 / sex: worst-group AUROC 83.12 (ERM) versus 91.14 (SWAD)." },
+    ktena: { models: "Conditional diffusion models (U-Net denoisers); classifiers ResNet-152 (histopathology), BiT-ResNet-152 (chest X-ray), BiT-ResNet (dermatology).",
+      data: "CAMELYON17 (455,954 labelled + about 1.8 million unlabelled patches); CheXpert (201,055 train) with ChestX-ray14 (17,723) as external test; dermatology from the US (16,530 cases), Australia and Colombia.",
+      metrics: "Histopathology accuracy; chest X-ray mean ROC-AUC; dermatology high-risk sensitivity; fairness gap = difference between subgroups.",
+      results: "Histopathology: +48.5% (relative) over no augmentation and +3.2% over colour augmentation. Chest X-rays: +5.2% relative out-of-distribution ROC-AUC and a 44.6% relative reduction of the out-of-distribution sex gap." },
+    ci: { results: "54.8% of papers reported no variability and only 1 of 221 (0.5%) reported confidence intervals. In 77 comparisons that could be checked, the median interval width (0.03 Dice) was three times the median gap between the top two methods (0.01), and in 64.9% the second method’s mean lay inside the winner’s interval.",
+      ref: "Christodoulou E, Reinke A, Houhou R, et al. MICCAI 2024, LNCS 15010, 124–132." },
+    kapoor: { data: "22 earlier studies that together found leakage in at least 294 papers across 17 fields; civil-war prediction: 124 papers screened, 12 examined, 4 re-analysed.",
+      results: "Leakage affected at least 294 papers in 17 fields. In the four civil-war papers that claimed an advantage over logistic regression, the corrected analyses showed no real advantage (one kept just 0.01 AUC)." },
+    stanley: { data: "Synthetic T1 brain MRI, 2,002 per scenario (1,000 disease, 1,002 non-disease); split 50/25/25. Disease effect in the left insula; bias near it (left putamen) or far (right postcentral gyrus), both outside the disease region.",
+      models: "3D CNN (five blocks).",
+      metrics: "Accuracy; ΔTPR and ΔFPR between the bias and no-bias groups, relative to the no-bias reference; SmoothGrad saliency per region.",
+      results: "Relative ΔTPR / ΔFPR were 22.1 / 20.3 points with the near bias and 17.4 / 11.9 with the far bias: location changed the size of the problem. Reweighing brought the gaps closest to zero." },
+    germani: { results: "From the abstract: dataset identity was easy to recover from the embeddings while clinical labels were harder to separate, so pooling sites can hide shortcut-like behaviour. The journal full text could not be checked yet; data, models and metrics here come from the group’s separate MICCAI 2025 paper." },
+    roentmod: { data: "Reader study: 100 normal MIMIC-CXR images, each edited to add 8 findings (800 edits). Stress tests on MIMIC-CXR and NIH ChestX-ray14; training experiment on NIH.",
+      models: "RoentGen diffusion model with image-to-image editing; tested TorchXRayVision DenseNet-121, Ark+ and ElixrB; a multitask DenseNet-121 for training with edits.",
+      results: "745 of 800 edits (93.1%) were rated realistic; six findings were added correctly 89–99% of the time (emphysema and nodules were lower and dropped). Models changed predictions for findings that were not edited (shortcuts). Training with edits raised NIH AUC for edema 0.766 → 0.901, pneumonia 0.678 → 0.746, hernia 0.820 → 0.922; some scores fell slightly." },
+  };
+  PAPERS.forEach(p => { if (FIX[p.id]) Object.assign(p, FIX[p.id]); });
+  // test designs and "like ours" notes, corrected
+  const T2 = {
+    bassi: "Yes, all three: in training, every image carries a class-specific mark in the top-left corner (outside the lungs); tests use the matched marks, reassigned marks (reversed) or no marks (clean). The closest test design to ours, but the mark is never placed inside the ROI.",
+    brown: "Biased and balanced versions of the data (mean age of positives vs negatives 55.8 vs 44.6 years when biased, 50.1 vs 50.0 when balanced): like correlated and clean. No reversed test.",
+    pahde: "Synthetic text on 10% of melanomas (0% of others) in training; the “poisoned” test adds it to every image, so it no longer differs between classes. No reversed test.",
+    jimenez: "Each test: 300 drain-free negatives and 300 positives of which 150, 300 or 0 have drains. A drain-free test and two positively associated tests; no reversal.",
+    li: "Each cue matches the class in 95% of training images; validation and test balance each cue at 50%, and groups with an uncommon cue are scored separately. No whole test set is reversed.",
+    dfr: "Waterbirds: 95% of birds on their typical background in training; the test balances backgrounds (like our clean test). The worst group (e.g. water birds on land) is a reversed subgroup, not a reversed test set.",
+    stanley: "Bias on about 70% of disease and 30% of non-disease images, the same in training and test. No reversed test.",
+  };
+  const L2 = {
+    bassi: "Matched, reversed and clean tests with a segment-then-classify comparison: the closest precedent for our test design. What it lacks: the mark is always outside the ROI.",
+    li: "Accuracy drop when one cue is uncommon resembles our reversed subgroup, and “fixing one shortcut worsens another” resembles our crossover.",
+    dfr: "Worst-group accuracy scores the model where the shortcut points the wrong way, close in spirit to our reversed test.",
+  };
+  PAPERS.forEach(p => { if (T2[p.id]) p.tests = T2[p.id]; if (L2[p.id]) p.like = L2[p.id]; });
+  // two papers added after the audit: direct reversed-test precedents in medical images
+  PAPERS.push(
+    { id: "nurd", y: 2022, t: "fixes", short: "NuRD: reversed chest X-ray test", who: "Puli et al.", venue: "ICLR",
+      title: "Out-of-distribution generalization in the presence of nuisance-induced spurious correlations",
+      q: "Can a model stay accurate when a nuisance–label link flips at test time?",
+      method: "Break the dependence between a nuisance (here the hospital source) and the label by reweighting or generation, then learn a representation that does not use the nuisance.",
+      data: "Chest X-rays mixing CheXpert and MIMIC (12,446 train, 400 test, pneumonia vs healthy); Waterbirds; Colored MNIST.",
+      models: "A small CNN for chest X-rays, ResNet-18 for Waterbirds.",
+      metrics: "Accuracy (mean ± standard error).",
+      results: "On the reversed chest X-ray test, standard training scored 37%, reweighting-NuRD 61%. A centre-crop baseline scored 39%.",
+      us: "Uses exactly our 90/10 → 10/90 design in medical images, with the hospital source as the shortcut instead of a visible artifact.",
+      ref: "Puli AM, Zhang LH, Oermann EK, Ranganath R. International Conference on Learning Representations (ICLR 2022).", doi: "", link: "https://openreview.net/forum?id=12RoR2o32T" },
+    { id: "corbetta", y: 2026, t: "artifacts", short: "Inverted artifacts in VLMs", who: "Corbetta et al.", venue: "MICCAI",
+      title: "Beyond clean test sets: spurious correlations in medical vision-language models and the role of concept supervision",
+      q: "Do medical vision–language models rely on acquisition artifacts, and does concept supervision help?",
+      method: "Inject simulated acquisition artifacts at controlled rates (0–100% of eligible images), then test with the artifacts removed (clean) or with their class links cyclically swapped (inverted).",
+      data: "FGADR fundus (1,842 images); EMBED mammography (100 cases, 400 images).",
+      models: "RetCLIP ViT-B/16 and Mammo-CLIP EfficientNet-B2, with five variants from image-only to concept bottleneck.",
+      metrics: "Balanced accuracy, averaged over five splits.",
+      results: "On the inverted fundus test, the baseline fell from 0.63 (no artifact) to 0.53 at 25% artifact prevalence, and most models approached 0.20 at 100%.",
+      us: "Another inverted test in medical images, with a clean test too; artifacts are synthetic overlays and their position relative to the lesion is not varied.",
+      ref: "Corbetta V, Portaluri A, He M, et al. MICCAI 2026, LNCS 16879, 56–66.", doi: "10.1007/978-3-032-38062-3_6" }
+  );
+  Object.assign(NUMS, {
+    brown: ["ρ = −0.668 (biased effusion)", "separation gap ≈ halved", "65,394 training X-rays"],
+    yang24: ["3,456 models (MIMIC grid)", "8 datasets", "R = 0.82 encoding vs gap"],
+    jimenez: ["84.7% vs 76.7% (CheXpert, drains vs none)", "81.1% vs 65.5% (NIH)"],
+    pahde: ["F1 7.7 → 39.2 (VGG-16, RRR)", "ruler relevance 24.2% → 8.5%"],
+    lin: ["3,775 ultrasound stills", "head Dice 76.97 → 70.85%"],
+    cassidy: ["13,976 exact duplicates (pooled)", "14,310 training files removed", "AUROC 0.80 (VGG-19)"],
+    sourget: ["0.95 full / 0.86 no lungs / 0.47 lungs only", "5 × 5 mask settings"],
+    bassi: ["reversed test: 0.195 plain vs 0.775 ISNet", "external TB F1 0.738 vs 0.566"],
+    li: ["both-cue gap −69.2 → −5.9 (LLE)", "EIIL: −4.2 BG but −24.7 CoObj"],
+    dfr: ["Waterbirds 92.9% worst group", "CelebA 88.3%"],
+    medfair: ["11 algorithms", "10 datasets", "no significant gain over ERM"],
+    ktena: ["+48.5% rel. (histopathology)", "+5.2% rel. OOD AUC (CXR)", "−44.6% rel. OOD sex gap"],
+    ci: ["1 of 221 reported intervals", "0.03 vs 0.01 (77 comparisons)"],
+    kapoor: ["≥294 papers", "17 fields", "8 leakage types"],
+    stanley: ["ΔTPR 22.1 near vs 17.4 far", "≈70/30 bias prevalence"],
+    roentmod: ["745/800 realistic (93.1%)", "NIH edema AUC 0.766 → 0.901"],
+    nurd: ["90/10 → 10/90 (chest X-ray)", "37% standard vs 61% NuRD"],
+    corbetta: ["artifact prevalence 0–100%", "inverted + clean tests"],
+  });
+  Object.assign(NOTCOV, {
+    bassi: "The marks are always in the background (outside the lungs); no artifact inside the ROI.",
+    lin: "Segmentation; the skin study moves the lesion relative to the crop border, not an artifact relative to an ROI.",
+    nurd: "The shortcut is the hospital source (global), not a visible artifact; no ROI masking.",
+    corbetta: "Synthetic overlays; their position relative to the lesion is not varied; no ROI masking.",
+    germani: "Full journal text not yet checked; dataset identity as the shortcut; no masking.",
+  });
+  Object.assign(LIKE, { nurd: "Reversed test exactly like ours (90/10 → 10/90).", corbetta: "Inverted and clean tests, like our reversed and clean tests." });
+  Object.assign(LIKE, { pahde: "Adding the artifact to every test image and watching the score resembles our same-image test (adding the ruler)." });
+  const T3 = {
+    nurd: "Training: 90% of pneumonia images from MIMIC and 90% of healthy images from CheXpert; test: the reverse (90% of pneumonia from CheXpert). Also 30% and 50% (independent) test settings.",
+    corbetta: "Artifacts on 0–100% of eligible images in training; clean test without artifacts and an inverted test with the class links cyclically swapped.",
+  };
+  PAPERS.forEach(p => { if (T3[p.id]) p.tests = T3[p.id]; });
+  PAPERS.forEach(p => { if (LIKE[p.id]) p.like = LIKE[p.id]; });
   PAPERS.forEach(p => { p.nums = NUMS[p.id] || []; p.notcov = NOTCOV[p.id] || ""; });
   let litTheme = "all", litSel = "li", litView = "one";
   const litTabs = $("litTabs"), litView$ = $("litViewTabs");
@@ -794,18 +935,29 @@ td.n { font-family: var(--mono); font-variant-numeric: tabular-nums; text-align:
   drawLit();
 
   /* ---------------- gap table ---------------- */
+  // columns: medical | real named artifact | ROI masking | correlated/reversed/clean tests | varies where the cue sits | links that position to masking
   const GAP = [
-    ["Sourget et al. 2025, J. Imaging Inform. Med.", 1, 0, 1, 0, 0],
-    ["Bassi et al. 2024, Nature Communications", 1, 0, 1, 0, 0],
-    ["Stanley et al. 2024, JAMIA", 1, 0, 0, 1, 0],
-    ["Lin, Weng et al. 2024, MICCAI", 1, 1, 0, 0, 0],
-    ["Jiménez-Sánchez et al. 2023, ISBI", 1, 1, 0, 0, 0],
-    ["Li et al. 2023, CVPR", 0, 1, 0, 0, 0],
-    ["This thesis", 1, 1, 1, 1, 1],
+    ["Bassi et al. 2024, Nature Communications", 1, 0, 1, 1, 0, 0],
+    ["Bissoto et al. 2020, CVPR workshop", 1, 1, 1, 1, 0, 0],
+    ["Puli et al. 2022 (NuRD), ICLR", 1, 0, 0, 1, 0, 0],
+    ["Corbetta et al. 2026, MICCAI", 1, 0, 0, 1, 0, 0],
+    ["Sourget et al. 2025, J. Imaging Inform. Med.", 1, 0, 1, 0, 0, 0],
+    ["Stanley et al. 2024, JAMIA", 1, 0, 0, 0, 1, 0],
+    ["Boland et al. 2024, MIDL", 1, 0, 0, 0, 1, 0],
+    ["Li et al. 2023, CVPR", 0, 0, 0, 0, 0, 0],
+    ["This thesis", 1, 1, 1, 1, 1, 1],
   ];
-  const GAPNOTE = { "Stanley et al. 2024, JAMIA": [null, "synthetic bias", null, "near or far from the disease region", null] };
+  const GAPNOTE = {
+    "Bassi et al. 2024, Nature Communications": [null, "synthetic marks", "relevance penalty + segment-then-classify", "all three", "mark always outside the lungs", null],
+    "Bissoto et al. 2020, CVPR workshop": [null, "7 real artifacts", "outside-lesion pixels normalised", "reversed + correlated", "observed, not controlled", null],
+    "Puli et al. 2022 (NuRD), ICLR": [null, "hospital source", "centre-crop baseline only", "90/10 → 10/90", null, null],
+    "Corbetta et al. 2026, MICCAI": [null, "synthetic overlays", null, "inverted + clean", null, null],
+    "Stanley et al. 2024, JAMIA": [null, "synthetic bias", null, "correlated only", "near vs far, both outside the disease region", null],
+    "Boland et al. 2024, MIDL": [null, "synthetic square", null, "balanced test", "fixed vs random position", null],
+    "Li et al. 2023, CVPR": ["natural images", "2 controlled cues", null, "uncommon-cue groups", null, null],
+  };
   const yn = v => v ? `<span class="yes">Yes</span>` : `<span class="no">No</span>`;
-  $("gapTable").innerHTML = `<tr><th>Study</th><th>Medical images</th><th>A named artifact (ruler, caliper, drain…)</th><th>Keeps only the ROI</th><th>Varies where the bias sits</th><th>Links that position to masking</th></tr>` +
+  $("gapTable").innerHTML = `<tr><th>Study</th><th>Medical images</th><th>A real named artifact</th><th>ROI masking</th><th>Correlated / reversed / clean tests</th><th>Varies where the cue sits</th><th>Links that position to masking</th></tr>` +
     GAP.map(r => `<tr${r[0] === "This thesis" ? ' class="cell-pos"' : ""}><td><b>${r[0]}</b></td>${r.slice(1).map((v, j) => { const n = (GAPNOTE[r[0]] || [])[j]; return `<td>${yn(v)}${n ? `<br><span class="small muted">${n}</span>` : ""}</td>`; }).join("")}</tr>`).join("");
 
   /* ---------------- datasets ---------------- */
