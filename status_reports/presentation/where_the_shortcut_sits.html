@@ -254,6 +254,30 @@ td.n { font-family: var(--mono); font-variant-numeric: tabular-nums; text-align:
     </div>
   </section>
 
+  <section class="slide" id="metric" data-name="Why AUROC?">
+    <p class="eyebrow">Why AUROC?</p>
+    <h2>We ask “does the model rank sick above healthy?”, and AUROC measures exactly that</h2>
+    <p class="lead">AUROC = pick one sick and one healthy image at random: how often does the model give the sick one the higher score? 1.0 = always, 0.5 = coin flip, below 0.5 = it gets the order <i>backwards</i>.</p>
+    <div class="cols">
+      <div class="panel">
+        <div class="seg" role="group" aria-label="Which model" id="aucTabs">
+          <button type="button" data-m="disease" aria-pressed="true">Model that uses the disease</button>
+          <button type="button" data-m="artifact" aria-pressed="false">Model that uses the artifact</button>
+        </div>
+        <div class="chart" id="aucChart"></div>
+        <div class="slider">
+          <label for="aucThr" class="small muted">Move the threshold (the cut-off a doctor would use)</label>
+          <input type="range" id="aucThr" min="5" max="95" step="1" value="50">
+        </div>
+        <p id="aucText"></p>
+        <p class="small muted">Toy example with 10 images on the <b>reversed test</b>: the artifact is now mostly on <i>healthy</i> images. A ring marks an image with the artifact.</p>
+      </div>
+      <div>
+        <div class="cards" id="aucCards" style="align-items:start"></div>
+      </div>
+    </div>
+  </section>
+
   <section class="slide" id="leakage" data-name="No data leakage">
     <p class="eyebrow">How we prevented data leakage</p>
     <h2>The same lesion or patient never sits in both training and test</h2>
@@ -1149,6 +1173,53 @@ td.n { font-family: var(--mono); font-variant-numeric: tabular-nums; text-align:
     });
   }
   expandable($("checks"), CHECKS);
+
+  /* ---------------- why AUROC ---------------- */
+  // toy reversed test: 5 sick, 5 healthy; art = carries the artifact (now mostly on healthy images)
+  const AUC_TOY = {
+    disease: { sick: [[0.55, 0], [0.62, 0], [0.70, 1], [0.78, 0], [0.88, 0]], healthy: [[0.15, 1], [0.25, 1], [0.38, 0], [0.50, 1], [0.60, 1]] },
+    artifact: { sick: [[0.12, 0], [0.20, 0], [0.30, 0], [0.45, 0], [0.72, 1]], healthy: [[0.35, 0], [0.55, 1], [0.66, 1], [0.80, 1], [0.90, 1]] },
+  };
+  let aucMode = "disease";
+  function aucOf(d) { let k = 0; d.sick.forEach(([a]) => d.healthy.forEach(([b]) => { k += a > b ? 1 : a === b ? 0.5 : 0; })); return k / (d.sick.length * d.healthy.length); }
+  function drawAuc() {
+    const d = AUC_TOY[aucMode], t = +$("aucThr").value / 100;
+    [...$("aucTabs").children].forEach(b => b.setAttribute("aria-pressed", b.dataset.m === aucMode ? "true" : "false"));
+    const W = 560, H = 190, L = 92, R = 530, x = v => L + v * (R - L);
+    let g = `<line x1="${L}" x2="${R}" y1="60" y2="60" stroke="var(--line)"/><line x1="${L}" x2="${R}" y1="120" y2="120" stroke="var(--line)"/>`;
+    g += `<text x="${L - 12}" y="65" text-anchor="end" class="ink b">Sick</text><text x="${L - 12}" y="125" text-anchor="end" class="ink b">Healthy</text>`;
+    [["sick", 60, "var(--roi)"], ["healthy", 120, "var(--std)"]].forEach(([k, y, c]) => d[k].forEach(([v, a]) => {
+      g += `<circle cx="${x(v)}" cy="${y}" r="9" fill="${c}"/>`;
+      if (a) g += `<circle cx="${x(v)}" cy="${y}" r="14" fill="none" stroke="var(--artifact)" stroke-width="3"/>`;
+    }));
+    g += `<line x1="${x(t)}" x2="${x(t)}" y1="30" y2="148" stroke="var(--ink)" stroke-width="2" stroke-dasharray="5 4"/>`;
+    g += `<text x="${x(t)}" y="22" text-anchor="middle" class="ink small">threshold ${t.toFixed(2)}</text>`;
+    g += `<text x="${L}" y="${H - 10}" class="ink small">score 0</text><text x="${R}" y="${H - 10}" text-anchor="end" class="ink small">score 1 (looks sick) →</text>`;
+    $("aucChart").innerHTML = svg(W, H, g, "Toy model scores for five sick and five healthy images with a movable threshold");
+    const auc = aucOf(d), sens = d.sick.filter(([v]) => v >= t).length / 5, spec = d.healthy.filter(([v]) => v < t).length / 5;
+    const verdict = auc >= 0.5 ? `<span class="pos"><b>AUROC ${auc.toFixed(2)}</b></span>: sick images are ranked above healthy ones in ${Math.round(auc * 25)} of 25 pairs.`
+      : `<span class="neg"><b>AUROC ${auc.toFixed(2)}</b></span>: below a coin flip. The model follows the artifact, and on the reversed test the artifact points the wrong way, so the ranking flips. This is how the reversed test exposes a shortcut.`;
+    $("aucText").innerHTML = `${verdict}<br><span class="small">At this threshold: sensitivity <b>${Math.round(sens * 100)}%</b>, specificity <b>${Math.round(spec * 100)}%</b>. Move the slider: these change, <b>AUROC does not</b>.</span>`;
+  }
+  $("aucTabs").addEventListener("click", e => { const b = e.target.closest("button"); if (b) { aucMode = b.dataset.m; drawAuc(); } });
+  $("aucThr").addEventListener("input", drawAuc);
+  drawAuc();
+  expandable($("aucCards"), [
+    { h: "1. No threshold to choose", r: "The result can’t depend on a cut-off we picked",
+      m: "Accuracy, F1 and sensitivity all need a cut-off, and a cut-off can hide or exaggerate a shortcut. AUROC looks at the ranking of all images, so the main result is the same whatever threshold a hospital would choose (try the slider)." },
+    { h: "2. Not changed by class balance", r: "Fair across tests with different mixes",
+      m: "Our correlated, reversed and clean tests, and our four datasets, have different shares of sick images. Accuracy and AUPRC move just because that share moves. AUROC does not, so differences between tests come from the model, not the mix." },
+    { h: "3. Built for the reversed test", r: "Shortcut use shows up as a drop toward or below 0.5",
+      m: "On the reversed test the artifact points the wrong way. A model that ranks by the artifact falls toward or below 0.5. Our main numbers (location effect, crossover) are differences of AUROC between the masked and the standard model, so they all sit on one scale." },
+    { h: "4. Comparable with other papers", r: "Most papers we compare with use it",
+      m: "Jiménez-Sánchez (drains), Sourget (Mask of Truth), Puli (NuRD), Yang and MEDFAIR all report AUROC, and so does the published thyroid baseline (0.773). Corbetta uses balanced accuracy, so we can convert if needed." },
+    { h: "5. Works with our error bars", r: "The bootstraps resample AUROC directly",
+      m: "The seed × image bootstrap and the grouped bootstrap recompute AUROC on each resample. A thresholded metric would add one more source of noise: where the threshold lands in each resample." },
+    { h: "What AUROC misses, and what we add", r: "So we also report sensitivity at fixed thresholds",
+      m: "AUROC says nothing about the one threshold a doctor actually uses, and as an average it can hide a failing subgroup. So we also report sensitivity at thresholds fixed on validation data, and test the shortcut-conflicting cases on their own. Example: in thyroid, masking cut sensitivity for the 78 cancers with a caliper inside the ROI from 0.744 to 0.223 (registered test, significant after Holm)." },
+    { h: "Why not balanced accuracy or AUPRC?", r: "Both have a catch for our design",
+      m: "Balanced accuracy needs a threshold; we wanted the headline result free of that choice, but it is easy to add as a second metric. AUPRC changes with how common the disease is, so it can’t be compared across tests with different mixes." },
+  ]);
 
   /* ---------------- step 3 ---------------- */
   const MOD = [
