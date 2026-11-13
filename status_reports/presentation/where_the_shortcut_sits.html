@@ -47,7 +47,7 @@ body { background: var(--paper); color: var(--ink); font-family: var(--body); fo
 .slides { flex: 1; min-height: 0; overflow-y: auto; padding-block: 8px 24px; }
 .slide[hidden] { display: none; }
 #hashChart svg { min-width: 0; max-width: 460px; }
-#ptChart svg, #transChart svg { min-width: 0; }
+#transChart svg { min-width: 0; }
 .slide { max-width: 1200px; margin-inline: auto; display: flex; flex-direction: column; gap: 18px; min-height: 100%; justify-content: center; }
 .eyebrow { font-family: var(--mono); font-size: 13px; letter-spacing: 0.08em; text-transform: uppercase; color: var(--roi); }
 h1, h2, h3 { font-family: var(--display); font-weight: 600; text-wrap: balance; }
@@ -531,54 +531,6 @@ td.n { font-family: var(--mono); font-variant-numeric: tabular-nums; text-align:
             <li>“Real artifacts cannot be moved, so we cut them out and pasted the same piece inside or outside the ROI of the same images.”</li>
             <li>“The image is identical; only the position changes. Masking still helps outside and fails inside, in all four datasets.”</li>
             <li>“This test was registered before we ran it.”</li>
-          </ol>
-        </div>
-      </div>
-    </div>
-  </section>
-
-  <section class="slide" id="step-6" data-name="Step 6: real patients">
-    <p class="eyebrow">Step 6 · does it matter for real patients? (pre-registered)</p>
-    <h2>On untouched patient data, masking misses cancers where the artifact points the wrong way</h2>
-    <p class="kp-why"><b>The worry:</b> our traps are extreme (artifact on 90% of sick images). So we trained on normal data and tested on the official, patient-disjoint thyroid test set, without changing anything.</p>
-    <div class="cols even">
-      <div>
-        <div class="panel">
-          <h3>Real data already leans one way</h3>
-          <ul class="plain small">
-            <li>Thyroid: <b>37.6%</b> of benign nodules have a caliper inside, but only <b>24.1%</b> of malignant nodules do.</li>
-            <li>Skin: <b>31%</b> of melanomas have hair on the lesion, but only <b>20%</b> of benign lesions do.</li>
-            <li>Capsule: <b>23%</b> of polyp-like lesions have debris on them, but only <b>10%</b> of erosions do.</li>
-          </ul>
-          <p class="small">So a model can learn “caliper inside = probably benign”. That is dangerous for the malignant nodules that <i>do</i> have a caliper.</p>
-        </div>
-        <div class="panel">
-          <h3>Masking looks safe on average, but not on the tricky cases</h3>
-          <ul class="plain small">
-            <li><b>All thyroid patients together:</b> masking changes nothing (AUROC −0.004). Looking only at this, masking seems safe.</li>
-            <li><b>Only the tricky cases:</b> cases where the caliper hints at the wrong answer, i.e. cancers <i>with</i> a caliper inside and benign nodules <i>without</i> one. Here the masked model is clearly worse (AUROC <b class="neg">−0.095</b>).</li>
-            <li><b>Skin, new patients</b> (trained on ISIC 2019, tested on ISIC 2020): the same thing, worse on the tricky cases (AUROC <b class="neg">about −0.03</b>).</li>
-          </ul>
-          <p class="small muted">To be fair: we saw this harm in 3 of our 5 untouched test sets. In one skin hospital masking helped, and in capsule it made no difference.</p>
-        </div>
-      </div>
-      <div>
-        <div class="panel">
-          <h3>The 78 malignant nodules with a caliper inside: how many does the model catch?</h3>
-          <div class="seg" role="group" aria-label="Model" id="ptTabs">
-            <button type="button" data-m="ft" aria-pressed="true">Fine-tuned model (near published)</button>
-            <button type="button" data-m="frozen" aria-pressed="false">Frozen DINOv2</button>
-          </div>
-          <div class="chart" id="ptChart"></div>
-          <p class="small" id="ptText"></p>
-          <p class="small muted">Threshold fixed on validation data, as in a real deployment. Even with the best possible threshold chosen on the test set itself, masking still loses (−0.154 fine-tuned): about 30% of the loss cannot be fixed by any threshold.</p>
-        </div>
-        <div class="say">
-          <h3>What to say</h3>
-          <ol>
-            <li>“On untouched data the overall score does not change, so masking looks safe.”</li>
-            <li>“But for the 78 cancers with a caliper inside the nodule, the masked model catches 17 instead of 58.”</li>
-            <li>“The model is near the published baseline (0.769 vs 0.773), and this test was registered before we had its results.”</li>
           </ol>
         </div>
       </div>
@@ -1457,23 +1409,6 @@ td.n { font-family: var(--mono); font-variant-numeric: tabular-nums; text-align:
     $("transChart").innerHTML = svg(W, H, g, "Location effect when the same real artifact is pasted inside or outside the ROI, with a random-tissue control");
   })();
 
-  /* ---------------- step 6: real patients ---------------- */
-  const PT = { ft: [0.744, 0.223], frozen: [0.549, 0.177] };
-  function drawPt(m) {
-    const [a, b] = PT[m], W = 560, L = 4, R = 556, H = 150, x = v => L + v * (R - L);
-    let g = "";
-    [[`Normal model`, a, "var(--std)", 6], [`Masked model`, b, "var(--artifact)", 80]].forEach(([lab, v, c, y]) => {
-      g += `<text x="${L}" y="${y + 16}" class="ink"><tspan class="b">${lab}:</tspan> catches ${Math.round(v * 78)} of 78 (${Math.round(v * 100)}%)</text>`;
-      g += `<rect x="${L}" y="${y + 26}" width="${R - L}" height="34" rx="4" fill="var(--line)" opacity="0.45"/>`;
-      g += `<rect x="${L}" y="${y + 26}" width="${x(v) - L}" height="34" rx="4" fill="${c}"/>`;
-    });
-    $("ptChart").innerHTML = svg(W, H, g, "Share of the 78 malignant nodules with an in-ROI caliper that the normal and the masked model detect");
-    $("ptText").innerHTML = `Masking drops the share of these cancers that are caught from <b>${a.toFixed(3)}</b> to <b class="neg">${b.toFixed(3)}</b>. ` +
-      (m === "ft" ? "Fine-tuned ConvNeXt-T, test AUROC 0.769 (published baseline 0.773); the 78-nodule test was registered before any of its results." : "Frozen DINOv2 with a linear classifier (this subgroup was chosen after the first results; the threshold test itself was registered).");
-    [...$("ptTabs").children].forEach(btn => btn.setAttribute("aria-pressed", btn.dataset.m === m ? "true" : "false"));
-  }
-  $("ptTabs").addEventListener("click", e => { const btn = e.target.closest("button"); if (btn) drawPt(btn.dataset.m); });
-  drawPt("ft");
   /* ---------------- statistics checks ---------------- */
   expandable($("stats"), [
     { h: "Runs share test images", r: "Crossed bootstrap, about 1.5× wider", m: "Each bootstrap replicate resamples the seeds and gives each test image one weight that it keeps in every seed, model and trap. Our intervals are about 1.5 times wider than the common method’s, and a few results that looked significant with it are not." },
@@ -1567,7 +1502,7 @@ td.n { font-family: var(--mono); font-variant-numeric: tabular-nums; text-align:
     { h: "1. Is it really where the artifact sits?", r: "Or is it the kind of lesion?",
       m: "The worry: rulers on the lesion may appear mostly on big lesions, and rulers off the lesion on small ones. Then the difference could come from lesion size, not from position. First answer (Step 5): the same real artifact pasted inside vs outside the same images, plus matched images, both confirm location. Still open: capsule could not be matched (too few pairs), and no clinician has checked the pasted images look realistic." },
     { h: "2. Does it matter for real patients?", r: "Our trap is artificial",
-      m: "The worry: we made the ruler appear on 90% of melanomas to force a shortcut; real data is not that extreme. First answer (Step 6): on the untouched thyroid test set, masking catches far fewer cancers that carry a caliper. Still open: only one cohort has a strong clinical baseline, the harm appears in 3 of 5 test sets, and an external hospital is still missing." },
+      m: "The worry: we made the ruler appear on 90% of melanomas to force a shortcut; real data is not that extreme. The test: use normal, untouched test images and new patients, and ask a clinical question: of the real cancers, how many does the model still catch?" },
     { h: "3. Can we predict it in advance?", r: "Before running the experiment",
       m: "The worry: today we only know the answer after the experiment. The test: build a simple formula from a few things we can measure (how strongly the artifact points to the label, how much useful information masking removes) and check whether it predicts results it has not seen." },
     { h: "4. Does it hold if we change the details?", r: "Other masking styles, other data",
