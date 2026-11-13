@@ -60,8 +60,8 @@ need different remedies. We find this framing useful: the artifacts in the thesi
 taken on suspicion, so they are part of how the data are generated and cannot be cleaned away as noise.
 
 Several groups study shortcuts under controlled conditions. \citet{stanley2024simba} built synthetic brain images with
-known disease and bias effects, placed the bias either next to the disease region or far from it, and found that this
-distance changed the performance gaps and how well three mitigation strategies worked (reweighing worked best);
+known disease and bias effects, placed the bias either near the disease region or far from it (both outside the
+region itself), and found that this choice changed the performance gaps and how well three mitigation strategies worked (reweighing worked best);
 \citet{sun2023right} added a tag, hyperintensities or an obstruction to chest radiographs and found that explanation
 methods differ widely in whether they reveal the injected signal. Stanley
 et al.\ are therefore the closest precedent for the thesis: they show that where a bias lies matters. They do not study
@@ -86,7 +86,8 @@ as a possible confound and judged that differences in their appearance between s
 ultrasound, although calipers are placed on the nodule border by design.
 In chest radiography, pneumothorax classifiers respond to the chest tube that treats the condition.
 \citet{rueckel2021pneumothorax} reduced this confounding by training with in-image annotations, and
-\citet{jimenez2023shortcuts} labelled drains on a public dataset to expose the shortcut. A drain projects over the lung
+\citet{jimenez2023shortcuts} showed that a CheXpert-trained model loses AUROC on NIH images without drains
+(81.1\% with drains, 65.5\% without); the drain annotations were later released as NEATX \citep{cheplygina2025neatx}. A drain projects over the lung
 field, so a lung mask cannot remove it. For capsule endoscopy we found no study of bubbles or debris as a shortcut, even
 though debris and lesions often occupy the same pixels.
 
@@ -97,7 +98,8 @@ and fundus photographs, models trained on full images performed better on images
 containing only the ROI \citep{sourget2025mask}. Training on segmented dermoscopy images improved balanced accuracy for
 classifiers trained on HAM10000 but not for those trained on ISIC \citep{maron2021confounding}, a mixed result that is
 easy to overlook. ISNet takes a softer route and penalises relevance outside the segmentation mask during training,
-which made chest-radiograph classifiers more robust to background bias \citep{bassi2024isnet}.
+which made chest-radiograph classifiers more robust to background bias \citep{bassi2024isnet}; its evaluation already
+uses matched, reversed and artifact-free tests, with an artificial mark that always lies outside the lungs.
 
 All of these studies assume that the shortcut lies in the background. The clearest result pointing the other way comes
 from natural images: when several shortcuts are present, removing one can make the model rely more on the others
@@ -167,7 +169,12 @@ second-ranked methods \citep{christodoulou2024ci}. Overall metrics also hide fai
 \citep{yang2024limits}, a problem first described as hidden stratification \citep{oakden2020hidden}. These papers shaped
 the evaluation in the thesis: splits grouped by patient or lesion, a bootstrap that resamples training seeds and test
 images together, registration before results, and evaluation on the cases that contradict the shortcut as well as on
-the whole test set.
+the whole test set. The correlated, reversed and clean tests are borrowed as well. Colored MNIST flips a
+colour cue between training and test \citep{arjovsky2019irm}; \citet{puli2022nurd} train chest-radiograph models at
+90/10 agreement between hospital source and label and test at 10/90; \citet{bassi2024isnet} and
+\citet{corbetta2026beyond} evaluate on reversed and clean sets; and a 2020 workshop study reversed seven dermoscopy
+artifact associations and evaluated lesion-exterior masking. What the thesis adds is not the test but the variable it
+is crossed with: the artifact's position relative to the ROI that masking keeps.
 
 \section{Where the thesis stands}
 The literature establishes four things firmly. Medical classifiers take shortcuts, including ones produced by clinical
@@ -179,14 +186,17 @@ training across settings. Table~\ref{tab:gaps} lists what remained open and how 
 \caption{Open questions in the reviewed work and the corresponding contribution of the thesis.}\label{tab:gaps}
 \begin{tabular}{P{4.6cm}P{4.6cm}P{5.6cm}}\toprule
 Open question & Closest prior work & Thesis \\\midrule
-Does the artifact's location relative to the ROI decide whether masking works? & \citet{sourget2025mask,maron2021confounding,bassi2024isnet}: masking studies that assume a background shortcut; \citet{stanley2024simba}: a synthetic bias's distance from the disease region matters (no masking) & Location varied directly: controlled sweeps, traps built from real artifacts, and a transplant of the same artifact across the ROI boundary \\
+Does the artifact's location relative to the ROI decide whether masking works? & \citet{sourget2025mask,maron2021confounding,bassi2024isnet}: masking studies that assume a background shortcut; \citet{boland2024shortcuts}: fixed vs random shortcut position (no ROI); \citet{stanley2024simba}: a synthetic bias's distance from the disease region matters (no masking) & Location varied directly: controlled sweeps, traps built from real artifacts, and a transplant of the same artifact across the ROI boundary \\
+Is the test design new? & \citet{arjovsky2019irm,puli2022nurd,bassi2024isnet,corbetta2026beyond}: correlated, reversed and clean tests & No; the thesis borrows it and crosses it with the artifact's position relative to the ROI and with masking \\
 Can masking increase reliance on an artifact? & \citet{li2023whacamole}: removing one shortcut amplifies others (natural images) & Reliance on an in-ROI artifact grows after masking, in four cohorts and three modalities \\
 Can the harm be predicted? & \citet{hermann2024foundations,puli2023dontblame}: explanatory theories & A two-parameter account with predictions registered before the results \\
 What should be used instead of masking? & \citet{veitch2021counterfactual,makar2022causally,zong2023medfair} & A registered test against masking; a class-conditional constraint comes closest, none dominates \\
 Calipers and debris as classification shortcuts & \citet{lin2024segshortcut} (segmentation only) & Thyroid and ovarian ultrasound and capsule endoscopy alongside dermoscopy \\\bottomrule
 \end{tabular}\end{table}
 
-Some of this is not new, and the thesis should say so. That a mask cannot remove what it keeps is self-evident; what was
+Some of this is not new, and the thesis should say so. The reversed test is established
+\citep{arjovsky2019irm,puli2022nurd,bassi2024isnet,corbetta2026beyond}. That a mask cannot remove what it keeps is
+self-evident; what was
 missing is evidence that masking makes reliance on the kept artifact grow, how large the effect is on real artifacts,
 and how to predict it. The recommended constraint is a special case of known conditional-invariance methods, and the
 group-robustness methods are used as baselines rather than proposed. The closest conceptual precedent is the

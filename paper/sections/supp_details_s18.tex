@@ -37,9 +37,9 @@ with $r\ge0.5$; Trap~B: $r<0.1$. Leakage groups: blocks of 100 consecutive frame
 
 \paragraph{Chest radiography} NIH ChestX-ray14 \citep{wang2017chestxray8}; lung ROIs from the TorchXRayVision
 PSPNet \citep{cohen2022xrv}. \emph{Controlled cohort:} 1,906 pneumothorax images without a chest drain (NEATX
-annotations) and 5,718 \emph{No Finding} images from other patients; a $100\times12$\,px radio-opaque tube is
+annotations, \citealp{cheplygina2025neatx}) and 5,718 \emph{No Finding} images from other patients; a $100\times12$\,px radio-opaque tube is
 placed at controlled overlap with the lungs (7,610 images in common support). \emph{Real drains} (in-ROI only):
-29,687 images; drains are labelled by NEATX for pneumothorax-positive images and by a drain detector (precision
+29,687 images; drains are labelled by NEATX \citep{cheplygina2025neatx} for pneumothorax-positive images and by a drain detector (precision
 0.95) for negatives; environments are built within view position (AP/PA); five patient-grouped folds.
 
 \subsection*{Further results}

@@ -26,15 +26,17 @@ classification: a review of the 2021--2026 literature}
 \noindent This review collects the peer-reviewed work published from January 2021 to October 2026 that bears on one
 question: when an image artifact that is correlated with the diagnosis lies inside or outside the region of interest
 (ROI), does restricting the classifier to the ROI remove the shortcut, and what should be used instead? We included
-69 studies from journals and conferences of recognised standing (Nature, Lancet and Science families, Medical Image
+70 studies from journals and conferences of recognised standing (Nature, Lancet and Science families, Medical Image
 Analysis, MICCAI, CVPR, ECCV, NeurIPS, ICML, ICLR and others), verified each against its publisher or proceedings page
 and excluded preprints and workshop papers. The literature establishes firmly that medical classifiers exploit
 acquisition signals, devices, markings and demographic correlates; it documents artifacts per modality, mostly in
 dermoscopy and chest radiography; it shows that image backgrounds carry predictive signal and that ROI restriction
 sometimes helps; and it offers group-robustness, invariance, erasure, explanation-guided and generative mitigations,
 none of which is uniformly better than standard training. Every masking and background-removal study we found assumes
-that the shortcut lies outside the ROI. One synthetic-bias study varies the bias's distance from the disease region;
-none varies an artifact's location relative to the ROI used for masking. The clearest report that removing one shortcut can amplify another comes from natural images. The review ends
+that the shortcut lies outside the ROI. Reversed tests, which train on one artifact--label correlation and test on
+its opposite, are established, and synthetic biases have been moved between positions outside the disease region; no
+study places the same artifact inside versus outside the ROI used for masking and evaluates each placement on
+correlated, reversed and clean tests. The clearest report that removing one shortcut can amplify another comes from natural images. The review ends
 with a gap analysis that positions the thesis against the closest prior work and states what is and is not new.
 \end{abstract}
 
@@ -78,8 +80,9 @@ Journal of Cancer, JMIR, Computers in Biology and Medicine, Machine Learning, Pa
 are an aid for the reader, not a formal ranking.
 
 \paragraph{Exclusion} Preprints without a peer-reviewed version, workshop papers and papers in journals without a
-consistent standing in the field were excluded even when relevant. They are listed, uncited, in
-Appendix~\ref{app:excluded} so that the reader can see what was left out and why. Studies of segmentation accuracy
+consistent standing in the field were excluded even when relevant. They are listed in
+Appendix~\ref{app:excluded} so that the reader can see what was left out and why, and are not counted; two of them
+(the source of a test design and the source of annotations the thesis uses) are also cited in the text. Studies of segmentation accuracy
 alone, and fairness studies without a bearing on the mechanism of shortcut use, were excluded. A small number of works
 published before 2021 are cited as background; they are marked with \bg\ and are not counted.
 
@@ -124,15 +127,22 @@ per-site evaluation reveals \citep{germani2026aggregation}.
 
 \subsection{Controlled, synthetic bias}
 Several studies inject a known bias to study its effect. \citet{stanley2024simba} generate synthetic brain images with
-known disease and bias effects, place the bias either next to the disease region or far from it (opposite hemisphere),
-and show that this distance changes the performance gaps and how well three mitigations work (reweighing worked best); a follow-up locates where in a convolutional network the bias is encoded and finds that strong encoding does not
+known disease and bias effects, place the bias either near the disease region (putamen) or far from it (postcentral
+gyrus), both outside the disease region itself (left insula), train and test at a nominal 70/30 bias prevalence, and
+show that this choice changes the performance gaps and how well three mitigations work (reweighing gave the most
+consistent near-zero gaps); a follow-up locates where in a convolutional network the bias is encoded and finds that strong encoding does not
 always mean the model uses it \citep{stanley2025where}. \citet{sun2023right} contaminate chest radiographs with a tag,
 hyperintensities or an obstruction and find that explanation methods differ strongly in whether they reveal the
-spurious signal. \citet{boland2024shortcuts} study shortcuts such as text labels added to images and locate where in the network the
-shortcut is used.
-\takeaway{The traps of the thesis belong to this controlled tradition. \citet{stanley2024simba} are the closest precedent:
-they vary where a synthetic bias lies relative to the disease region (near or far) and find that it matters. They do not
-study ROI masking, and their bias is synthetic. The thesis varies an artifact's position relative to the ROI that
+spurious signal. \citet{boland2024shortcuts} add synthetic shortcuts such as a square, at a fixed or a random position, to
+Waterbirds, CheXpert and ISIC 2017 images, train with a perfect association and test on balanced data, and use
+prediction depth to locate the layers where the shortcut is used. \citet{corbetta2026beyond} inject simulated
+acquisition artifacts into fundus and mammography images at prevalences from 0 to 100\% and evaluate vision-language
+models on clean test sets and on sets in which the artifact--class associations are cyclically inverted; balanced
+accuracy falls towards chance under inversion, and concept supervision helps only partly.
+\takeaway{The traps of the thesis belong to this controlled tradition. \citet{stanley2024simba} are the closest precedent
+for position: they move a synthetic bias between two places, both outside the disease region, and find that it
+matters; \citet{boland2024shortcuts} compare fixed and random positions. Neither moves the bias across an ROI, studies
+ROI masking or uses a real artifact. The thesis varies an artifact's position relative to the ROI that
 masking keeps, and measures how masking's benefit changes with it, with pasted and real artifacts.}
 
 %======================================================================================================================
@@ -164,13 +174,18 @@ position to the nodule ROI.
 
 \subsection{Chest radiography}
 Pneumothorax classifiers detect the chest tube that treats the condition. \citet{rueckel2021pneumothorax} reduced this
-confounding by training with in-image annotations, and \citet{jimenez2023shortcuts} labelled
-drains to expose the shortcut on a public dataset. A meta-analysis of deep pneumothorax detection reports performance
+confounding by training with in-image annotations, and \citet{jimenez2023shortcuts} trained on
+CheXpert and tested on CheXpert and NIH images with and without drains: AUROC on NIH fell from 81.1\% with drains to
+65.5\% without. Non-expert drain and tube annotations for 3,543 NIH images and 1,011 PadChest images were later
+released as NEATX \citep{cheplygina2025neatx}; the thesis uses them. A meta-analysis of deep pneumothorax detection reports performance
 comparable to physicians but a high risk of bias in most studies \citep{sugibayashi2023pneumothorax}. Saliency maps
 localise chest pathology worse than radiologists \citep{saporta2022saliency}, which limits explanation-based audits.
 Diffusion-based editing allows stress tests for acquisition, manifestation and population shift without new data
-\citep{perezgarcia2024radedit}. \citet{bassi2024isnet} penalise relevance outside segmentation masks to make chest
-radiograph classifiers robust to background bias.
+\citep{perezgarcia2024radedit}. \citet{bassi2024isnet} penalise relevance outside segmentation masks during training to make chest
+radiograph classifiers robust to background bias. Their evaluation is the closest to the trap design of the thesis:
+with an artificial mark placed outside the lungs, they test on matched (100\%), cyclically reversed (0\%) and
+artifact-free COVID-19 sets, and compare ISNet with alternatives that include a U-Net that segments the lungs first.
+The mark is always outside the lungs, so masking is expected to remove it.
 
 \emph{Location.} A drain projects over the lung field, so for lung-field masks it is an in-ROI artifact. Lung
 masking therefore cannot remove it: this is the boundary case discussed in the thesis.
@@ -326,10 +341,19 @@ the clinical question \citep{maierhein2024metrics}, and reporting should follow 
 selection can matter more than the mitigation algorithm \citep{zong2023medfair,yang2023change}, and subgroup failures
 are hidden by overall metrics \citep{yang2024limits}, as hidden stratification had shown
 \citep{oakden2020hidden}\bg.
+
+\emph{Reversed tests.} Training on one cue--label correlation and testing on its reversal is an established design.
+Colored MNIST trains at 80--90\% colour--label agreement and tests at 10\% \citep{arjovsky2019irm}. In medical images,
+\citet{puli2022nurd} train chest-radiograph models at 90\% agreement between hospital source and label and test at
+10\% (and at 30\% and 50\%), the same 90/10 schedule as the thesis; \citet{bassi2024isnet} use matched, reversed and
+artifact-free tests; \citet{corbetta2026beyond} invert artifact--class associations cyclically; and a workshop study
+built trap sets that invert seven dermoscopy artifact associations and evaluated lesion-exterior masking
+(Appendix~\ref{app:excluded}). The thesis takes this design from them; it does not claim it.
 \takeaway{These studies motivate the evaluation choices of the thesis: patient- or lesion-grouped splits; a bootstrap
 that resamples training seeds and test images jointly, since a test set shared by several seeds is one sample, not
-several; Holm-corrected families; registration before results; and evaluation on shortcut-conflicting cases as well
-as on the whole unaltered test set.}
+several; Holm-corrected families; registration before results; correlated, reversed and clean tests as in the
+reversed-test literature above; and evaluation on shortcut-conflicting cases as well as on the whole unaltered test
+set.}
 
 %======================================================================================================================
 \section{Gap analysis: where the thesis stands}\label{sec:gap}
@@ -342,6 +366,7 @@ Question & Established in 2021--2026 & Open & Thesis contribution \\\midrule\end
 \bottomrule\endfoot
 Where does the shortcut sit? & Artifacts are documented by presence \citep{winkler2021scalebars,rueckel2021pneumothorax,lin2024segshortcut,wang2024hair}; backgrounds carry signal \citep{maguolo2021critic,sourget2025mask,xiao2021noise}; a synthetic bias's distance from the disease region changes performance gaps \citep{stanley2024simba} & Location relative to the masking ROI as an experimental variable, with real artifacts & Overlap $r$ controlled in sweeps; real traps with in-ROI and out-of-ROI artifacts; transplant of the same real artifact across the ROI boundary of the same images \\
 Does ROI masking fix it? & Sometimes \citep{maron2021confounding,bassi2024isnet}; every study assumes a background shortcut & When and why masking fails & Location law: masking removes out-of-ROI shortcuts and leaves in-ROI ones, in four cohorts and three modalities \\
+Is the test design new? & No. Reversed tests: \citet{arjovsky2019irm,puli2022nurd,bassi2024isnet,corbetta2026beyond}; synthetic bias moved between positions: \citet{stanley2024simba,boland2024shortcuts} & Crossing the artifact's position relative to the ROI with masking, under correlated, reversed and clean tests & The same artifact inside vs outside the ROI, with and without masking, each on three tests; real as well as pasted artifacts \\
 Can a mitigation amplify a shortcut? & Yes, for multiple shortcuts in natural images \citep{li2023whacamole} & Whether masking amplifies an in-ROI artifact in medical images, and by what mechanism & Reliance on the in-ROI artifact grows after masking because competing evidence is removed \\
 Can it be predicted? & Explanatory theories of feature choice \citep{nagarajan2021understanding,puli2023dontblame,hermann2024foundations} & Quantitative, prospectively tested predictions & Two-parameter linear-Gaussian account; predictions registered before the results \\
 Is harm visible clinically? & Overall metrics hide subgroup failures \citep{yang2024limits}; see also \citet{oakden2020hidden}\bg & Effect of masking on shortcut-conflicting cases of unaltered data & Lower AUROC on conflicting cases of patient-disjoint and new-patient thyroid data; sensitivity loss among malignant nodules with calipers \\
@@ -352,14 +377,20 @@ How strong is the evidence? & CIs rarely reported \citep{christodoulou2024ci}; s
 
 \paragraph{What is not new} That a mask cannot remove what it keeps is self-evident; what was not established is that
 masking makes reliance on a kept artifact \emph{grow}, how large this is on real artifacts, that it is caused by
-location, and how to predict it. Group balancing, last-layer retraining, IRM and V-REx are established methods used as
+location, and how to predict it. The correlated, reversed and clean test design is borrowed
+\citep{arjovsky2019irm,puli2022nurd,bassi2024isnet,corbetta2026beyond}, and varying a synthetic bias's position is
+not new \citep{stanley2024simba,boland2024shortcuts}; what is new is crossing the artifact's position relative to the
+ROI with ROI masking under that design, and doing so with real artifacts. Group balancing, last-layer retraining, IRM and V-REx are established methods used as
 baselines. The class-conditional constraint is a special case of known conditional-invariance regularisers
 \citep{veitch2021counterfactual,makar2022causally}, and disease-preserving erasure overlaps with SPLINCE
 \citep{holstege2025splince}; the thesis presents both as adaptations, not as new methods.
 
 \paragraph{Threats to this positioning} (i) Two workshop papers study masking directly: early versus late background
 masking for fine-grained recognition, and artifact-based domain generalisation with test-time masking in dermoscopy
-(Appendix~\ref{app:excluded}). Both assume background shortcuts, but a reviewer may know them. (ii) The whac-a-mole
+(Appendix~\ref{app:excluded}). Both assume background shortcuts, but a reviewer may know them. A third
+workshop paper, Bissoto et al.\ (2020), already combines trap sets that reverse artifact associations with
+lesion-exterior masking in dermoscopy; it does not vary where the artifact lies relative to the lesion, but it is the
+closest single precedent for the test design and must be cited. (ii) The whac-a-mole
 dilemma \citep{li2023whacamole} anticipates the amplification conceptually; the thesis should cite it and state that it
 supplies the location-specific mechanism and the medical evidence. (iii) Coverage of 2026 is incomplete; the review
 should be repeated before submission.
@@ -368,7 +399,7 @@ should be repeated before submission.
 \section{Summary of included studies}\label{sec:table}
 \begingroup\footnotesize\setlength{\tabcolsep}{3pt}
 \begin{longtable}{P{2.5cm}P{2.5cm}P{0.6cm}P{1.6cm}P{4.15cm}P{4.2cm}}
-\caption{All 69 included studies (2021--2026), grouped by theme. Tier: A or B as defined in Sec.~\ref{sec:method}.
+\caption{All 70 included studies (2021--2026), grouped by theme. Tier: A or B as defined in Sec.~\ref{sec:method}.
 CXR: chest radiograph; US: ultrasound; NI: natural images; --: not modality-specific.}\label{tab:all}\\\toprule
 Study & Venue & Tier & Modality & Finding or contribution & Relevance to the thesis \\\midrule\endfirsthead
 \toprule Study & Venue & Tier & Modality & Finding or contribution & Relevance to the thesis \\\midrule\endhead
@@ -390,7 +421,8 @@ Study & Venue & Tier & Modality & Finding or contribution & Relevance to the the
 \citet{stanley2024simba} & JAMIA & A & brain MRI & synthetic bias near or far from the disease region; distance matters; reweighing best & closest location precedent \\
 \citet{stanley2025where} & eBioMedicine & A & brain MRI & where bias is encoded & encoding vs use \\
 \citet{sun2023right} & MICCAI & A & CXR & explanations vary in detecting injected confounders & limits of heatmaps \\
-\citet{boland2024shortcuts} & MIDL & B & medical & layer-wise shortcut localisation & detection \\
+\citet{boland2024shortcuts} & MIDL & B & CXR, derm., NI & fixed vs random shortcut position; layer-wise localisation & position precedent \\
+\citet{corbetta2026beyond} & MICCAI & A & fundus, mammo. & inverted and clean tests for injected artifacts & reversed-test precedent \\
 \citet{sourget2025mask} & J.\ Imaging Inform.\ Med. & B & CXR, fundus & ROI-removed images remain classifiable & closest masking study \\
 \citet{germani2026aggregation} & Med.\ Image Anal. & A & medical & pooled data hide shortcut-like behaviour & foundation features \\
 \citet{ktena2024generative} & Nat.\ Med. & A & histo., CXR, derm. & synthetic data improve OOD fairness & generative remedy \\
@@ -413,7 +445,7 @@ Study & Venue & Tier & Modality & Finding or contribution & Relevance to the the
 \citet{jimenez2023shortcuts} & IEEE ISBI & B & CXR & drain labels expose a shortcut & chest boundary case \\
 \citet{saporta2022saliency} & Nat.\ Mach.\ Intell. & A & CXR & saliency localises worse than radiologists & limits of heatmaps \\
 \citet{perezgarcia2024radedit} & ECCV & A & CXR & diffusion editing for stress tests & counterfactual testing \\
-\citet{bassi2024isnet} & Nat.\ Commun. & A & CXR & relevance penalties outside masks & mask-based remedy \\
+\citet{bassi2024isnet} & Nat.\ Commun. & A & CXR & relevance penalties outside masks; matched, reversed and clean tests & mask-based remedy; test-design precedent \\
 \multicolumn{6}{l}{\textit{Backgrounds and masking in natural images}}\\
 \citet{xiao2021noise} & ICLR & A & NI & backgrounds alone predict the class & background shortcuts \\
 \citet{moayeri2022comprehensive} & CVPR & A & NI & foreground/background sensitivity & masking evaluation \\
@@ -463,6 +495,9 @@ journals outside it. They are listed for transparency and are not counted.
 \item Aniraj, Dantas, Ienco, Marcos (2023), \emph{Masking strategies for background bias removal in computer vision
 models}, ICCV Workshops (OODCV): early (image-level) masking gave the best out-of-distribution accuracy in fine-grained
 recognition. The closest general-vision masking study; workshop paper.
+\item Bissoto, Valle, Avila (2020), \emph{Debiasing skin lesion datasets and models? Not so fast}, CVPR Workshops,
+pp.~3192--3201: trap sets that reverse seven dermoscopy artifact associations, evaluated with lesion-exterior
+normalisation. Before 2021 and a workshop paper, but the closest precedent for the reversed test with masking.
 \item Bissoto, Barata, Valle, Avila (2022), \emph{Artifact-based domain generalization of skin lesion models}, ECCV
 Workshops (ISIC); and Bissoto et al.\ (2023), \emph{Test-time selection for robust skin lesion analysis}, MICCAI
 Workshops (ISIC). Workshop papers.
@@ -476,7 +511,9 @@ models for skin cancer diagnosis}, \emph{Diagnostics} (MDPI).
 \item Kina, Petersen (2026), \emph{Prevalence calibration as shortcut mitigation}, arXiv:2609.07922 (preprint).
 \item Chuang et al.\ (2023), \emph{Debiasing vision-language models via biased prompts}, arXiv:2302.00070 (preprint).
 \item Arjovsky, Bottou, Gulrajani, Lopez-Paz (2019), \emph{Invariant risk minimization}, arXiv:1907.02893: a preprint and
-before 2021, but the source of the IRMv1 baseline used in the thesis.
+before 2021, but the source of the IRMv1 baseline and of the Colored MNIST reversed test \citep{arjovsky2019irm}.
+\item Cheplygina et al.\ (2025), \emph{Augmenting chest X-ray datasets with non-expert annotations}, MIUA, LNCS 15916:
+the NEATX drain annotations used by the thesis \citep{cheplygina2025neatx}; cited for data provenance.
 \end{itemize}
 
 \section{Datasets and encoders cited for provenance}\label{app:provenance}

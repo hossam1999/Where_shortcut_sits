@@ -100,11 +100,17 @@ fetal ultrasound, calipers and on-screen text act as shortcuts even for segmenta
 chest radiography, hospital signals limit generalisation \citep{zech2018variable}, drain shortcuts are documented on
 NIH-CXR14 and CheXpert \citep{oakden2020hidden,jimenez2023shortcuts}, reduced by training with in-image annotations
 \citep{rueckel2021pneumothorax}, localised to late layers of probed encoders \citep{pedersen2026probes} and mitigated
-by prevalence-equalised recalibration, which needs the artifact label at test time \citep{kina2026prevalence}. These
-works treat an artifact's presence. Location has been varied with a synthetic bias: placing it near to or far from the
-disease region in brain MRI changed performance gaps and how well mitigation worked \citep{stanley2024simba}. Within
-our search, no study varies an artifact's position relative to the ROI used for masking, or does so with real
-artifacts.
+by prevalence-equalised recalibration, which needs the artifact label at test time \citep{kina2026prevalence}. Most of
+these works treat an artifact's presence. Reversed tests are not new: Colored MNIST flips a colour cue between training
+and test \citep{arjovsky2019irm}; in medical images, trap sets invert seven dermoscopy artifact associations and were
+evaluated with the lesion exterior normalised \citep{bissoto2020debiasing}, chest-radiograph models trained at 90/10
+source agreement were tested at 10/90 \citep{puli2022nurd}, ISNet was evaluated on matched, reversed and artifact-free
+tests with a mark placed outside the lungs \citep{bassi2024isnet}, and simulated acquisition artifacts were inverted in
+fundus and mammography images \citep{corbetta2026beyond}. Position has been varied too: a synthetic bias placed near to
+or far from the disease region in brain MRI, both outside it, changed performance gaps and how well mitigation worked
+\citep{stanley2024simba}, and fixed versus randomly placed synthetic squares changed where networks use the shortcut
+\citep{boland2024shortcuts}. Within our search, no study places the same artifact inside versus outside the ROI used
+for masking and evaluates each placement on correlated, reversed and clean tests, or does so with real artifacts.
 \paragraph{Restricting the model to the ROI} Medical images often remain classifiable with the ROI removed, and models
 trained on full chest radiographs performed better on images without the ROI than on the ROI alone
 \citep{sourget2025mask}. Training on segmented dermoscopy images improved balanced accuracy for one training set but
@@ -133,7 +139,9 @@ the image the shortcut sits and what masking can and cannot remove.
 Let $Y\in\{0,1\}$ be the diagnosis and $A\in\{0,1\}$ the presence of an artifact. A \emph{trap} trains with
 $P(A{=}1\mid Y{=}1)=0.9$ and $P(A{=}1\mid Y{=}0)=0.1$ and tests on a correlated environment with the same rates,
 a \emph{reversed} environment with the rates swapped, and a clean environment in which the artifact is independent of
-the label. A model that uses $A$ gains on the correlated test and collapses on the reversed one; the primary metric is
+the label. This design is borrowed, not new: it follows Colored MNIST \citep{arjovsky2019irm} and its medical uses
+\citep{bissoto2020debiasing,puli2022nurd,bassi2024isnet}, and the 90/10 schedule matches \citet{puli2022nurd}; what is
+added here is crossing it with the artifact's position relative to the ROI and with ROI masking. A model that uses $A$ gains on the correlated test and collapses on the reversed one; the primary metric is
 reversed-test AUROC, and clean AUROC measures the cost of a mitigation. The overlap
 $r=|\mathrm{artifact}\cap\mathrm{ROI}|/|\mathrm{artifact}|$ is the variable of interest. Three designs vary it:
 \emph{controlled sweeps} paste a synthetic artifact at overlaps 0--100\% on artifact-free images; \emph{real traps}
