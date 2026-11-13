@@ -17,6 +17,7 @@
   --artifact: #b8540f;
   --artifact-soft: #f6dfcd;
   --std: #5d6c78;
+  --third: #6a4c9c;
   --skin: #e6c6b1;
   --lesion: #74493a;
   --maskgrey: #8d969c;
@@ -28,13 +29,13 @@
 @media (prefers-color-scheme: dark) {
   :root:not([data-theme="light"]) {
     --paper: #0f161c; --surface: #16212a; --ink: #e4ebee; --muted: #a3b3bd; --line: #2f3e49;
-    --roi: #5cb3d6; --roi-soft: #173445; --artifact: #f08a3c; --artifact-soft: #3d2615; --std: #9aaab6;
+    --roi: #5cb3d6; --roi-soft: #173445; --artifact: #f08a3c; --artifact-soft: #3d2615; --std: #9aaab6; --third: #b49be0;
     --maskgrey: #59636a; color-scheme: dark;
   }
 }
 :root[data-theme="dark"] {
   --paper: #0f161c; --surface: #16212a; --ink: #e4ebee; --muted: #a3b3bd; --line: #2f3e49;
-  --roi: #5cb3d6; --roi-soft: #173445; --artifact: #f08a3c; --artifact-soft: #3d2615; --std: #9aaab6;
+  --roi: #5cb3d6; --roi-soft: #173445; --artifact: #f08a3c; --artifact-soft: #3d2615; --std: #9aaab6; --third: #b49be0;
   --maskgrey: #59636a; color-scheme: dark;
 }
 html, body { height: 100%; }
@@ -136,6 +137,15 @@ td.n { font-family: var(--mono); font-variant-numeric: tabular-nums; text-align:
 .ref { font-size: 14px; color: var(--muted); border-top: 1px solid var(--line); padding-top: 10px; overflow-wrap: anywhere; }
 .ref a { color: var(--roi); }
 .badge { display: inline-block; font-family: var(--mono); font-size: 13px; padding: 2px 8px; border-radius: 99px; border: 1px solid var(--line); color: var(--muted); }
+.say { background: var(--roi-soft); border-radius: 10px; padding: 14px 16px; display: flex; flex-direction: column; gap: 6px; }
+.say h3 { font-size: 16px; font-family: var(--body); text-transform: uppercase; letter-spacing: 0.06em; color: var(--roi); }
+.say h3, .say ol { margin: 0; }
+#key-bassi .eyebrow, #key-stanley .eyebrow { max-width: none; }
+.say ol { padding-left: 20px; display: flex; flex-direction: column; gap: 4px; font-size: 16px; }
+.kp-why { border-left: 4px solid var(--artifact); padding: 2px 0 2px 14px; font-size: 18px; max-width: 80ch; }
+.kp-grid { display: grid; grid-template-columns: minmax(0, 1fr) minmax(0, 1fr); gap: 10px 18px; }
+@media (max-width: 700px) { .kp-grid { grid-template-columns: minmax(0, 1fr); } }
+.legend { display: flex; flex-wrap: wrap; gap: 6px 16px; font-size: 15px; }
 /* leakage demo */
 .split { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; }
 .bin { border: 1px dashed var(--line); border-radius: 8px; padding: 10px; display: flex; flex-direction: column; gap: 8px; }
@@ -211,7 +221,103 @@ td.n { font-family: var(--mono); font-variant-numeric: tabular-nums; text-align:
     </div>
     <div class="tablewrap panel" id="litAll" hidden></div>
     <p class="small"><b>Where the reversed test comes from:</b> Colored MNIST (Arjovsky et al., 2019, <i>Invariant risk minimization</i>, a preprint) colours digits so that colour predicts the label in 80–90% of training images but in only 10% of test images. Our 90/10 training and 10/90 reversed test apply the same idea to medical artifacts, scored with AUROC, together with correlated and clean tests on the same images.</p>
+    <p class="small"><b>The two that matter most</b> get their own slides next: <b>Bassi et al.</b> (they already use our three tests) and <b>Stanley et al.</b> (they already vary our variable, position).</p>
     <p class="small muted">Selected from the 69 peer-reviewed studies in our literature review, plus RoentMod, NuRD and Corbetta et al., added after a full-text check of every card (November 2026). Each was checked against its publisher’s page. Venues: Nature family journals, CVPR, ICLR, MICCAI, Medical Image Analysis, and others.</p>
+  </section>
+
+  <section class="slide" id="key-bassi" data-name="Key paper 1: ISNet">
+    <p class="eyebrow">Key paper 1 of 2 · the two papers that matter most for us</p>
+    <h2>Bassi et al., <i>Nature Communications</i> 2024 (ISNet): they already run our three tests</h2>
+    <p class="kp-why"><b>Why it matters most:</b> it is the closest <b>test design</b> to ours. They train with a shortcut mark, then test on <b>matched, reversed and clean</b> images, and they compare with a model that only sees the <b>lungs</b>. But the mark is <b>always outside the lungs</b>, so they only see the case where masking is expected to work.</p>
+    <div class="cols even">
+      <div>
+        <div class="panel">
+          <div class="seg" role="group" aria-label="Diagram view" id="bassiView">
+            <button type="button" data-v="theirs" aria-pressed="true">Their setup</button>
+            <button type="button" data-v="ours" aria-pressed="false">What we add</button>
+          </div>
+          <div id="bassiScene"></div>
+          <p class="small" id="bassiSceneText"></p>
+        </div>
+        <div class="panel">
+          <h3>Their result: macro-F1 on the three tests (COVID-19 chest X-rays, artificial mark)</h3>
+          <div class="chart" id="bassiChart"></div>
+          <div class="legend"><span><span class="dotkey" style="background:var(--std)"></span> DenseNet, whole image</span><span><span class="dotkey" style="background:var(--roi)"></span> U-Net + DenseNet, lungs only</span><span><span class="dotkey" style="background:var(--third)"></span> ISNet</span></div>
+          <p class="small">The whole-image model collapses on the reversed test (0.775 → 0.195): it uses the mark. The lungs-only model is <b>flat</b> (0.618 on all three): masking removed a mark that sat outside the lungs. That is our Trap B result. ISNet stays at 0.775 everywhere.</p>
+        </div>
+      </div>
+      <div>
+        <div class="panel kp-grid">
+          <div class="psec"><h4>Question</h4><div>Can a classifier be trained to ignore the background without cutting the image at test time?</div></div>
+          <div class="psec"><h4>Method</h4><div>ISNet: a DenseNet-121 trained with an extra loss (from layer-wise relevance propagation) that punishes any attention outside the lung mask. At test time it sees the full image.</div></div>
+          <div class="psec"><h4>Data</h4><div>COVID-19 / pneumonia / normal chest X-rays (4,644 per class); external test of 3,126 images (BIMCV, NIH, Montgomery/Shenzhen). Also tuberculosis (TB Portals vs CheXpert; external test 753), Stanford Dogs and CelebA-HQ.</div></div>
+          <div class="psec"><h4>Compared with</h4><div>Eight alternatives, including a <b>U-Net that segments the lungs first</b> and then classifies only the lungs (the same idea as our masking).</div></div>
+          <div class="psec"><h4>Test design</h4><div>Every training image gets a class mark in the upper-left corner (square = normal, circle = pneumonia, triangle = COVID). Test: <b>matched</b> (100% right mark), <b>reversed</b> (marks swapped in a cycle, 0% right), <b>clean</b> (no mark).</div></div>
+          <div class="psec"><h4>Metrics</h4><div>Macro-F1 (main) and AUROC, with 95% confidence intervals.</div></div>
+          <div class="psec"><h4>Real-world result</h4><div>External tuberculosis test, AUROC: ISNet 0.809, lungs-only U-Net 0.667, plain DenseNet 0.576.</div></div>
+          <div class="psec"><h4>Not covered → what we add</h4><div>The mark is never placed <b>inside</b> the lungs, and the artifact is drawn, not real. We move the same artifact inside vs outside the ROI, and use real rulers, calipers and debris.</div></div>
+        </div>
+        <div class="say">
+          <h3>What to say</h3>
+          <ol>
+            <li>“Our three tests are not new. Bassi et al. used matched, reversed and clean tests in <i>Nature Communications</i>.”</li>
+            <li>“Their lungs-only model was not fooled, because the mark was outside the lungs. We reproduce that in our Trap B.”</li>
+            <li>“The question they could not ask is what happens when the artifact is inside the lungs. That is our Trap A, and there masking makes things worse.”</li>
+          </ol>
+        </div>
+        <p class="ref">Bassi, Dertkigil, Cavalli. Improving deep neural network generalization and robustness to background bias via layer-wise relevance propagation optimization. <i>Nature Communications</i> 15, 291 (2024). <a href="https://doi.org/10.1038/s41467-023-44371-z" target="_blank" rel="noopener">doi:10.1038/s41467-023-44371-z</a></p>
+      </div>
+    </div>
+  </section>
+
+  <section class="slide" id="key-stanley" data-name="Key paper 2: SimBA">
+    <p class="eyebrow">Key paper 2 of 2 · the two papers that matter most for us</p>
+    <h2>Stanley et al., <i>JAMIA</i> 2024 (SimBA): where the bias sits changes the harm</h2>
+    <p class="kp-why"><b>Why it matters most:</b> it is the closest study of <b>our variable, position</b>. They put the same kind of bias in two places and show that the place changes how unfair the model is, and how well fixes work. But <b>both places are outside the disease region</b>, the images are synthetic, and nobody masks.</p>
+    <div class="cols even">
+      <div>
+        <div class="panel">
+          <div class="seg" role="group" aria-label="Diagram view" id="stanleyView">
+            <button type="button" data-v="near" aria-pressed="true">Bias near</button>
+            <button type="button" data-v="far" aria-pressed="false">Bias far</button>
+            <button type="button" data-v="ours" aria-pressed="false">Our design</button>
+          </div>
+          <div id="stanleyScene"></div>
+          <p class="small" id="stanleySceneText"></p>
+        </div>
+        <div class="panel">
+          <h3>Their result: extra unfairness caused by the bias (percentage points)</h3>
+          <div class="seg" role="group" aria-label="Training" id="stanleyTrain">
+            <button type="button" data-t="naive" aria-pressed="true">Standard training</button>
+            <button type="button" data-t="rw" aria-pressed="false">With reweighing</button>
+          </div>
+          <div class="chart" id="stanleyChart"></div>
+          <div class="legend"><span><span class="dotkey" style="background:var(--artifact)"></span> ΔTPR gap (missed disease differs by group)</span><span><span class="dotkey" style="background:var(--std)"></span> ΔFPR gap (false alarms differ by group)</span></div>
+          <p class="small" id="stanleyChartText"></p>
+        </div>
+      </div>
+      <div>
+        <div class="panel kp-grid">
+          <div class="psec"><h4>Question</h4><div>Can we test bias and its fixes in a setting where we know the truth, because we created the bias ourselves?</div></div>
+          <div class="psec"><h4>Method</h4><div>SimBA tool: generate brain MRIs with a disease effect and a bias effect (a small shape change) placed exactly where they choose.</div></div>
+          <div class="psec"><h4>Data</h4><div>2,002 synthetic T1 brain MRIs per scenario (1,000 disease, 1,002 healthy), built from an atlas and 50 real IXI scans; split 50/25/25.</div></div>
+          <div class="psec"><h4>Model</h4><div>A 3D CNN (five blocks). Fixes compared: <b>reweighing</b>, <b>unlearning</b> the bias, and separate models per group.</div></div>
+          <div class="psec"><h4>Position</h4><div>Disease: left insula. Bias <b>near</b>: left putamen. Bias <b>far</b>: right postcentral gyrus. <b>Both outside the disease region.</b></div></div>
+          <div class="psec"><h4>Test design</h4><div>Bias on ~70% of disease and ~30% of healthy images, in training <i>and</i> test. <b>No reversed test, no clean test with the bias.</b></div></div>
+          <div class="psec"><h4>Metrics</h4><div>Accuracy; ΔTPR and ΔFPR = difference in true- and false-positive rate between the bias group and the others, minus the same gap in a no-bias model. Saliency maps per brain region.</div></div>
+          <div class="psec"><h4>Not covered → what we add</h4><div>No artifact <b>inside</b> the region the model should use, no masking, no reversed test, no real artifact. We cross inside vs outside the ROI with masking and test on all three test sets.</div></div>
+        </div>
+        <div class="say">
+          <h3>What to say</h3>
+          <ol>
+            <li>“Stanley et al. showed first that where a bias sits matters: near the disease it did more harm than far away.”</li>
+            <li>“But both of their positions are outside the disease region and they never mask. The boundary that matters for masking is the ROI edge, and they never cross it.”</li>
+            <li>“We move the artifact across that edge, from fully outside to fully inside the ROI, and show masking flips from helping to hurting.”</li>
+          </ol>
+        </div>
+        <p class="ref">Stanley, Souza, Winder, Gulve, Amador, Wilms, Forkert. Towards objective and systematic evaluation of bias in artificial intelligence for medical imaging. <i>JAMIA</i> 31(11), 2613–2621 (2024). <a href="https://doi.org/10.1093/jamia/ocae165" target="_blank" rel="noopener">doi:10.1093/jamia/ocae165</a></p>
+      </div>
+    </div>
   </section>
 
   <section class="slide" id="gap" data-name="The gap">
@@ -1391,6 +1497,91 @@ td.n { font-family: var(--mono); font-variant-numeric: tabular-nums; text-align:
     { h: "6. Are our artifact masks correct?", r: "The computer found the artifacts",
       m: "The worry: rulers, hair and calipers were found automatically and the computer can make mistakes, which could bias our results. The test: compare our masks with masks made by other people or tools, and ideally have a doctor check a sample." },
   ]);
+
+  /* ---------------- key papers ---------------- */
+  function groupedBars(el, groups, series, lo, hi, ticks, label, fmt) {
+    const W = 560, H = 250, L = 52, R = 545, T = 18, B = 208;
+    const y = v => B - (v - lo) / (hi - lo) * (B - T);
+    let g = "";
+    ticks.forEach(t => { g += `<line x1="${L}" x2="${R}" y1="${y(t)}" y2="${y(t)}" stroke="var(--line)" ${t === 0 ? 'stroke-width="2"' : ''}/><text x="${L - 8}" y="${y(t) + 5}" text-anchor="end">${t}</text>`; });
+    const gw = (R - L) / groups.length, bw = Math.min(46, (gw - 30) / series.length);
+    groups.forEach((gr, i) => {
+      const x0 = L + i * gw + (gw - bw * series.length) / 2;
+      series.forEach((se, j) => {
+        const v = se.v[i], x = x0 + j * bw, y0 = y(Math.max(0, lo)), y1 = y(v);
+        g += `<rect x="${x + 3}" y="${Math.min(y0, y1)}" width="${bw - 6}" height="${Math.max(2, Math.abs(y1 - y0))}" rx="3" fill="${se.c}"/>`;
+        g += `<text x="${x + bw / 2}" y="${v >= 0 ? y1 - 6 : y1 + 17}" text-anchor="middle" class="ink b" style="font-size:13px">${fmt(v)}</text>`;
+      });
+      g += `<text x="${L + i * gw + gw / 2}" y="${B + 26}" text-anchor="middle" class="ink b">${gr}</text>`;
+    });
+    $(el).innerHTML = svg(W, H, g, label);
+  }
+  groupedBars("bassiChart", ["Matched test", "Clean test", "Reversed test"], [
+    { c: "var(--std)", v: [0.775, 0.434, 0.195] },
+    { c: "var(--roi)", v: [0.618, 0.619, 0.618] },
+    { c: "var(--third)", v: [0.775, 0.775, 0.775] },
+  ], 0, 1, [0, 0.25, 0.5, 0.75, 1], "Macro-F1 of three models on matched, clean and reversed tests in Bassi et al.", v => v.toFixed(2));
+
+  function chestScene(mode) {
+    const W = 520, H = 250;
+    let g = `<rect x="140" y="12" width="240" height="226" rx="18" fill="var(--maskgrey)" opacity="0.35"/>`;
+    g += `<ellipse cx="212" cy="132" rx="44" ry="84" fill="var(--roi-soft)" stroke="var(--roi)" stroke-width="3"/><ellipse cx="308" cy="132" rx="44" ry="84" fill="var(--roi-soft)" stroke="var(--roi)" stroke-width="3"/>`;
+    g += `<text x="260" y="244" text-anchor="middle" class="ink" style="font-size:13px">lungs = ROI</text>`;
+    g += `<polygon points="160,48 176,22 192,48" fill="var(--artifact)"/>`;
+    g += `<line x1="196" y1="34" x2="404" y2="34" stroke="var(--artifact)" stroke-width="1.5"/><text x="408" y="30" class="ink" style="font-size:14px">their mark:</text><text x="408" y="48" class="ink" style="font-size:14px">always outside</text>`;
+    if (mode === "ours") {
+      g += `<polygon points="290,140 306,114 322,140" fill="none" stroke="var(--artifact)" stroke-width="3" stroke-dasharray="5 3"/>`;
+      g += `<line x1="326" y1="128" x2="404" y2="150" stroke="var(--artifact)" stroke-width="1.5"/><text x="408" y="146" class="ink b" style="font-size:14px">inside the ROI:</text><text x="408" y="164" class="ink b" style="font-size:14px">never tested</text><text x="408" y="182" class="ink" style="font-size:14px">(our Trap A)</text>`;
+    }
+    $("bassiScene").innerHTML = svg(W, H, g, "Chest X-ray sketch with the lungs as ROI and the position of the shortcut mark");
+    $("bassiSceneText").innerHTML = mode === "ours"
+      ? "We also put the artifact <b>inside</b> the ROI. Masking cannot remove it there, and our results show reliance on it grows."
+      : "Their mark sits in the upper-left corner, <b>outside the lungs</b>. Masking to the lungs deletes it, so masking is expected to work.";
+    [...$("bassiView").children].forEach(b => b.setAttribute("aria-pressed", b.dataset.v === mode ? "true" : "false"));
+  }
+  $("bassiView").addEventListener("click", e => { const b = e.target.closest("button"); if (b) chestScene(b.dataset.v); });
+  chestScene("theirs");
+
+  function brainScene(mode) {
+    const W = 520, H = 250;
+    let g = "";
+    if (mode === "ours") {
+      g += `<rect x="40" y="20" width="440" height="200" rx="14" fill="var(--maskgrey)" opacity="0.25"/>`;
+      g += `<ellipse cx="260" cy="120" rx="95" ry="70" fill="var(--roi-soft)" stroke="var(--roi)" stroke-width="3"/><text x="260" y="124" text-anchor="middle" class="ink b">ROI (kept by the mask)</text>`;
+      g += `<rect x="225" y="150" width="70" height="12" rx="3" fill="var(--artifact)"/><text x="260" y="182" text-anchor="middle" class="ink b" style="font-size:14px">inside: Trap A</text>`;
+      g += `<rect x="60" y="40" width="70" height="12" rx="3" fill="var(--artifact)"/><text x="95" y="72" text-anchor="middle" class="ink b" style="font-size:14px">outside: Trap B</text>`;
+      g += `<text x="260" y="244" text-anchor="middle" class="ink" style="font-size:14px">the same artifact crosses the ROI edge; masking on vs off</text>`;
+    } else {
+      g += `<ellipse cx="260" cy="125" rx="200" ry="108" fill="var(--maskgrey)" opacity="0.3"/><line x1="260" y1="20" x2="260" y2="232" stroke="var(--line)" stroke-dasharray="4 4"/>`;
+      g += `<text x="150" y="40" text-anchor="middle" style="font-size:13px">left</text><text x="370" y="40" text-anchor="middle" style="font-size:13px">right</text>`;
+      g += `<circle cx="170" cy="125" r="30" fill="var(--roi-soft)" stroke="var(--roi)" stroke-width="3"/><text x="170" y="172" text-anchor="middle" class="ink b" style="font-size:14px">disease (insula)</text>`;
+      const near = mode === "near";
+      g += `<circle cx="222" cy="112" r="14" fill="${near ? "var(--artifact)" : "none"}" stroke="var(--artifact)" stroke-width="2" ${near ? "" : 'stroke-dasharray="4 3"'}/><text x="222" y="86" text-anchor="middle" class="ink${near ? " b" : ""}" style="font-size:14px">near (putamen)</text>`;
+      g += `<circle cx="370" cy="85" r="14" fill="${!near ? "var(--artifact)" : "none"}" stroke="var(--artifact)" stroke-width="2" ${!near ? "" : 'stroke-dasharray="4 3"'}/><text x="370" y="62" text-anchor="middle" class="ink${!near ? " b" : ""}" style="font-size:14px">far (postcentral gyrus)</text>`;
+      g += `<text x="260" y="248" text-anchor="middle" class="ink" style="font-size:14px">both bias positions lie outside the disease region</text>`;
+    }
+    $("stanleyScene").innerHTML = svg(W, H, g, "Sketch of where the bias is placed in Stanley et al. and in our design");
+    $("stanleySceneText").innerHTML = mode === "ours"
+      ? "Our variable is different: not near vs far, but <b>inside vs outside the ROI the mask keeps</b>. That is the boundary that decides whether masking can help."
+      : mode === "near" ? "Bias placed <b>next to</b> the disease region. Accuracy 87.7% (no-bias model 84.8%): the model gains from the shortcut."
+      : "Bias placed <b>in the other hemisphere</b>. Accuracy 86.8%. Still a shortcut, but a smaller fairness gap than near.";
+    [...$("stanleyView").children].forEach(b => b.setAttribute("aria-pressed", b.dataset.v === mode ? "true" : "false"));
+  }
+  $("stanleyView").addEventListener("click", e => { const b = e.target.closest("button"); if (b) brainScene(b.dataset.v); });
+  brainScene("near");
+
+  const STAN = { naive: { tpr: [22.12, 17.35], fpr: [20.32, 11.88] }, rw: { tpr: [0.44, -0.80], fpr: [-0.69, -0.32] } };
+  function drawStanley(t) {
+    const d = STAN[t];
+    groupedBars("stanleyChart", ["Bias near", "Bias far"], [{ c: "var(--artifact)", v: d.tpr }, { c: "var(--std)", v: d.fpr }],
+      -5, 25, [0, 5, 10, 15, 20, 25], "Relative TPR and FPR gaps for near and far bias in Stanley et al.", v => (v > 0 ? "+" : "") + v.toFixed(1));
+    $("stanleyChartText").innerHTML = t === "naive"
+      ? "With standard training the bias opens large gaps, and <b>larger when it sits near the disease</b> (TPR gap +22.1 vs +17.4; FPR gap +20.3 vs +11.9). Position matters."
+      : "Reweighing the training images brings all gaps to about zero (between −0.8 and +0.4). Of the three fixes it gave the most consistent result. Note: this fix needs to know which images carry the bias.";
+    [...$("stanleyTrain").children].forEach(b => b.setAttribute("aria-pressed", b.dataset.t === t ? "true" : "false"));
+  }
+  $("stanleyTrain").addEventListener("click", e => { const b = e.target.closest("button"); if (b) drawStanley(b.dataset.t); });
+  drawStanley("naive");
   /* ---------------- navigation ---------------- */
   const slides = [...document.querySelectorAll(".slide")];
   const mm = $("mm"), counter = $("counter"), secname = $("secname"), box = $("slides");
