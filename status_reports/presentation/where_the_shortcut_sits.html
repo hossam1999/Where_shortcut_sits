@@ -916,7 +916,8 @@ td.n { font-family: var(--mono); font-variant-numeric: tabular-nums; text-align:
   function drawRob() {
     const c = $("robustChart");
     c.innerHTML = intervals(ROB, 0, 0.6, "Location effect in each robustness setting", { sel: robSel, click: true, left: 220, right: "masking worth more with the ruler outside" }) +
-      `<p class="small muted">Dot = location effect; bar = 95% interval. * Same 1,314 images; ruler width as a share of the image width.</p>`;
+      `<p class="small muted">Dot = location effect; bar = 95% interval. * Same 1,314 images; ruler width as a share of the image width.</p>` +
+      `<div class="likeours small" style="margin-top:8px"><b>How each row is calculated</b><br>Masking effect = AUROC<sub>masked</sub> − AUROC<sub>standard</sub>, on the reversed test.<br><b>Location effect = masking effect at 0% overlap (artifact outside) − masking effect at 100% overlap (artifact fully inside).</b><br>Example: main result: +0.184 − (−0.129) = +0.31.</div>`;
     wire(c, i => { robSel = i; drawRob(); });
     $("robustDetail").innerHTML = detail(ROB[robSel]);
   }
@@ -961,7 +962,8 @@ td.n { font-family: var(--mono); font-variant-numeric: tabular-nums; text-align:
   function drawMod() {
     const c = $("modChart");
     c.innerHTML = intervals(MOD, -0.2, 0.6, "Location effect in moving-artifact experiments", { sel: modSel, click: true, left: 240, right: "worth more outside" , leftText: "worth more inside" }) +
-      `<p class="small muted">Dot = location effect; bar = 95% interval. Two more skin rows (224 px, randomised ruler) are on the previous slide.</p>`;
+      `<p class="small muted">Dot = location effect; bar = 95% interval. Two more skin rows (224 px, randomised ruler) are on the previous slide.</p>` +
+      `<div class="likeours small" style="margin-top:8px"><b>How each row is calculated</b><br>Masking effect = AUROC<sub>masked</sub> − AUROC<sub>standard</sub>, on the reversed test.<br><b>Location effect = masking effect at 0% overlap (artifact outside) − masking effect at 100% overlap (artifact fully inside).</b><br>Example: thyroid caliper, DINOv2: +0.402 − (−0.030) = +0.43. Right of zero = masking helps more when the artifact is outside.</div>`;
     wire(c, i => { modSel = i; drawMod(); });
     if (modSel >= 0) $("modDetail").innerHTML = detail(MOD[modSel]);
   }
