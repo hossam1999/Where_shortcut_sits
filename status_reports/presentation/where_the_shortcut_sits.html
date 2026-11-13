@@ -404,37 +404,6 @@ td.n { font-family: var(--mono); font-variant-numeric: tabular-nums; text-align:
     </div>
   </section>
 
-  <section class="slide" id="metric" data-name="Why AUROC?">
-    <p class="eyebrow">Why AUROC?</p>
-    <h2>We ask “does the model rank sick above healthy?”, and AUROC measures exactly that</h2>
-    <p class="lead">AUROC = pick one sick and one healthy image at random: how often does the model give the sick one the higher score?</p>
-    <div class="cols">
-      <div>
-        <div class="panel">
-          <h3>Short answer</h3>
-          <p>Our question is whether the model puts sick patients above healthy ones because of the <b>disease</b> or because of the <b>artifact</b>. AUROC measures exactly that ranking, with no threshold to pick, and it does not change when the share of sick images changes.</p>
-          <table>
-            <tr><th>AUROC</th><th>Meaning</th></tr>
-            <tr><td class="n">1.0</td><td>sick always ranked above healthy</td></tr>
-            <tr><td class="n">0.5</td><td>no better than a coin flip</td></tr>
-            <tr><td class="n">below 0.5</td><td>order is backwards: on our reversed test this is what a model that follows the artifact does</td></tr>
-          </table>
-        </div>
-        <div class="say">
-          <h3>What to say</h3>
-          <ol>
-            <li>“AUROC asks one thing: does the model rank sick above healthy? That is our question.”</li>
-            <li>“It needs no threshold and ignores how many sick images there are, so all our tests and datasets are on one scale.”</li>
-            <li>“It misses the operating point, so we also report sensitivity at fixed thresholds. In thyroid, masking cut it from 0.744 to 0.223.”</li>
-          </ol>
-        </div>
-      </div>
-      <div>
-        <div class="cards" id="aucCards" style="align-items:start"></div>
-      </div>
-    </div>
-  </section>
-
   <section class="slide" id="step-1" data-name="Step 1">
     <p class="eyebrow">Step 1 · moving a ruler into the lesion</p>
     <h2>Drag the ruler into the lesion</h2>
@@ -1313,23 +1282,6 @@ td.n { font-family: var(--mono); font-variant-numeric: tabular-nums; text-align:
   }
   expandable($("checks"), CHECKS);
 
-  /* ---------------- why AUROC ---------------- */
-  expandable($("aucCards"), [
-    { h: "1. No threshold to choose", r: "The result can’t depend on a cut-off we picked",
-      m: "Accuracy, F1 and sensitivity all need a cut-off, and a cut-off can hide or exaggerate a shortcut. AUROC looks at the ranking of all images, so the main result is the same whatever threshold a hospital would choose." },
-    { h: "2. Not changed by class balance", r: "Fair across tests with different mixes",
-      m: "Our correlated, reversed and clean tests, and our four datasets, have different shares of sick images. Accuracy and AUPRC move just because that share moves. AUROC does not, so differences between tests come from the model, not the mix." },
-    { h: "3. Built for the reversed test", r: "Shortcut use shows up as a drop toward or below 0.5",
-      m: "On the reversed test the artifact points the wrong way. A model that ranks by the artifact falls toward or below 0.5. Our main numbers (location effect, crossover) are differences of AUROC between the masked and the standard model, so they all sit on one scale." },
-    { h: "4. Comparable with other papers", r: "Most papers we compare with use it",
-      m: "Jiménez-Sánchez (drains), Sourget (Mask of Truth), Puli (NuRD), Yang and MEDFAIR all report AUROC, and so does the published thyroid baseline (0.773). Corbetta uses balanced accuracy, so we can convert if needed." },
-    { h: "5. Works with our error bars", r: "The bootstraps resample AUROC directly",
-      m: "The seed × image bootstrap and the grouped bootstrap recompute AUROC on each resample. A thresholded metric would add one more source of noise: where the threshold lands in each resample." },
-    { h: "What AUROC misses, and what we add", r: "So we also report sensitivity at fixed thresholds",
-      m: "AUROC says nothing about the one threshold a doctor actually uses, and as an average it can hide a failing subgroup. So we also report sensitivity at thresholds fixed on validation data, and test the shortcut-conflicting cases on their own. Example: in thyroid, masking cut sensitivity for the 78 cancers with a caliper inside the ROI from 0.744 to 0.223 (registered test, significant after Holm)." },
-    { h: "Why not balanced accuracy or AUPRC?", r: "Both have a catch for our design",
-      m: "Balanced accuracy needs a threshold; we wanted the headline result free of that choice, but it is easy to add as a second metric. AUPRC changes with how common the disease is, so it can’t be compared across tests with different mixes." },
-  ]);
 
   /* ---------------- step 3 ---------------- */
   const MOD = [
