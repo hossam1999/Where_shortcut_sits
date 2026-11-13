@@ -553,14 +553,13 @@ td.n { font-family: var(--mono); font-variant-numeric: tabular-nums; text-align:
           <p class="small">So a model can learn “caliper inside = probably benign”. That is dangerous for the malignant nodules that <i>do</i> have a caliper.</p>
         </div>
         <div class="panel">
-          <h3>The average hides it</h3>
-          <table>
-            <tr><th>Thyroid test set</th><th>Masked − normal (AUROC)</th></tr>
-            <tr><td>All patients</td><td class="n">−0.004 (no change)</td></tr>
-            <tr><td>Cases where the caliper points the wrong way</td><td class="n neg">−0.095</td></tr>
-            <tr><td>New patients (skin: ISIC 2019 → ISIC 2020), same cases</td><td class="n neg">−0.026 to −0.037</td></tr>
-          </table>
-          <p class="small muted">Honest note: harm in 3 of 5 untouched test sets; one skin source improved (+0.050) and capsule did not change.</p>
+          <h3>Masking looks safe on average, but not on the tricky cases</h3>
+          <ul class="plain small">
+            <li><b>All thyroid patients together:</b> masking changes nothing (AUROC −0.004). Looking only at this, masking seems safe.</li>
+            <li><b>Only the tricky cases:</b> cases where the caliper hints at the wrong answer, i.e. cancers <i>with</i> a caliper inside and benign nodules <i>without</i> one. Here the masked model is clearly worse (AUROC <b class="neg">−0.095</b>).</li>
+            <li><b>Skin, new patients</b> (trained on ISIC 2019, tested on ISIC 2020): the same thing, worse on the tricky cases (AUROC <b class="neg">about −0.03</b>).</li>
+          </ul>
+          <p class="small muted">To be fair: we saw this harm in 3 of our 5 untouched test sets. In one skin hospital masking helped, and in capsule it made no difference.</p>
         </div>
       </div>
       <div>
