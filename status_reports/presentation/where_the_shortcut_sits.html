@@ -45,6 +45,8 @@ body { background: var(--paper); color: var(--ink); font-family: var(--body); fo
 .topbar { display: flex; align-items: baseline; justify-content: space-between; gap: 12px; padding-block: 12px 4px; font-size: 13px; color: var(--muted); letter-spacing: 0.04em; text-transform: uppercase; }
 .topbar b { color: var(--ink); font-weight: 700; }
 .slides { flex: 1; min-height: 0; overflow-y: auto; padding-block: 8px 24px; }
+.slide[hidden] { display: none; }
+#hashChart svg { min-width: 0; max-width: 460px; }
 .slide { max-width: 1200px; margin-inline: auto; display: flex; flex-direction: column; gap: 18px; min-height: 100%; justify-content: center; }
 .eyebrow { font-family: var(--mono); font-size: 13px; letter-spacing: 0.08em; text-transform: uppercase; color: var(--roi); }
 h1, h2, h3 { font-family: var(--display); font-weight: 600; text-wrap: balance; }
@@ -339,6 +341,48 @@ td.n { font-family: var(--mono); font-variant-numeric: tabular-nums; text-align:
     </div>
   </section>
 
+  <section class="slide" id="leakage" data-name="No data leakage">
+    <p class="eyebrow">How we prevented data leakage</p>
+    <h2>The same lesion, patient or look-alike image never sits in both training and test</h2>
+    <div class="cols even">
+      <div class="panel">
+        <div class="seg" role="group" aria-label="Split type" id="splitTabs">
+          <button type="button" data-s="random" aria-pressed="false">Random split</button>
+          <button type="button" data-s="grouped" aria-pressed="true">Grouped split (ours)</button>
+        </div>
+        <div class="split">
+          <div class="bin"><h3>Training</h3><div class="dots" id="binTrain"></div></div>
+          <div class="bin"><h3>Test</h3><div class="dots" id="binTest"></div></div>
+        </div>
+        <p id="splitText"></p>
+      </div>
+      <div class="cards" id="leakCards"></div>
+    </div>
+    <div class="panel">
+      <h3>How we find look-alike images from the pixels (perceptual hash)</h3>
+      <p class="small">Thyroid, ovary and capsule images come without patient IDs, so we find repeats of the same lesion or scene from the image pixels themselves. For skin we use this as well as the lesion ID.</p>
+      <div class="pipe" aria-label="Steps of the perceptual hash">
+        <span class="box">1. Shrink the image to 32×32 grey pixels</span><span aria-hidden="true">→</span>
+        <span class="box">2. Keep only the coarse pattern (lowest 8×8 frequencies)</span><span aria-hidden="true">→</span>
+        <span class="box">3. Each value above / below the median → 1 / 0: a 64-bit fingerprint</span><span aria-hidden="true">→</span>
+        <span class="box">4. Count how many bits differ between two images</span>
+      </div>
+      <div class="cols even" style="align-items:center">
+        <div>
+          <div class="seg" role="group" aria-label="Compare two images" id="hashTabs">
+            <button type="button" data-h="dup" aria-pressed="true">Same lesion, another photo</button>
+            <button type="button" data-h="other" aria-pressed="false">A different lesion</button>
+          </div>
+          <div class="chart" id="hashChart"></div>
+        </div>
+        <div>
+          <p id="hashText"></p>
+          <p class="small muted">Few differing bits = near-duplicate, so both images join one group, and a group goes wholly to training or wholly to test. Rule: at most 8 of 64 bits differ (skin traps, thyroid, ovary); at most 2 for capsule frames, which are also grouped in blocks of 100 consecutive frames. Groups chain: if A looks like B and B like C, all three are one group.</p>
+        </div>
+      </div>
+    </div>
+  </section>
+
   <section class="slide" id="method" data-name="How we test it">
     <p class="eyebrow">How we test it</p>
     <h2>Two models, one trap</h2>
@@ -381,25 +425,6 @@ td.n { font-family: var(--mono); font-variant-numeric: tabular-nums; text-align:
       <div>
         <div class="cards" id="aucCards" style="align-items:start"></div>
       </div>
-    </div>
-  </section>
-
-  <section class="slide" id="leakage" data-name="No data leakage">
-    <p class="eyebrow">How we prevented data leakage</p>
-    <h2>The same lesion or patient never sits in both training and test</h2>
-    <div class="cols even">
-      <div class="panel">
-        <div class="seg" role="group" aria-label="Split type" id="splitTabs">
-          <button type="button" data-s="random" aria-pressed="false">Random split</button>
-          <button type="button" data-s="grouped" aria-pressed="true">Grouped split (ours)</button>
-        </div>
-        <div class="split">
-          <div class="bin"><h3>Training</h3><div class="dots" id="binTrain"></div></div>
-          <div class="bin"><h3>Test</h3><div class="dots" id="binTest"></div></div>
-        </div>
-        <p id="splitText"></p>
-      </div>
-      <div class="cards" id="leakCards"></div>
     </div>
   </section>
 
@@ -1158,7 +1183,8 @@ td.n { font-family: var(--mono); font-variant-numeric: tabular-nums; text-align:
   splitTabs.addEventListener("click", e => { const b = e.target.closest("button"); if (b) { splitMode = b.dataset.s; drawSplit(); } });
   drawSplit();
   const LEAK = [
-    { h: "Group before splitting", m: "Skin: lesion ID plus near-identical images (perceptual hash). Thyroid and ovary: near-identical images (no patient IDs). Capsule: blocks of 100 consecutive frames plus near-identical frames. Chest X-rays: NIH patient ID." },
+    { h: "Group before splitting", m: "Skin: lesion ID plus look-alike images found from the pixels (perceptual hash, see below). Thyroid and ovary: look-alike images only (no patient IDs published). Capsule: blocks of 100 consecutive frames plus look-alike frames. Chest X-rays: NIH patient ID." },
+    { h: "A stricter check with model features", m: "The pixel fingerprint can miss the same nodule seen from a slightly different angle. So we also joined images whose DINOv2 features are very similar (cosine ≥ 0.80; 0.93 for capsule): thyroid 3,455 → 3,081 groups, ovary 1,059 → 969, capsule 137 → 135. We re-ran every main test: 11 of 12 keep their sign and significance." },
     { h: "Checked in code", m: "The splitting code stops with an error if a group crosses splits. Tests check that no patient appears in two splits or folds. On the real NIH data: 0 shared patients among 30,805." },
     { h: "Test data never used to choose", m: "Classifier settings and the decision threshold are chosen on validation data, which is also grouped. The test sets are only scored." },
     { h: "Frozen encoders, fixed rules", m: "The image encoders are frozen; only a small classifier is trained on our training folds. The thyroid caliper detector was tuned on 36 images and frozen before its audit; artifact groups were fixed before any model was fitted." },
@@ -1498,6 +1524,31 @@ td.n { font-family: var(--mono); font-variant-numeric: tabular-nums; text-align:
       m: "The worry: rulers, hair and calipers were found automatically and the computer can make mistakes, which could bias our results. The test: compare our masks with masks made by other people or tools, and ideally have a doctor check a sample." },
   ]);
 
+
+  /* ---------------- perceptual-hash demo ---------------- */
+  const HASH_A = Array.from({ length: 64 }, (_, i) => ((i * 37 + 11) % 64) % 3 === 0 || (i * 13) % 7 === 2 ? 1 : 0);
+  const FLIPS = { dup: [9, 30, 51], other: Array.from({ length: 64 }, (_, i) => i).filter(i => (i * 29 + 5) % 64 < 31) };
+  function drawHash(m) {
+    const fl = new Set(FLIPS[m]), B = HASH_A.map((v, i) => fl.has(i) ? 1 - v : v);
+    const cell = 22, gap = 60, W = 8 * cell * 2 + gap + 20, H = 8 * cell + 40;
+    let g = "";
+    [[HASH_A, 10, "Image 1"], [B, 10 + 8 * cell + gap, "Image 2"]].forEach(([bits, x0, lab]) => {
+      g += `<text x="${x0 + 4 * cell}" y="16" text-anchor="middle" class="ink b">${lab}</text>`;
+      bits.forEach((v, i) => {
+        const x = x0 + (i % 8) * cell, y = 26 + Math.floor(i / 8) * cell, diff = fl.has(i) && x0 > 10;
+        g += `<rect x="${x + 1}" y="${y + 1}" width="${cell - 2}" height="${cell - 2}" rx="2" fill="${v ? "var(--ink)" : "var(--surface)"}" stroke="${diff ? "var(--artifact)" : "var(--line)"}" stroke-width="${diff ? 3 : 1}"/>`;
+      });
+    });
+    g += `<text x="${10 + 8 * cell + gap / 2}" y="${26 + 4 * cell + 5}" text-anchor="middle" class="ink b">vs</text>`;
+    $("hashChart").innerHTML = svg(W, H, g, "Two 64-bit image fingerprints with the differing bits outlined");
+    const n = fl.size;
+    $("hashText").innerHTML = n <= 8
+      ? `<span class="big pos">${n}</span> <b>of 64 bits differ</b> (orange outlines). That is within the limit of 8, so the two images are treated as the same lesion and kept on the <b>same side</b> of the split.`
+      : `<span class="big neg">${n}</span> <b>of 64 bits differ</b>. Far above the limit of 8: different images, so they may go to different sides of the split.`;
+    [...$("hashTabs").children].forEach(b => b.setAttribute("aria-pressed", b.dataset.h === m ? "true" : "false"));
+  }
+  $("hashTabs").addEventListener("click", e => { const b = e.target.closest("button"); if (b) drawHash(b.dataset.h); });
+  drawHash("dup");
   /* ---------------- key papers ---------------- */
   function groupedBars(el, groups, series, lo, hi, ticks, label, fmt) {
     const W = 560, H = 250, L = 52, R = 545, T = 18, B = 208;
