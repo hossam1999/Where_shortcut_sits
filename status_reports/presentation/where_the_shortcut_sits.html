@@ -334,33 +334,22 @@ td.n { font-family: var(--mono); font-variant-numeric: tabular-nums; text-align:
   <section class="slide" id="step-4" data-name="Step 4">
     <p class="eyebrow">Step 4 · real artifacts</p>
     <h2>With real artifacts, masking helps much more when the artifact is away from the lesion</h2>
-    <p class="lead" style="font-size:18px">Real rulers, hair and calipers cannot be moved. So we split real images into two groups: the artifact <b class="neg">on the lesion</b>, or <b class="pos">away from it</b>. In each group we compare the normal model with the masked model, on the hard test where the artifact points to the wrong answer.</p>
-    <div style="display:flex;flex-wrap:wrap;gap:10px;align-items:center">
-      <div class="seg" role="group" aria-label="Dataset" id="storyTabs"></div>
-      <button class="btn" id="allToggle" aria-pressed="false">Show all datasets and models</button>
-    </div>
-    <div id="storyView">
-      <div class="cols even">
-        <div class="panel" id="storyIn"></div>
-        <div class="panel" id="storyOut"></div>
-      </div>
-      <div class="panel" id="storySum" style="margin-top:14px"></div>
-    </div>
-    <div id="allView" hidden>
+    <div class="cols lit">
       <div class="panel">
-        <div style="display:flex;flex-wrap:wrap;gap:10px">
-          <div class="seg" role="group" aria-label="Which models" id="encTabs">
-            <button type="button" data-e="dino" aria-pressed="true">DINOv2: 4 planned tests</button>
-            <button type="button" data-e="all" aria-pressed="false">All encoders</button>
-          </div>
-          <div class="seg" role="group" aria-label="Interval type" id="ciTabs">
-            <button type="button" data-ci="img" aria-pressed="true">Intervals per image</button>
-            <button type="button" data-ci="grp" aria-pressed="false">Per lesion or group</button>
-          </div>
-        </div>
-        <div style="display:flex;flex-wrap:wrap;gap:18px;font-size:16px">
-          <span><span class="dotkey" style="background:var(--artifact)"></span> How much masking helped with the artifact <b>on</b> the lesion</span>
-          <span><span class="dotkey" style="background:var(--roi)"></span> … with the artifact <b>away</b> from it</span>
+        <h3>How to read this chart</h3>
+        <ul class="plain small">
+          <li><b>Each row (y axis)</b> is one dataset and one image model, e.g. “Thyroid, calipers · DINOv2”.</li>
+          <li><b>The x axis</b> is how much masking changed the model’s score on the hard test (masked model’s AUROC minus normal model’s AUROC). Right of 0 = masking helped; left of 0 = masking made it worse.</li>
+          <li><b class="neg">Orange bar:</b> images with the artifact <b>on</b> the lesion (inside the ROI).<br><b class="pos">Teal bar:</b> images with the artifact <b>away</b> from the lesion (outside the ROI).</li>
+          <li><b>A long teal bar and a short orange bar</b> means masking works well only when the artifact is away from the lesion. That is our finding.</li>
+          <li><b>The number on the right</b> = teal minus orange: how much more masking helps when the artifact is away. <b>Large</b> = location matters a lot; <b>near 0</b> = location does not matter (DermLIP). “Clear” = its 95% interval stays above 0.</li>
+        </ul>
+        <p class="small muted">Hard test = the artifact points to the wrong answer. The two bars come from two groups of real images (real artifacts cannot be moved). Results stay clear with stricter per-lesion intervals too.</p>
+      </div>
+      <div class="panel">
+        <div class="seg" role="group" aria-label="Which models" id="encTabs">
+          <button type="button" data-e="all" aria-pressed="true">All datasets and models</button>
+          <button type="button" data-e="dino" aria-pressed="false">Only the 4 planned tests (DINOv2)</button>
         </div>
         <div class="chart" id="realChart"></div>
       </div>
@@ -970,88 +959,49 @@ td.n { font-family: var(--mono); font-variant-numeric: tabular-nums; text-align:
   }
   drawMod();
 
-  /* ---------------- step 4: one dataset at a time ---------------- */
-  // Reversed-test AUROC, DINOv2, mean of 5 seeds (results/rerun_2026-09-28/*/metrics_per_seed.csv)
-  const STORY = {
-    "Skin, hair/ruler": { art: "hair or ruler", roi: "lesion", A: [0.510, 0.460], B: [0.510, 0.608], gap: 0.147, ci: [0.111, 0.185] },
-    "Thyroid, calipers": { art: "caliper", roi: "nodule", A: [0.289, 0.398], B: [0.405, 0.752], gap: 0.239, ci: [0.196, 0.280] },
-    "Ovary, calipers": { art: "caliper", roi: "lesion", A: [0.413, 0.545], B: [0.423, 0.725], gap: 0.170, ci: [0.087, 0.252] },
-    "Capsule, debris": { art: "debris", roi: "lesion", A: [0.581, 0.665], B: [0.429, 0.890], gap: 0.377, ci: [0.327, 0.426] },
-  };
-  let storySel = "Thyroid, calipers", showAll = false;
-  const storyTabs = $("storyTabs"), allToggle = $("allToggle");
-  Object.keys(STORY).forEach(k => { const b = document.createElement("button"); b.type = "button"; b.textContent = k; b.dataset.k = k; storyTabs.appendChild(b); });
-  storyTabs.addEventListener("click", e => { const b = e.target.closest("button"); if (b) { storySel = b.dataset.k; drawStory(); } });
-  allToggle.addEventListener("click", () => { showAll = !showAll; drawStory(); });
-  function pair(title, cls, [std, msk]) {
-    const W = 460, x = lin(0, 1, 120, W - 60);
-    const bar = (y, v, col, lab) => `<text x="110" y="${y + 24}" text-anchor="end" class="ink">${lab}</text><rect x="120" y="${y}" width="${x(v) - 120}" height="36" rx="4" style="fill:var(${col})"/><text x="${x(v) + 8}" y="${y + 24}" class="ink b">${v.toFixed(2)}</text>`;
-    let g = `<line x1="${x(0.5)}" x2="${x(0.5)}" y1="0" y2="104" style="stroke:var(--ink);stroke-dasharray:4 4;opacity:0.6"/><text x="${x(0.5)}" y="122" text-anchor="middle">0.5 = guessing</text>`;
-    g += bar(6, std, "--std", "Normal model") + bar(56, msk, "--roi", "Masked model");
-    const d = msk - std;
-    return `<h3 class="${cls}">${title}</h3>` + svg(W, 128, g, `${title}: normal ${std.toFixed(2)}, masked ${msk.toFixed(2)}`) +
-      `<p>Masking changed the score by <b class="num ${d >= 0 ? "pos" : "neg"}" style="font-size:22px">${f2(d)}</b>${d < 0 ? " (it made things worse)" : ""}</p>`;
-  }
-  function drawStory() {
-    [...storyTabs.children].forEach(b => b.setAttribute("aria-pressed", b.dataset.k === storySel ? "true" : "false"));
-    allToggle.setAttribute("aria-pressed", showAll ? "true" : "false");
-    allToggle.textContent = showAll ? "Back to one dataset" : "Show all datasets and models";
-    storyTabs.hidden = showAll; $("storyView").hidden = showAll; $("allView").hidden = !showAll;
-    if (showAll) { drawReal(); return; }
-    const c = STORY[storySel], dA = c.A[1] - c.A[0], dB = c.B[1] - c.B[0];
-    $("storyIn").innerHTML = pair(`${c.art[0].toUpperCase() + c.art.slice(1)} ON the ${c.roi} (inside the ROI)`, "neg", c.A);
-    $("storyOut").innerHTML = pair(`${c.art[0].toUpperCase() + c.art.slice(1)} AWAY from the ${c.roi} (outside the ROI)`, "pos", c.B);
-    $("storySum").innerHTML = `<p style="font-size:20px">Masking helped <b class="pos">${f2(dB)}</b> with the ${c.art} away from the ${c.roi}, but only <b class="neg">${f2(dA)}</b> with it on the ${c.roi}.<br>
-      Difference: ${f2(dB)} − (${f2(dA)}) = <b class="num">${f2(c.gap)}</b> &nbsp;<span class="small muted">(95% interval ${f2(c.ci[0])} to ${f2(c.ci[1])}: clearly above 0)</span></p>
-      <p class="small muted">Scores are AUROC on the hard test (0.5 = guessing, 1 = perfect). Many normal models score below 0.5 there: the artifact fools them. The same pattern holds in all four datasets.</p>`;
-  }
-  /* ---------------- step 4: dumbbell of masking effect in each trap ---------------- */
-  // A, B = masked − standard on the reversed test in Trap A (inside) and Trap B (outside); gap = B − A = crossover
+  /* ---------------- step 4: paired bars per dataset and model ---------------- */
+  // A, B = masked − normal reversed-test AUROC with the artifact on (A) / away from (B) the lesion; gap = B − A
   const REAL = [
-    { c: "Skin, hair/ruler", e: "DINOv2", A: -0.049, B: 0.098, est: 0.147, img: [0.110, 0.185], grp: [0.110, 0.197], planned: true },
-    { c: "Thyroid, calipers", e: "DINOv2", A: 0.109, B: 0.348, est: 0.239, img: [0.195, 0.280], grp: [0.196, 0.279], planned: true },
-    { c: "Ovary, calipers", e: "DINOv2", A: 0.132, B: 0.302, est: 0.170, img: [0.088, 0.252], grp: [0.086, 0.254], planned: true },
-    { c: "Capsule, debris", e: "DINOv2", A: 0.084, B: 0.461, est: 0.377, img: [0.327, 0.425], grp: [0.304, 0.451], planned: true },
-    { c: "Thyroid, calipers", e: "MedSigLIP", A: 0.053, B: 0.248, est: 0.195, img: [0.153, 0.236], grp: [0.153, 0.237] },
-    { c: "Ovary, calipers", e: "MedSigLIP", A: 0.002, B: 0.180, est: 0.178, img: [0.109, 0.248], grp: [0.107, 0.252] },
-    { c: "Capsule, debris", e: "MedSigLIP", A: 0.117, B: 0.452, est: 0.335, img: [0.286, 0.383], grp: [0.251, 0.408] },
-    { c: "Thyroid, calipers", e: "ConvNeXt", A: -0.004, B: 0.271, est: 0.275, img: [0.230, 0.320], grp: [0.230, 0.322] },
-    { c: "Capsule, debris", e: "ConvNeXt", A: 0.084, B: 0.403, est: 0.320, img: [0.269, 0.372], grp: [0.248, 0.391] },
-    { c: "Skin, hair/ruler", e: "DermLIP", A: -0.104, B: -0.090, est: 0.014, img: [-0.037, 0.063], grp: [-0.035, 0.095] },
+    { c: "Skin, hair/ruler", e: "DINOv2", A: -0.049, B: 0.098, est: 0.147, ci: [0.111, 0.185], planned: true },
+    { c: "Thyroid, calipers", e: "DINOv2", A: 0.109, B: 0.348, est: 0.239, ci: [0.196, 0.280], planned: true },
+    { c: "Ovary, calipers", e: "DINOv2", A: 0.132, B: 0.302, est: 0.170, ci: [0.087, 0.252], planned: true },
+    { c: "Capsule, debris", e: "DINOv2", A: 0.084, B: 0.461, est: 0.377, ci: [0.327, 0.426], planned: true },
+    { c: "Thyroid, calipers", e: "MedSigLIP", A: 0.053, B: 0.248, est: 0.195, ci: [0.153, 0.238] },
+    { c: "Ovary, calipers", e: "MedSigLIP", A: 0.002, B: 0.180, est: 0.178, ci: [0.109, 0.248] },
+    { c: "Capsule, debris", e: "MedSigLIP", A: 0.117, B: 0.452, est: 0.335, ci: [0.286, 0.383] },
+    { c: "Thyroid, calipers", e: "ConvNeXt", A: -0.004, B: 0.271, est: 0.275, ci: [0.231, 0.320] },
+    { c: "Capsule, debris", e: "ConvNeXt", A: 0.084, B: 0.403, est: 0.320, ci: [0.268, 0.372] },
+    { c: "Skin, hair/ruler", e: "DermLIP", A: -0.104, B: -0.090, est: 0.014, ci: [-0.037, 0.063] },
   ];
-  let ciMode = "img", encMode = "dino";
-  const ciTabs = $("ciTabs"), encTabs = $("encTabs");
+  let encMode = "all";
+  const encTabs = $("encTabs");
   function drawReal() {
-    [...ciTabs.children].forEach(b => b.setAttribute("aria-pressed", b.dataset.ci === ciMode ? "true" : "false"));
     [...encTabs.children].forEach(b => b.setAttribute("aria-pressed", b.dataset.e === encMode ? "true" : "false"));
     const rows = encMode === "dino" ? REAL.filter(r => r.planned) : REAL;
-    const W = 720, L = 190, R = W - 170, top = 36, rowH = rows.length > 4 ? 52 : 70, H = top + rows.length * rowH + 44;
-    const x = lin(-0.15, 0.5, L, R);
-    let s = `<rect x="${x(-0.15)}" y="${top - 8}" width="${x(0) - x(-0.15)}" height="${rows.length * rowH + 8}" style="fill:var(--artifact-soft);opacity:0.55"/>`;
-    s += `<text x="${x(0) - 8}" y="${top - 14}" text-anchor="end" class="art b">← masking hurts</text><text x="${x(0) + 8}" y="${top - 14}" class="roi b">masking helps →</text>`;
-    [-0.1, 0, 0.1, 0.2, 0.3, 0.4, 0.5].forEach(v => {
-      s += `<line x1="${x(v)}" x2="${x(v)}" y1="${top - 8}" y2="${top + rows.length * rowH}" style="stroke:${v === 0 ? "var(--ink)" : "var(--line)"};stroke-width:${v === 0 ? 2 : 1}"/>`;
+    const W = 800, L = 200, R = W - 150, top = 40, rowH = 58, H = top + rows.length * rowH + 50;
+    const x = lin(-0.15, 0.6, L, R - 50), z = x(0);
+    const fv = v => Math.abs(v) < 0.01 ? (v < 0 ? "−" : "+") + Math.abs(v).toFixed(3) : f2(v);
+    let s = `<rect x="${x(-0.15)}" y="${top - 6}" width="${z - x(-0.15)}" height="${rows.length * rowH + 6}" style="fill:var(--artifact-soft);opacity:0.5"/>`;
+    s += `<text x="${z - 8}" y="${top - 14}" text-anchor="end" class="art b">← masking made it worse</text><text x="${z + 8}" y="${top - 14}" class="roi b">masking helped →</text>`;
+    s += `<text x="${R + 16}" y="${top - 14}" class="ink b">Teal − orange</text>`;
+    [-0.1, 0, 0.1, 0.2, 0.3, 0.4, 0.5, 0.6].forEach(v => {
+      s += `<line x1="${x(v)}" x2="${x(v)}" y1="${top - 6}" y2="${top + rows.length * rowH}" style="stroke:${v === 0 ? "var(--ink)" : "var(--line)"};stroke-width:${v === 0 ? 2 : 1}"/>`;
       s += `<text x="${x(v)}" y="${top + rows.length * rowH + 20}" text-anchor="middle">${v === 0 ? "0" : f2(v).replace("+", "")}</text>`;
     });
-    s += `<text x="${(L + R) / 2}" y="${H - 4}" text-anchor="middle" class="ink">Effect of masking on the reversed test (masked − standard AUROC)</text>`;
-    s += `<text x="${R + 18}" y="${top - 14}" class="ink b">Gap (crossover)</text>`;
+    s += `<text x="${(L + R - 50) / 2}" y="${H - 6}" text-anchor="middle" class="ink b">x axis: change in score from masking (masked AUROC − normal AUROC)</text>`;
     rows.forEach((r, i) => {
-      const cy = top + i * rowH + rowH / 2, [lo, hi] = r[ciMode], clear = lo > 0;
-      s += `<text x="${L - 14}" y="${cy - 2}" text-anchor="end" class="ink b">${r.c}</text><text x="${L - 14}" y="${cy + 16}" text-anchor="end">${r.e}${r.planned ? " · planned" : ""}</text>`;
-      s += `<line x1="${x(r.A)}" x2="${x(r.B)}" y1="${cy}" y2="${cy}" style="stroke:var(--muted);stroke-width:5;opacity:0.45;stroke-linecap:round"/>`;
-      s += `<circle cx="${x(r.A)}" cy="${cy}" r="10" style="fill:var(--artifact);stroke:var(--surface);stroke-width:2"/>`;
-      s += `<circle cx="${x(r.B)}" cy="${cy}" r="10" style="fill:var(--roi);stroke:var(--surface);stroke-width:2"/>`;
-      const near = Math.abs(x(r.B) - x(r.A)) < 46;
-      s += `<text x="${x(r.A)}" y="${cy - 16}" text-anchor="${near ? "end" : "middle"}" class="art">${f2(r.A)}</text>`;
-      s += `<text x="${x(r.B)}" y="${cy - 16}" text-anchor="${near ? "start" : "middle"}" class="roi">${f2(r.B)}</text>`;
-      s += `<text x="${R + 18}" y="${cy - 2}" class="ink b">${f2(r.est)} ${clear ? "clear" : "not clear"}</text><text x="${R + 18}" y="${cy + 16}">[${f2(lo)}, ${f2(hi)}]</text>`;
+      const y0 = top + i * rowH, clear = r.ci[0] > 0;
+      if (i % 2 === 1) s += `<rect x="0" y="${y0}" width="${W}" height="${rowH}" style="fill:var(--line);opacity:0.18"/>`;
+      s += `<text x="${L - 12}" y="${y0 + 25}" text-anchor="end" class="ink b">${r.c}</text><text x="${L - 12}" y="${y0 + 43}" text-anchor="end">${r.e}</text>`;
+      const bar = (v, yy, col) => { const x1 = Math.min(x(v), z), w = Math.max(Math.abs(x(v) - z), 2);
+        return `<rect x="${x1}" y="${yy}" width="${w}" height="17" rx="3" style="fill:var(${col})"/><text x="${v >= 0 ? x(v) + 6 : z + 6}" y="${yy + 14}" text-anchor="start" class="${col === "--roi" ? "roi" : "art"}">${fv(v)}</text>`; };
+      s += bar(r.A, y0 + 9, "--artifact") + bar(r.B, y0 + 30, "--roi");
+      s += `<text x="${R + 16}" y="${y0 + 25}" class="ink b">${f2(r.est)}</text><text x="${R + 16}" y="${y0 + 43}" class="${clear ? "pos" : "muted"}">${clear ? "clear" : "not clear"}</text>`;
     });
-    $("realChart").innerHTML = svg(W, H, s, "Effect of masking with the artifact inside versus outside the ROI, per cohort") +
-      `<p class="small muted">Read each row from orange to teal: the further right the teal dot, the more masking helps when the artifact is outside. “Clear” = the 95% interval of the gap stays above 0.</p>`;
+    $("realChart").innerHTML = svg(W, H, s, "How much masking helped with the artifact on versus away from the lesion, per dataset and model");
   }
-  ciTabs.addEventListener("click", e => { const b = e.target.closest("button"); if (b) { ciMode = b.dataset.ci; drawReal(); } });
   encTabs.addEventListener("click", e => { const b = e.target.closest("button"); if (b) { encMode = b.dataset.e; drawReal(); } });
-  drawStory();
+  drawReal();
 
   /* ---------------- statistics checks ---------------- */
   expandable($("stats"), [
