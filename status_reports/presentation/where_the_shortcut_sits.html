@@ -516,13 +516,13 @@ td.n { font-family: var(--mono); font-variant-numeric: tabular-nums; text-align:
         <div class="panel">
           <h3>Two extra checks</h3>
           <p class="small"><b>Matched images:</b> we also paired each Trap A image with a Trap B image of the same lesion size, artifact amount and scanner. The result did not change (shrank by at most 16%).</p>
-          <p class="small"><b>Plain tissue control (grey bars):</b> we pasted plain tissue the same way. It gives most of the effect too. So what matters is that <i>something linked to the diagnosis</i> sits inside the ROI, not what the artifact looks like.</p>
+          <p class="small"><b>Random tissue control (grey bars):</b> this extra experiment was made only to show that <b>what the artifact looks like does not matter</b>. Instead of the artifact we pasted a piece of random tissue, in the same places and mostly on sick images. The model cheated with it almost as much. So the problem is <i>anything linked to the diagnosis</i> that sits inside the ROI, not calipers or hair as such.</p>
         </div>
       </div>
       <div>
         <div class="panel">
           <div class="chart" id="transChart"></div>
-          <div class="legend"><span><span class="dotkey" style="background:var(--artifact)"></span> Real artifact pasted</span><span><span class="dotkey" style="background:var(--std)"></span> Plain tissue pasted (control)</span></div>
+          <div class="legend"><span><span class="dotkey" style="background:var(--artifact)"></span> Real artifact pasted</span><span><span class="dotkey" style="background:var(--std)"></span> Random tissue pasted (control)</span></div>
           <p class="small"><b>How to read:</b> each bar = how much <b>more</b> masking helps when the piece is <b>outside</b> the ROI than when it is <b>inside</b> (in AUROC, reversed test). Above 0 means location matters. All orange bars are clearly above 0, in all four datasets.</p>
         </div>
         <div class="say">
@@ -1455,7 +1455,7 @@ td.n { font-family: var(--mono); font-variant-numeric: tabular-nums; text-align:
       g += `<rect x="${x(0)}" y="${y0 + 24}" width="${x(n) - x(0)}" height="14" rx="3" fill="var(--std)"/><text x="${x(n) + 6}" y="${y0 + 36}" style="font-size:13px">+${n.toFixed(2)}</text>`;
     });
     g += `<text x="${(L + R) / 2}" y="${H - 4}" text-anchor="middle" class="ink">extra help from masking when the piece is outside vs inside (AUROC)</text>`;
-    $("transChart").innerHTML = svg(W, H, g, "Location effect when the same real artifact is pasted inside or outside the ROI, with a plain-tissue control");
+    $("transChart").innerHTML = svg(W, H, g, "Location effect when the same real artifact is pasted inside or outside the ROI, with a random-tissue control");
   })();
 
   /* ---------------- step 6: real patients ---------------- */
