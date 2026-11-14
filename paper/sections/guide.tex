@@ -11,7 +11,10 @@ natural weights. Within each class, the head then cannot score images with and w
 average, and no image is down-weighted; group balancing, by contrast, loses on unaltered data mainly by discarding
 disease evidence through reweighting (Supplement~S17). The constraint is the first-moment, linear case of
 counterfactual invariance \citep{veitch2021counterfactual} and of the auxiliary-label conditional-independence
-regularisers of \citet{makar2022causally}; what is new is its derivation from the location law and its use after
+regularisers of \citet{makar2022causally}. It is also related to class artifact compensation, which projects an
+artifact direction out of the features of all images \citep{anders2022clever} or penalises the model along it
+(RR-ClArC; \citealp{pahde2025ensuring}); ours removes the within-class differences, needs no artifact information at
+test time, and is applied after masking. What is new is its derivation from the location law and its use after
 masking. At test time it needs only the masked image.
 
 \paragraph{Registered test against masking} We registered a criterion for \emph{dominating} masking: not worse (margin

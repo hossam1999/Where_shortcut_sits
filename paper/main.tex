@@ -115,8 +115,8 @@ for masking and evaluates each placement on correlated, reversed and clean tests
 trained on full chest radiographs performed better on images without the ROI than on the ROI alone
 \citep{sourget2025mask}. Training on segmented dermoscopy images improved balanced accuracy for one training set but
 not another \citep{maron2021confounding}, and penalising relevance outside segmentation masks makes chest-radiograph
-classifiers more robust to background bias \citep{bassi2024isnet}. All of these assume that the shortcut lies outside
-the ROI. In natural images, mitigating one shortcut can amplify reliance on others \citep{li2023whacamole}; masking is
+classifiers more robust to background bias \citep{bassi2024isnet}. Most of these assume that the shortcut lies outside
+the ROI. Three studies note the in-ROI case without testing it: \citet{viviano2021saliency}, who restricted chest-radiograph classifiers with a mask or with gradient penalties under a 90/10 source--label correlation reversed at test time, state that their methods are not guaranteed to remove confounders inside the mask; \citet{benahmed2022multisite} found that a shortcut still influenced the classifier after lung segmentation; and \citet{pahde2025ensuring} note that artifacts can overlap task-relevant regions, so that masking them out removes information. In natural images, mitigating one shortcut can amplify reliance on others \citep{li2023whacamole}; masking is
 such a mitigation when an artifact lies inside the ROI, and we show that in medical images it amplifies the in-ROI
 shortcut, that location causes this, and why.
 \paragraph{Removing shortcuts} Reweighting and GroupDRO \citep{sagawa2020groupdro}, last-layer retraining
@@ -140,7 +140,8 @@ Let $Y\in\{0,1\}$ be the diagnosis and $A\in\{0,1\}$ the presence of an artifact
 $P(A{=}1\mid Y{=}1)=0.9$ and $P(A{=}1\mid Y{=}0)=0.1$ and tests on a correlated environment with the same rates,
 a \emph{reversed} environment with the rates swapped, and a clean environment in which the artifact is independent of
 the label. This design is borrowed, not new: it follows Colored MNIST \citep{arjovsky2019irm} and its medical uses
-\citep{bissoto2020debiasing,puli2022nurd,bassi2024isnet}, and the 90/10 schedule matches \citet{puli2022nurd}; what is
+\citep{bissoto2020debiasing,puli2022nurd,viviano2021saliency,bassi2024isnet}, and the 90/10 schedule matches
+\citet{puli2022nurd} and \citet{viviano2021saliency}; what is
 added here is crossing it with the artifact's position relative to the ROI and with ROI masking. A model that uses $A$ gains on the correlated test and collapses on the reversed one; the primary metric is
 reversed-test AUROC, and clean AUROC measures the cost of a mitigation. The overlap
 $r=|\mathrm{artifact}\cap\mathrm{ROI}|/|\mathrm{artifact}|$ is the variable of interest. Three designs vary it:

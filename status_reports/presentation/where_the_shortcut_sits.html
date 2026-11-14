@@ -195,7 +195,7 @@ td.n { font-family: var(--mono); font-variant-numeric: tabular-nums; text-align:
       <div>
         <p>A deep classifier learns whatever predicts the label. In skin images, doctors often place a ruler next to a suspicious mole, so a model can score well by detecting the ruler. This is a <b>shortcut</b>.</p>
         <p>A common fix is <b>ROI masking</b>: keep only the region of interest (ROI), such as the lesion, and replace the rest of the image.</p>
-        <p class="muted">Its hidden assumption: the artifact lies in the background. Rulers, hair, calipers and debris often lie on the lesion too.</p>
+        <p class="muted">Its usual assumption: the artifact lies in the background. Rulers, hair, calipers and debris often lie on the lesion too. A few papers mention this risk in their limitations, but none has tested it.</p>
       </div>
       <div class="panel">
         <div class="scenes">
@@ -329,8 +329,8 @@ td.n { font-family: var(--mono); font-variant-numeric: tabular-nums; text-align:
     <div class="tablewrap">
       <table id="gapTable"></table>
     </div>
-    <p class="statement">Reversed tests and moving a cue have been done before. What we did not find is the full combination: the same artifact placed inside versus outside the ROI, crossed with ROI masking, and each condition tested on correlated, reversed and clean tests.</p>
-    <p class="small muted">Closest precedents: Bassi et al. (matched, reversed and clean tests; the mark is always outside the lungs), Puli et al. (90/10 → 10/90 on chest X-rays), Bissoto et al. (reversed skin artifacts, with masking; workshop), Corbetta et al. (inverted artifacts, MICCAI 2026), Stanley et al. and Boland et al. (bias near vs far, or fixed vs random position, not relative to a masking ROI). Li et al. (CVPR 2023) showed in natural images that removing one shortcut can amplify another.</p>
+    <p class="statement">Reversed tests and moving a cue have been done before, and a few papers even warn that a shortcut inside the mask may survive. What nobody has done is test it: the full combination: the same artifact placed inside versus outside the ROI, crossed with ROI masking, and each condition tested on correlated, reversed and clean tests.</p>
+    <p class="small muted">Closest precedents: Bassi et al. (matched, reversed and clean tests; the mark is always outside the lungs), Puli et al. (90/10 → 10/90 on chest X-rays), Bissoto et al. (reversed skin artifacts, with masking; workshop), Corbetta et al. (inverted artifacts, MICCAI 2026), Stanley et al. and Boland et al. (bias near vs far, or fixed vs random position, not relative to a masking ROI). Li et al. (CVPR 2023) showed in natural images that removing one shortcut can amplify another. Named but untested: Viviano et al. (ICLR 2021) state that their masking methods may not remove confounders inside the mask; Ben Ahmed et al. (IEEE Access 2022) saw a shortcut survive lung segmentation; Pahde et al. (2025) note artifacts can overlap task-relevant regions. Viviano and Pahde are our planned replication targets.</p>
   </section>
 
   <section class="slide" id="data" data-name="Datasets">
@@ -758,7 +758,7 @@ td.n { font-family: var(--mono); font-variant-numeric: tabular-nums; text-align:
       models: "Convolutional neural networks.",
       metrics: "AUC under each masking setting; SHAP maps; embeddings; the clinician’s reading.",
       results: "On PadChest every model, whatever the mask, scored above chance; models trained on full images did well on images without the lungs, sometimes better than on lung-only images: strong evidence of shortcuts. In glaucoma the evidence was weaker, with a possible spurious correlation in Chákṣu.",
-      us: "The closest masking study, on the PadChest data of our future option. It assumes the shortcut lies outside the ROI.",
+      us: "The closest masking study, on the PadChest data of our future option. It tests whether signal lies outside the ROI, but never moves an artifact.",
       ref: "Sourget T, Hestbek-Møller M, Jiménez-Sánchez A, Xu JJ, Cheplygina V. Journal of Imaging Informatics in Medicine 39(1):767–784 (2025).", doi: "10.1007/s10278-025-01531-5" },
     { id: "bassi", y: 2024, t: "masking", short: "ISNet", who: "Bassi et al.", venue: "Nature Communications",
       title: "Improving deep neural network generalization and robustness to background bias via layer-wise relevance propagation optimization",
@@ -903,7 +903,7 @@ td.n { font-family: var(--mono); font-variant-numeric: tabular-nums; text-align:
     pahde: "Needs artifact labels or masks; no ROI masking; location not varied.",
     lin: "Segmentation, not classification; caliper position not varied.",
     cassidy: "Data quality of ISIC only; no shortcut or masking experiments.",
-    sourget: "Never moves an artifact or flips its link to the label; assumes the shortcut is outside the ROI.",
+    sourget: "Never moves an artifact or flips its link to the label.",
     bassi: "Assumes the bias lies outside the mask; no artifact inside the ROI.",
     li: "Natural images only; no masking; location not varied.",
     dfr: "Natural-image benchmarks; needs group labels; no masking.",
@@ -1110,6 +1110,8 @@ td.n { font-family: var(--mono); font-variant-numeric: tabular-nums; text-align:
   // columns: medical | real named artifact | ROI masking | correlated/reversed/clean tests | varies where the cue sits | links that position to masking
   const GAP = [
     ["Bassi et al. 2024, Nature Communications", 1, 0, 1, 1, 0, 0],
+    ["Viviano et al. 2021, ICLR", 1, 0, 1, 0, 0, 0],
+    ["Pahde et al. 2025, Machine Learning", 1, 0, 0, 0, 0, 0],
     ["Bissoto et al. 2020, CVPR workshop", 1, 1, 1, 1, 0, 0],
     ["Puli et al. 2022 (NuRD), ICLR", 1, 0, 0, 1, 0, 0],
     ["Corbetta et al. 2026, MICCAI", 1, 0, 0, 1, 0, 0],
@@ -1121,6 +1123,8 @@ td.n { font-family: var(--mono); font-variant-numeric: tabular-nums; text-align:
   ];
   const GAPNOTE = {
     "Bassi et al. 2024, Nature Communications": [null, "synthetic marks", "relevance penalty + segment-then-classify", "all three", "mark always outside the lungs", null],
+    "Viviano et al. 2021, ICLR": [null, "hospital source / view", "mask + gradient penalties", "reversed only (90/10 → 10/90)", null, "says confounders inside the mask may remain (limitations), not tested"],
+    "Pahde et al. 2025, Machine Learning": [null, "synthetic artifacts", "penalty on artifact regions", "clean + biased", null, "notes artifacts can overlap task-relevant regions, not tested"],
     "Bissoto et al. 2020, CVPR workshop": [null, "7 real artifacts", "outside-lesion pixels normalised", "reversed + correlated", "observed, not controlled", null],
     "Puli et al. 2022 (NuRD), ICLR": [null, "hospital source", "centre-crop baseline only", "90/10 → 10/90", null, null],
     "Corbetta et al. 2026, MICCAI": [null, "synthetic overlays", null, "inverted + clean", null, null],
