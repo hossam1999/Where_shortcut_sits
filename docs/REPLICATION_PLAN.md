@@ -38,3 +38,25 @@ Answers: Viviano's cardiomegaly mask is a central circle; splits come from a fix
 2. **PadChest access:** whether the downsized TorchXRayVision copy is enough, to avoid the ~1 TB download.
 3. **Pahde:** where the inserted artifact sits relative to the lesion. Whether the split files are released.
 4. **ISNet:** whether the code still runs. Which COVID datasets are still downloadable. The exact mark positions.
+
+## BIMCV COVID-19+ access for P3 (found 2026-11-15)
+- **The problem:** IEEE DataPort needs a subscription for the Extension entries.
+- **Free alternative:** the dataset owners' own mirror at the Barcelona Supercomputing Center, linked from
+  github.com/BIMCV-CSUSP/BIMCV-COVID-19 (`BIMCV-COVID19+/Readme.md`):
+  - Share: `https://b2drop.bsc.es/index.php/s/BIMCV-COVID19-cIter_1_2_3` (iterations 1+2+3, a superset of what P3
+    could have used). It is a Nextcloud public share; the owners recommend WebDAV for bulk downloads.
+  - The data is split into **571 separate .tgz archives, each with a `*.tar-tvf.txt` listing of its contents**, plus
+    `covid19_posi_metadata.tar.gz`, `covid19_posi_sessions_tsv.tar.gz`, `covid19_posi_derivative.tar.gz` and
+    `sha1sum.txt` / `sha1sum-b.txt`. So we can read the listings, then download **only the archives that hold the
+    images P3 used**, not the whole dataset.
+- **Licence:** the BIMCV-COVID19 Research Use Agreement. Free for academic research; no sale; cite the dataset; do
+  not redistribute the images.
+- **Not checked yet:** the mirror's links could not be reached from the analysis session (network policy). The GPU
+  machine must check that they still work.
+- **The image list:** the P3 repo (github.com/PedroRASB/ISNet) has no list of the 1,515 BIMCV images and no data
+  scripts; its README points to the paper. Get the selection rule from the paper's Methods and supplement, or ask the
+  authors for the image IDs.
+- **Pre-trained weights:** P3's trained ISNet weights for COVID-19 are on Google Drive (link in the P3 README). Use
+  them to check our reproduction.
+- **Not a substitute:** the Kaggle "COVID-19 Radiography Database" contains ~2,473 BIMCV images, but renamed and
+  processed, so they cannot be matched to P3's test.
