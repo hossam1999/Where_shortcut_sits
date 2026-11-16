@@ -11,7 +11,8 @@ Data (Supp. Notes 5.1, 6.1): cache from p3_prepare.py (histogram-equalized 224-p
 scaled to [0, 1]). Augmentation on training images only: translation up to 28 px, rotation within +-40 degrees, horizontal
 flip p = 0.5, applied jointly to image, lung mask and the mark (the mark is drawn first, as in P3).
 Marks: white shapes, side 10% of the image (22 px): triangle COVID-19 (2), square normal (0), circle pneumonia (1).
-  --position corner: P3's upper-left corner (4-px margin; P3 gives no exact offset) | inside: fully inside the lungs
+  --position corner: P3's upper-left corner, box at (0, 0); the right-angled triangle and the flush position were measured
+             from P3's main-text heatmap figure (page 9: mark box 0.10-0.11 of the side from pixel 0) | inside: fully inside the lungs
              (overlap >= 0.95, find_best_placements_for_mask on the image's lung mask)
   --presence all: every training/validation image carries its class mark (P3) | 9010: 90% carry it, keyed by a stable hash
              of (image id, seed) (amendment A6)
@@ -48,14 +49,14 @@ def draw(img: np.ndarray, shape: str, x: int, y: int) -> np.ndarray:
     elif shape == "circle":
         cv2.circle(out, (x + M // 2, y + M // 2), M // 2, 255, -1)
     else:
-        pts = np.array([[x + M // 2, y], [x, y + M - 1], [x + M - 1, y + M - 1]], np.int32)
+        pts = np.array([[x, y], [x + M - 1, y], [x, y + M - 1]], np.int32)   # right triangle in the corner (P3 Fig. 5)
         cv2.fillPoly(out, [pts], 255)
     return out
 
 
 def placements(ids, roi, position):
     if position == "corner":
-        return {i: (4, 4, 0.0) for i in ids}
+        return {i: (0, 0, 0.0) for i in ids}   # flush with the corner, as measured in P3's figure
     from wtss.synthetic import find_best_placements_for_mask
     out = {}
     for i, m in zip(ids, roi):

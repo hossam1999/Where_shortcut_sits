@@ -83,7 +83,7 @@ def main():
         for k in range(0, n, 64):
             g = list(ex.map(lambda p: process(p, pad), paths[k:k + 64]))
             g512 = np.stack([cv2.resize(x, (512, 512), interpolation=cv2.INTER_LINEAR) for x in g])
-            m = seg(g512)
+            m = np.concatenate([seg(g512[j:j + 8]) for j in range(0, len(g512), 8)])  # small GPU batches (shared GPU)
             for j, (x, mm) in enumerate(zip(g, m)):
                 gray[k + j] = x
                 roi[k + j] = cv2.resize(mm, (S, S), interpolation=cv2.INTER_NEAREST)

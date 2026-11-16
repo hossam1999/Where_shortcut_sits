@@ -413,3 +413,21 @@ If any is outside, P1 pauses for the author (the queue holds seeds 3232 and 3221
   reading: first number in the clinical reading = years. It keeps CHNCXR_0018 ("male 42") and counts CHNCXR_0202
   ("female 64days", an infant) as an adult, as P3's 370 implies. Variants: primary 2,501 + 1,319 + 370; size-matched
   1,515 + 1,295 + 370 = 3,180.
+- **P3 marks, corrected before any P3 run (smoke tests only).** P3's main-text heatmap figure (PDF page 9, top row, the two
+  marked X-rays at ~210 px) shows:
+  - the mark box flush with the upper-left corner, starting at pixel 0;
+  - box size 0.10–0.11 of the side, as the text says;
+  - the **triangle as a right triangle filling the corner** (vertices top-left, top-right, bottom-left);
+  - the circle inscribed in the same box.
+
+  Our first guess (4-px margin, upright triangle) is replaced by this.
+- **Mark survival under P3's augmentation** (rotation ±40° about the centre, translation ±28 px; 2,000 draws):
+  - corner mark: 23% of the mark kept on average; fully kept in 8.7% of draws; fully lost in 58.2%;
+  - mark well inside the lungs: always kept.
+
+  P3 says augmentation "can sometimes remove the shapes"; in its design the shortcut is visible in under half of the training
+  views. Reported next to every P3 corner result.
+- **P3 caches:** training/validation cache built (13,932 images; mean lung fraction 0.322; visual check of masks and orientation
+  done). TorchXRayVision PSPNet weights match the SHA-256 in `docs/ENVIRONMENT.md` (`019b167e…cadc044fc`).
+- **P3 trainer smoke tests:** DenseNet and ISNet (corner / inside, all / 90-10) run end to end. The 90/10 rule marks 89.5–90.3%
+  per class. Inside placement reaches ≥ 0.95 overlap for 99.94% of images; the rest are reported per image.
