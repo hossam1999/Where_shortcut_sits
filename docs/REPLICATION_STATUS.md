@@ -111,20 +111,52 @@ Supplementary Information (Bassi), and the code linked in each paper's code-avai
 
 | dataset | needed for | status |
 |---|---|---|
-| ISIC 2019 (+ HAM10000 masks) | P2, P2 location | downloading (our pipeline) |
-| NIH ChestX-ray14 | P1 cardiomegaly; P3 o.o.d. pneumonia | downloading (our pipeline); P1 needs the original `Data_Entry_2017.csv` |
-| PadChest 224 px (Academic Torrents) | P1 cardiomegaly | to download |
-| RSNA Pneumonia (Kaggle) | P1 pneumonia | **not in the agreed list: needs your OK** |
-| CheXpert small | P3 normal/pneumonia training | to download (Stanford registration) |
-| BrixIA | P3 COVID-19 training | **waiting for your link** |
-| BIMCV COVID-19+ | P3 test (1,515 COVID-19) | **skipped per instruction: P3's own test cannot be built** |
-| Montgomery + Shenzhen | P3 test normals | small, open (NLM) |
+| ISIC 2019 (+ HAM10000 masks) | P2, P2 location | downloading from the ISIC S3 bucket (our pipeline's source) |
+| NIH ChestX-ray14, 224 px + original `Data_Entry_2017.csv` | P1 cardiomegaly | **done** (Academic Torrents `e615d3ae…`, "NIH Chest X-ray Dataset (Resized to 224x224)", the `NIH/images-224` folder P1's config reads) |
+| PadChest 224 px "Fixed cropping" + `PADCHEST_chest_x_ray_images_labels_160K_01.02.19.csv` | P1 cardiomegaly | downloading (Academic Torrents `96ebb4f9…`, 12.9 GB) |
+| RSNA Pneumonia JPG (`kaggle-pneumonia-jpg/stage_2_train_images_jpg`) | P1 pneumonia | downloading (Academic Torrents `95588a73…`, 3.9 GB); approved |
+| NIH ChestX-ray14 pneumonia (1,295 images) | P3 test | from the NIH copy above (selection rule: Pneumonia label, age ≥ 18) |
+| Montgomery + Shenzhen | P3 test normals (406) | downloading (Academic Torrents `ac786f74…`, `462728e8…`) |
+| CheXpert small | P3 training normal/pneumonia | waiting (registration) |
+| BrixIA | P3 training COVID-19 | waiting for the author's link |
+| BIMCV COVID-19+ iter. 1+2 | P3 test COVID-19 (1,515) | waiting for credentials; will be streamed and filtered, never stored whole |
 
-## Blocked / decisions needed
+## Decisions (author, 2026-11-16)
 
-1. **P3 test set needs BIMCV COVID-19+.** Without it we cannot score on P3's test, so there is no valid head-to-head number for P3.
-   Options: (a) you approve the BIMCV download (iterations 1+2, registration required, large), (b) we run P3's design on an
-   i.i.d. held-out split of BrixIA + CheXpert and label it as *not* P3's test (no "reproduced"/"beaten" claim).
-2. **P3 BrixIA link** (from you).
-3. **P1 pneumonia needs RSNA Pneumonia** (Kaggle competition data, ~3.7 GB; your Kaggle account must accept the rules).
-4. **Third-party envs on Blackwell** use cu128 builds instead of the pinned versions (above). Accept as a recorded deviation?
+1. **P3 test: get BIMCV COVID-19+**, under these conditions. The author registers on IEEE DataPort/BIMCV and provides
+   the link or credentials; we never register for them. We stream the archive and keep only the frontal COVID-19 images
+   P3 used. We never store the full archive, and we log the bytes downloaded and the files kept.
+   - If P3's own list of the 1,515 images exists, we match it 1:1 and record missing images.
+   - Otherwise we rebuild the selection by P3's stated rule and label the test "rebuilt by P3's rule, not the identical
+     image list". "Reproduced"/"beaten" verdicts are still allowed, but only if our reproduced ISNet lands within the
+     pre-registered tolerance of P3's Table 1.
+   - The external test is completed with the 1,295 NIH pneumonia images and the 406 Montgomery/Shenzhen normals.
+   - Until BIMCV arrives, the proxy (held-out BrixIA + CheXpert split, "not P3's test", no verdicts) and the P3 location
+     extension run in parallel. The head-to-head is rerun on the real test once BIMCV is available.
+   - On the original P3 benchmark (artifact = label) only U-MtE runs; mask_cmc runs on the 90/10 variant and in the location extension.
+2. **Third-party code on Blackwell: approved.** Their code runs unchanged except torch/lightning/captum at cu128 builds;
+   every change is kept as a `.patch` and recorded as a deviation.
+3. **RSNA Pneumonia: approved** (Academic Torrents JPG copy, the folder P1's config reads).
+
+### Search for P3's list of the 1,515 BIMCV images
+- Paper, Supplementary Information (MOESM1), peer-review file (MOESM2), reporting summary (MOESM3, MOESM5), Source Data
+  (MOESM4: P-hyperparameter sweep table only): **no image list**.
+- ISNet repository (commit above): no data files or lists.
+- figshare 10.6084/m9.figshare.24243895 (Supplementary Data 1, 385 MB): ISNet heatmaps for 30 example test images only.
+  These are 10 BIMCV COVID-19 images (e.g. `sub-S03258_ses-E06425_run-1_bp-chest_vp-pa_dx.png`), 10 ChestX-ray14
+  pneumonia images and 10 Montgomery/Shenzhen normals.
+- **Verdict: no list of the 1,515 BIMCV images is published.** The P3 test will be **rebuilt by P3's rule, not the
+  identical image list**. The rule (Supp. Note 5.1, p. 28): BIMCV COVID-19+ iterations 1+2; AP or PA views (no lateral);
+  NLP report label "COVID-19" (not "uncertain"/"negative"); DICOM metadata present; patients ≥ 18 years. Partial check:
+  the rebuilt set must contain the 10 BIMCV test images named in the figshare deposit; any that are missing will be
+  reported. The same check applies to the 10 NIH and 10 Montgomery/Shenzhen names.
+
+## Blocked / waiting
+
+| item | blocks | waiting for |
+|---|---|---|
+| BIMCV COVID-19+ download link or credentials | P3 head-to-head on the real test | author (registers on IEEE DataPort/BIMCV) |
+| BrixIA download link | all P3 work (COVID-19 training class) | author |
+| CheXpert (small) | P3 normal and pneumonia training classes | Stanford AIMI registration (author's account; a third-party mirror is not used) |
+
+P1 and P2 are not blocked: their data is downloading, and their code is being ported to cu128.

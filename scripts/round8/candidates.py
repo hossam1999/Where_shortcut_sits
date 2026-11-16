@@ -119,13 +119,14 @@ class Projector:
 
 def cmc_directions(X, y, a, mode: str = "pooled", ids: Optional[Sequence[str]] = None,
                    allowed: Optional[set] = None) -> np.ndarray:
-    """Orthonormal basis of the within-class mean differences δ_y = μ(a=1,y) − μ(a=0,y).
-    pooled: the single direction (δ_0 + δ_1)/2 (classes with an empty group are skipped); per_class: span(δ_0, δ_1).
+    """Orthonormal basis of the within-class mean differences δ_y = μ(a=1,y) − μ(a=0,y), for K ≥ 2 classes.
+    One δ per class that has ≥ 2 images in both artifact groups (other classes are skipped).
+    pooled: the single direction mean_y δ_y; per_class: span{δ_y} (rank ≤ number of usable classes).
     `allowed` (image ids) restricts the images the means are estimated from (the dermoscopy sensitivity run)."""
     X, y, a = np.asarray(X, np.float64), np.asarray(y).astype(int), np.asarray(a).astype(int)
     keep = np.ones(len(y), bool) if allowed is None else np.array([str(i) in allowed for i in ids])
     deltas = []
-    for c in (0, 1):
+    for c in np.unique(y):
         m1, m0 = keep & (y == c) & (a == 1), keep & (y == c) & (a == 0)
         if m1.sum() >= 2 and m0.sum() >= 2:
             deltas.append(X[m1].mean(0) - X[m0].mean(0))

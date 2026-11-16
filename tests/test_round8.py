@@ -165,6 +165,39 @@ def test_cmc_projection_removes_within_class_mean_artifact_effect():
         assert np.abs(Z @ CA.cmc_directions(X, y, a, mode)).max() < 1e-6
 
 
+def test_cmc_directions_k_classes():
+    rng = np.random.default_rng(1)
+    n, dim, K = 4000, 20, 5
+    y = rng.integers(0, K, n)
+    a = (rng.random(n) < 0.3).astype(int)
+    a[y == 4] = 1  # class 4 has no artifact-free images: no δ for it
+    shift = np.stack([np.eye(dim)[c + 1] for c in range(K)])  # a different artifact direction per class
+    X = rng.normal(0, 1, (n, dim)) + 3 * np.eye(dim)[y] + a[:, None] * shift[y]
+    Qp, Qc = CA.cmc_directions(X, y, a, "pooled"), CA.cmc_directions(X, y, a, "per_class")
+    assert Qp.shape == (dim, 1) and Qc.shape == (dim, K - 1)  # classes 0..3 usable
+    assert np.allclose(Qc.T @ Qc, np.eye(K - 1), atol=1e-10)
+    Z = CA.Projector(Qc)(X)
+    for c in range(K - 1):
+        d = Z[(y == c) & (a == 1)].mean(0) - Z[(y == c) & (a == 0)].mean(0)
+        assert np.abs(d).max() < 1e-8
+    # pooled = normalised mean of the usable δ's
+    deltas = [X[(y == c) & (a == 1)].mean(0) - X[(y == c) & (a == 0)].mean(0) for c in range(K - 1)]
+    m = np.mean(deltas, 0)
+    assert abs(abs(Qp[:, 0] @ (m / np.linalg.norm(m))) - 1) < 1e-10
+
+
+def test_cmc_directions_binary_unchanged_by_k_class_extension():
+    rng = np.random.default_rng(2)
+    n, dim = 600, 8
+    y = rng.integers(0, 2, n)
+    a = (rng.random(n) < np.where(y == 1, 0.7, 0.3)).astype(int)
+    X = rng.normal(0, 1, (n, dim)) + np.outer(a, np.eye(dim)[3])
+    deltas = [X[(y == c) & (a == 1)].mean(0) - X[(y == c) & (a == 0)].mean(0) for c in (0, 1)]
+    for mode, D in (("pooled", np.mean(deltas, 0)[:, None]), ("per_class", np.stack(deltas, 1))):
+        Q = CA.cmc_directions(X, y, a, mode)
+        assert np.allclose(Q @ Q.T, np.linalg.qr(D)[0] @ np.linalg.qr(D)[0].T, atol=1e-10)
+
+
 def test_paste_plan_equalises_artifact_rate_and_splits_locations():
     rng = np.random.default_rng(0)
     n = 4000
