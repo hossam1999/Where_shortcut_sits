@@ -279,3 +279,26 @@ as registered (all seeds, all methods, the papers' tests). Phase 4 (section 5) i
    applies, because with artifact = label there is no within-class contrast for mask_cmc. A 90/10 inside+outside variant is
    added only if the measured ISNet time leaves room; that is decided after the ISNet timing test and recorded as a further
    amendment.
+
+**A6 (2026-11-16, before any P3 result; author's decision).** Without this, mask_cmc is never compared with ISNet: P3's own
+design has artifact = label, so mask_cmc cannot run there (A4, A5). Added: a **P3 90/10 variant at two positions**.
+- **Design:** P3's data, split and test sets (the rebuilt o.o.d. test, plus the proxy until BIMCV is complete). P3's three
+  class marks (triangle COVID-19, square normal, circle pneumonia; 10% of the image side).
+- **Presence:** a mark is present on 90% of training and validation images of every class and absent from the other 10%,
+  set per image by `presence_vector` (stable hash of image id, label, seed 0, environment), independent of position. A
+  present mark is always the image's own class's mark, so the mark predicts the label, and mask_cmc can estimate within-class
+  differences from the 10% of unmarked images.
+- **Tests, as in P3:**
+  - biased: the own-class mark on every test image;
+  - standard: no mark;
+  - deceiving: P3's swapped marks (circle on normal, triangle on pneumonia, square on COVID-19).
+- **Positions:**
+  - outside: P3's upper-left corner (overlap with the lungs ≤ 0.02);
+  - inside: fully inside the lungs (overlap ≥ 0.95), placed with `find_best_placements_for_mask` on the P3 lung masks.
+  - The same images are used at both positions.
+- **Methods (seed 0):** DenseNet, ISNet, and ours: arm a (mask_cmc on their DenseNet trained in that condition, features of
+  lung-masked images on every split, as in A5 item 2), arm b (DINOv2 + mask_cmc), arm c (U-MtE).
+- **Metrics and rule:** macro-F1 on the deceiving test (P3's metric), plus macro one-vs-rest AUROC and the standard
+  (clean) test. "Beaten" uses the image-only paired bootstrap of A3 (training-seed variance not included). These
+  comparisons form their own Holm family (6 = arms a, b, c × 2 positions, each against ISNet), separate from section 2's 10.
+- **Cost:** 2 ISNet (~11.3 h each) + 2 DenseNet (~3 h each), about +29 GPU-hours. New total for all remaining work: ~125 GPU-h.
