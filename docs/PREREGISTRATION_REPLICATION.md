@@ -194,3 +194,22 @@ seeds, not 0–9, and the split is not fixed at 1234. Consequences:
   already (one Poisson weight per image id).
 
 Section 0's statement about "P1 `np.random.seed(1234)`" is replaced by this paragraph.
+
+**A2 (2026-11-16, before any phase-4 run; reason: compute cost).** The full plan needs ~1,500–2,000 GPU-hours on this
+machine (one 16 GB RTX 5060 Ti), about two-thirds of it in phase 4. By the author's decision, phases 2–3 stay exactly
+as registered (all seeds, all methods, the papers' tests). Phase 4 (section 5) is reduced as follows:
+- **Positions:** inside (overlap ≥ 0.95) and outside (overlap ≤ 0.02) only. The border position is dropped. The
+  crossover (gain outside − gain inside) is unchanged. Images must be feasible at both remaining positions.
+- **Seeds:** 3 per arm (P1: the first three of P1's list, 1234, 3232, 3221; P2 and P3: 0, 1, 2).
+- **Methods per setup:**
+  - standard training;
+  - the paper's main method: P1 Masked; P2 RR-ClArC; P3 ISNet;
+  - the paper's best other method among those we run, fixed from the papers' own tables and not from our results:
+    - P1 GradMask (cardiomegaly Table 1: GradMask 0.74 > ActDiff 0.73 > RRR 0.57; the P1 location setup is cardiomegaly);
+    - P2 RRR (the only other method of P2 that we run);
+    - P3 U-Net lungs-only (Table 1 deceiving test 0.618; the best non-ISNet model there);
+  - ours: arm a (mask_cmc on their backbone) and arm c (U-MtE). Arm b and the other paper methods are dropped from phase 4.
+- **Unchanged:** the tests (correlated, reversed, clean), metrics, the crossed bootstrap, Holm within phase 4, and
+  expectations E-L1 to E-L3 (applied to the methods that remain).
+- After P1's phases 2–3 finish, real GPU-hours per run and a new total estimate are reported to the author. Work stops for
+  the author's decision if the remaining total exceeds ~4 weeks.
