@@ -25,11 +25,11 @@ TARGETS (best method only; numbers to beat; verify any not yet verified against 
   P3 Bassi et al., Nature Communications 2024 (ISNet). ISNet 0.775 macro-F1 on the corner-mark benchmark.
      Test rebuilt per A9/A10 (verdicts only if COVIDIsNet.pt is within 0.03 of 0.773 macro-F1 on that variant).
   P4 Saab et al., "Reducing Reliance on Spurious Features in Medical Image Classification with Spatial
-     Specificity", MLHC 2022 (PMLR). Best method in their Table 1 (expected: segmentation-supervised ERM, robust
-     AUROC 0.820 +- 0.039 CXR / 0.727 +- 0.016 ISIC, 3 seeds; binary ERM 0.455 / 0.359). Key quotes to verify:
-     sec. 5.1 p. 13 (larger gaps for artifacts with more lesion overlap: hair > gel bubbles ~50% > rulers ~20% >
-     dark corners) and p. 15 ("struggles to overcome spurious features that have high overlap with the abnormal
-     region"; chest-tube tip crossing the pneumothorax).
+     Specificity", MLHC 2022 (PMLR); code github.com/khaledsaab/spatial_specificity @ 1739cf2. ISIC ONLY (A13).
+     Best method: Segmentation-ERM, robust AUROC 0.727 +- 0.016 (Table 1, p. 13, 3 seeds); Binary-ERM 0.359 +- 0.016
+     is the reproduction check. Quotes (verified by an external audit; re-check page numbers): sec. 5.1 p. 13
+     (larger gaps for artifacts with more lesion overlap: hair > gel bubbles ~50% > rulers ~20% > dark corners) and
+     p. 15 ("struggles to overcome spurious features that have high overlap with the abnormal region").
 
 STEP 1 - Record amendment A12 (lean scope) NOW, before any affected result. From docs/REPLICATION_PLAN.md
 "Lean scope":
@@ -43,16 +43,37 @@ STEP 1 - Record amendment A12 (lean scope) NOW, before any affected result. From
     test (artifact = label); mask_cmc on the 90/10 variant.
   - Finished runs stay and are reported; cancelled runs that never started are simply not run.
 
-STEP 2 - P4 Saab feasibility (no training yet). Report in REPLICATION_STATUS.md: official code (link, commit, does it
-run on cu128), datasets and access (ISIC: which release and which artifact labels; CXR: which dataset, e.g.
-CANDID-PTX/SIIM, and its access terms), whether splits and overlap/artifact labels are released or rebuildable,
-exact Table 1 numbers and the best method, GPU-hour estimate. Then record amendment A13 (P4 added: best method only,
-3 seeds, ISIC first, CXR only if its data are reachable; P4 phase 4 = one fixed artifact moved inside vs outside
-their ROI on ISIC; phase-5 arm = segmentation-supervised ERM on our ROI masks). Do not start P4 training until A13
-is pushed. If CXR data need a request, tell me what to request.
+STEP 2 - Record amendment A13 (P4 Saab, ISIC only) before any P4 result, then port P4:
+  1. Scope: ISIC only. The CXR part is dropped (no SIIM access, unknown val/test membership, no training tube
+     labels); our own environment covers chest tubes via NIH.
+  2. Data: ISIC 2018 Task 1/2 training images + Task 1 lesion masks, joined to Bissoto's artifact/melanoma labels
+     (github.com/alceubissoto/debiasing-skin @ f93c865, trap-sets/ and artefacts-annotation/isic_bias.csv).
+  3. Test: the public release's 772-image test per split (Saab's notebooks/isic_evaluation.ipynb evaluates 772;
+     the PDF's 513 is reported as a text inconsistency). Use the split triplet(s) their code/notebook uses; record
+     which.
+  4. Equivalence gate: verdicts (reproduced / beaten) only if our reproduced Segmentation-ERM is within 0.03 of
+     0.727 AND Binary-ERM within 0.03 of 0.359 robust AUROC (3-seed means). Otherwise P4 is descriptive only.
+  5. Train exactly as their code does (1,822 train incl. the 259 validation IDs). Report the val-in-train overlap
+     and any lesion / near-duplicate overlap between train and test (thesis rules), without changing their split.
+  6. Protocol: their Appendix A.1 (150 epochs, Adam, the described augmentations, selection by val AUROC for
+     Binary-ERM and val Dice for the SE-ResNeXt50 U-Net), unless git history shows the checked-in code (100 epochs,
+     no augmentation) produced Table 1. Record the choice. Port changes (torchvision model_urls, Lightning 2 API,
+     TorchMetrics dice, Meerkat loader, hard-coded paths) go in third_party/saab/SOURCE.md + a .patch file.
+  7. Runs: Binary-ERM (reproduction check only) and Segmentation-ERM (their best method), 3 seeds each. Measure
+     memory and speed on THIS GPU (16 GB) first; if the paper's batch does not fit, tell me before using gradient
+     accumulation.
+  8. Our arms, no new training: (a) features of their trained Segmentation-ERM encoder on lesion-masked images +
+     mask_cmc, then a linear head. Use every artifact flag that has all four artifact x diagnosis groups in training
+     (e.g. hair); skip flags lacking a group (e.g. patches, only 2 melanomas). This rule is fixed now.
+     (b) DINOv2 + mask_cmc. (c) U-MtE. ROI = ISIC 2018 Task 1 lesion masks (they exist for every image and are
+     label-independent).
+  9. P4 phase 4: one fixed artifact moved inside vs outside the lesion in their ISIC setup, Segmentation-ERM + ours,
+     1 seed. Phase 5: segmentation-supervised ERM arm on our ROI masks, as in the plan.
+  10. Priority: after the P1-P3 runs already in the queue; P4 fills free slots.
 
 STEP 3 - Run, in critical-path order:
-  a) P3 ISNet chain (3 runs) and P2 Vanilla first (longest); P1 kept seeds and P1 phase 4 fill gaps; P4 after A13.
+  a) P3 ISNet chain (3 runs) and P2 Vanilla first (longest); P1 kept seeds and P1 phase 4 fill gaps; P4 (after A13)
+     fills the remaining free slots.
   b) Our arms on each paper's best network as soon as it exists (features once; heads on CPU).
   c) Head-to-heads in their metric + AUROC (+ clean). Preliminary results labelled "preliminary" until all
      registered seeds/runs exist; never change anything because of a preliminary number.
@@ -96,5 +117,6 @@ REPORTING
     per paper, 1) reproduced? 2) beaten in their environment? 3) location test, 4) beaten in our environment.
   - Stop and ask me only for: data access I must provide, a gate failure, a result that contradicts a registered
     expectation in a way that might mean a bug, or approval of PREREGISTRATION_PHASE5.md.
-  - After STEP 1-2, send me: the new GPU-hour estimate, the run order, and the P4 feasibility summary.
+  - After STEP 1-2, send me: the new GPU-hour estimate (measured on this GPU, P4 included), the run order, and
+    what changed in the P4 port.
 ```

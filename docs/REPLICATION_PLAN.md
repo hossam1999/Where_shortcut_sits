@@ -32,9 +32,10 @@ are kept and reported; runs not yet started are cancelled.
 | P1 Viviano, pneumonia | **ActDiff**, 0.68 (Masked leaks the label, A11) | ActDiff seeds 3232, 3221 | none | ActDiff arm, Trap A only |
 | P2 Pahde | **RR-ClArC**, 0.76 accuracy | Vanilla (RR-ClArC starts from it) + RR-ClArC fine-tunes. Use the paper's reported config; run their grid only if the paper does not give one | none | RR-ClArC arm, Trap A |
 | P3 ISNet | **ISNet**, 0.775 macro-F1 | ISNet, original corner benchmark: **1 run** | ISNet with marks inside the lungs: (a) P3's design, (b) 90/10 so that mask_cmc applies: **2 runs** | ISNet arm, Trap A |
-| P4 Saab (MLHC 2022) | **Their best method in Table 1** (expected: segmentation-supervised ERM; robust AUROC 0.820 ± 0.039 CXR, 0.727 ± 0.016 ISIC; 3 seeds). Verify first | Feasibility check first (code, data access, splits, artifact/overlap labels). Then their best method, 3 seeds, ISIC part first; the CXR part only if its data are reachable | Their per-artifact overlap analysis is already a location result. Add one run with a fixed artifact moved inside vs outside their ROI, ISIC only | Segmentation-supervised arm (our ROI masks as the segmentation target), Trap A |
+| P4 Saab (MLHC 2022), **ISIC only** (A13) | **Segmentation-ERM**, robust AUROC 0.727 ± 0.016 (3 seeds); binary ERM 0.359 ± 0.016 as the reproduction check | Port of their code (Appendix A.1 protocol); Binary-ERM + Segmentation-ERM, 3 seeds, on the public 772-image test (Saab's own notebook scores 772; the PDF's 513 is reported as an inconsistency); verdicts only if both reproduce within 0.03 | One fixed artifact moved inside vs outside the lesion, Segmentation-ERM + ours, 1 seed | Segmentation-supervised arm on our ROI masks, Trap A |
 
 **Cancelled:**
+- P4: the chest X-ray part (no SIIM access, unknown val/test membership, no training tube labels; our NIH cohort covers chest tubes).
 - P1: RSNA Standard and RSNA Masked seeds 3232/3221; cardiomegaly ActDiff (all seeds); ActDiff in the cardiomegaly
   location test.
 - P2: the RRR fine-tunes.
