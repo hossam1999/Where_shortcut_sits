@@ -324,3 +324,20 @@ ActDiff on both tasks; seeds 3232 and 3221 start only after it.
 - **Rule:** a result inside its band, or outside it by ≤ 0.03, passes, and all seeds then continue. If any result is further
   outside, P1 pauses for the author.
 - The gate only decides whether to continue. The "reproduced" verdict stays the registered 3-seed-mean rule (section 1, A3).
+
+**A9 (2026-11-16, before any P3 scoring; author's decision).** The rebuilt P3 test has 2,501 BIMCV COVID-19 images (1,631
+patients) and 1,319 NIH pneumonia images (938 patients), against P3's 1,515 (1,145) and 1,295 (941). P3's class counts
+(406 + 1,295 + 1,515 = 3,216) also disagree with its stated n = 3,126 (Supp. Note 10); one of the two is a typo in P3.
+1. **Size-matched variant.** From our rebuilt sets, whole patients are drawn so that the class mix matches P3's counts:
+   1,515 COVID-19 images from the 2,501 and 1,295 pneumonia images from the 1,319; the 406 normals are unchanged.
+   - Rule: patients are taken in a random order (seed 20261117, numpy `default_rng`); a patient is added only if all of their
+     images still fit within the target; drawing stops at the target or when no remaining patient fits. The count reached
+     is reported.
+   - Both variants are reported everywhere. The primary test stays as registered: the full rebuilt set, 2,501 + 1,319 + 406.
+2. **Equivalence check with P3's released model.** `COVIDIsNet.pt` (P3 Table 2: macro-F1 0.773 on this o.o.d. test) is
+   scored on both variants with P3's preprocessing.
+   - If its macro-F1 is within 0.03 of 0.773 on a variant, the P3 head-to-head on that variant may carry "reproduced" /
+     "beaten" verdicts (section 2 / A3 rules).
+   - On a variant where it is not, the P3 head-to-head is descriptive only.
+   - The P3 phase-4 comparisons (inside vs outside, A5/A6) are unaffected, since they compare our own runs on the same images.
+3. The NIH pneumonia part follows the same rule. The 1,319 vs 1,295 gap is stated next to every P3 result.
