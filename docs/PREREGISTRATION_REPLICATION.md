@@ -259,3 +259,23 @@ as registered (all seeds, all methods, the papers' tests). Phase 4 (section 5) i
    P3 the DenseNet, because the U-Net pipeline is not re-run (the registered U-Net lungs-only backbone is replaced by the
    DenseNet). Arms b and c use frozen DINOv2 features, extracted once per image set.
 5. Order: P1 and P2 first (shortest first), then P3 once its data is available.
+
+**A5 (2026-11-16, before any affected run; author's decisions).**
+1. **P1 cardiomegaly "Masked" from the Standard run.** With their `load_config`, the loaded configs of
+   `xray-seeds_resnet.yml` (Standard) and `xray-seeds_resnet_maskall.yml` (Masked) differ only in
+   `dataset.test.XRayDataset.mask_all` (None vs True) and `experiment_name` (the output folder name). Every training key is
+   identical (Adam lr 0.009992, same data, same seed; validation unmasked in both, so the same epoch is selected).
+   - Cardiomegaly Masked is therefore **the Standard run's saved best model, scored on the test split built by their own
+     dataset code with `mask_all=True`**. This saves 3 runs.
+   - Their GPU training is not bit-deterministic, so a separate Masked run would differ from Standard only by GPU noise; using
+     the same model makes the Masked − Standard comparison paired exactly.
+   - **RSNA pneumonia is not shortened:** its Masked config uses lr 0.01 against Standard's 0.009996, so it is trained
+     separately as written.
+2. **P1 arm a input: ROI-masked images on every split** (train, validation, test), passed through their trained Masked
+   network. This is our method's definition. Their literal pipeline (training features unmasked, test features masked) is
+   reported as a side note only.
+3. **P3 phase 4 (fixes the open point of A4 item 3): P3's own design**, with every image carrying its class's mark, moved
+   inside the lungs. The comparison is P3's original corner (outside) result against our inside run. Only U-MtE (arm c)
+   applies, because with artifact = label there is no within-class contrast for mask_cmc. A 90/10 inside+outside variant is
+   added only if the measured ISNet time leaves room; that is decided after the ISNet timing test and recorded as a further
+   amendment.
