@@ -32,6 +32,7 @@ are kept and reported; runs not yet started are cancelled.
 | P1 Viviano, pneumonia | **ActDiff**, 0.68 (Masked leaks the label, A11) | ActDiff seeds 3232, 3221 | none | ActDiff arm, Trap A only |
 | P2 Pahde | **RR-ClArC**, 0.76 accuracy | Vanilla (RR-ClArC starts from it) + RR-ClArC fine-tunes. Use the paper's reported config; run their grid only if the paper does not give one | none | RR-ClArC arm, Trap A |
 | P3 ISNet | **ISNet**, 0.775 macro-F1 | ISNet, original corner benchmark: **1 run** | ISNet with marks inside the lungs: (a) P3's design, (b) 90/10 so that mask_cmc applies: **2 runs** | ISNet arm, Trap A |
+| P4 Saab (MLHC 2022) | **Their best method in Table 1** (expected: segmentation-supervised ERM; robust AUROC 0.820 ± 0.039 CXR, 0.727 ± 0.016 ISIC; 3 seeds). Verify first | Feasibility check first (code, data access, splits, artifact/overlap labels). Then their best method, 3 seeds, ISIC part first; the CXR part only if its data are reachable | Their per-artifact overlap analysis is already a location result. Add one run with a fixed artifact moved inside vs outside their ROI, ISIC only | Segmentation-supervised arm (our ROI masks as the segmentation target), Trap A |
 
 **Cancelled:**
 - P1: RSNA Standard and RSNA Masked seeds 3232/3221; cardiomegaly ActDiff (all seeds); ActDiff in the cardiomegaly
@@ -85,7 +86,7 @@ Every target must be beaten twice. Both are required for a claim of "better than
     nodule or organ mask.
   - **P2 Pahde:** RR-ClArC, with the artifact concept direction learned from our image-level artifact labels.
   - **P3 ISNet:** LRP relevance penalty outside our ROI masks. It is the most expensive arm (LRP per step).
-  - **Saab (if adopted as P4):** segmentation-supervised ERM, with our ROI masks as the segmentation target.
+  - **P4 Saab:** segmentation-supervised ERM (their best method), with our ROI masks as the segmentation target.
   - **Ours:** mask_cmc on the fine-tuned features, U-MtE (`mte_post`, `umte_ft`).
 - **Scope, to keep cost bounded:**
   - cohorts: thyroid, ovary, capsule and ISIC 2019 hair (the four registered real-trap cohorts);
