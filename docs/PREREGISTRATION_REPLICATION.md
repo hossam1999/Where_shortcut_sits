@@ -213,3 +213,18 @@ as registered (all seeds, all methods, the papers' tests). Phase 4 (section 5) i
   expectations E-L1 to E-L3 (applied to the methods that remain).
 - After P1's phases 2–3 finish, real GPU-hours per run and a new total estimate are reported to the author. Work stops for
   the author's decision if the remaining total exceeds ~4 weeks.
+
+**A3 (2026-11-16, before any affected run; reason: compute; author's decision).**
+1. **Seeds.**
+   - P2, P3 and all of phase 4: **1 training seed** (seed 0). P2 and P3 each report a single trained model, so this matches
+     their protocol.
+   - P1: **3 seeds**, the first three of P1's list (1234, 3232, 3221). P1's claim is a 10-seed mean with an SD up to 0.09, so one
+     seed cannot test it. This replaces section 0's 10 seeds for P1 and A2's 3 seeds for P1's phase 4 (same three seeds).
+   - Runs with seed 0 (P2, P3) and seed 1234 (P1) go first, so single-seed results exist early.
+2. **Statistics with 1 seed** (P2, P3, phase 4): the same paired bootstrap, over test images only (one model run per method,
+   the same images, 10,000 replicates, Poisson weight per image). **Training-seed variance is not included**, and every such
+   table states it. "Beaten" there means "beaten for this training run". The Holm family and the "beaten" rule are otherwise
+   unchanged.
+3. **P1 verdicts** use the 3-seed mean, the registered "reproduced" rule (within the paper's SD) and the crossed seed × image
+   bootstrap over the 3 seeds, with the note that the paper used 10 seeds.
+4. The P3 seed-count rule in section 0 (5, or 3 if > 10 GPU-hours) is replaced by item 1.
