@@ -327,7 +327,14 @@ ActDiff on both tasks; seeds 3232 and 3221 start only after it.
 
 **A9 (2026-11-16, before any P3 scoring; author's decision).** The rebuilt P3 test has 2,501 BIMCV COVID-19 images (1,631
 patients) and 1,319 NIH pneumonia images (938 patients), against P3's 1,515 (1,145) and 1,295 (941). P3's class counts
-(406 + 1,295 + 1,515 = 3,216) also disagree with its stated n = 3,126 (Supp. Note 10); one of the two is a typo in P3.
+(406 + 1,295 + 1,515 = 3,216) also disagree with its stated n = 3,126 (Supp. Note 10).
+- *Settled by P3's main-text Table 4* (test confusion matrices, o.o.d. COVID-19): every one of the 8 models has row sums
+  **370 normal / 1,295 pneumonia / 1,515 COVID-19, n = 3,180**. Recomputing per-class F1 from Table 4 reproduces Table 2
+  (DenseNet-121 0.444 / 0.434 / 0.760, macro 0.546, exactly).
+- So both "n = 3,126" and "406 normal" are wrong as descriptions of the evaluated test. 406 is the Montgomery + Shenzhen
+  normal count *before* the age filter: 406 − 370 = 36, exactly the number of normals under 18 in our check. P3 therefore did
+  remove minors from the normals, as its text says.
+- (Note added 2026-11-16 at the author's request; the variants below are not changed by it.)
 1. **Size-matched variant.** From our rebuilt sets, whole patients are drawn so that the class mix matches P3's counts:
    1,515 COVID-19 images from the 2,501 and 1,295 pneumonia images from the 1,319; the 406 normals are unchanged.
    - Rule: patients are taken in a random order (seed 20261117, numpy `default_rng`); a patient is added only if all of their
