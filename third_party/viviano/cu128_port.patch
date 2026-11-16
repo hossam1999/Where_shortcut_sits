@@ -1,0 +1,134 @@
+diff --git a/activmask/config/rsna-seeds/base_rsna.yml b/activmask/config/rsna-seeds/base_rsna.yml
+index addd31c..c67ec57 100644
+--- a/activmask/config/rsna-seeds/base_rsna.yml
++++ b/activmask/config/rsna-seeds/base_rsna.yml
+@@ -9,17 +9,17 @@ shuffle: True
+ dataset:
+   train:
+     XRayRSNADataset:
+-      imgpath: "/home/cohenjos/projects/rpp-bengioy/jpcohen/kaggle-pneumonia/stage_2_train_images_jpg"
++      imgpath: "/workspace/data/cxr_at/kaggle-pneumonia-jpg/stage_2_train_images_jpg"
+       ratio: 0.9
+       mode: "train"
+   valid:
+     XRayRSNADataset:
+-      imgpath: "/home/cohenjos/projects/rpp-bengioy/jpcohen/kaggle-pneumonia/stage_2_train_images_jpg"
++      imgpath: "/workspace/data/cxr_at/kaggle-pneumonia-jpg/stage_2_train_images_jpg"
+       ratio: 0.9
+       mode: "valid"
+   test:
+     XRayRSNADataset:
+-      imgpath: "/home/cohenjos/projects/rpp-bengioy/jpcohen/kaggle-pneumonia/stage_2_train_images_jpg"
++      imgpath: "/workspace/data/cxr_at/kaggle-pneumonia-jpg/stage_2_train_images_jpg"
+       ratio: 0.9
+       mode: "test"
+ 
+diff --git a/activmask/config/rsna-seeds/base_rsna_balanced.yml b/activmask/config/rsna-seeds/base_rsna_balanced.yml
+index 444f73f..1da2702 100644
+--- a/activmask/config/rsna-seeds/base_rsna_balanced.yml
++++ b/activmask/config/rsna-seeds/base_rsna_balanced.yml
+@@ -9,17 +9,17 @@ shuffle: True
+ dataset:
+   train:
+     XRayRSNADataset:
+-      imgpath: "/home/cohenjos/projects/rpp-bengioy/jpcohen/kaggle-pneumonia/stage_2_train_images_jpg"
++      imgpath: "/workspace/data/cxr_at/kaggle-pneumonia-jpg/stage_2_train_images_jpg"
+       ratio: 0.5
+       mode: "train"
+   valid:
+     XRayRSNADataset:
+-      imgpath: "/home/cohenjos/projects/rpp-bengioy/jpcohen/kaggle-pneumonia/stage_2_train_images_jpg"
++      imgpath: "/workspace/data/cxr_at/kaggle-pneumonia-jpg/stage_2_train_images_jpg"
+       ratio: 0.5
+       mode: "valid"
+   test:
+     XRayRSNADataset:
+-      imgpath: "/home/cohenjos/projects/rpp-bengioy/jpcohen/kaggle-pneumonia/stage_2_train_images_jpg"
++      imgpath: "/workspace/data/cxr_at/kaggle-pneumonia-jpg/stage_2_train_images_jpg"
+       ratio: 0.5
+       mode: "test"
+ 
+diff --git a/activmask/config/xray-seeds/base_xray.yml b/activmask/config/xray-seeds/base_xray.yml
+index 48fee73..e7ebf02 100644
+--- a/activmask/config/xray-seeds/base_xray.yml
++++ b/activmask/config/xray-seeds/base_xray.yml
+@@ -9,26 +9,26 @@ shuffle: True
+ dataset:
+   train:
+     XRayDataset:
+-      d1data: "/home/cohenjos/projects/def-marzyeh/cohenjos/NIH/images-224"
+-      d1csv: "/home/cohenjos/projects/def-marzyeh/cohenjos//NIH/Data_Entry_2017.csv"
+-      d2data: "/home/cohenjos/projects/def-marzyeh/cohenjos/PC/images-224"
+-      d2csv: "/home/cohenjos/projects/def-marzyeh/cohenjos/PC/PADCHEST_chest_x_ray_images_labels_160K_01.02.19.csv"
++      d1data: "/workspace/data/cxr_at/NIH/images-224"
++      d1csv: "/workspace/data/cxr_at/NIH/Data_Entry_2017.csv"
++      d2data: "/workspace/data/cxr_at/PC/images-224"
++      d2csv: "/workspace/data/cxr_at/PC/PADCHEST_chest_x_ray_images_labels_160K_01.02.19.csv"
+       ratio: 0.9
+       mode: "train"
+   valid:
+     XRayDataset:
+-      d1data: "/home/cohenjos/projects/def-marzyeh/cohenjos/NIH/images-224"
+-      d1csv: "/home/cohenjos/projects/def-marzyeh/cohenjos/NIH/Data_Entry_2017.csv"
+-      d2data: "/home/cohenjos/projects/def-marzyeh/cohenjos/PC/images-224"
+-      d2csv: "/home/cohenjos/projects/def-marzyeh/cohenjos/PC/PADCHEST_chest_x_ray_images_labels_160K_01.02.19.csv"
++      d1data: "/workspace/data/cxr_at/NIH/images-224"
++      d1csv: "/workspace/data/cxr_at/NIH/Data_Entry_2017.csv"
++      d2data: "/workspace/data/cxr_at/PC/images-224"
++      d2csv: "/workspace/data/cxr_at/PC/PADCHEST_chest_x_ray_images_labels_160K_01.02.19.csv"
+       ratio: 0.9
+       mode: "valid"
+   test:
+     XRayDataset:
+-      d1data: "/home/cohenjos/projects/def-marzyeh/cohenjos/NIH/images-224"
+-      d1csv: "/home/cohenjos/projects/def-marzyeh/cohenjos/NIH/Data_Entry_2017.csv"
+-      d2data: "/home/cohenjos/projects/def-marzyeh/cohenjos/PC/images-224"
+-      d2csv: "/home/cohenjos/projects/def-marzyeh/cohenjos/PC/PADCHEST_chest_x_ray_images_labels_160K_01.02.19.csv"
++      d1data: "/workspace/data/cxr_at/NIH/images-224"
++      d1csv: "/workspace/data/cxr_at/NIH/Data_Entry_2017.csv"
++      d2data: "/workspace/data/cxr_at/PC/images-224"
++      d2csv: "/workspace/data/cxr_at/PC/PADCHEST_chest_x_ray_images_labels_160K_01.02.19.csv"
+       ratio: 0.9
+       mode: "test"
+ 
+diff --git a/activmask/training.py b/activmask/training.py
+index b57d344..006f7e0 100644
+--- a/activmask/training.py
++++ b/activmask/training.py
+@@ -341,6 +341,7 @@ def train(cfg, random_state=None, state=None, save_checkpoints=False,
+     checkpoint_freq = cfg['checkpoint_freq']
+     if cfg['device'] >= 0:
+         torch.cuda.set_device(cfg['device'])
++    device = 'cuda'  # replication patch: restores the line removed in bdf5525 (2021-02-05 cleanup)
+ 
+     if burn_in >= 1:  # Corrects for zero indexing.
+         burn_in -= 1
+diff --git a/activmask/utils/configuration.py b/activmask/utils/configuration.py
+index e3364f6..b154a9e 100644
+--- a/activmask/utils/configuration.py
++++ b/activmask/utils/configuration.py
+@@ -1,6 +1,7 @@
+ import activmask.datasets as datasets
+ import activmask.models as models
+ import collections
++import collections.abc
+ import functools
+ import importlib
+ import inspect
+@@ -18,7 +19,7 @@ def flatten(d, parent_key='', sep='_'):
+     items = []
+     for k, v in d.items():
+         new_key = parent_key + sep + k if parent_key else k
+-        if isinstance(v, collections.MutableMapping):
++        if isinstance(v, collections.abc.MutableMapping):
+             items.extend(flatten(v, new_key, sep=sep).items())
+         else:
+             items.append((new_key, v))
+@@ -64,6 +65,7 @@ def load_config(config_file):
+     """
+     # Required by training.py to run.
+     default_cfg = {'cuda': True,
++                   'device': 0,  # replication patch: key missing after the 2023 cleanup commit
+                    'seed': 0,
+                    'optimizer': {'Adam': {}},
+                    'batch_size': 16,

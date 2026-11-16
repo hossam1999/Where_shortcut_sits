@@ -74,6 +74,12 @@ Supplementary Information (Bassi), and the code linked in each paper's code-avai
   - The cardiomegaly (site) split is checked the same way once PadChest is on disk.
   - Their "Masked" input for pneumonia multiplies the image by the pneumonia boxes. Negatives have no box, so a masked
     training negative is an all-zero image (seg sum 0). This is their method as coded; we keep it.
+- **P1 split check (cardiomegaly, seed 1234).** n_per_category = 2,772 (paper's sizes imply 2,771: 5,542 = 2 × 2,771); the
+  one-image difference per cell probably comes from PadChest-224 having 160,845 images against 160,868 in the full release.
+  The pattern is the same as RSNA: train 2,770 (1,247 of 1,385 positives from PadChest); valid 1,384 with the same link
+  (623 of 692); test 6,934, the remainder, reversed only ~74/26 (902 of 3,467 positives from PadChest).
+  **Input size: `JointDataset` defaults to `new_size=128` and no xray config overrides it, so cardiomegaly images enter
+  the network at 128 × 128, not 224 × 224 as the paper states (p. 6).** The circle mask is drawn at 128 px too. Run as coded.
 - **P1 "Masked" masks only the test images (as coded).** Both `xray-seeds_resnet_maskall.yml` and
   `rsna-seeds_resnet_maskall.yml` contain three top-level `dataset:` keys (train, valid, test). YAML keeps only the last, so
   the loaded config has `mask_all` = None / None / True for train / valid / test (checked with their `load_config`). The
