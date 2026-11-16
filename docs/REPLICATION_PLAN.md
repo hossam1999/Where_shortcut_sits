@@ -22,6 +22,51 @@ like-for-like number). Then all of their methods and ours are run on our inside-
 - **Pahde:** RR-ClArC is the closest method to ours. The difference to stress: theirs removes the artifact direction for all images; ours removes it within each class, after masking, with nothing needed at test time.
 - **ISNet:** on its *original* test the mark is outside the lungs, and ISNet is already unaffected (0.775 everywhere). We can at best match it there. The real comparison is **their benchmark with the mark moved inside the lungs**: same data, code and metric, where a penalty outside the mask cannot help. The external tuberculosis AUROC (0.809) is a secondary target.
 
+## Lean scope: only each paper's best method, only necessary runs (decided 2026-11-17; amendment A12)
+Every run must feed a "beat it" comparison. If no comparison needs a run, the run is dropped. Runs already finished
+are kept and reported; runs not yet started are cancelled.
+
+| Paper | Best method (the one we beat) | Their env.: runs still needed | Location test: runs still needed | Our env. (phase 5) |
+|---|---|---|---|---|
+| P1 Viviano, cardiomegaly | **Masked**, 0.77 (scored from the Standard model, A5) | Standard seeds 3232, 3221 (Masked is scored from them at no cost) | Standard with the tube inside / outside the lungs + heart ROI: **2 runs**, Masked scored from them | Masked is already our `mask` arm: **no new runs** |
+| P1 Viviano, pneumonia | **ActDiff**, 0.68 (Masked leaks the label, A11) | ActDiff seeds 3232, 3221 | none | ActDiff arm, Trap A only |
+| P2 Pahde | **RR-ClArC**, 0.76 accuracy | Vanilla (RR-ClArC starts from it) + RR-ClArC fine-tunes. Use the paper's reported config; run their grid only if the paper does not give one | none | RR-ClArC arm, Trap A |
+| P3 ISNet | **ISNet**, 0.775 macro-F1 | ISNet, original corner benchmark: **1 run** | ISNet with marks inside the lungs: (a) P3's design, (b) 90/10 so that mask_cmc applies: **2 runs** | ISNet arm, Trap A |
+
+**Cancelled:**
+- P1: RSNA Standard and RSNA Masked seeds 3232/3221; cardiomegaly ActDiff (all seeds); ActDiff in the cardiomegaly
+  location test.
+- P2: the RRR fine-tunes.
+- P3: the DenseNet baseline and the 90/10 "outside" run. P3's own Table 1 is the outside reference.
+
+**P1 gate:** checks only the runs we keep (cardiomegaly Standard, RSNA ActDiff, and RSNA Standard seed 1234, which is
+already done).
+
+**Our arms:** each runs on top of the paper's best network:
+- P1 cardiomegaly: the Standard/Masked model;
+- P1 pneumonia: the ActDiff model;
+- P2: the Vanilla network (RR-ClArC's base);
+- P3: no network of theirs is needed (DINOv2 + mask_cmc, U-MtE).
+
+**Phase 5, lean:**
+- their best method vs ours, **Trap A only** (where the claim is made);
+- the 4 registered cohorts, 3 folds;
+- **Trap B for thyroid only**, as a sanity check that their method works when the artifact is outside;
+- standard and masked results come from the existing thesis runs (no re-running).
+
+### Running it smartly
+1. **GPU only for training.** Feature extraction is batched once per trained network and cached. Every head fit
+   (mask_cmc, U-MtE heads, bootstraps) runs on CPU, in parallel across the 96 cores, never on the GPU.
+2. **Pack by measured throughput, not by job count.** Before each pairing, measure images/s for 1 vs 2 jobs. Keep the
+   pairing only if total throughput rises. Three jobs at once slowed P2 by about 2.5×.
+3. **Pair heavy with light.** ISNet (10.4 GB) runs only beside one small job (P1 ResNet-18 or a P2 fine-tune).
+4. **Critical path first.** The longest chains start first (P3 ISNet ×3, P2 Vanilla). Short jobs fill the gaps.
+5. **Checkpoint every few epochs and resume after a crash.** The P2 crash lost 34 epochs.
+6. **Reuse, do not recompute:** cached DINOv2 features, the thesis's saved predictions, their released weights where
+   valid.
+7. **Phase 5 only:** mixed precision and the same early-stopping rule for every arm. Both are registered before the
+   first run and applied identically, so the comparison stays fair. Their environment keeps their exact recipes.
+
 ## The principle: beat each paper in two environments (decided 2026-11-17)
 Every target must be beaten twice. Both are required for a claim of "better than paper X".
 1. **Their environment:** their data, their splits, their test design and their metric. This is phase 2
