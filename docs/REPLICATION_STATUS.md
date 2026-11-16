@@ -269,3 +269,50 @@ P1 and P2 are not blocked: their data is downloading, and their code is being po
 
 ISNet fits on 16 GB and is under the author's 12 h limit at batch 16 when run alone. It is paired only with the small P2
 job (2.8 GB), never with P1 ActDiff.
+
+## P1 diagnostics (2026-11-16): why the first runs did not match, and the port fix
+
+The first P1 runs (RSNA, seed 1234) gave Standard 0.355 (paper 0.20 ± 0.03) and ActDiff 0.308 (paper 0.68 ± 0.05). Four checks
+were run without re-tuning anything.
+
+**(a) Split proportions (their code at repository HEAD; identical for seeds 1234, 3232, 3221).** RSNA share of AP:
+- train: positives 0.90, negatives 0.10;
+- valid: **0.90 / 0.10, the same as training**;
+- test: **0.26 / 0.74**.
+
+The paper describes training 90/10 with validation and test reversed.
+
+**(b) Paper text vs code, and which code produced the published numbers.** In the repository history, commit `81ecbd3`
+(2021-02-03, "syncing xray") changed the split code in `activmask/datasets/xray.py`. **Before it, the training cells were drawn
+at twice the size and the validation cells were reversed** (`ratio` and `1 − ratio` swapped). This gives exactly the paper's
+design and sizes. The published numbers predate the change: arXiv v2 (2020-10-06) already contains Table 1 (Masked
+0.77 ± 0.09), Table 2 (ActDiff 0.68 ± 0.05) and N_train = 5,542. The repository has no GitHub issues.
+
+The commit current at arXiv v2 is `32f7b7d` (2020-10-01). Its only behavioural difference from HEAD is this split code:
+- `loss.py` at HEAD only adds an unused function;
+- `training.py` differs only in formatting; batch 16 in both (hard-coded at `32f7b7d`, from the configs at HEAD);
+- the batch size was 128 only between 2020-10-14 and 2021-02-03, after arXiv v2;
+- the Standard / Masked / ActDiff configs are unchanged.
+
+**Our port therefore deviated from the code behind the published numbers. Fix (bug fix, not tuning):**
+`activmask/datasets/xray.py` is restored from `32f7b7d` (in `third_party/viviano/cu128_port.patch`). With it, seed 1234 gives:
+
+| task | train | valid | test | correlation |
+|---|---|---|---|---|
+| RSNA (paper 2,696 / 1,348 / 1,348) | 2,694 | 1,346 | 1,352 | train 0.90 / 0.10; valid and test reversed 0.10 / 0.90 |
+| cardiomegaly (paper 5,542 / 2,770 / 2,770) | 5,542 | 2,770 | 2,776 | train 0.90 / 0.10; valid and test reversed 0.10 / 0.90 |
+
+**All P1 runs made with the HEAD split code are superseded** and kept, labelled, in
+`$WTSS_DATA/replication/viviano/runs_superseded_head_splits/`. They are not used in any result. They were 8 runs, ~16 GPU-h.
+The P1 queue restarted from scratch at 19:16 on the fixed code. The earlier "P1 split check" notes above describe the HEAD
+code and are kept as history.
+
+**(c) ActDiff loss is active.** The saved stats of the (superseded) ActDiff run show λ = 1.60256, lr 4.1e-5 and activation
+layer [5], as configured. The training ActDiff term is non-zero and falls over training (1.56 at epoch 0, 0.33 at epoch 14,
+0.15 at epoch 99); it is 0 at validation and test, as coded. The term is computed between each image's activations and those
+of the same image with the pixels outside its mask shuffled (`shuffle_outside_mask`).
+
+**(d) Image size and masks.** Both versions of the code construct cardiomegaly images at **128 × 128** (`JointDataset`
+default `new_size=128`, not overridden by any config) and RSNA images at 224 × 224. The paper says 224 for both. We run as
+coded. RSNA masks are the challenge's pneumonia boxes, as the paper describes; negatives have no box, so their mask is empty.
+The Masked configs mask only the test split (YAML duplicate keys, see above); this is the same at `32f7b7d`.
