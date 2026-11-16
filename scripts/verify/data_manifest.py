@@ -64,6 +64,16 @@ REPL_ROWS = [
      "same mirror; archives fetched one at a time, SHA1-verified, deleted after extraction (scripts/replication/bimcv_fetch.sh)", "BIMCV-COVID19 Research Use Agreement (academic, cite, no redistribution)", "open"),
     ("ISNet pre-trained COVID-19 weights (P3)", ["isnet_weights/COVIDIsNet.pt"],
      "Google Drive folder linked from github.com/PedroRASB/ISNet README", "not stated", "open"),
+    ("CheXpert-v1.0-small (P3 training normal and pneumonia; 223,414 train + 234 valid images, train.csv, valid.csv)",
+     ["chexpert/CheXpert-v1.0-small"],
+     "Kaggle mirror ashery/chexpert of CheXpert-v1.0-small (Kaggle API, author's account)",
+     "Stanford CheXpert Research Use Agreement, accepted by the author", "registration (Kaggle account; Stanford agreement)"),
+    ("BrixIA COVID-19 dataset v2, metadata (P3 training COVID-19)", ["brixia/x/data/metadata_global_v2.csv",
+     "brixia/x/data/metadata_consensus_v1.csv", "brixia/x/data/changelog.txt", "brixia/x/license.txt"],
+     "BrixIA, OSF, private link from the authors", "research use only, no re-identification", "private link from the authors"),
+    ("BrixIA COVID-19 dataset v2, DICOM images (P3 training COVID-19; 4,695 images, 4,644 with Brixia score > 0)",
+     ["brixia/dicom"], "BrixIA, OSF, private link from the authors (15 archive parts, each checked against the SHA-256 OSF reports)",
+     "research use only, no re-identification", "private link from the authors"),
 ]
 
 
