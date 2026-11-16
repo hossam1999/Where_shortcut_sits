@@ -22,6 +22,39 @@ like-for-like number). Then all of their methods and ours are run on our inside-
 - **Pahde:** RR-ClArC is the closest method to ours. The difference to stress: theirs removes the artifact direction for all images; ours removes it within each class, after masking, with nothing needed at test time.
 - **ISNet:** on its *original* test the mark is outside the lungs, and ISNet is already unaffected (0.775 everywhere). We can at best match it there. The real comparison is **their benchmark with the mark moved inside the lungs**: same data, code and metric, where a penalty outside the mask cannot help. The external tuberculosis AUROC (0.809) is a secondary target.
 
+## The principle: beat each paper in two environments (decided 2026-11-17)
+Every target must be beaten twice. Both are required for a claim of "better than paper X".
+1. **Their environment:** their data, their splits, their test design and their metric. This is phase 2
+   (reproduce) and phase 3 (head-to-head). Phase 4 is a bridge between the two environments: their data, with the
+   artifact moved inside the ROI.
+2. **Our environment:** our data and our test design, run on our cohorts with their methods. This is **phase 5**.
+   - **Our data:** ISIC 2019 hair / ruler traps, thyroid and ovary calipers, capsule debris, NIH chest tubes.
+   - **Our test design:** correlated, reversed and clean tests; Trap A (artifact inside the ROI) vs Trap B (outside);
+     the transplant; the unaltered test sets.
+
+### Phase 5 sketch (pre-register before any phase-5 run; start after P1–P3 phases 2–3)
+- **Where:** our end-to-end pipeline, `src/wtss/experiments/finetune.py`. It already runs `erm`, `mask`, `balanced`,
+  `mte_post`, `umte_ft` on our traps with ResNet-50 and folds. Their methods are added as new arms, ported from
+  their code with the same loss definitions and their published hyperparameters, and no tuning on our test sets.
+  - **P1 Viviano:** Masked (already = our `mask` arm), ActDiff, and GradMask if it is cheap. The ROI is our lesion,
+    nodule or organ mask.
+  - **P2 Pahde:** RR-ClArC, with the artifact concept direction learned from our image-level artifact labels.
+  - **P3 ISNet:** LRP relevance penalty outside our ROI masks. It is the most expensive arm (LRP per step).
+  - **Saab (if adopted as P4):** segmentation-supervised ERM, with our ROI masks as the segmentation target.
+  - **Ours:** mask_cmc on the fine-tuned features, U-MtE (`mte_post`, `umte_ft`).
+- **Scope, to keep cost bounded:**
+  - cohorts: thyroid, ovary, capsule and ISIC 2019 hair (the four registered real-trap cohorts);
+  - traps: Trap A and Trap B;
+  - 3 folds and 1 seed per fold;
+  - tests: correlated, reversed and clean, plus the unaltered test sets where they exist.
+- **Success rule:** the same as phase 3. Reversed-test AUROC is primary; the paired difference vs each paper's method
+  must have a 95% CI above 0 (crossed bootstrap over folds × images); Holm across all phase-5 comparisons. Clean
+  AUROC must not drop by more than the registered margin (0.01).
+- **Expected message:** methods that act by location (Masked, ActDiff, ISNet, and Saab's segmentation supervision)
+  help in Trap B but not in Trap A. Ours helps in both. RR-ClArC is the strongest competitor in Trap A, and the
+  comparison with it is the decisive one.
+- **Cost:** not yet estimated. A timing test on one cohort (thyroid, Trap A, 1 fold, every arm) comes first.
+
 ## How to frame each paper's result (decided 2026-11-17)
 **P1 Viviano is the odd one out.** Its shortcut is *global*, not a localized artifact:
 - the hospital the X-ray came from (cardiomegaly);
