@@ -255,3 +255,17 @@ our test is to theirs.
 | P1 arm a input: "their Masked model" is trained unmasked (config bug) | P1 arm a only | author: (i) literal pipeline (train features unmasked, test masked), (ii) all features masked, or (iii) use the exploratory masked-everywhere model |
 
 P1 and P2 are not blocked: their data is downloading, and their code is being ported to cu128.
+
+## Measured timings (2026-11-16; one 16 GB RTX 5060 Ti)
+
+| method (paper's own code and settings) | measured | per run | GPU memory |
+|---|---|---|---|
+| P1 Standard, RSNA, 100 epochs | full run, sharing the GPU with one job | 1.9 h | 5.6 GB |
+| P1 ActDiff, RSNA, 100 epochs | full run, sharing | 2.5 h | 9.4 GB |
+| P1 ActDiff, cardiomegaly (128 px) | 7-epoch test, sharing: 80 s/epoch + test scoring | ~2.3 h | ~4 GB |
+| P2 Vanilla ResNet-50d, 300 epochs | 2-epoch test, sharing: ~3.0 min/epoch + 1.5 min eval every 5 epochs | ~16.5 h | 2.8 GB |
+| P3 ISNet DenseNet-121, 48 epochs, batch 16, mixed precision (P3: batch 10–16, AMP) | 60 iterations alone, random inputs of the real shape | 11.3 h (14.1 min/epoch) | 10.4 GiB |
+| P3 ISNet, batch 10 | same | 16.6 h | 6.7 GiB |
+
+ISNet fits on 16 GB and is under the author's 12 h limit at batch 16 when run alone. It is paired only with the small P2
+job (2.8 GB), never with P1 ActDiff.
