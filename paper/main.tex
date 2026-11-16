@@ -99,7 +99,8 @@ HAM10000 \citep{wang2024hair}, and adding synthetic dark-corner artifacts helps 
 fetal ultrasound, calipers and on-screen text act as shortcuts even for segmentation \citep{lin2024segshortcut}. In
 chest radiography, hospital signals limit generalisation \citep{zech2018variable}, drain shortcuts are documented on
 NIH-CXR14 and CheXpert \citep{oakden2020hidden,jimenez2023shortcuts}, reduced by training with in-image annotations
-\citep{rueckel2021pneumothorax}, localised to late layers of probed encoders \citep{pedersen2026probes} and mitigated
+\citep{rueckel2021pneumothorax}, exposed by diffusion counterfactuals that add or remove rulers, drains and
+pacemakers \citep{weng2024fastdime}, localised to late layers of probed encoders \citep{pedersen2026probes} and mitigated
 by prevalence-equalised recalibration, which needs the artifact label at test time \citep{kina2026prevalence}. Most of
 these works treat an artifact's presence. Reversed tests are not new: Colored MNIST flips a colour cue between training
 and test \citep{arjovsky2019irm}; in medical images, trap sets invert seven dermoscopy artifact associations and were
@@ -113,10 +114,11 @@ or far from the disease region in brain MRI, both outside it, changed performanc
 for masking and evaluates each placement on correlated, reversed and clean tests, or does so with real artifacts.
 \paragraph{Restricting the model to the ROI} Medical images often remain classifiable with the ROI removed, and models
 trained on full chest radiographs performed better on images without the ROI than on the ROI alone
-\citep{sourget2025mask}. Training on segmented dermoscopy images improved balanced accuracy for one training set but
-not another \citep{maron2021confounding}, and penalising relevance outside segmentation masks makes chest-radiograph
+\citep{sourget2025mask}. Removing the background or cropping around the lesion changed dermoscopy AUROC in either
+direction depending on the class \citep{mahbod2020segmentation}. Training on segmented dermoscopy images improved
+balanced accuracy for one training set but not another \citep{maron2021confounding}, and penalising relevance outside segmentation masks makes chest-radiograph
 classifiers more robust to background bias \citep{bassi2024isnet}. Most of these assume that the shortcut lies outside
-the ROI. Three studies note the in-ROI case without testing it: \citet{viviano2021saliency}, who restricted chest-radiograph classifiers with a mask or with gradient penalties under a 90/10 source--label correlation reversed at test time, state that their methods are not guaranteed to remove confounders inside the mask; \citet{benahmed2022multisite} found that a shortcut still influenced the classifier after lung segmentation; and \citet{pahde2025ensuring} note that artifacts can overlap task-relevant regions, so that masking them out removes information. In natural images, mitigating one shortcut can amplify reliance on others \citep{li2023whacamole}; masking is
+the ROI. Several studies note the in-ROI case without testing it. \citet{maron2021confounding} illustrate an artifact inside the lesion that remains visible after segmentation and state that segmentation removes artifacts only where they do not lie within the lesion, as hairs and overlapping rulers can; \citet{viviano2021saliency}, who restricted chest-radiograph classifiers with a mask or with gradient penalties under a 90/10 source--label correlation reversed at test time, state that their methods are not guaranteed to remove confounders inside the mask; \citet{benahmed2022multisite} found that a shortcut still influenced the classifier after lung segmentation; \citet{sourget2025mask} point to anatomical confounders located at the area of interest; \citet{pahde2023r2r,pahde2025ensuring} note that artifacts can overlap clinically informative regions, so that masking them out removes information; and \citet{nauta2022uncovering} excluded inserted colour patches that covered the lesion from their main analysis. In ultrasound, calipers often span the lesion \citep{bunnell2024busclean}, and marker removal is hardest where markers overlap anatomy \citep{wang2026echodm}. Cropping away \emph{peripheral} skin markings, by contrast, restored a dermoscopy classifier's specificity from 45.8\% to 97.2\% \citep{winkler2019markings}: the outside-ROI case in which restriction works. In natural images, mitigating one shortcut can amplify reliance on others \citep{li2023whacamole}; masking is
 such a mitigation when an artifact lies inside the ROI, and we show that in medical images it amplifies the in-ROI
 shortcut, that location causes this, and why.
 \paragraph{Removing shortcuts} Reweighting and GroupDRO \citep{sagawa2020groupdro}, last-layer retraining

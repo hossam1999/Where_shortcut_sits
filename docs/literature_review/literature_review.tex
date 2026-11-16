@@ -26,7 +26,7 @@ classification: a review of the 2021--2026 literature}
 \noindent This review collects the peer-reviewed work published from January 2021 to October 2026 that bears on one
 question: when an image artifact that is correlated with the diagnosis lies inside or outside the region of interest
 (ROI), does restricting the classifier to the ROI remove the shortcut, and what should be used instead? We included
-72 studies from journals and conferences of recognised standing (Nature, Lancet and Science families, Medical Image
+74 studies from journals and conferences of recognised standing (Nature, Lancet and Science families, Medical Image
 Analysis, MICCAI, CVPR, ECCV, NeurIPS, ICML, ICLR and others), verified each against its publisher or proceedings page
 and excluded preprints and workshop papers. The literature establishes firmly that medical classifiers exploit
 acquisition signals, devices, markings and demographic correlates; it documents artifacts per modality, mostly in
@@ -83,7 +83,8 @@ are an aid for the reader, not a formal ranking.
 \paragraph{Exclusion} Preprints without a peer-reviewed version, workshop papers and papers in journals without a
 consistent standing in the field were excluded even when relevant. They are listed in
 Appendix~\ref{app:excluded} so that the reader can see what was left out and why, and are not counted; two of them
-(the source of a test design and the source of annotations the thesis uses) are also cited in the text. Studies of segmentation accuracy
+(the source of a test design and the source of annotations the thesis uses), and one study that met the in-ROI
+case \citep{nauta2022uncovering}, are also cited in the text. Studies of segmentation accuracy
 alone, and fairness studies without a bearing on the mechanism of shortcut use, were excluded. A small number of works
 published before 2021 are cited as background; they are marked with \bg\ and are not counted.
 
@@ -223,7 +224,8 @@ ROI \citep{sourget2025mask}.
 
 \subsection{ROI restriction as a remedy}
 Training on segmented dermoscopy images improved balanced accuracy for classifiers trained on HAM10000 but not for those
-trained on ISIC \citep{maron2021confounding}. ISNet uses segmentation masks only at training time, penalising relevance
+trained on ISIC \citep{maron2021confounding}. Removing the background or cropping around the lesion changes
+dermoscopy AUROC in either direction depending on the class \citep{mahbod2020segmentation}\bg. ISNet uses segmentation masks only at training time, penalising relevance
 outside them, and improves robustness to background bias on chest radiographs \citep{bassi2024isnet}; in-image
 annotations serve a similar purpose for chest tubes \citep{rueckel2021pneumothorax}. Each of these remedies assumes
 that the shortcut lies outside the region that is kept.
@@ -233,7 +235,7 @@ that the shortcut lies outside the region that is kept.
 model rely more on the others, and proposed a last-layer ensemble against it. In our reading, ROI masking is a
 mitigation of exactly this kind: it removes background shortcuts and, if an artifact remains inside the ROI, the same
 dilemma predicts greater reliance on it. Li et~al.\ did not study masking or medical images.
-Three studies note the in-ROI case without testing it: \citet{viviano2021saliency}, who restricted chest-radiograph classifiers with a mask or with gradient penalties under a 90/10 source--label correlation reversed at test time, state that their methods are not guaranteed to remove confounders inside the mask; \citet{benahmed2022multisite} found that a shortcut still influenced the classifier after lung segmentation; and \citet{pahde2025ensuring} note that artifacts can overlap task-relevant regions, so that masking them out removes information. These are the closest statements of the problem the thesis studies; none of them measures it.
+Several studies note the in-ROI case without testing it. \citet{maron2021confounding} illustrate an artifact inside the lesion that remains visible after segmentation and state that segmentation removes artifacts only where they do not lie within the lesion, as hairs and overlapping rulers can; \citet{viviano2021saliency}, who restricted chest-radiograph classifiers with a mask or with gradient penalties under a 90/10 source--label correlation reversed at test time, state that their methods are not guaranteed to remove confounders inside the mask; \citet{benahmed2022multisite} found that a shortcut still influenced the classifier after lung segmentation; \citet{sourget2025mask} point to anatomical confounders located at the area of interest; \citet{pahde2023r2r,pahde2025ensuring} note that artifacts can overlap clinically informative regions, so that masking them out removes information; and \citet{nauta2022uncovering} excluded inserted colour patches that covered the lesion from their main analysis. In ultrasound, calipers often span the lesion \citep{bunnell2024busclean}, and marker removal is hardest where markers overlap anatomy \citep{wang2026echodm}. Cropping away \emph{peripheral} skin markings, by contrast, restored a dermoscopy classifier's specificity from 45.8\% to 97.2\% \citep{winkler2019markings}\bg: the outside-ROI case in which restriction works. These are the closest statements of the problem the thesis studies; none of them measures it.
 \takeaway{The prior work supports both halves of the problem---backgrounds carry shortcuts, and masking often
 helps---but almost every ROI-restriction study assumes the shortcut is in the background, and the few that name the
 in-mask case leave it untested. Within our search, no study varies
@@ -405,7 +407,7 @@ is incomplete; the review should be repeated before submission.
 \section{Summary of included studies}\label{sec:table}
 \begingroup\footnotesize\setlength{\tabcolsep}{3pt}
 \begin{longtable}{P{2.5cm}P{2.5cm}P{0.6cm}P{1.6cm}P{4.15cm}P{4.2cm}}
-\caption{All 72 included studies (2021--2026), grouped by theme. Tier: A or B as defined in Sec.~\ref{sec:method}.
+\caption{All 74 included studies (2021--2026), grouped by theme. Tier: A or B as defined in Sec.~\ref{sec:method}.
 CXR: chest radiograph; US: ultrasound; NI: natural images; --: not modality-specific.}\label{tab:all}\\\toprule
 Study & Venue & Tier & Modality & Finding or contribution & Relevance to the thesis \\\midrule\endfirsthead
 \toprule Study & Venue & Tier & Modality & Finding or contribution & Relevance to the thesis \\\midrule\endhead
@@ -454,6 +456,8 @@ Study & Venue & Tier & Modality & Finding or contribution & Relevance to the the
 \citet{bassi2024isnet} & Nat.\ Commun. & A & CXR & relevance penalties outside masks; matched, reversed and clean tests & mask-based remedy; test-design precedent \\
 \citet{viviano2021saliency} & ICLR & A & CXR & masked training and gradient penalties under a 90/10 source reversal; in-mask confounders not removed & closest statement of the problem; replication target \\
 \citet{benahmed2022multisite} & IEEE Access & B & CXR & shortcut survives lung segmentation & in-ROI evidence \\
+\citet{bunnell2024busclean} & PLOS ONE & B & breast US & caliper detection; calipers span the lesion & in-ROI calipers \\
+\citet{wang2026echodm} & Neural Netw. & B & US & marker removal; hardest where markers overlap anatomy & in-ROI markers \\
 \multicolumn{6}{l}{\textit{Backgrounds and masking in natural images}}\\
 \citet{xiao2021noise} & ICLR & A & NI & backgrounds alone predict the class & background shortcuts \\
 \citet{moayeri2022comprehensive} & CVPR & A & NI & foreground/background sensitivity & masking evaluation \\

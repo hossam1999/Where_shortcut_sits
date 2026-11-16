@@ -14,6 +14,7 @@ Warning--empty pages in splice2025
 Warning--empty pages in jimenez2023shortcuts
 Warning--empty pages in kirichenko2023dfr
 Warning--empty pages in lin2024segshortcut
+Warning--empty pages in pahde2023r2r
 Warning--empty pages in puli2022nurd
 Warning--empty pages in ravfogel2020inlp
 Warning--empty pages in sagawa2020groupdro
@@ -21,45 +22,45 @@ Warning--empty pages in veitch2021counterfactual
 Warning--empty pages in viviano2021saliency
 Warning--empty pages in wang2017chestxray8
 Warning--empty pages in zhong2020random
-You've used 51 entries,
+You've used 56 entries,
             2990 wiz_defined-function locations,
-            901 strings with 16736 characters,
-and the built_in function-call counts, 38342 in all, are:
-= -- 2763
-> -- 2006
-< -- 11
-+ -- 773
-- -- 714
-* -- 4450
-:= -- 5662
-add.period$ -- 150
-call.type$ -- 51
-change.case$ -- 489
-chr.to.int$ -- 51
-cite$ -- 68
-duplicate$ -- 2741
-empty$ -- 2505
-format.name$ -- 874
-if$ -- 7015
+            929 strings with 17852 characters,
+and the built_in function-call counts, 42014 in all, are:
+= -- 3041
+> -- 2176
+< -- 13
++ -- 840
+- -- 774
+* -- 4862
+:= -- 6202
+add.period$ -- 167
+call.type$ -- 56
+change.case$ -- 532
+chr.to.int$ -- 56
+cite$ -- 74
+duplicate$ -- 3011
+empty$ -- 2755
+format.name$ -- 950
+if$ -- 7702
 int.to.chr$ -- 1
 int.to.str$ -- 1
-missing$ -- 557
-newline$ -- 267
-num.names$ -- 204
-pop$ -- 1063
+missing$ -- 610
+newline$ -- 294
+num.names$ -- 224
+pop$ -- 1154
 preamble$ -- 1
-purify$ -- 435
+purify$ -- 473
 quote$ -- 0
-skip$ -- 837
+skip$ -- 926
 stack$ -- 0
-substring$ -- 1188
-swap$ -- 2063
-text.length$ -- 6
+substring$ -- 1313
+swap$ -- 2262
+text.length$ -- 7
 text.prefix$ -- 0
 top$ -- 0
-type$ -- 459
-warning$ -- 17
-while$ -- 199
+type$ -- 504
+warning$ -- 18
+while$ -- 219
 width$ -- 0
-write$ -- 721
-(There were 17 warnings)
+write$ -- 796
+(There were 18 warnings)
