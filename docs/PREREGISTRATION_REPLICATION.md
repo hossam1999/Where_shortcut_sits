@@ -180,3 +180,17 @@ Each expectation is reported as supported, not supported, or contradicted, per s
 - "Beats X on P# by Δ [CI]" only if section 2 holds for that comparison, after Holm, and the paper's target is reproduced.
 - Proxy-test (P3 before BIMCV) and exploratory results never support a "beats" or "reproduced" statement.
 - A comparison that does not meet the rule is reported as "not beaten", with its numbers.
+
+## Amendments
+
+**A1 (2026-11-16, before any run; a fact from P1's code, found after the first commit).** P1's runner
+(`scripts/run_seeds.sh`) uses the seeds **1234, 3232, 3221, 9856, 1290, 1987, 1111, 6400, 8888, 0451** (the last is
+passed as the integer 451). `training.py` and `configuration.setup_dataset` pass this seed to the dataset, so **each P1 seed
+draws its own balanced cohort and train/valid/test split** as well as its own initialisation. P1 therefore uses these 10
+seeds, not 0–9, and the split is not fixed at 1234. Consequences:
+- arms a, b and c are fitted and scored separately per seed, on that seed's split;
+- the pairing of ours with theirs stays within seed (same split, same test images);
+- in the crossed bootstrap, test images are shared across seeds only where the splits overlap. The estimator handles this
+  already (one Poisson weight per image id).
+
+Section 0's statement about "P1 `np.random.seed(1234)`" is replaced by this paragraph.
