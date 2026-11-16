@@ -107,6 +107,59 @@ Supplementary Information (Bassi), and the code linked in each paper's code-avai
   **The ± is a Bayesian posterior SD over test images (Supp. Note 10), not a spread over training seeds**; the paper reports one
   trained model per method.
 
+## BIMCV COVID-19+ for P3's test (2026-11-16)
+
+**Source.** The owners' free mirror (linked from github.com/BIMCV-CSUSP/BIMCV-COVID-19, `BIMCV-COVID19+/Readme.md`):
+B2DROP public share `BIMCV-COVID19-cIter_1_2_3`, via WebDAV. It is reachable. It has 571 subject archives
+(`covid19_posi_subjects_partaa…partvy.tar.gz`), each with a `-tvf.txt` listing, plus metadata, sessions, derivatives
+and SHA1 sums. Licence: BIMCV-COVID19 Research Use Agreement (academic use, cite, no redistribution). No image is
+ever committed.
+
+**Small files downloaded:** all 571 listings, `covid19_posi_metadata.tar.gz` (participants.tsv), `covid19_posi_sessions_tsv.tar.gz`,
+`sha1sum.txt`, `sha1sum_b.txt`, `LICENSE.md`, `00_extract_data.sh` (66 MB). Also `covid19_posi_derivative.tar.gz` (74 MB,
+SHA1 OK), from which only `derivatives/labels/Labels_covid_123.tsv` (the NLP report labels) and `partitions.tsv` were kept.
+
+**P3's rule applied** (`scripts/replication/bimcv_select.py`; Supp. Note 5.1). Iteration 1+2 = 5-digit subject ids
+(S03044–S12845; iteration 3 has 6-digit ids and was added in v1.0.2, 2022-11-20; all 10 figshare test images have 5-digit ids).
+
+| step | images |
+|---|---|
+| PNGs in all listings | 57,183 |
+| iterations 1+2 | 14,308 |
+| frontal (vp-ap / vp-pa) | 12,914 |
+| report NLP label "COVID 19" | 2,508 |
+| DICOM sidecar (.json) present | 2,508 |
+| adult (youngest recorded age ≥ 18, participants.tsv) | **2,501** (1,631 patients) |
+
+**The count does not match P3: 2,501 images and 1,631 patients against P3's 1,515 and 1,145.** Further filters from P3's
+text do not close the gap:
+- study date within P3's stated period (16 Feb – 8 Jun 2020): 2,423 images, 1,591 patients;
+- also excluding reports labelled "COVID 19 uncertain": 2,374 images, 1,560 patients;
+- also one image per session: 2,183 images, 1,560 patients.
+
+**All 10 figshare test images are in every variant.** P3 most likely used an earlier state of the release (labels and
+metadata as of 2020–21) that the mirror no longer serves. The test is therefore labelled **"rebuilt by P3's rule, not the
+identical image list; 2,501 vs 1,515 images"**. The primary rebuilt test is the 2,501-image rule above, fixed now before
+any scoring. The date-window variant is reported as a sensitivity check.
+
+**Download cost.** The 2,501 images (36.9 GB of PNG) are spread over **531 of the 571 archives (~2.8 TB)**. A `.tgz` cannot
+be read by byte range, and SHA1 verification needs the whole archive. `scripts/replication/bimcv_fetch.sh` therefore
+processes one archive at a time: download (≥ 18 MB/s measured), SHA1 check against the owners' `sha1sum.txt`, extract only
+the selected PNG + JSON, delete the archive. Disk use stays ≤ ~6 GB at a time; the expected time is about 1–1.5 days. Every
+archive's bytes, SHA1 result and files kept are logged in `$WTSS_DATA/bimcv/fetch_log.tsv`. Started 2026-11-16.
+
+**NIH pneumonia part of P3's test.** All 10 figshare NIH images carry a Pneumonia label, some with other findings, so the rule is
+"any Pneumonia label, age ≥ 18". With the original `Data_Entry_2017.csv` it gives 1,247 images and 890 patients. With NIH's
+2020 re-issue `Data_Entry_2017_v2020.csv` (corrected ages) it gives **1,319 images and 938 patients, mean age 47.2 ± 15.4,
+58.8% male**, against P3's 1,295 images, 941 patients, 48 ± 15.5 and 58.7% (Supp. Note 5.1). We use the v2020 rule; the
+24-image gap is unexplained and reported.
+
+**P3 pre-trained weights.** From the Google Drive folder in the P3 README: `COVIDIsNet.pt` (28,506,899 bytes, SHA256
+`760e9b62b79a7ed4d7a07961193aa103cc6706b758ff7705e6bfa087c95f87b9`). The folder has **no synthetic-bias COVID model**.
+`COVIDIsNet.pt` is the COVID ISNet without synthetic bias, scored in **Table 2 on the same o.o.d. test** (macro-F1
+0.773 ± 0.009; per-class F1 (Table 2 column order): normal 0.555, pneumonia 0.858, COVID-19 0.907). Scoring it on the rebuilt test checks how close
+our test is to theirs.
+
 ## Data status
 
 | dataset | needed for | status |
@@ -119,7 +172,7 @@ Supplementary Information (Bassi), and the code linked in each paper's code-avai
 | Montgomery + Shenzhen | P3 test normals (406) | downloading (Academic Torrents `ac786f74…`, `462728e8…`) |
 | CheXpert small | P3 training normal/pneumonia | waiting (registration) |
 | BrixIA | P3 training COVID-19 | waiting for the author's link |
-| BIMCV COVID-19+ iter. 1+2 | P3 test COVID-19 (1,515) | waiting for credentials; will be streamed and filtered, never stored whole |
+| BIMCV COVID-19+ iter. 1+2 | P3 test COVID-19 (rebuilt: 2,501) | fetching from the owners' B2DROP mirror, one archive at a time (see BIMCV section) |
 
 ## Decisions (author, 2026-11-16)
 
@@ -155,7 +208,6 @@ Supplementary Information (Bassi), and the code linked in each paper's code-avai
 
 | item | blocks | waiting for |
 |---|---|---|
-| BIMCV COVID-19+ download link or credentials | P3 head-to-head on the real test | author (registers on IEEE DataPort/BIMCV) |
 | BrixIA download link | all P3 work (COVID-19 training class) | author |
 | CheXpert (small) | P3 normal and pneumonia training classes | Stanford AIMI registration (author's account; a third-party mirror is not used) |
 
