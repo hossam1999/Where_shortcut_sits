@@ -219,7 +219,8 @@ as registered (all seeds, all methods, the papers' tests). Phase 4 (section 5) i
    - P2, P3 and all of phase 4: **1 training seed** (seed 0). P2 and P3 each report a single trained model, so this matches
      their protocol.
    - P1: **3 seeds**, the first three of P1's list (1234, 3232, 3221). P1's claim is a 10-seed mean with an SD up to 0.09, so one
-     seed cannot test it. This replaces section 0's 10 seeds for P1 and A2's 3 seeds for P1's phase 4 (same three seeds).
+     seed cannot test it. This replaces section 0's 10 seeds for P1's phases 2–3. Phase 4 uses 1 seed for every setup,
+     P1 included (P1: seed 1234), which replaces A2's 3 seeds. (Wording corrected 2026-11-16, before any phase-4 run.)
    - Runs with seed 0 (P2, P3) and seed 1234 (P1) go first, so single-seed results exist early.
 2. **Statistics with 1 seed** (P2, P3, phase 4): the same paired bootstrap, over test images only (one model run per method,
    the same images, 10,000 replicates, Poisson weight per image). **Training-seed variance is not included**, and every such
