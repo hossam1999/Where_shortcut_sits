@@ -39,7 +39,7 @@ def main():
     b = pd.read_csv(f"{D}/brixia/x/data/metadata_global_v2.csv", sep=";")
     b = b[b.BrixiaScoreGlobal > 0]
     covid = pd.DataFrame({"image_id": b.Filename.str.replace(".dcm", "", regex=False),
-                          "path": "brixia/dicom/" + b.Filename, "patient": "brixia_" + b.Subject,
+                          "path": "brixia/dicom/dicom_clean/" + b.Filename, "patient": "brixia_" + b.Subject,
                           "view": "", "y": 2, "source": "brixia"})
     c = pd.read_csv(f"{D}/chexpert/CheXpert-v1.0-small/train.csv")
     c["patient"] = c.Path.str.extract(r"(patient\d+)")[0]
