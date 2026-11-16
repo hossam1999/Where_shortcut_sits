@@ -389,3 +389,15 @@ masking is therefore exactly their Masked procedure.
 - ActDiff: cardiomegaly 0.73 ± 0.03, RSNA 0.68 ± 0.05.
 
 If any is outside, P1 pauses for the author (the queue holds seeds 3232 and 3221 until `GATE_OK`).
+
+- **Cardiomegaly test: 2,776 images vs the paper's 2,770.** The test is the remainder after the int-truncated training and
+  validation draws: 4 × 2,772 − 5,542 − 2,770 = 2,776. Our pool has one more image per cell than the paper's sizes imply
+  (2,772 vs 2,771; PadChest-224 has 160,845 images). The paper's 2,770 equals its validation size, i.e. the nominal 25%,
+  not the remainder.
+- **Gate decision rule (author, recorded 2026-11-16, before any seed-1234 result):**
+  - inside paper ± 2 SD: continue;
+  - outside that band by ≤ 0.03: continue all seeds, and judge on the registered 3-seed-mean rule;
+  - further outside for any of the four: pause P1 and report.
+  - Implemented in `scripts/replication/p1_gate.py`.
+- **BIMCV fetch check (19:57):** progressing, not hung. 83 of 531 archives (435 GB) in 8.4 h, 14.3 MB/s, ~6 min per archive,
+  no SHA1 failures, 397 images kept. The remaining ~2.4 TB take about 46 h.

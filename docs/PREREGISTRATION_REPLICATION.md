@@ -316,3 +316,11 @@ training path (`docs/REPLICATION_STATUS.md`).
   epoch). This is stated here because these numbers were seen before the fix was made. The fix is a correction of our
   port to the authors' code that produced the published numbers; no setting was chosen to change a result.
 - After the fix, P1 restarts from scratch with the registered seeds, methods and protocol, behind the author's gate.
+
+**A8 (2026-11-16, before any corrected P1 result; author's decision).** A gate is placed after seed 1234 of P1 Standard and
+ActDiff on both tasks; seeds 3232 and 3221 start only after it.
+- **Bands:** paper ± 2 SD (Standard: cardiomegaly 0.70 ± 0.05, RSNA 0.20 ± 0.03; ActDiff: cardiomegaly 0.73 ± 0.03, RSNA
+  0.68 ± 0.05).
+- **Rule:** a result inside its band, or outside it by ≤ 0.03, passes, and all seeds then continue. If any result is further
+  outside, P1 pauses for the author.
+- The gate only decides whether to continue. The "reproduced" verdict stays the registered 3-seed-mean rule (section 1, A3).
