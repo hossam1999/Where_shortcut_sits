@@ -229,3 +229,33 @@ as registered (all seeds, all methods, the papers' tests). Phase 4 (section 5) i
 3. **P1 verdicts** use the 3-seed mean, the registered "reproduced" rule (within the paper's SD) and the crossed seed × image
    bootstrap over the 3 seeds, with the note that the paper used 10 seeds.
 4. The P3 seed-count rule in section 0 (5, or 3 if > 10 GPU-hours) is replaced by item 1.
+
+**A4 (2026-11-16, before any affected run; reason: scope, the supervisor's actual request; author's decision).**
+1. **Methods re-run in phases 2–3:** each paper's best method plus the standard baseline (to validate the setup).
+   - P1: Standard, Masked, ActDiff, on both tasks, 3 seeds (A3).
+   - P2: Vanilla and RR-ClArC, 1 seed.
+   - P3: DenseNet and ISNet (item 2).
+   - All other baselines (P1 GradMask, RRR, Adversarial; P2 RRR, P-ClArC, rP-ClArC; P3 U-Net lungs-only, RRR, GAIN, …) are
+     **cited from the papers, not re-run**.
+   - The exploratory P1 "Masked as described" runs are dropped as well.
+   - The "reproduced" targets and the 10 head-to-head comparisons (section 2: ours vs P1 Masked, P1 ActDiff, P2 RR-ClArC,
+     P3 ISNet) are unchanged.
+2. **P3 original benchmark.** The released `COVIDIsNet.pt` (P3 README, Google Drive) is a pickled `IsDense` object with no
+   metadata. Its name, unlike `FacesSyntheticBiasISNet.ckpt` and `ISNetDogsSyntheticBias.ckpt`, marks it as the COVID-19 model
+   *without* synthetic marks (Table 2). It is therefore not the Table 1 model. We **train 1 ISNet and 1 DenseNet** on the
+   synthetic-mark benchmark (seed 0). `COVIDIsNet.pt` is scored on the rebuilt o.o.d. test against Table 2 only, as a check that
+   the rebuilt test matches P3's.
+3. **Phase 4 only in two setups** (1 seed each); **no phase 4 for P2**.
+   - **P1 cardiomegaly:** inside vs outside the lungs ∪ heart ROI. Methods: Standard, Masked, ActDiff, plus ours (arms a and c).
+     This replaces A2's GradMask with ActDiff.
+   - **P3:** P3's marks moved **inside the lungs**, compared with P3's original corner (outside) runs. Methods: DenseNet, ISNet,
+     ours.
+     - In P3's own design every training image carries its class's mark (artifact = label), so mask_cmc (arm a) cannot be
+       estimated there; only U-MtE (arm c) applies.
+     - **Whether the inside run keeps P3's design (all images marked, directly comparable with P3's Table 1) or uses the
+       registered 90/10 presence (so that mask_cmc applies) is to be fixed by the author before the P3 phase-4 runs.**
+   - The P3 90/10 corner variant and the border position are dropped.
+4. **Our arms reuse trained networks and saved features.** Arm a uses each paper's re-run network: P1 Masked; P2 Vanilla;
+   P3 the DenseNet, because the U-Net pipeline is not re-run (the registered U-Net lungs-only backbone is replaced by the
+   DenseNet). Arms b and c use frozen DINOv2 features, extracted once per image set.
+5. Order: P1 and P2 first (shortest first), then P3 once its data is available.
