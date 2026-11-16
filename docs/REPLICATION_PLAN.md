@@ -22,6 +22,31 @@ like-for-like number). Then all of their methods and ours are run on our inside-
 - **Pahde:** RR-ClArC is the closest method to ours. The difference to stress: theirs removes the artifact direction for all images; ours removes it within each class, after masking, with nothing needed at test time.
 - **ISNet:** on its *original* test the mark is outside the lungs, and ISNet is already unaffected (0.775 everywhere). We can at best match it there. The real comparison is **their benchmark with the mark moved inside the lungs**: same data, code and metric, where a penalty outside the mask cannot help. The external tuberculosis AUROC (0.809) is a secondary target.
 
+## How to frame each paper's result (decided 2026-11-17)
+**P1 Viviano is the odd one out.** Its shortcut is *global*, not a localized artifact:
+- the hospital the X-ray came from (cardiomegaly);
+- the X-ray view, AP or PA (pneumonia).
+
+Such a signal is spread over the whole image, inside and outside the mask at once. So "inside vs outside the ROI",
+the thesis question, does not apply to it.
+- **P1 head-to-head on their original test → SECONDARY.** It only shows that our method also copes with a global
+  shortcut. Label it "global shortcut (hospital / AP-PA view), not a localized artifact".
+- **P1 phase 4 → the P1 result that addresses the thesis.** It is the location test: a localized radio-opaque tube
+  placed inside vs outside the lungs + heart ROI, in their pipeline, with their methods (Standard, Masked, ActDiff)
+  against ours.
+- **Why P1 stays in the plan anyway:**
+  1. its limitation section names our problem (confounders inside the mask are not removed);
+  2. it uses the same reversed-test design (90/10 → 10/90, AUROC);
+  3. its methods are the "fix it by location" family that the thesis predicts fails for in-ROI artifacts.
+- **P1 pneumonia "Masked" is label-dependent at test time** (A11). The mask is the pneumonia boxes, so every negative
+  becomes one constant image. It is reported as a finding about the paper, not as a target. The pneumonia target is
+  ActDiff (0.68).
+
+**P2 Pahde and P3 ISNet → PRIMARY head-to-heads.** Both use localized artifacts (an inserted vignette; corner marks).
+
+**P3 phase 4 (marks inside the lungs) → the strongest location result**, because ISNet's own design assumes the mark
+lies outside the lungs.
+
 ## Then: our location test with every method
 On the same images, the artifact goes fully outside, on the border and fully inside the ROI, each with correlated, reversed and clean tests. Methods compared:
 - standard model and masking;
