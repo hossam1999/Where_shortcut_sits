@@ -302,3 +302,17 @@ design has artifact = label, so mask_cmc cannot run there (A4, A5). Added: a **P
   (clean) test. "Beaten" uses the image-only paired bootstrap of A3 (training-seed variance not included). These
   comparisons form their own Holm family (6 = arms a, b, c × 2 positions, each against ISNet), separate from section 2's 10.
 - **Cost:** 2 ISNet (~11.3 h each) + 2 DenseNet (~3 h each), about +29 GPU-hours. New total for all remaining work: ~125 GPU-h.
+
+**A7 (2026-11-16; port bug fix, not tuning).** The P1 port first used the repository's HEAD split code
+(`activmask/datasets/xray.py` as changed in `81ecbd3`, 2021-02-03). That code was written after the published numbers:
+arXiv v2, 2020-10-06, already has Tables 1–2 and N_train = 5,542. The file is restored from `32f7b7d` (2020-10-01), the
+commit current at arXiv v2. It reproduces the paper's split sizes (cardiomegaly 5,542 / 2,770 / 2,776; RSNA
+2,694 / 1,346 / 1,352) and its reversed validation and test (10/90). A full diff found no other behavioural change on the
+training path (`docs/REPLICATION_STATUS.md`).
+- **Superseded runs** (HEAD split code; archived in `$WTSS_DATA/replication/viviano/runs_superseded_head_splits/`, not
+  used): RSNA Standard 1234, Masked 1234, ActDiff 1234, Standard 3232, Masked 3232 and ActDiff 3232 (last two stopped
+  early); cardiomegaly Standard 1234 and ActDiff 1234.
+- **Results seen before the fix:** RSNA seed 1234 Standard 0.355 and ActDiff 0.308 (their test AUROC at their selected
+  epoch). This is stated here because these numbers were seen before the fix was made. The fix is a correction of our
+  port to the authors' code that produced the published numbers; no setting was chosen to change a result.
+- After the fix, P1 restarts from scratch with the registered seeds, methods and protocol, behind the author's gate.

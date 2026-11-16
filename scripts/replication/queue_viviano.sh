@@ -15,6 +15,11 @@ jobs_list(){
 jobs_list | while read t m s; do
   [ -d $RUNS/${t}_${m}_${s} ] && continue
   [ "$t $m" = "xray resnet_maskall" ] && continue   # A5: scored from the Standard model (identical training config)
+  # gate (author, 2026-11-16): seeds other than 1234 wait until p1_gate.py has passed (GATE_OK); GATE_FAIL stops the queue
+  while [ "$s" != 1234 ] && [ ! -f $RUNS/../GATE_OK ]; do
+    [ -f $RUNS/../GATE_FAIL ] && { echo "$(date +%F_%T) gate failed: P1 paused for the author"; exit 0; }
+    WTSS_DATA=${WTSS_DATA:-/workspace/data} /workspace/venv-wtss/bin/python $Q/p1_gate.py > $RUNS/../gate.txt 2>&1; sleep 300
+  done
   need=$([ "$m" = resnet_actdiff ] && echo 10000 || echo 6200)   # MiB measured per method (+ margin)
   while [ $(running) -ge $N ] || [ $(free_mib) -lt $need ]; do sleep 60; done
   echo "$(date +%F_%T) start $t $m $s"; nohup $Q/run_viviano.sh $t $m $s >/dev/null 2>&1 &

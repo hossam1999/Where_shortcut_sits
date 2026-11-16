@@ -357,3 +357,35 @@ Research Use Agreement accepted by the author).
 - **Deviation:** P3's lung segmentation targets came from a lung U-Net of an earlier study that is not published. We use the
   TorchXRayVision PSPNet (lungs, p > 0.5), as in our own pipeline.
 - **Mark position:** P3 says only "upper left corner"; we place the 22-px mark with a 4-px margin.
+
+## P1 full code diff: 32f7b7d (2020-10-01, current at arXiv v2) vs the ported HEAD (2026-11-16)
+
+`git diff 32f7b7d HEAD` over the whole repository, notebooks excluded. Every change on the training path:
+
+| file | change | behaviour |
+|---|---|---|
+| `activmask/datasets/xray.py` | split code (`81ecbd3`): training cells drawn at 2× size and validation cells reversed at 32f7b7d; halved and not reversed at HEAD | **differs; restored to 32f7b7d** |
+| `activmask/training.py` | data loaders: batch 16 hard-coded at 32f7b7d; from the config at HEAD (16); `device='cuda'` replaced by `cfg['device']`; formatting | same (batch 16 in both; device line restored by our port patch) |
+| `activmask/utils/configuration.py` | default `batch_size` 32 → 16 | none (overridden by hard-coded 16 at 32f7b7d and by the configs at HEAD) |
+| `activmask/models/loss.py` | adds `get_grad_saliency` | none (called only by `results.py`, plotting) |
+| `activmask/models/resnet.py` | trailing whitespace | none |
+| `config/xray-seeds/base_xray.yml` | `batch_size` 64 → 16; `n_iter: 50` added | none (32f7b7d ignored the config batch size and used 16; `n_iter` is used only by hyperparameter search) |
+| `config/rsna-seeds/base_rsna.yml` | `n_iter: 50` added | none |
+| method configs used (Standard, Masked, ActDiff, both tasks) | unchanged | — |
+| `run_seeds.sh` | experiment list and paths; seed list unchanged | none |
+
+Losses (ActDiff, masking), mask loading, augmentation (none in either version), optimiser (Adam, no scheduler), model
+selection (lowest validation loss after the 5-epoch burn-in, test scored at that epoch) and evaluation are identical.
+**Only `xray.py` changes behaviour; it is the only file restored.**
+
+**A5 re-confirmed under the restored code** (cardiomegaly, seed 1234): the test split built with `mask_all` off and on has
+the same 2,776 images, sites and labels in the same order; only the pixels outside the circle are zeroed (50.3% of pixels
+non-zero vs 100%). The Standard and Masked configs still differ only in `test.mask_all`. Scoring the Standard model with test
+masking is therefore exactly their Masked procedure.
+
+**Gate (author, 2026-11-16).** After the first corrected seed (1234) of Standard and ActDiff on both tasks,
+`scripts/replication/p1_gate.py` compares their test AUROC with the paper ± 2 SD:
+- Standard: cardiomegaly 0.70 ± 0.05, RSNA 0.20 ± 0.03;
+- ActDiff: cardiomegaly 0.73 ± 0.03, RSNA 0.68 ± 0.05.
+
+If any is outside, P1 pauses for the author (the queue holds seeds 3232 and 3221 until `GATE_OK`).
