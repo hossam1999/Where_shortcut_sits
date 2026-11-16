@@ -40,3 +40,8 @@ results/round9_search/_smoke/
 
 # round 9: smoke runs and logs (never committed)
 results/round9/_smoke/
+
+# replication: third-party code (cloned, never committed) — keep only SOURCE.md and our .patch files
+third_party/*/*
+!third_party/*/SOURCE.md
+!third_party/*/*.patch
