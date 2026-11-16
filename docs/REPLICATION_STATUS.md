@@ -118,6 +118,13 @@ Supplementary Information (Bassi), and the code linked in each paper's code-avai
   `criterion=all_logits_random`, at one of the last 3 ResNet layers; RRR (`RRR_ExpMax`) uses the ground-truth artifact masks.
   **Which λ and layer produced Table 1 is not stated in the paper or the code** (open item; we will choose on validation and register the rule).
 
+- **P2 data check (their code, our ISIC 2019 download).** ISIC 2019: 25,331 images and 25,331 ground-truth rows (official
+  count). Their split: train 20,265, validation 2,533, test 2,533. Microscope artifact on 916 of 4,522 melanomas (20.3%) and on
+  no other class (train 745, validation 81, test 90).
+  Their training sets no random seed (the paper reports one run), so a `seed` key was added (`third_party/pahde/cu128_port.patch`);
+  with no seed the code behaves as before. The batch size comes from `local_config.yaml`; the released value is 12, the paper
+  does not state it, and we use 12.
+
 ### P3 Bassi et al., ISNet, Nature Communications 15:291 (2024)
 
 - Code: https://github.com/PedroRASB/ISNet (code-availability section), commit `7ad0a9ee15ab57fa055c9974f7c336aee26b34af`.

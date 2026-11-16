@@ -1,0 +1,301 @@
+diff --git a/config_files/local_config.yaml b/config_files/local_config.yaml
+index 3afab90..b39e614 100644
+--- a/config_files/local_config.yaml
++++ b/config_files/local_config.yaml
+@@ -1,10 +1,10 @@
+-isic2019_dir: /PATH/TO/ISIC2019
++isic2019_dir: /workspace/data/isic2019_pahde
+ isic2024_dir: /PATH/TO/ISIC2024
+ hyper_kvasir_dir: /PATH/TO/hyper-kvasir
+ chexpert_dir: /PATH/TO/CheXpert-v1.0-small
+ ptb_xl_dir: /PATH/TO/PTB-XL/data
+-checkpoint_dir: /PATH/TO/checkpoints
+-checkpoint_dir_corrected: /PATH/TO/checkpoints_corrected
+-dir_precomputed_data: /PATH/TO/precomputed_data
++checkpoint_dir: /workspace/data/replication/pahde/checkpoints
++checkpoint_dir_corrected: /workspace/data/replication/pahde/checkpoints_corrected
++dir_precomputed_data: /workspace/data/replication/pahde/precomputed_data
+ local_batch_size: 12
+ local_device: cuda
+diff --git a/config_files/training/isic_attacked/local/resnet50d_p_artifact0.2_p_backdoor0_adam_lr0.0005.yaml b/config_files/training/isic_attacked/local/resnet50d_p_artifact0.2_p_backdoor0_adam_lr0.0005.yaml
+index f254f39..4f4cf14 100644
+--- a/config_files/training/isic_attacked/local/resnet50d_p_artifact0.2_p_backdoor0_adam_lr0.0005.yaml
++++ b/config_files/training/isic_attacked/local/resnet50d_p_artifact0.2_p_backdoor0_adam_lr0.0005.yaml
+@@ -4,7 +4,7 @@ attacked_classes:
+ - MEL
+ batch_size: 12
+ data_paths:
+-- /PATH/TO/ISIC2019
++- /workspace/data/isic2019_pahde
+ dataset_name: isic_attacked
+ device: cuda
+ eval_every_n_epochs: 5
+@@ -13,7 +13,7 @@ loss: cross_entropy
+ lr: 0.0005
+ milestones: 150,250
+ model_name: resnet50d
+-model_savedir: /PATH/TO/checkpoints
++model_savedir: /workspace/data/replication/pahde/checkpoints
+ num_epochs: 300
+ optimizer: adam
+ p_artifact: 0.2
+diff --git a/config_files/training/isic_attacked/local/resnet50d_p_artifact0.2_p_backdoor0_adam_lr0.001.yaml b/config_files/training/isic_attacked/local/resnet50d_p_artifact0.2_p_backdoor0_adam_lr0.001.yaml
+index 502742b..91e9484 100644
+--- a/config_files/training/isic_attacked/local/resnet50d_p_artifact0.2_p_backdoor0_adam_lr0.001.yaml
++++ b/config_files/training/isic_attacked/local/resnet50d_p_artifact0.2_p_backdoor0_adam_lr0.001.yaml
+@@ -4,7 +4,7 @@ attacked_classes:
+ - MEL
+ batch_size: 12
+ data_paths:
+-- /PATH/TO/ISIC2019
++- /workspace/data/isic2019_pahde
+ dataset_name: isic_attacked
+ device: cuda
+ eval_every_n_epochs: 5
+@@ -13,7 +13,7 @@ loss: cross_entropy
+ lr: 0.001
+ milestones: 150,250
+ model_name: resnet50d
+-model_savedir: /PATH/TO/checkpoints
++model_savedir: /workspace/data/replication/pahde/checkpoints
+ num_epochs: 300
+ optimizer: adam
+ p_artifact: 0.2
+diff --git a/config_files/training/isic_attacked/local/resnet50d_p_artifact0.2_p_backdoor0_adam_lr0.005.yaml b/config_files/training/isic_attacked/local/resnet50d_p_artifact0.2_p_backdoor0_adam_lr0.005.yaml
+index 89da28b..a56eb1d 100644
+--- a/config_files/training/isic_attacked/local/resnet50d_p_artifact0.2_p_backdoor0_adam_lr0.005.yaml
++++ b/config_files/training/isic_attacked/local/resnet50d_p_artifact0.2_p_backdoor0_adam_lr0.005.yaml
+@@ -4,7 +4,7 @@ attacked_classes:
+ - MEL
+ batch_size: 12
+ data_paths:
+-- /PATH/TO/ISIC2019
++- /workspace/data/isic2019_pahde
+ dataset_name: isic_attacked
+ device: cuda
+ eval_every_n_epochs: 5
+@@ -13,7 +13,7 @@ loss: cross_entropy
+ lr: 0.005
+ milestones: 150,250
+ model_name: resnet50d
+-model_savedir: /PATH/TO/checkpoints
++model_savedir: /workspace/data/replication/pahde/checkpoints
+ num_epochs: 300
+ optimizer: adam
+ p_artifact: 0.2
+diff --git a/config_files/training/isic_attacked/local/resnet50d_p_artifact0.2_p_backdoor0_sgd_lr0.0005.yaml b/config_files/training/isic_attacked/local/resnet50d_p_artifact0.2_p_backdoor0_sgd_lr0.0005.yaml
+index 296bc8c..e3d520c 100644
+--- a/config_files/training/isic_attacked/local/resnet50d_p_artifact0.2_p_backdoor0_sgd_lr0.0005.yaml
++++ b/config_files/training/isic_attacked/local/resnet50d_p_artifact0.2_p_backdoor0_sgd_lr0.0005.yaml
+@@ -4,7 +4,7 @@ attacked_classes:
+ - MEL
+ batch_size: 12
+ data_paths:
+-- /PATH/TO/ISIC2019
++- /workspace/data/isic2019_pahde
+ dataset_name: isic_attacked
+ device: cuda
+ eval_every_n_epochs: 5
+@@ -13,7 +13,7 @@ loss: cross_entropy
+ lr: 0.0005
+ milestones: 150,250
+ model_name: resnet50d
+-model_savedir: /PATH/TO/checkpoints
++model_savedir: /workspace/data/replication/pahde/checkpoints
+ num_epochs: 300
+ optimizer: sgd
+ p_artifact: 0.2
+diff --git a/config_files/training/isic_attacked/local/resnet50d_p_artifact0.2_p_backdoor0_sgd_lr0.001.yaml b/config_files/training/isic_attacked/local/resnet50d_p_artifact0.2_p_backdoor0_sgd_lr0.001.yaml
+index 2dbd5bd..334bc56 100644
+--- a/config_files/training/isic_attacked/local/resnet50d_p_artifact0.2_p_backdoor0_sgd_lr0.001.yaml
++++ b/config_files/training/isic_attacked/local/resnet50d_p_artifact0.2_p_backdoor0_sgd_lr0.001.yaml
+@@ -4,7 +4,7 @@ attacked_classes:
+ - MEL
+ batch_size: 12
+ data_paths:
+-- /PATH/TO/ISIC2019
++- /workspace/data/isic2019_pahde
+ dataset_name: isic_attacked
+ device: cuda
+ eval_every_n_epochs: 5
+@@ -13,7 +13,7 @@ loss: cross_entropy
+ lr: 0.001
+ milestones: 150,250
+ model_name: resnet50d
+-model_savedir: /PATH/TO/checkpoints
++model_savedir: /workspace/data/replication/pahde/checkpoints
+ num_epochs: 300
+ optimizer: sgd
+ p_artifact: 0.2
+diff --git a/config_files/training/isic_attacked/local/resnet50d_p_artifact0.2_p_backdoor0_sgd_lr0.005.yaml b/config_files/training/isic_attacked/local/resnet50d_p_artifact0.2_p_backdoor0_sgd_lr0.005.yaml
+index 1a6a65f..a369684 100644
+--- a/config_files/training/isic_attacked/local/resnet50d_p_artifact0.2_p_backdoor0_sgd_lr0.005.yaml
++++ b/config_files/training/isic_attacked/local/resnet50d_p_artifact0.2_p_backdoor0_sgd_lr0.005.yaml
+@@ -4,7 +4,7 @@ attacked_classes:
+ - MEL
+ batch_size: 12
+ data_paths:
+-- /PATH/TO/ISIC2019
++- /workspace/data/isic2019_pahde
+ dataset_name: isic_attacked
+ device: cuda
+ eval_every_n_epochs: 5
+@@ -13,7 +13,7 @@ loss: cross_entropy
+ lr: 0.005
+ milestones: 150,250
+ model_name: resnet50d
+-model_savedir: /PATH/TO/checkpoints
++model_savedir: /workspace/data/replication/pahde/checkpoints
+ num_epochs: 300
+ optimizer: sgd
+ p_artifact: 0.2
+diff --git a/config_files/training/isic_attacked/local/vgg16_p_artifact0.2_p_backdoor0_adam_lr0.0005.yaml b/config_files/training/isic_attacked/local/vgg16_p_artifact0.2_p_backdoor0_adam_lr0.0005.yaml
+index 06e54b1..1c6a479 100644
+--- a/config_files/training/isic_attacked/local/vgg16_p_artifact0.2_p_backdoor0_adam_lr0.0005.yaml
++++ b/config_files/training/isic_attacked/local/vgg16_p_artifact0.2_p_backdoor0_adam_lr0.0005.yaml
+@@ -4,7 +4,7 @@ attacked_classes:
+ - MEL
+ batch_size: 12
+ data_paths:
+-- /PATH/TO/ISIC2019
++- /workspace/data/isic2019_pahde
+ dataset_name: isic_attacked
+ device: cuda
+ eval_every_n_epochs: 5
+@@ -13,7 +13,7 @@ loss: cross_entropy
+ lr: 0.0005
+ milestones: 150,250
+ model_name: vgg16
+-model_savedir: /PATH/TO/checkpoints
++model_savedir: /workspace/data/replication/pahde/checkpoints
+ num_epochs: 300
+ optimizer: adam
+ p_artifact: 0.2
+diff --git a/config_files/training/isic_attacked/local/vgg16_p_artifact0.2_p_backdoor0_adam_lr0.001.yaml b/config_files/training/isic_attacked/local/vgg16_p_artifact0.2_p_backdoor0_adam_lr0.001.yaml
+index 947dced..797d3f3 100644
+--- a/config_files/training/isic_attacked/local/vgg16_p_artifact0.2_p_backdoor0_adam_lr0.001.yaml
++++ b/config_files/training/isic_attacked/local/vgg16_p_artifact0.2_p_backdoor0_adam_lr0.001.yaml
+@@ -4,7 +4,7 @@ attacked_classes:
+ - MEL
+ batch_size: 12
+ data_paths:
+-- /PATH/TO/ISIC2019
++- /workspace/data/isic2019_pahde
+ dataset_name: isic_attacked
+ device: cuda
+ eval_every_n_epochs: 5
+@@ -13,7 +13,7 @@ loss: cross_entropy
+ lr: 0.001
+ milestones: 150,250
+ model_name: vgg16
+-model_savedir: /PATH/TO/checkpoints
++model_savedir: /workspace/data/replication/pahde/checkpoints
+ num_epochs: 300
+ optimizer: adam
+ p_artifact: 0.2
+diff --git a/config_files/training/isic_attacked/local/vgg16_p_artifact0.2_p_backdoor0_adam_lr0.005.yaml b/config_files/training/isic_attacked/local/vgg16_p_artifact0.2_p_backdoor0_adam_lr0.005.yaml
+index 50848e1..842c7f0 100644
+--- a/config_files/training/isic_attacked/local/vgg16_p_artifact0.2_p_backdoor0_adam_lr0.005.yaml
++++ b/config_files/training/isic_attacked/local/vgg16_p_artifact0.2_p_backdoor0_adam_lr0.005.yaml
+@@ -4,7 +4,7 @@ attacked_classes:
+ - MEL
+ batch_size: 12
+ data_paths:
+-- /PATH/TO/ISIC2019
++- /workspace/data/isic2019_pahde
+ dataset_name: isic_attacked
+ device: cuda
+ eval_every_n_epochs: 5
+@@ -13,7 +13,7 @@ loss: cross_entropy
+ lr: 0.005
+ milestones: 150,250
+ model_name: vgg16
+-model_savedir: /PATH/TO/checkpoints
++model_savedir: /workspace/data/replication/pahde/checkpoints
+ num_epochs: 300
+ optimizer: adam
+ p_artifact: 0.2
+diff --git a/config_files/training/isic_attacked/local/vgg16_p_artifact0.2_p_backdoor0_sgd_lr0.0005.yaml b/config_files/training/isic_attacked/local/vgg16_p_artifact0.2_p_backdoor0_sgd_lr0.0005.yaml
+index cf901db..94e459f 100644
+--- a/config_files/training/isic_attacked/local/vgg16_p_artifact0.2_p_backdoor0_sgd_lr0.0005.yaml
++++ b/config_files/training/isic_attacked/local/vgg16_p_artifact0.2_p_backdoor0_sgd_lr0.0005.yaml
+@@ -4,7 +4,7 @@ attacked_classes:
+ - MEL
+ batch_size: 12
+ data_paths:
+-- /PATH/TO/ISIC2019
++- /workspace/data/isic2019_pahde
+ dataset_name: isic_attacked
+ device: cuda
+ eval_every_n_epochs: 5
+@@ -13,7 +13,7 @@ loss: cross_entropy
+ lr: 0.0005
+ milestones: 150,250
+ model_name: vgg16
+-model_savedir: /PATH/TO/checkpoints
++model_savedir: /workspace/data/replication/pahde/checkpoints
+ num_epochs: 300
+ optimizer: sgd
+ p_artifact: 0.2
+diff --git a/config_files/training/isic_attacked/local/vgg16_p_artifact0.2_p_backdoor0_sgd_lr0.001.yaml b/config_files/training/isic_attacked/local/vgg16_p_artifact0.2_p_backdoor0_sgd_lr0.001.yaml
+index fc66bfa..15312d7 100644
+--- a/config_files/training/isic_attacked/local/vgg16_p_artifact0.2_p_backdoor0_sgd_lr0.001.yaml
++++ b/config_files/training/isic_attacked/local/vgg16_p_artifact0.2_p_backdoor0_sgd_lr0.001.yaml
+@@ -4,7 +4,7 @@ attacked_classes:
+ - MEL
+ batch_size: 12
+ data_paths:
+-- /PATH/TO/ISIC2019
++- /workspace/data/isic2019_pahde
+ dataset_name: isic_attacked
+ device: cuda
+ eval_every_n_epochs: 5
+@@ -13,7 +13,7 @@ loss: cross_entropy
+ lr: 0.001
+ milestones: 150,250
+ model_name: vgg16
+-model_savedir: /PATH/TO/checkpoints
++model_savedir: /workspace/data/replication/pahde/checkpoints
+ num_epochs: 300
+ optimizer: sgd
+ p_artifact: 0.2
+diff --git a/config_files/training/isic_attacked/local/vgg16_p_artifact0.2_p_backdoor0_sgd_lr0.005.yaml b/config_files/training/isic_attacked/local/vgg16_p_artifact0.2_p_backdoor0_sgd_lr0.005.yaml
+index a3e4a2c..e1a5b7e 100644
+--- a/config_files/training/isic_attacked/local/vgg16_p_artifact0.2_p_backdoor0_sgd_lr0.005.yaml
++++ b/config_files/training/isic_attacked/local/vgg16_p_artifact0.2_p_backdoor0_sgd_lr0.005.yaml
+@@ -4,7 +4,7 @@ attacked_classes:
+ - MEL
+ batch_size: 12
+ data_paths:
+-- /PATH/TO/ISIC2019
++- /workspace/data/isic2019_pahde
+ dataset_name: isic_attacked
+ device: cuda
+ eval_every_n_epochs: 5
+@@ -13,7 +13,7 @@ loss: cross_entropy
+ lr: 0.005
+ milestones: 150,250
+ model_name: vgg16
+-model_savedir: /PATH/TO/checkpoints
++model_savedir: /workspace/data/replication/pahde/checkpoints
+ num_epochs: 300
+ optimizer: sgd
+ p_artifact: 0.2
+diff --git a/model_training/start_training.py b/model_training/start_training.py
+index 67896e0..a4be4ca 100644
+--- a/model_training/start_training.py
++++ b/model_training/start_training.py
+@@ -47,6 +47,13 @@ def start_training(config, config_name, visualize_datasets):
+         config_name (str): Name of given config
+     """
+ 
++    # replication patch: optional training seed (the paper reports one unseeded run; we run 5 seeds)
++    if config.get('seed') is not None:
++        import random
++        import numpy as np
++        random.seed(config['seed']); np.random.seed(config['seed']); torch.manual_seed(config['seed'])
++        torch.cuda.manual_seed_all(config['seed'])
++
+     dataset_name = config['dataset_name']
+     model_name = config['model_name']
+     pretrained = config.get('pretrained', False)
