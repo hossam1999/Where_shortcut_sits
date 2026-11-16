@@ -13,6 +13,7 @@ jobs_list(){
 }
 jobs_list | while read t m s; do
   [ -d $RUNS/${t}_${m}_${s} ] && continue
+  [ "$t $m" = "xray resnet_maskall" ] && continue   # A5: scored from the Standard model (identical training config)
   while [ $(running) -ge $N ]; do sleep 60; done
   echo "$(date +%F_%T) start $t $m $s"; nohup $Q/run_viviano.sh $t $m $s >/dev/null 2>&1 &
   sleep 120
