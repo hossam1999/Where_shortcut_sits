@@ -59,6 +59,34 @@ Supplementary Information (Bassi), and the code linked in each paper's code-avai
   0.93 / 0.90 / 0.63 / 0.92 / 0.94 / 0.93. **Pneumonia numbers are in Table 2 (p. 8), not Fig. 7.** With VPC: Baseline
   0.20 ± 0.03, Masked 0.56 ± 0.16, **ActDiff 0.68 ± 0.05**, Adversarial 0.62 ± 0.10, GradMask 0.49 ± 0.06, RRR 0.21 ± 0.04.
   The list in the plan matches except for the table reference, and the masked pneumonia SD (± 0.16) was missing.
+- **P1 split check (RSNA pneumonia, seed 1234, their code, TorchXRayVision 0.0.18).** The balanced pool matches the
+  paper exactly: n_per_category = 1,348, so 4 × 1,348 = 5,392 = 2,696 + 1,348 + 1,348. **But the code does not build the
+  splits the paper describes:**
+  - *Sizes:* the code gives train 1,346, valid 672, test 3,374 (the test is all images left over). The paper's
+    2,696 / 1,348 / 1,348 are the 50/25/25 fractions of the pool, not the sets the code trains and tests on.
+  - *Correlation:* **validation has the same link as training**, not the reversed one: 303 of 336 validation positives are
+    AP, as in training (606 of 673). The **test is reversed only at ~74/26** (439 of 1,687 positives are AP), not 10/90,
+    because it is the remainder. The paper text (p. 6, p. 7) says validation and test are reversed.
+  - Their model selection (best validation epoch) is therefore done on a validation set that carries the training shortcut.
+  - We **run their code as is** (it produced their numbers) and keep the paper's numbers as the targets. Our arms use the same
+    validation split, so the registered rule "select on the paper's validation split" applies unchanged, although it is
+    the correlated split and not a reversed one.
+  - The cardiomegaly (site) split is checked the same way once PadChest is on disk.
+  - Their "Masked" input for pneumonia multiplies the image by the pneumonia boxes. Negatives have no box, so a masked
+    training negative is an all-zero image (seg sum 0). This is their method as coded; we keep it.
+- **P1 "Masked" masks only the test images (as coded).** Both `xray-seeds_resnet_maskall.yml` and
+  `rsna-seeds_resnet_maskall.yml` contain three top-level `dataset:` keys (train, valid, test). YAML keeps only the last, so
+  the loaded config has `mask_all` = None / None / True for train / valid / test (checked with their `load_config`). The
+  "Masked" model is therefore **trained and selected on unmasked images and scored on masked images**. This contradicts the
+  paper's description of masking as a training intervention. The files date from 2020-09-24 (`eb307f5`, "cleaned up configs
+  and added rrr baseline"), before the ICLR camera-ready. PyYAML of that time also kept the last duplicate key, so this is
+  very likely how the published Masked numbers were produced. For pneumonia, a test negative (no box) becomes an all-zero image.
+  - We reproduce **their code as is**.
+  - As an exploratory check (labelled so), we also run "Masked" with the mask applied to train, valid and test, as the paper describes.
+  - **Open for arm a (P1).** The registered text says arm a uses "the Masked ResNet-18 with its own input pipeline". As coded,
+    that model was trained on unmasked images. Extracting its training features on unmasked images and its test features on
+    masked images is what "its own pipeline" literally means. This must be settled (amendment) before arm a runs; see
+    "Blocked / waiting".
 - Setup: ResNet-18 (torchvision), Adam, 100 epochs, best valid epoch, batch 16, 10 seeds. Tuned per-method settings are in
   `activmask/config/xray-seeds/*.yml` (e.g. baseline lr 0.009992; masked `mask_all: True`, lr 0.01; ActDiff λ 10, lr 0.000583;
   GradMask λ 0.385, lr 0.009238; RRR λ 7.74, lr 0.001355).
@@ -210,5 +238,7 @@ our test is to theirs.
 |---|---|---|
 | BrixIA download link | all P3 work (COVID-19 training class) | author |
 | CheXpert (small) | P3 normal and pneumonia training classes | Stanford AIMI registration (author's account; a third-party mirror is not used) |
+
+| P1 arm a input: "their Masked model" is trained unmasked (config bug) | P1 arm a only | author: (i) literal pipeline (train features unmasked, test masked), (ii) all features masked, or (iii) use the exploratory masked-everywhere model |
 
 P1 and P2 are not blocked: their data is downloading, and their code is being ported to cu128.
