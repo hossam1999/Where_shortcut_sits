@@ -401,3 +401,11 @@ If any is outside, P1 pauses for the author (the queue holds seeds 3232 and 3221
   - Implemented in `scripts/replication/p1_gate.py`.
 - **BIMCV fetch check (19:57):** progressing, not hung. 83 of 531 archives (435 GB) in 8.4 h, 14.3 MB/s, ~6 min per archive,
   no SHA1 failures, 397 images kept. The remaining ~2.4 TB take about 46 h.
+- **P3 size-matched test variant (A9).** Whole patients drawn with seed 20261117:
+  - 1,515 BIMCV COVID-19 images from 1,000 patients (P3: 1,145);
+  - 1,295 NIH pneumonia images from 923 patients (P3: 941);
+  - 406 normals, unchanged.
+  - It contains 7 of the 10 BIMCV and all 10 NIH figshare test images; the full variant contains all 20.
+  - P3's own counts sum to 3,216 but it states n = 3,126.
+  - Whether either variant carries verdicts depends on `COVIDIsNet.pt` scoring within 0.03 of 0.773 on it. This check runs
+    once BIMCV is complete (~46 h).
