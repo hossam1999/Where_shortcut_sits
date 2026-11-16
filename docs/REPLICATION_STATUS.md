@@ -316,3 +316,44 @@ of the same image with the pixels outside its mask shuffled (`shuffle_outside_ma
 default `new_size=128`, not overridden by any config) and RSNA images at 224 × 224. The paper says 224 for both. We run as
 coded. RSNA masks are the challenge's pneumonia boxes, as the paper describes; negatives have no box, so their mask is empty.
 The Masked configs mask only the test split (YAML duplicate keys, see above); this is the same at `32f7b7d`.
+
+## P3 data (2026-11-16)
+
+**CheXpert-v1.0-small (verified).** Source: Kaggle mirror `ashery/chexpert` (Kaggle API, author's account; Stanford CheXpert
+Research Use Agreement accepted by the author).
+- 223,414 train + 234 valid JPGs; `train.csv` (223,414 rows) and `valid.csv` (234 rows); paths prefixed `CheXpert-v1.0-small/`.
+- Sample image sizes ~390 × 320 (200 sampled; 390 × 320 most common), so this is the small version.
+- One macOS metadata file was skipped when unpacking.
+- P3 does not state the resolution beyond "jpg"; every image is resized to 224, so the small version suffices.
+
+**BrixIA (authors' private OSF link; the link is kept outside the repository).**
+- The folder zip OSF builds on the fly stopped at 17.0 GB: two of the 15 DICOM archive parts were missing or cut.
+- Instead, the 15 parts (`dicom_archive_v2.tar.gz.aa`–`.ao`, 42.2 GB) are fetched one by one and each is checked against
+  the SHA-256 that OSF reports (`scripts/replication/brixia_fetch.sh`). Part `aj` failed its check once and is re-fetched.
+- The metadata files match OSF's SHA-256.
+- **Count:** `metadata_global_v2.csv` lists **4,695 images** (2,351 patients). The changelog says v2 removed 8 erroneous DICOMs
+  from v1's 4,703 (= P3's 4,644 + 59). The author's figure of 4,707 matches neither release.
+- **P3's rule (Brixia score > 0) gives exactly P3's 4,644 images**, and also P3's "11 patients under 20".
+
+**Rebuilt P3 training cohort** (`scripts/replication/p3_select.py`, seed 20261116): 4,644 images per class; 3,483 train and
+1,161 validation per class (P3: 3,483 train), split by patient so no patient is in both.
+- normal = CheXpert "No Finding", one image per patient, from 14,000 eligible patients;
+- pneumonia = CheXpert "Pneumonia" = 1 (uncertain counts as negative), 4,644 drawn from 4,674 eligible
+  (P3: 4,644 from 3,899 patients; eligible pool: 3,927 patients, 74.4% AP, age 62.5 ± 18.6 vs P3's 74.3%, 62.3 ± 18.7);
+- all: frontal AP/PA, age ≥ 18.
+
+**Rebuilt P3 test** (`scripts/replication/p3_test_select.py`):
+- 406 normals = all Montgomery (80) + Shenzhen (326) normals, exactly P3's count. 36 of them are under 18, so P3's general
+  statement about removing minors did not apply to these.
+- 1,319 NIH pneumonia; all 10 figshare NIH test images are included.
+- 2,501 BIMCV COVID-19 (fetching).
+- The figshare Montgomery/Shenzhen examples end in `_1` (TB-positive), so they come from P3's TB experiment, not this test.
+
+**Preprocessing** (`scripts/replication/p3_prepare.py`, P3 Supp. Note 6.1): grayscale → histogram equalization → 224 px
+(test images padded to square first) → 3 channels in [0, 1].
+- BIMCV PNGs are 16-bit; 16 of 60 checked are flagged MONOCHROME1 in their JSON, but all display with dark lungs, i.e. are
+  already stored in display orientation, so no PNG is inverted. BrixIA DICOMs flagged MONOCHROME1 are inverted.
+- Low-contrast 16-bit images are equalized at full bit depth.
+- **Deviation:** P3's lung segmentation targets came from a lung U-Net of an earlier study that is not published. We use the
+  TorchXRayVision PSPNet (lungs, p > 0.5), as in our own pipeline.
+- **Mark position:** P3 says only "upper left corner"; we place the 22-px mark with a 4-px margin.
