@@ -409,3 +409,7 @@ If any is outside, P1 pauses for the author (the queue holds seeds 3232 and 3221
   - P3's own counts sum to 3,216 but it states n = 3,126.
   - Whether either variant carries verdicts depends on `COVIDIsNet.pt` scoring within 0.03 of 0.773 on it. This check runs
     once BIMCV is complete (~46 h).
+- **P3 test normals (A10):** 370 adults (Montgomery 67, Shenzhen 303), matching P3's Table 4 row sums. P3-compatible age
+  reading: first number in the clinical reading = years. It keeps CHNCXR_0018 ("male 42") and counts CHNCXR_0202
+  ("female 64days", an infant) as an adult, as P3's 370 implies. Variants: primary 2,501 + 1,319 + 370; size-matched
+  1,515 + 1,295 + 370 = 3,180.

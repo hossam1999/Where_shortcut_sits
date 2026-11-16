@@ -348,3 +348,22 @@ patients) and 1,319 NIH pneumonia images (938 patients), against P3's 1,515 (1,1
    - On a variant where it is not, the P3 head-to-head is descriptive only.
    - The P3 phase-4 comparisons (inside vs outside, A5/A6) are unaffected, since they compare our own runs on the same images.
 3. The NIH pneumonia part follows the same rule. The 1,319 vs 1,295 gap is stated next to every P3 result.
+
+**A10 (2026-11-16, before any P3 scoring; author's decision).** The 36 under-18 normals are dropped from both P3 test
+variants, which then have **370 normals**, matching P3's evaluated test.
+- **Evidence:**
+  - P3 main-text Table 4 (test confusion matrices, o.o.d. COVID-19): the row sums are 370 normal / 1,295 pneumonia /
+    1,515 COVID-19 in all 8 models.
+  - Per-class F1 recomputed from Table 4 reproduces Table 2 (DenseNet-121 0.444 / 0.434 / 0.760, macro 0.546).
+  - 406 − 370 = 36, the number of Montgomery + Shenzhen normals under 18.
+- **Age rule:** the age is read from each image's clinical reading, taking the first number as years whatever its unit.
+  - This is the only reading that gives 370: Montgomery 67 of 80, Shenzhen 303 of 326.
+  - It keeps CHNCXR_0018 ("male 42", no unit).
+  - It also counts one infant as an adult: CHNCXR_0202 ("female 64days"). Reading units literally would give 369. We follow
+    P3's evaluated count and flag this image.
+- **Final variants:**
+  - primary: 2,501 COVID-19 + 1,319 pneumonia + 370 normal = 4,190;
+  - size-matched: 1,515 + 1,295 + 370 = **3,180**, P3's evaluated total.
+- **Equivalence check (A9) extended:** besides "macro-F1 within 0.03 of 0.773", `COVIDIsNet.pt`'s confusion matrix on each
+  variant is reported next to P3's Table 4 ISNet matrix (normal 210 / 157 / 3; pneumonia 81 / 1,210 / 4; COVID-19
+  93 / 156 / 1,266) and its Table 2 per-class F1 (0.555 / 0.858 / 0.907). The verdict gate stays the registered macro-F1 rule.

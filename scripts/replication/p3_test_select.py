@@ -1,8 +1,8 @@
 """Rebuild P3's (Bassi et al. 2024) o.o.d. COVID-19 test set by its stated rule (Supp. Note 5.1 and Note 10).
 
 P3: 406 normal + 1,295 pneumonia + 1,515 COVID-19 (= 3,216; P3 states n = 3,126, a typo in one of the two). Ours (rebuilt by rule; the image lists are not published):
-- normal: all Montgomery (80) and Shenzhen (326) normals, i.e. the files ending in _0 (406, P3's count). P3 says patients
-  under 18 were removed from the other classes; this count shows the normals were kept whole (36 of the 406 are under 18).
+- normal: Montgomery and Shenzhen normals (files ending in _0; 80 + 326 = 406) aged >= 18 (age from the clinical
+  readings): 370, which matches the row sums of P3's Table 4 (amendment A10).
 - pneumonia: ChestX-ray14, any "Pneumonia" label, age >= 18, using NIH's Data_Entry_2017_v2020.csv (1,319 images, 938
   patients; P3: 1,295, 941). Images: the 224-px ChestX-ray14 copy (originals are 1024 x 1024, so P3's pad-to-square is a no-op).
 - COVID-19: BIMCV COVID-19+ by scripts/replication/bimcv_select.py (2,501 images; P3: 1,515), as far as fetched.
@@ -12,6 +12,7 @@ Labels in P3's order: 0 normal, 1 pneumonia, 2 COVID-19. Writes $WTSS_DATA/repli
 """
 import glob
 import os
+import re
 
 import numpy as np
 import pandas as pd
@@ -20,12 +21,22 @@ D = os.environ.get("WTSS_DATA", "/workspace/data")
 OUT = f"{D}/replication/isnet/test_cohort.csv"
 
 
+def note_age(png: str) -> float:
+    """Age from the Montgomery/Shenzhen clinical reading next to the image ("Patient's Age: 027Y", "45yrs", "male 42").
+    P3-compatible rule: the first number is read as years whatever its unit. This is the only reading that reproduces P3's
+    370 adult normals (Table 4). It counts one infant as an adult: CHNCXR_0202 ("female 64days"); flagged in A10."""
+    txt = open(png.replace("/CXR_png/", "/ClinicalReadings/")[:-4] + ".txt", errors="ignore").read()
+    m = re.search(r"(\d+)", txt)
+    return float(m.group(1)) if m else float("nan")
+
+
 def main():
     rows = []
     for src, pat in (("montgomery", "cxr_at/tb/MontgomerySet/CXR_png/*_0.png"),
                      ("shenzhen", "cxr_at/tb/ChinaSet_AllFiles/CXR_png/*_0.png")):
         for f in sorted(glob.glob(f"{D}/{pat}")):
-            rows.append({"image_id": os.path.basename(f)[:-4], "path": os.path.relpath(f, D), "y": 0, "source": src})
+            if note_age(f) >= 18:   # amendment A10: P3's evaluated test (Table 4) has 370 adult normals
+                rows.append({"image_id": os.path.basename(f)[:-4], "path": os.path.relpath(f, D), "y": 0, "source": src})
     n = pd.read_csv(f"{D}/cxr_nih_tables/data/Data_Entry_2017_v2020.csv")
     n = n[n["Finding Labels"].str.contains("Pneumonia") & (n["Patient Age"] >= 18)]
     for i in n["Image Index"]:
@@ -59,7 +70,7 @@ def main():
                                           on_disk=("present", "sum"), size_matched=("size_matched", "sum")))
     sm = t[t.size_matched]
     print("size-matched patients:", sm.groupby("source").patient.nunique().to_dict())
-    print("P3: normal 406, pneumonia 1,295, COVID-19 1,515 (sum 3,216; P3 states 3,126)")
+    print("P3 evaluated (Table 4): normal 370, pneumonia 1,295, COVID-19 1,515 (n = 3,180)")
 
 
 if __name__ == "__main__":
