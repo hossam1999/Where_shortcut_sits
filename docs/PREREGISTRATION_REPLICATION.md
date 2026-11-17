@@ -470,3 +470,27 @@ changes under A14.
 3. **Phase 5:** one cohort, thyroid; Trap A, plus Trap B as the sanity check; 3 folds; arms = each paper's best method +
    ours. Other cohorts only if time remains after everything else, decided later as a new amendment.
 4. Everything else is unchanged.
+
+**A15 (2026-11-17, before any P1 location-test run; stricter clarification of section 5 / A12).** The P1 location test, in
+P1's own pipeline (their code, Standard config, seed 1234):
+- **Base data:** P1's balanced cardiomegaly split (No-SPC, `ratio = 0.5`: hospital independent of the label; their
+  `JointDataset`, seed 1234), so the tube is the only induced shortcut. Images enter their network at 128 px, as coded.
+- **Artifact:** our radio-opaque tube (`draw_tube` geometry, 43 × 6 px at 224 px = `TUBE_GEOMETRY`), drawn on the 224-px
+  source image after their intensity normalisation and before their resize to 128 px. Intensities follow `draw_tube`
+  (band: 0.35 × pixel + 0.65 × (pixel + 70/255 of the range); stripe at 245/255), mapped to their [−1024, 1024] scale.
+- **Positions** (placement with `find_best_placements_for_mask` on the 224-px PSPNet lungs ∪ heart mask, p > 0.5):
+  - inside: overlap with lungs ∪ heart ≥ 0.95;
+  - **outside: overlap ≤ 0.02 with the union of lungs ∪ heart and P1's central circle** (their Masked mask: ellipse of
+    radius 0.4 × side). "Outside" must also lie outside the mask of the method under test; otherwise Masked could never
+    remove an "outside" tube and E-L1 could not be tested.
+
+  Images where a position is infeasible are counted and reported, and keep their best placement (their split is not
+  changed).
+- **Presence** (stable hash of image, label, seed and environment): training 90% of positives / 10% of negatives; validation
+  reversed (10/90), as P1's own design reverses validation; tests on P1's test split: correlated (90/10), reversed (10/90)
+  and clean (none).
+- **Methods:** Standard (their config), trained once per position (2 runs); Masked = the same model scored with test masking
+  (A5); ours: arm a (mask_cmc on their network's circle-masked features, every split, artifact label = tube presence) and
+  arm c (U-MtE, ROI = lungs ∪ heart).
+- **Metric:** reversed-test AUROC (primary), each method's gain over Standard, the crossover (gain outside − gain inside) and
+  clean AUROC (section 5). One seed: image-only bootstrap (A3).
