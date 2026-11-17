@@ -111,7 +111,7 @@ def main():
         for s in ("train", "valid", "test"):
             R = rois(args.task, paths[s], out / f"roi_{s}.npy")
             m224 = np.stack([cv2.resize(r, (224, 224), interpolation=cv2.INTER_NEAREST) for r in R])
-            np.savez_compressed(out / f"roi224_{s}.npz", ids=S[s].image_id.astype(str).to_numpy(), masks=m224)
+            np.savez_compressed(out / f"roi224_{s}.npz", ids=np.asarray(S[s].image_id.astype(str), dtype="U"), masks=m224)
             print(s, len(R), "mean ROI fraction", round(float(m224.mean()), 3), flush=True)
         return
 

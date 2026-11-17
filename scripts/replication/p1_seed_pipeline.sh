@@ -29,8 +29,8 @@ else
 fi
 P1ENV="WTSS_DATA=$D PYTHONPATH=/root/Where_shortcut_sits/src /workspace/venv-wtss/bin/python -u $Q/p1_arms.py --task $t --seed $s --split_csv $O/${t}_standard_$s.csv.gz"
 [ -f $A/roi224_test.npz ] || $Q/gpu_wait.sh 3000 bash -c "$P1ENV --stage rois"
-if [ $t = rsna ]; then                                        # A11: arm a = lungs through their Masked network
-  score resnet_maskall resnet_maskall ${t}_arma_lungs_$s --mask_all off --external_roi $A
+if [ $t = rsna ]; then                                        # A12: arm a = lungs (A11) through the ActDiff network
+  score resnet_actdiff resnet_actdiff ${t}_arma_lungs_$s --mask_all off --external_roi $A
   FA=$O/${t}_arma_lungs_${s}_features.npz
 fi
 [ -f $A/summary.json ] || $Q/gpu_wait.sh 5500 bash -c "$P1ENV --stage arms --arm_a_features $FA"
