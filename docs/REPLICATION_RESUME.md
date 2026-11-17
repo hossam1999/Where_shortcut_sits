@@ -40,6 +40,11 @@ Findings and deviations: `docs/REPLICATION_STATUS.md`. Results: `docs/REPLICATIO
   RR-ClArC score files exist. ISNet run 1 `isnet_corner_all_seed0` resumes after epoch 2.
 - `short_queue.sh` pauses while the ISNet flag exists. If `p2_chain.sh` stops with FAILED, fix, record, and restart it.
 - Never edit a running bash script (bash reads it as it executes); stop it by PID, edit, restart.
+- **Before restarting `p2_chain.sh`:** their Lightning callback writes `last.ckpt` after *every* epoch, and the chain skips
+  a fine-tune whose `last.ckpt` exists. A run is complete only if `last.ckpt` has `epoch == 9` (10 epochs, 16,890 steps):
+  `/workspace/envs/pahde/bin/python -c "import torch,sys; print(torch.load(sys.argv[1],map_location='cpu',weights_only=False)['epoch'])" <dir>/last.ckpt`.
+  Move an incomplete run's directory to `checkpoints_corrected_incomplete/` (and delete its score file if one exists)
+  before restarting; their code cannot resume a fine-tune, so it restarts from our Vanilla (record it in STATUS).
 
 ## Queued next (run order, A12–A14; long jobs one at a time, short jobs beside them only if a measured pairing helps)
 1. P2 Vanilla — done.
