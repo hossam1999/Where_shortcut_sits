@@ -388,3 +388,57 @@ masked test image depend on the label.
      not depend on the label: **ActDiff (0.68 ± 0.05)**. The Holm family keeps its size: comparisons 4–6 of section 2 are
      against ActDiff, as already registered for RSNA pneumonia.
   3. **Cardiomegaly is unaffected:** the circle mask does not depend on the label, and Masked (0.77 ± 0.09) stays its target.
+
+**A12 (2026-11-17; lean scope; author's decision; before any affected result).** Only each paper's best method and the
+runs a "beat it" comparison needs are run (`docs/REPLICATION_PLAN.md`, "Lean scope"). Finished runs are kept and reported;
+cancelled runs that never started are simply not run. Results already seen when this was recorded: the P1 seed-1234 gate
+values (cardiomegaly Standard 0.627, RSNA Standard 0.186, RSNA ActDiff 0.708) and the P1 cardiomegaly seed-1234 arms
+(arm b 0.869, arm c 0.593 test AUROC). Neither changes under A12.
+- **P1 keep:** cardiomegaly Standard seeds 3232 and 3221 (Masked is scored from them, A5); RSNA ActDiff seeds 3232 and 3221.
+  **Cancelled:** RSNA Standard and Masked seeds 3232/3221; cardiomegaly ActDiff (all seeds; the seed-1234 run in progress
+  is stopped); ActDiff in the P1 location test.
+- **P1 gate (A8)** checks only kept runs: cardiomegaly Standard, RSNA Standard (seed 1234, done) and RSNA ActDiff.
+- **P1 location test (phase 4):** Standard with the tube inside vs outside the lungs + heart ROI, seed 1234 (2 runs);
+  Masked is scored from them (A5); ours on top.
+- **Our arm a sits on each paper's best network:** P1 cardiomegaly, the Standard/Masked model (unchanged); **P1 RSNA,
+  the ActDiff model**, with the label-free PSPNet lung ROI on every split (replaces A11 item 1's Masked network); P2, the
+  Vanilla network (RR-ClArC's base); P3, no network of theirs (DINOv2 + mask_cmc and U-MtE only, since the DenseNet runs
+  are cancelled).
+- **P2 keep:** Vanilla and RR-ClArC. P2 reports no λ or layer for RR-ClArC (Phase 0), so their grid (λ ∈ {10, 50} ×
+  last 3 ResNet blocks) is run with the registered validation rule (section 3). **Cancelled:** RRR.
+- **P3 keep:** ISNet on the original corner benchmark (1 run); ISNet with the marks inside the lungs in P3's design (all
+  marked) and in the 90/10 variant (2 runs). **Cancelled:** DenseNet (all) and the 90/10 outside run; P3's Table 1 is
+  the outside reference. Only U-MtE runs on the P3-design test (artifact = label); mask_cmc (arm b) and U-MtE run on the
+  90/10 variant. A6's Holm family becomes 2 comparisons (arms b, c vs ISNet, 90/10 inside).
+- Section 2's family of 10 is unchanged.
+
+**A13 (2026-11-17; P4 Saab et al., MLHC 2022, ISIC only; author's decision; before any P4 result).**
+1. **Scope:** ISIC only. The chest X-ray part is dropped (no SIIM access, unknown validation/test membership, no training
+   tube labels); our own environment covers chest tubes via NIH.
+2. **Data:** ISIC 2018 Task 1/2 training images and Task 1 lesion masks, joined to Bissoto's artifact and melanoma labels
+   (github.com/alceubissoto/debiasing-skin @ f93c865, `trap-sets/` and `artefacts-annotation/isic_bias.csv`).
+3. **Test:** the public release's 772-image test per split (Saab's `notebooks/isic_evaluation.ipynb` scores 772; the PDF's
+   513 is reported as an inconsistency). We use the split triplet(s) their code/notebook uses and record which.
+4. **Equivalence gate:** "reproduced"/"beaten" verdicts only if our reproduced Segmentation-ERM is within 0.03 of 0.727 **and**
+   Binary-ERM within 0.03 of 0.359 robust AUROC (3-seed means). Otherwise P4 is descriptive only.
+5. **Split as their code does:** 1,822 training images, including the 259 validation IDs. The validation-in-train overlap and
+   any lesion or near-duplicate overlap between train and test are reported (thesis rules), without changing their split.
+6. **Protocol:** their Appendix A.1 (150 epochs, Adam, the described augmentations; selection by validation AUROC for
+   Binary-ERM and by validation Dice for the SE-ResNeXt50 U-Net), unless git history shows that the checked-in code (100
+   epochs, no augmentation) produced Table 1. The choice is recorded. Port changes go in `third_party/saab/SOURCE.md` and a
+   `.patch`.
+7. **Runs:** Binary-ERM (reproduction check only) and Segmentation-ERM (their best method), 3 seeds each. Memory and speed
+   are measured on this GPU first; if the paper's batch does not fit, the author is asked before gradient accumulation is used.
+8. **Our arms, no new training:**
+   - (a) features of their trained Segmentation-ERM encoder on lesion-masked images, mask_cmc, then a linear head. Every
+     artifact flag that has all four artifact × diagnosis groups in training is used (e.g. hair); flags lacking a group
+     (e.g. patches, with only 2 melanomas) are skipped. This rule is fixed now.
+   - (b) DINOv2 + mask_cmc.
+   - (c) U-MtE.
+
+   ROI = ISIC 2018 Task 1 lesion masks (they exist for every image and do not depend on the label).
+9. **P4 statistics:** robust AUROC (P4's metric), 3 seeds, crossed seed × image bootstrap; P4's head-to-heads (arms a, b, c vs
+   Segmentation-ERM) form their own Holm family of 3.
+10. **Location test:** one fixed artifact moved inside vs outside the lesion in their ISIC setup, Segmentation-ERM + ours,
+   1 seed. Phase 5: a segmentation-supervised ERM arm on our ROI masks.
+11. **Priority:** after the P1–P3 runs already queued; P4 fills free slots.
