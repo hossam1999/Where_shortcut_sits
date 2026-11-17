@@ -25,28 +25,26 @@ Findings and deviations: `docs/REPLICATION_STATUS.md`. Results: `docs/REPLICATIO
 - P3 data (cohort, test rebuilt per A9/A10), P4 port (`third_party/saab/SOURCE.md`); P4 data: ISIC 2018 unzipped
   (2,594 images + masks) and the 512-px cache built (`$WTSS_DATA/replication/saab/cache512/`).
 
-## Running (updated 2026-11-17 13:35)
-| job | PID | progress | checkpoint on disk | resume command |
-|---|---|---|---|---|
-| P2 Vanilla ResNet-50d, seed 0 | 130207 | epoch ~83 / 300 | none before epoch 100 (their trainer saves every 100) → `$WTSS_DATA/replication/pahde/runs/vanilla_resnet50d_seed0/checkpoints/<config>/checkpoint_resnet50d_100.pth` | if it dies after epoch 100: copy `runs/vanilla_resnet50d_seed0/config.yaml`, set `ckpt_path` to the latest checkpoint and **`num_epochs: 300 - (epoch+1)`** (their resume trains num_epochs MORE epochs), run with `scripts/replication/run_pahde.sh <that yaml> 0 vanilla_resnet50d_seed0_resume`. Record the resume next to the P2 result. Before epoch 100: restart from scratch with `run_pahde.sh …/resnet50d_p_artifact0.2_p_backdoor0_adam_lr0.001.yaml 0 vanilla_resnet50d_seed0`. |
-| P1 location test, tube inside (Standard, seed 1234) | see `ps` (`p1_location.py train --position inside`) | started 13:13, ~190 s/epoch beside P2, 100 epochs | their code keeps the best model only (`$WTSS_DATA/replication/viviano/location/inside/results/`) | restart via the short queue (it re-runs a position whose `stats_1234.pkl` is missing) |
-| Short-job queue | see `ps` (`short_queue.sh`) | waiting for the inside run; then outside, P4 ERM ×3, P4 Seg ×3 | per job | `nohup scripts/replication/short_queue.sh > /workspace/logs/short_queue.log 2>&1 &` (skips finished steps) |
-| BIMCV fetch | 6956 | 224 / 531 archives | `$WTSS_DATA/bimcv/done.txt` | `WTSS_DATA=/workspace/data nohup scripts/replication/bimcv_fetch.sh &` (resumes; logs in `$WTSS_DATA/bimcv/fetch_log.tsv`) |
+## Running (updated 2026-11-17 20:15 UTC)
+| job | progress | checkpoint on disk | resume command |
+|---|---|---|---|
+| P2 Vanilla ResNet-50d, seed 0 | **finished 19:26** (test clean 0.839, biased 0.311); scored → `$WTSS_DATA/replication/pahde/scores/vanilla_seed0.csv.gz` (+ features) | `runs/vanilla_resnet50d_seed0/checkpoints/config/checkpoint_resnet50d_last.pth` | — |
+| `p2_chain.sh` (2nd pass, started 20:06 after the port-bug fix; see STATUS 20:10) | waiting for a GPU slot → class-0 activations → 6 RR-ClArC fine-tunes → scores | per step (skips finished steps; stops at the first failure) | `nohup scripts/replication/p2_chain.sh > /workspace/logs/p2_chain.log 2>&1 &` |
+| P1 location test, tube outside (Standard, seed 1234) | started 18:05 via short queue, epoch ~50 / 100 at 20:05 | best model only (`$WTSS_DATA/replication/viviano/location/outside/results/`) | restart the short queue (re-runs a position whose `stats_1234.pkl` is missing) |
+| P1 location arms (A16), `$WTSS_DATA/replication/viviano/location/run_arms.sh` | inside: a, b done, c (U-MtE) running; outside after its scores exist; table rebuilt after each | `…/location/<pos>/arms/preds_<arm>.csv.gz`, DINOv2 features cached per split | `nohup $WTSS_DATA/replication/viviano/location/run_arms.sh > $WTSS_DATA/replication/viviano/location/arms.log 2>&1 &` (skips a position whose `summary.json` exists) |
+| Short-job queue (`short_queue.sh`) | outside train → outside score → P4 ERM ×3 → P4 Seg ×3 | per job | `nohup scripts/replication/short_queue.sh > /workspace/logs/short_queue.log 2>&1 &` |
+| BIMCV fetch | see heartbeat | `$WTSS_DATA/bimcv/done.txt` | `WTSS_DATA=/workspace/data nohup scripts/replication/bimcv_fetch.sh &` |
 
-## Chains running unattended (started 2026-11-17 ~15:00)
-- `scripts/replication/p2_chain.sh` (PID see `ps`): waits for Vanilla epoch 300, then scores Vanilla (+ arm-a features),
-  their class-0 activation preprocessing, the RR-ClArC grid (6 configs in `$WTSS_DATA/replication/pahde/mitigation/`),
-  per-image scores, and finally **starts `p3_chain.sh`** (ISNet alone; flag `$WTSS_DATA/replication/ISNET_CHAIN_ACTIVE`).
-  Restart: `nohup scripts/replication/p2_chain.sh > /workspace/logs/p2_chain.log 2>&1 &` (skips finished steps).
-- `scripts/replication/short_queue.sh`: location inside → outside → P4 ERM ×3 → P4 Seg ×3; pauses while the ISNet flag
-  exists. Restart: `nohup scripts/replication/short_queue.sh > /workspace/logs/short_queue.log 2>&1 &`.
+## Chains (how they hand over)
+- `p2_chain.sh` starts `p3_chain.sh` (ISNet alone; flag `$WTSS_DATA/replication/ISNET_CHAIN_ACTIVE`) **only** when all 6
+  RR-ClArC score files exist. ISNet run 1 `isnet_corner_all_seed0` resumes after epoch 2.
+- `short_queue.sh` pauses while the ISNet flag exists. If `p2_chain.sh` stops with FAILED, fix, record, and restart it.
 - Never edit a running bash script (bash reads it as it executes); stop it by PID, edit, restart.
 
 ## Queued next (run order, A12–A14; long jobs one at a time, short jobs beside them only if a measured pairing helps)
-1. P2 Vanilla → epoch 300.
-2. P2 RR-ClArC: their `run_preprocessing` (activations) on our Vanilla, then their mitigation grid (λ ∈ {10, 50} × last 3
-   ResNet blocks, 10 epochs each; selection: mean of clean + biased validation accuracy, section 3). Scripts to be written
-   (uses their `experiments/mitigation_experiments/start_model_correction.py`; set `ckpt_path` to our Vanilla's last checkpoint).
+1. P2 Vanilla — done.
+2. P2 RR-ClArC via `p2_chain.sh` (running). Afterwards on CPU: selection among the 6 (mean of clean + biased validation
+   accuracy, section 3), then P2 arms a/b/c and the head-to-head.
 3. P3 ISNet chain alone: `nohup scripts/replication/p3_chain.sh &` — run 1 `isnet_corner_all_seed0` resumes after epoch 2
    (`$WTSS_DATA/replication/isnet/runs/isnet_corner_all_seed0/checkpoint.pt`), then `isnet_inside_all_seed0`,
    `isnet_inside_9010_seed0`. Score after BIMCV completes: `p3_test_select.py`, `p3_prepare.py --which test`, then
