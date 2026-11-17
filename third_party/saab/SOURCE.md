@@ -85,3 +85,20 @@ which no longer resolves. The identical file was taken from the Internet Archive
 
 It is loaded into the U-Net encoder without `last_linear`, exactly as smp does. Stored at
 `$WTSS_DATA/weights/se_resnext50_32x4d-a260b3a4.pth` (not committed).
+
+## Engineering note: activation checkpointing for Segmentation-ERM (2026-11-17; not a method deviation)
+Segmentation-ERM at the paper's batch 16 in fp32 does not fit in 16 GB. Measured peaks: 4.10 GiB at batch 4 and 7.81 GiB at
+batch 8, about 0.93 GiB per image, so ~15.2 GiB of tensors at batch 16 against 15.5 GiB usable. Instead of changing batch
+size or precision, `p4_train.py --grad_ckpt` recomputes activations in the backward pass (`torch.utils.checkpoint`, non-reentrant,
+RNG state preserved) for encoder stages 1–4 and every decoder block. Recomputing a block re-runs its BatchNorm layers in
+training mode; their running statistics are therefore snapshotted after the forward pass and restored after backward
+(`BNGuard`), so they are updated once, as in the plain model.
+
+Check (`scripts/replication/p4_ckpt_check.py`; batch 4 of real training images; identical initial weights; deterministic
+algorithms):
+- loss 1.14611340 (plain) vs 1.14611328 (checkpointed), |difference| 1.2e-7 (fp32 rounding);
+- gradients of all 253 parameters: max relative difference 0;
+- BatchNorm running statistics after the step: max |difference| 0;
+- one batch-16 training step with checkpointing: peak 6.38 GiB of 15.48 GiB.
+
+Segmentation-ERM therefore runs at batch 16, fp32, with `--grad_ckpt`. Binary-ERM fits without it (7.0 GiB at batch 16).
