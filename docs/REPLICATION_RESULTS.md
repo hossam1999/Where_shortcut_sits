@@ -10,8 +10,9 @@ Status: **in progress**, filled in as runs finish. Every number traces to a file
 |---|---|---|
 | P2 head-to-head on its own biased test | **primary** | localized artifact (inserted "microscope" vignette) |
 | P3 head-to-head on its own o.o.d. test | **primary** | localized artifact (corner marks) |
+| P3 location test (marks moved inside the lungs, phase 4) | **primary; the strongest location result** | ISNet's own design assumes the mark lies outside the lungs |
 | P1 location test (tube inside vs outside the lungs + heart ROI, phase 4) | **primary for P1** | it addresses the thesis question (where the shortcut sits) |
-| P1 head-to-head on its original tests (site / AP-PA view) | **secondary** | P1's shortcuts are global (hospital source, AP/PA view): they change the whole image, the ROI included, rather than sitting at a location |
+| P1 head-to-head on its original tests | **secondary**: *global shortcut (hospital / AP-PA view), not a localized artifact* | the signal is spread over the whole image, inside and outside the mask at once, so "inside vs outside the ROI" does not apply |
 
 "Preliminary" tables (one seed of P1) carry no verdict. With one training seed (P2, P3, phase 4) the bootstrap resamples test
 images only, so training-seed variance is not included and "beaten" means "beaten for this training run" (A3).
@@ -41,7 +42,7 @@ In P1's RSNA pneumonia task, "Masked" multiplies each image by its pneumonia bou
 ### Reproduction (their code; 3 seeds: 1234, 3232, 3221)
 *pending (gate after seed 1234; A8)*
 
-### Head-to-head on P1's original tests (secondary)
+### Head-to-head on P1's original tests (secondary: global shortcut (hospital / AP-PA view), not a localized artifact)
 *preliminary seed-1234 tables: `results/replication/viviano/preliminary_<task>_1234.md`; 3-seed verdicts pending*
 
 ### Location test (primary for P1; phase 4)
