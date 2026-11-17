@@ -73,18 +73,18 @@ Findings and deviations: `docs/REPLICATION_STATUS.md`. Results: `docs/REPLICATIO
 - ISIC 2018 Task 1/2 (P4): done and unzipped.
 
 <!-- HEARTBEAT START -->
-### Heartbeat 2026-11-17 13:20 UTC (auto-generated)
+### Heartbeat 2026-11-17 15:20 UTC (auto-generated)
 
 GPU jobs (PID, MiB, command):
 ```
-130207  1884 MiB    09:35:58 python -u -m model_training.start_training --config_file /workspace/data/replication/pahde/runs/vanilla_resnet50d_seed0/config.yaml
-186052  1844 MiB       07:06 /workspace/envs/viviano/bin/python -u scripts/replication/p1_location.py train --position inside
+130207  1858 MiB    11:36:15 python -u -m model_training.start_training --config_file /workspace/data/replication/pahde/runs/vanilla_resnet50d_seed0/config.yaml
+186052  1846 MiB    02:07:23 /workspace/envs/viviano/bin/python -u scripts/replication/p1_location.py train --position inside
 ```
-- P2 Vanilla: Epoch 173: of 300; checkpoints: checkpoint_resnet50d_100.pth 
+- P2 Vanilla: Epoch 214: of 300; checkpoints: checkpoint_resnet50d_100.pth checkpoint_resnet50d_200.pth 
 - P3 isnet_corner_all_seed0: last epoch 2 of 47
 - P4 timing_erm_b16: last epoch 0 of 149
 - P4 timing_seg_b4: last epoch 0 of 149
 - P4 timing_seg_b8: last epoch 0 of 149
-- BIMCV: 268 of 531 archives (0 SHA1 failures)
-- Disk: 259G used, 773G free
+- BIMCV: 290 of 531 archives (0 SHA1 failures)
+- Disk: 260G used, 772G free
 <!-- HEARTBEAT END -->
