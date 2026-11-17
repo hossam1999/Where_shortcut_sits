@@ -76,3 +76,12 @@ The last row is the one real difference. With `every_n_train_steps=5`, Lightning
 using the most recently logged validation value. So their "best" file holds the weights from up to 5 steps after the best
 validation, not the validated weights themselves. Ours keeps the validated weights. Their notebook's checkpoint names
 (`epoch=2-step=230`, `epoch=1-step=115`) are consistent with saves at step multiples of 5.
+
+## Encoder weights (2026-11-17)
+`encoder_weights="imagenet"` in smp 0.3.x downloads `http://data.lip6.fr/cadene/pretrainedmodels/se_resnext50_32x4d-a260b3a4.pth`,
+which no longer resolves. The identical file was taken from the Internet Archive (snapshot 2025-12-20):
+- SHA-256 `a260b3a40f82dfe3…`, matching the hash prefix in Cadene's file name;
+- all 331 tensors equal (max |difference| 0.0) to the re-host `smp-hub/se_resnext50_32x4d.imagenet` on the Hugging Face Hub.
+
+It is loaded into the U-Net encoder without `last_linear`, exactly as smp does. Stored at
+`$WTSS_DATA/weights/se_resnext50_32x4d-a260b3a4.pth` (not committed).

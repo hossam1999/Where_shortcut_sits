@@ -36,6 +36,7 @@ SAAB = "/workspace/third_party/saab"
 MEAN = np.array([0.6045568, 0.60814506, 0.6078789], np.float32)   # their isic.py img_loader
 STD = np.array([0.18579379, 0.1863619, 0.19625686], np.float32)
 S = 512
+WEIGHTS = f"{D}/weights/se_resnext50_32x4d-a260b3a4.pth"
 
 
 def cache(split_ids):
@@ -99,7 +100,12 @@ def build(method):
         m.fc = nn.Sequential(nn.Dropout(0.0), nn.Linear(2048, 2))   # their ResNet wrapper
         return m, None
     import segmentation_models_pytorch as smp
-    m = smp.Unet("se_resnext50_32x4d", encoder_weights="imagenet", activation=None, in_channels=3, classes=3)
+    m = smp.Unet("se_resnext50_32x4d", encoder_weights=None, activation=None, in_channels=3, classes=3)
+    # encoder_weights="imagenet" points to data.lip6.fr (offline since 2025). The identical file is loaded from the Internet
+    # Archive copy (SHA-256 a260b3a40f82dfe3..., the prefix in Cadene's file name; 331 tensors equal to smp-hub's re-host);
+    # smp drops the classifier (last_linear) when loading, as here.
+    sd = torch.load(WEIGHTS, map_location="cpu")
+    m.encoder.load_state_dict({k: v for k, v in sd.items() if not k.startswith("last_linear")})
     fc = m.segmentation_head
     m.segmentation_head = nn.Identity()
     return m, fc
