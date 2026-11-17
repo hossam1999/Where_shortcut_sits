@@ -25,10 +25,12 @@ Findings and deviations: `docs/REPLICATION_STATUS.md`. Results: `docs/REPLICATIO
 - P3 data (cohort, test rebuilt per A9/A10), P4 port (`third_party/saab/SOURCE.md`); P4 data: ISIC 2018 unzipped
   (2,594 images + masks) and the 512-px cache built (`$WTSS_DATA/replication/saab/cache512/`).
 
-## Running (2026-11-17 09:40)
+## Running (updated 2026-11-17 13:35)
 | job | PID | progress | checkpoint on disk | resume command |
 |---|---|---|---|---|
 | P2 Vanilla ResNet-50d, seed 0 | 130207 | epoch ~83 / 300 | none before epoch 100 (their trainer saves every 100) → `$WTSS_DATA/replication/pahde/runs/vanilla_resnet50d_seed0/checkpoints/<config>/checkpoint_resnet50d_100.pth` | if it dies after epoch 100: copy `runs/vanilla_resnet50d_seed0/config.yaml`, set `ckpt_path` to the latest checkpoint and **`num_epochs: 300 - (epoch+1)`** (their resume trains num_epochs MORE epochs), run with `scripts/replication/run_pahde.sh <that yaml> 0 vanilla_resnet50d_seed0_resume`. Record the resume next to the P2 result. Before epoch 100: restart from scratch with `run_pahde.sh …/resnet50d_p_artifact0.2_p_backdoor0_adam_lr0.001.yaml 0 vanilla_resnet50d_seed0`. |
+| P1 location test, tube inside (Standard, seed 1234) | see `ps` (`p1_location.py train --position inside`) | started 13:13, ~190 s/epoch beside P2, 100 epochs | their code keeps the best model only (`$WTSS_DATA/replication/viviano/location/inside/results/`) | restart via the short queue (it re-runs a position whose `stats_1234.pkl` is missing) |
+| Short-job queue | see `ps` (`short_queue.sh`) | waiting for the inside run; then outside, P4 ERM ×3, P4 Seg ×3 | per job | `nohup scripts/replication/short_queue.sh > /workspace/logs/short_queue.log 2>&1 &` (skips finished steps) |
 | BIMCV fetch | 6956 | 224 / 531 archives | `$WTSS_DATA/bimcv/done.txt` | `WTSS_DATA=/workspace/data nohup scripts/replication/bimcv_fetch.sh &` (resumes; logs in `$WTSS_DATA/bimcv/fetch_log.tsv`) |
 
 ## Queued next (run order, A12–A14; long jobs one at a time, short jobs beside them only if a measured pairing helps)
@@ -40,9 +42,9 @@ Findings and deviations: `docs/REPLICATION_STATUS.md`. Results: `docs/REPLICATIO
    (`$WTSS_DATA/replication/isnet/runs/isnet_corner_all_seed0/checkpoint.pt`), then `isnet_inside_all_seed0`,
    `isnet_inside_9010_seed0`. Score after BIMCV completes: `p3_test_select.py`, `p3_prepare.py --which test`, then
    `p3_train.py --name <run> --score_only …` (same args). Equivalence check (A9/A10): score `COVIDIsNet.pt` on both variants.
-4. Short jobs (beside a long job only if measured faster): P1 location test (Standard, tube inside / outside the lungs + heart
-   ROI, seed 1234; script to be written; Masked scored from it, A5); P4 timing (memory check at batch 16 first — ask the
-   author if it does not fit), then P4 Binary-ERM and Segmentation-ERM splits 1–3
+4. Short jobs via `scripts/replication/short_queue.sh` (pairing P1 + P2 measured at 1.44, kept; never beside ISNet): P1 location
+   test (A15; `p1_location.py train|score --position inside|outside`), then P4 Binary-ERM and Segmentation-ERM (`--grad_ckpt`,
+   batch 16, fp32; checkpointing verified identical, see `third_party/saab/SOURCE.md`) splits 1–3
    (`gpu_wait.sh 9000 /workspace/envs/saab/bin/python scripts/replication/p4_train.py --method erm|seg --split k`; resumes
    from `$WTSS_DATA/replication/saab/runs/<method>_split<k>/checkpoint.pt`); our arms' feature passes (P2, P3, P4).
 5. Phase 5 (thyroid only, A14): write `docs/PREREGISTRATION_PHASE5.md` after a timing test, push, **wait for the author's approval**.
