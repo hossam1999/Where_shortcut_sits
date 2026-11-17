@@ -54,19 +54,25 @@ already done).
 - **Why:** every competitor trains its whole network on the task data; arm b keeps DINOv2 frozen and loses clean
   accuracy where the task needs task-specific features (P2: clean 0.685 vs Vanilla 0.839). Arm d answers whether the
   constraint still works when our encoder is trained like theirs. Disclosed as motivated by arm b's P2 clean result.
-- **Encoder: ResNet-18, ImageNet weights (torchvision), 11.7 M parameters, 1.8 GFLOPs at 224 px.** It is the simplest
-  and lowest-compute network among the competitors (P1's own architecture; P2 ResNet-50 25.6 M / 4.1 GFLOPs, P3
-  DenseNet-121 8.0 M / 2.9 GFLOPs, P4 SE-ResNeXt50 U-Net > 25 M). The smallest DINOv2 (ViT-S/14, 22 M) is larger than
-  ResNet-18 and DenseNet-121, so it is not used.
+- **Encoder: EfficientNet-B0, ImageNet weights (torchvision `efficientnet_b0`, IMAGENET1K_V1), 5.3 M parameters,
+  0.39 GFLOPs at 224 px** (changed from ResNet-18 on 2026-11-18, before any arm-d run). It is smaller than every
+  competitor in both parameters and compute: P1 ResNet-18 11.7 M / 1.8 GFLOPs, P3 DenseNet-121 8.0 M / 2.9 GFLOPs
+  (the smallest competitor by parameters), P2 ResNet-50 25.6 M / 4.1 GFLOPs, P4 SE-ResNeXt50 U-Net > 25 M. ResNet-18
+  was dropped because it is larger than DenseNet-121 in parameters. The smallest DINOv2 (ViT-S/14, 22 M) is larger
+  than both, so it is not used. Penultimate features = the 1,280-d global-average-pooled output before the classifier.
+- **Resolution:** the resolution their network sees for each task (P1 cardiomegaly 128 px as coded, P1 RSNA 224 px,
+  P2 224, P3 224, P4 as their code feeds Seg-ERM); in phase 5, the same input resolution, augmentation and
+  early-stopping rule as the other phase-5 arms in `finetune.py`.
 - **Training (one fixed recipe for every paper, nothing tuned on a test):** ROI-masked inputs (the same ROIs as arm b),
-  the paper's resolution and label task, standard ERM (cross-entropy, or BCE where the paper is multi-label), the
+  the paper's label task, standard ERM (cross-entropy, or BCE where the paper is multi-label), the
   paper's own augmentation, Adam lr 1e-4, batch 64, up to 50 epochs, early stopping on the paper's validation metric
   (patience 5), seed 1234, mixed precision. Then penultimate features → mask_cmc (same artifact labels and mode
-  selection as arm a) → linear head refit on the training set, on CPU.
+  selection as arm a; C ∈ {0.001, 0.003, 0.01, 0.03, 0.1, 1, 10} chosen on validation, A21) → linear head
+  refit on the training set, on CPU.
 - **Where:** each head-to-head on the paper's own test where mask_cmc applies (P1 cardiomegaly and RSNA, P2, P3 90/10
   inside variant, P4 split 1), the P1 location test (tube inside and outside), and phase 5 (Trap A, 4 cohorts, 3 folds;
   Trap B thyroid). Same success rules as the other arms; 1 seed, image-only bootstrap, said in every table.
-- **Priority:** after the registered runs on the critical path; ResNet-18 jobs are the "small job" that may pair with
+- **Priority:** after the registered runs on the critical path; EfficientNet-B0 jobs are the "small job" that may pair with
   ISNet (rule 3), only if measured throughput rises.
 
 **Phase 5, lean:**
