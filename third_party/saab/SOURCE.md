@@ -54,3 +54,25 @@ DataPanels, Hydra) does not install with CUDA 12.8 torch. A plain PyTorch loop d
   `compute_dice_score` copied verbatim (overlap = pixels non-zero in both label maps; total = sum of label values).
 - **Checkpointing:** best model on the registered validation metric, plus a full checkpoint every epoch for resume
   (scheduling rule 5). Their Lightning `ModelCheckpoint(every_n_train_steps=5)` also keeps the best by the same metric.
+
+## Lightning 1.x defaults their runs relied on → our loop (checked against `src/task.py` / `train.py`, 2026-11-17)
+
+| their setting (Lightning 1.x / their code) | our loop |
+|---|---|
+| validation under `model.eval()` and `torch.no_grad()` (Lightning validation loop) | same (`model.eval()`, `fc.eval()`, `torch.no_grad()`) |
+| training under `model.train()` | same |
+| no gradient clipping (`gradient_clip_val` not set) | none |
+| `precision=32` (default; no AMP in their environment) | fp32, no autocast |
+| `accumulate_grad_batches=1` | one optimiser step per batch |
+| no LR scheduler (`configure_optimizers` returns Adam only) | constant LR, Adam, weight decay 0 |
+| `benchmark=False` (Trainer default) | `torch.backends.cudnn.benchmark = False` |
+| `seed_everything(seed)` | `random`, `numpy`, `torch` and CUDA seeded with the split index |
+| train DataLoader: `shuffle=True`, `drop_last=True`, batch 16 | same (a fresh generator per epoch, seeded by split and epoch) |
+| validation DataLoader: in order, last batch kept | same |
+| validation every epoch (`check_val_every_n_epoch=1`), 2 sanity-check batches before training | every epoch; the sanity check changes nothing and is not run |
+| checkpoint: `ModelCheckpoint(monitor=valid_auroc / valid_dice, mode=max, every_n_train_steps=5)` | **the weights validated at the end of the best epoch are kept** (author's instruction: selection at epoch end) |
+
+The last row is the one real difference. With `every_n_train_steps=5`, Lightning writes a checkpoint every 5 training steps
+using the most recently logged validation value. So their "best" file holds the weights from up to 5 steps after the best
+validation, not the validated weights themselves. Ours keeps the validated weights. Their notebook's checkpoint names
+(`epoch=2-step=230`, `epoch=1-step=115`) are consistent with saves at step multiples of 5.

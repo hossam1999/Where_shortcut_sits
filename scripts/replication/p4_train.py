@@ -125,6 +125,7 @@ def main():
     from sklearn.metrics import roc_auc_score
     k = args.split
     random.seed(k); np.random.seed(k); torch.manual_seed(k); torch.cuda.manual_seed_all(k)   # seed_everything(k)
+    torch.backends.cudnn.benchmark = False   # Lightning 1.x Trainer default (benchmark=False); fp32, no AMP
     rows = {s: pd.read_csv(f"{B}/isic_annotated_{s}{k}.csv").rename(columns={"label": "target"}) for s in ("train", "val", "test")}
     for s in rows:
         rows[s]["id"] = rows[s].image.str.split(".").str[0]
@@ -140,7 +141,8 @@ def main():
     tr = Data(img, msk, rows["train"], pos, seg, aug=seg)
     va = Data(img, msk, rows["val"], pos, seg, aug=False)
     te = Data(img, msk, rows["test"], pos, seg, aug=False)
-    loader = lambda d, sh, ep=0: torch.utils.data.DataLoader(d, batch_size=args.batch, shuffle=sh, num_workers=8,
+    # their train DataLoader: shuffle, drop_last=True; validation/test: in order, keep the last batch (task.py)
+    loader = lambda d, sh, ep=0: torch.utils.data.DataLoader(d, batch_size=args.batch, shuffle=sh, drop_last=sh, num_workers=8,
                                                              generator=torch.Generator().manual_seed(k * 1000 + ep))
     best, log, start = -1.0, [], 0
     if (out / "checkpoint.pt").exists():

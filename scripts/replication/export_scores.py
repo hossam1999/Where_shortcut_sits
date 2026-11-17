@@ -1,0 +1,64 @@
+"""Export per-image TEST scores of finished replication runs to small committed files (author's rule, 2026-11-17: every
+table must be rebuildable if the machine is lost). Columns: image_id, label, method, test_set, score (+ logits where the
+paper's metric needs them). No pixels, no paths. Writes results/replication/<paper>/scores/<run>.csv.gz.
+
+    python scripts/replication/export_scores.py          # exports everything that exists and is not yet exported
+"""
+import glob
+import os
+from pathlib import Path
+
+import pandas as pd
+
+D = os.environ.get("WTSS_DATA", "/workspace/data")
+ROOT = Path(__file__).resolve().parents[2]
+
+
+def write(paper, run, df):
+    out = ROOT / "results" / "replication" / paper / "scores" / f"{run}.csv.gz"
+    out.parent.mkdir(parents=True, exist_ok=True)
+    df.to_csv(out, index=False, compression={"method": "gzip", "mtime": 0})   # mtime 0: byte-stable, no spurious diffs
+    print("wrote", out.relative_to(ROOT), len(df))
+
+
+def p1():
+    for f in sorted(glob.glob(f"{D}/replication/viviano/preds/*.csv.gz")):
+        name = Path(f).name[:-7]
+        task, method, seed = name.split("_")[0], "_".join(name.split("_")[1:-1]), name.split("_")[-1]
+        d = pd.read_csv(f)
+        d = d[d.split == "test"]
+        write("viviano", name, pd.DataFrame({"image_id": d.image_id, "label": d.y, "site": d.site, "method": method,
+                                             "test_set": "reversed", "logit0": d.logit0, "logit1": d.logit1,
+                                             "score": d.logit1 - d.logit0}))
+    for a in sorted(glob.glob(f"{D}/replication/viviano/arms/*/preds_*.csv.gz")):
+        task_seed, arm = Path(a).parent.name, Path(a).name[6:-7]
+        d = pd.read_csv(a)
+        write("viviano", f"{task_seed.split('_')[0]}_{arm}_{task_seed.split('_')[1]}",
+              pd.DataFrame({"image_id": d.image_id, "label": d.y, "site": d.site, "method": arm, "test_set": "reversed",
+                            "score": d.score}))
+
+
+def p2():
+    for f in sorted(glob.glob(f"{D}/replication/pahde/scores/*.csv.gz")):
+        write("pahde", Path(f).name[:-7], pd.read_csv(f))
+
+
+def p3():
+    for r in sorted(glob.glob(f"{D}/replication/isnet/runs/*/preds_*.csv.gz")):
+        run, test = Path(r).parent.name, Path(r).name[6:-7]
+        if run.startswith("smoke"):
+            continue
+        d = pd.read_csv(r)
+        write("isnet", f"{run}_{test}", d.assign(method=run, test_set=test).rename(columns={"y": "label"}))
+
+
+def p4():
+    for r in sorted(glob.glob(f"{D}/replication/saab/runs/*/preds_test.csv")):
+        run = Path(r).parent.name
+        d = pd.read_csv(r)
+        write("saab", run, pd.DataFrame({"image_id": d.id, "label": d.target, "method": run, "test_set": "trap_test",
+                                         "score": d.score}))
+
+
+if __name__ == "__main__":
+    p1(); p2(); p3(); p4()
