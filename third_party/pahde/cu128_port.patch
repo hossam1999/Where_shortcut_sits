@@ -1,3 +1,135 @@
+diff --git a/config_files/bias_mitigation_controlled/isic_attacked/local/resnet50d_RRClarc_lamb10_adam_lr0.001_identity_1.yaml b/config_files/bias_mitigation_controlled/isic_attacked/local/resnet50d_RRClarc_lamb10_adam_lr0.001_identity_1.yaml
+index be60ed2..2935469 100644
+--- a/config_files/bias_mitigation_controlled/isic_attacked/local/resnet50d_RRClarc_lamb10_adam_lr0.001_identity_1.yaml
++++ b/config_files/bias_mitigation_controlled/isic_attacked/local/resnet50d_RRClarc_lamb10_adam_lr0.001_identity_1.yaml
+@@ -6,14 +6,14 @@ batch_size: 12
+ cav_mode: cavs_max
+ cav_scope:
+ - 0
+-checkpoint_dir_corrected: /PATH/TO/checkpoints_corrected
++checkpoint_dir_corrected: /workspace/data/replication/pahde/checkpoints_corrected
+ ckpt_path: /media/pahde/Data/r2r-extended/models/isic_attacked_microscope_v1/resnet50d_p_artifact0.2_p_backdoor0_adam_lr0.001_last.pth
+ criterion: all_logits_random
+ data_paths:
+-- /PATH/TO/ISIC2019
++- /workspace/data/isic2019_pahde
+ dataset_name: isic_attacked
+ device: cuda
+-dir_precomputed_data: /PATH/TO/precomputed_data
++dir_precomputed_data: /workspace/data/replication/pahde/precomputed_data
+ direction_mode: signal
+ img_size: 224
+ lamb: 10.0
+diff --git a/config_files/bias_mitigation_controlled/isic_attacked/local/resnet50d_RRClarc_lamb10_adam_lr0.001_identity_2.yaml b/config_files/bias_mitigation_controlled/isic_attacked/local/resnet50d_RRClarc_lamb10_adam_lr0.001_identity_2.yaml
+index 2a6a8d7..bfbb10a 100644
+--- a/config_files/bias_mitigation_controlled/isic_attacked/local/resnet50d_RRClarc_lamb10_adam_lr0.001_identity_2.yaml
++++ b/config_files/bias_mitigation_controlled/isic_attacked/local/resnet50d_RRClarc_lamb10_adam_lr0.001_identity_2.yaml
+@@ -6,14 +6,14 @@ batch_size: 12
+ cav_mode: cavs_max
+ cav_scope:
+ - 0
+-checkpoint_dir_corrected: /PATH/TO/checkpoints_corrected
++checkpoint_dir_corrected: /workspace/data/replication/pahde/checkpoints_corrected
+ ckpt_path: /media/pahde/Data/r2r-extended/models/isic_attacked_microscope_v1/resnet50d_p_artifact0.2_p_backdoor0_adam_lr0.001_last.pth
+ criterion: all_logits_random
+ data_paths:
+-- /PATH/TO/ISIC2019
++- /workspace/data/isic2019_pahde
+ dataset_name: isic_attacked
+ device: cuda
+-dir_precomputed_data: /PATH/TO/precomputed_data
++dir_precomputed_data: /workspace/data/replication/pahde/precomputed_data
+ direction_mode: signal
+ img_size: 224
+ lamb: 10.0
+diff --git a/config_files/bias_mitigation_controlled/isic_attacked/local/resnet50d_RRClarc_lamb10_adam_lr0.001_last_conv.yaml b/config_files/bias_mitigation_controlled/isic_attacked/local/resnet50d_RRClarc_lamb10_adam_lr0.001_last_conv.yaml
+index f83e9b6..0b5bd30 100644
+--- a/config_files/bias_mitigation_controlled/isic_attacked/local/resnet50d_RRClarc_lamb10_adam_lr0.001_last_conv.yaml
++++ b/config_files/bias_mitigation_controlled/isic_attacked/local/resnet50d_RRClarc_lamb10_adam_lr0.001_last_conv.yaml
+@@ -6,14 +6,14 @@ batch_size: 12
+ cav_mode: cavs_max
+ cav_scope:
+ - 0
+-checkpoint_dir_corrected: /PATH/TO/checkpoints_corrected
++checkpoint_dir_corrected: /workspace/data/replication/pahde/checkpoints_corrected
+ ckpt_path: /media/pahde/Data/r2r-extended/models/isic_attacked_microscope_v1/resnet50d_p_artifact0.2_p_backdoor0_adam_lr0.001_last.pth
+ criterion: all_logits_random
+ data_paths:
+-- /PATH/TO/ISIC2019
++- /workspace/data/isic2019_pahde
+ dataset_name: isic_attacked
+ device: cuda
+-dir_precomputed_data: /PATH/TO/precomputed_data
++dir_precomputed_data: /workspace/data/replication/pahde/precomputed_data
+ direction_mode: signal
+ img_size: 224
+ lamb: 10.0
+diff --git a/config_files/bias_mitigation_controlled/isic_attacked/local/resnet50d_RRClarc_lamb50_adam_lr0.001_identity_1.yaml b/config_files/bias_mitigation_controlled/isic_attacked/local/resnet50d_RRClarc_lamb50_adam_lr0.001_identity_1.yaml
+index df306fa..9bc1b2c 100644
+--- a/config_files/bias_mitigation_controlled/isic_attacked/local/resnet50d_RRClarc_lamb50_adam_lr0.001_identity_1.yaml
++++ b/config_files/bias_mitigation_controlled/isic_attacked/local/resnet50d_RRClarc_lamb50_adam_lr0.001_identity_1.yaml
+@@ -6,14 +6,14 @@ batch_size: 12
+ cav_mode: cavs_max
+ cav_scope:
+ - 0
+-checkpoint_dir_corrected: /PATH/TO/checkpoints_corrected
++checkpoint_dir_corrected: /workspace/data/replication/pahde/checkpoints_corrected
+ ckpt_path: /media/pahde/Data/r2r-extended/models/isic_attacked_microscope_v1/resnet50d_p_artifact0.2_p_backdoor0_adam_lr0.001_last.pth
+ criterion: all_logits_random
+ data_paths:
+-- /PATH/TO/ISIC2019
++- /workspace/data/isic2019_pahde
+ dataset_name: isic_attacked
+ device: cuda
+-dir_precomputed_data: /PATH/TO/precomputed_data
++dir_precomputed_data: /workspace/data/replication/pahde/precomputed_data
+ direction_mode: signal
+ img_size: 224
+ lamb: 50.0
+diff --git a/config_files/bias_mitigation_controlled/isic_attacked/local/resnet50d_RRClarc_lamb50_adam_lr0.001_identity_2.yaml b/config_files/bias_mitigation_controlled/isic_attacked/local/resnet50d_RRClarc_lamb50_adam_lr0.001_identity_2.yaml
+index 925cf5e..a0c76b0 100644
+--- a/config_files/bias_mitigation_controlled/isic_attacked/local/resnet50d_RRClarc_lamb50_adam_lr0.001_identity_2.yaml
++++ b/config_files/bias_mitigation_controlled/isic_attacked/local/resnet50d_RRClarc_lamb50_adam_lr0.001_identity_2.yaml
+@@ -6,14 +6,14 @@ batch_size: 12
+ cav_mode: cavs_max
+ cav_scope:
+ - 0
+-checkpoint_dir_corrected: /PATH/TO/checkpoints_corrected
++checkpoint_dir_corrected: /workspace/data/replication/pahde/checkpoints_corrected
+ ckpt_path: /media/pahde/Data/r2r-extended/models/isic_attacked_microscope_v1/resnet50d_p_artifact0.2_p_backdoor0_adam_lr0.001_last.pth
+ criterion: all_logits_random
+ data_paths:
+-- /PATH/TO/ISIC2019
++- /workspace/data/isic2019_pahde
+ dataset_name: isic_attacked
+ device: cuda
+-dir_precomputed_data: /PATH/TO/precomputed_data
++dir_precomputed_data: /workspace/data/replication/pahde/precomputed_data
+ direction_mode: signal
+ img_size: 224
+ lamb: 50.0
+diff --git a/config_files/bias_mitigation_controlled/isic_attacked/local/resnet50d_RRClarc_lamb50_adam_lr0.001_last_conv.yaml b/config_files/bias_mitigation_controlled/isic_attacked/local/resnet50d_RRClarc_lamb50_adam_lr0.001_last_conv.yaml
+index ca13304..a2315ae 100644
+--- a/config_files/bias_mitigation_controlled/isic_attacked/local/resnet50d_RRClarc_lamb50_adam_lr0.001_last_conv.yaml
++++ b/config_files/bias_mitigation_controlled/isic_attacked/local/resnet50d_RRClarc_lamb50_adam_lr0.001_last_conv.yaml
+@@ -6,14 +6,14 @@ batch_size: 12
+ cav_mode: cavs_max
+ cav_scope:
+ - 0
+-checkpoint_dir_corrected: /PATH/TO/checkpoints_corrected
++checkpoint_dir_corrected: /workspace/data/replication/pahde/checkpoints_corrected
+ ckpt_path: /media/pahde/Data/r2r-extended/models/isic_attacked_microscope_v1/resnet50d_p_artifact0.2_p_backdoor0_adam_lr0.001_last.pth
+ criterion: all_logits_random
+ data_paths:
+-- /PATH/TO/ISIC2019
++- /workspace/data/isic2019_pahde
+ dataset_name: isic_attacked
+ device: cuda
+-dir_precomputed_data: /PATH/TO/precomputed_data
++dir_precomputed_data: /workspace/data/replication/pahde/precomputed_data
+ direction_mode: signal
+ img_size: 224
+ lamb: 50.0
 diff --git a/config_files/local_config.yaml b/config_files/local_config.yaml
 index 3afab90..b39e614 100644
 --- a/config_files/local_config.yaml
@@ -281,6 +413,19 @@ index a3e4a2c..e1a5b7e 100644
  num_epochs: 300
  optimizer: sgd
  p_artifact: 0.2
+diff --git a/datasets/isic/isic_attacked.py b/datasets/isic/isic_attacked.py
+index da356d6..019bd97 100644
+--- a/datasets/isic/isic_attacked.py
++++ b/datasets/isic/isic_attacked.py
+@@ -62,7 +62,7 @@ class ISICAttackedDataset(ISICDataset):
+         self.clean_sample_ids = [i for i in range(len(self)) if i not in self.artifact_ids]
+ 
+     def add_artifact(self, img, idx):
+-        random.seed(idx)
++        random.seed(int(idx))  # port (Python 3.11): numpy ints no longer accepted; same seed as hash(np.int64(i)) == i
+         torch.manual_seed(idx)
+         np.random.seed(idx)
+ 
 diff --git a/model_training/start_training.py b/model_training/start_training.py
 index 67896e0..a4be4ca 100644
 --- a/model_training/start_training.py

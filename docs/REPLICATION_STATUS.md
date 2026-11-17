@@ -509,3 +509,11 @@ then P4 runs (7), and our arms' feature passes. Otherwise they run after the lon
   ISNet.
 - P1 location test: placements feasible inside 99.92% (9 images keep their best placement) and outside 100%; ROI (lungs ∪
   heart) covers 36.2% of the image; tube rendering checked visually.
+
+### 2026-11-17 20:10 UTC — P2 chain failure and fix
+The first pass of `p2_chain.sh` (19:47–19:54) failed at the class-0 activation step: a Python 3.11 port bug in their
+`isic_attacked.py` (`random.seed` with a numpy int; see `third_party/pahde/SOURCE.md`). All 6 RR-ClArC fine-tunes then
+failed for want of the CAV file, and the chain, which did not check its steps, started the P3 ISNet chain. That chain was
+still waiting for an empty GPU (no ISNet job had started) and was stopped by PID. Fixes: the seed call (`int(idx)`, the
+same seed), and `p2_chain.sh` now stops at the first failed step and hands over to P3 only when all 6 RR-ClArC score
+files exist. No P2 result existed or was seen; nothing was re-tuned.
