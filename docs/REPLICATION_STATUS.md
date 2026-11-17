@@ -481,3 +481,21 @@ then P4 runs (7), and our arms' feature passes. Otherwise they run after the lon
 - GPU wall-clock used so far: ~22 h, including 8 superseded P1 runs (A7) and the crashed P2 run.
 - BIMCV: 209 of 531 archives; ~30 h left; it gates only P3 scoring.
 - Blockers: none.
+
+## Updated estimate and run order after A14 (2026-11-17 ~09:45)
+
+| item | runs | basis | GPU-hours left |
+|---|---|---|---|
+| P2 Vanilla (epoch ~85 → 300) | 1 | measured 2.8 min/epoch alone | ~10 |
+| P2 RR-ClArC (activations + λ × layer grid) | 6 | estimate | ~4 |
+| P3 ISNet chain (corner resumes after epoch 2; inside; inside 90/10) | 3 | measured 14.7 min/epoch alone | ~35 |
+| P1 location test (Standard, tube inside / outside; Masked scored from it) | 2 | ~5 h each beside one job (measured) | ~10 |
+| P4 Binary-ERM + Segmentation-ERM, splits 1–3 | 6 | estimate (paper ~2 min/epoch, 150 epochs); timing pending | ~20 |
+| our arms (feature passes: P2, P3, P4, P1 location) | — | estimate | ~5 |
+| **total** | | | **~84** |
+
+- Phase 5 (thyroid, Trap A + B, 3 folds) is not included; it is costed by its timing test before its pre-registration.
+- Calendar: long chain (P2 → RR-ClArC → ISNet × 3) ≈ 49 h. The short jobs (~35 h) fit beside it only if a measured pairing
+  helps (ISNet + P2 did not: 0.91). Expect **~2.2 days if they pair, ~3.5 days if they run after**.
+- Next measurements: P4 Segmentation-ERM memory/speed at batch 16 and P1 ResNet-18 beside P2. Both start after P2's
+  epoch-100 checkpoint.

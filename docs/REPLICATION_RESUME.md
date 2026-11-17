@@ -19,16 +19,16 @@ Findings and deviations: `docs/REPLICATION_STATUS.md`. Results: `docs/REPLICATIO
 - **P1 Viviano, seed 1234 (preliminary, 1 seed, no verdict — A14):**
   - cardiomegaly: Standard 0.627, Masked 0.829 (A5), arms a 0.866, b 0.869, c 0.593 —
     `results/replication/viviano/preliminary_xray_1234.md`, scores `results/replication/viviano/scores/xray_*_1234.csv.gz`;
-  - RSNA: Standard 0.186, Masked 0.759 (label-dependent, A11), ActDiff 0.708 (gate value), arm b 0.767; arms a/c running —
-    scores `results/replication/viviano/scores/rsna_*_1234.csv.gz`.
+  - RSNA: Standard 0.186, Masked 0.759 (label-dependent, A11), ActDiff 0.708, arms a 0.610, b 0.767, c 0.378 —
+    `results/replication/viviano/preliminary_rsna_1234.md`, scores `results/replication/viviano/scores/rsna_*_1234.csv.gz`.
   - Gate passed on kept runs (`$WTSS_DATA/replication/viviano/GATE_OK`).
-- P3 data (cohort, test rebuilt per A9/A10), P4 port (`third_party/saab/SOURCE.md`).
+- P3 data (cohort, test rebuilt per A9/A10), P4 port (`third_party/saab/SOURCE.md`); P4 data: ISIC 2018 unzipped
+  (2,594 images + masks) and the 512-px cache built (`$WTSS_DATA/replication/saab/cache512/`).
 
 ## Running (2026-11-17 09:40)
 | job | PID | progress | checkpoint on disk | resume command |
 |---|---|---|---|---|
 | P2 Vanilla ResNet-50d, seed 0 | 130207 | epoch ~83 / 300 | none before epoch 100 (their trainer saves every 100) → `$WTSS_DATA/replication/pahde/runs/vanilla_resnet50d_seed0/checkpoints/<config>/checkpoint_resnet50d_100.pth` | if it dies after epoch 100: copy `runs/vanilla_resnet50d_seed0/config.yaml`, set `ckpt_path` to the latest checkpoint and **`num_epochs: 300 - (epoch+1)`** (their resume trains num_epochs MORE epochs), run with `scripts/replication/run_pahde.sh <that yaml> 0 vanilla_resnet50d_seed0_resume`. Record the resume next to the P2 result. Before epoch 100: restart from scratch with `run_pahde.sh …/resnet50d_p_artifact0.2_p_backdoor0_adam_lr0.001.yaml 0 vanilla_resnet50d_seed0`. |
-| P1 RSNA seed-1234 arms (a, c left) | 170448 | U-MtE | none needed (CPU heads; features cached under `$WTSS_DATA/replication/viviano/arms/rsna_1234/`) | `nohup scripts/replication/p1_seed_pipeline.sh rsna 1234 &` (skips finished steps) |
 | BIMCV fetch | 6956 | 224 / 531 archives | `$WTSS_DATA/bimcv/done.txt` | `WTSS_DATA=/workspace/data nohup scripts/replication/bimcv_fetch.sh &` (resumes; logs in `$WTSS_DATA/bimcv/fetch_log.tsv`) |
 
 ## Queued next (run order, A12–A14; long jobs one at a time, short jobs beside them only if a measured pairing helps)
@@ -59,8 +59,7 @@ Findings and deviations: `docs/REPLICATION_STATUS.md`. Results: `docs/REPLICATIO
 
 ## Downloads
 - BIMCV: see the table above (≈ 6 min per archive).
-- ISIC 2018 Task 1/2 (P4): both zips in `$WTSS_DATA/isic2018/`; unzip into that folder before the first P4 run
-  (`unzip -q ISIC2018_Task1-2_Training_Input.zip; unzip -q ISIC2018_Task1_Training_GroundTruth.zip`).
+- ISIC 2018 Task 1/2 (P4): done and unzipped.
 
 <!-- HEARTBEAT START -->
 ### Heartbeat 2026-11-17 09:19 UTC (auto-generated)
