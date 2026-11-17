@@ -162,13 +162,12 @@ def draw_ruler_variable(img: Image.Image, x: int, y: int, w: int, h: int, style:
 
 
 # --------------------------------------------------------------------------- CXR tube
-def draw_tube(img: Image.Image, x: int, y: int, w: int, h: int, image_id: str = "",
-              style_seed: Optional[int] = None) -> Tuple[Image.Image, np.ndarray]:
-    """Radio-opaque tube segment inside box (x,y,w,h): a bright, slightly curved band
-    with a radio-opaque stripe and side-hole gaps (chest-drain / catheter appearance)."""
+def tube_masks(shape, x: int, y: int, w: int, h: int, image_id: str = "",
+               style_seed: Optional[int] = None) -> Tuple[np.ndarray, np.ndarray]:
+    """Geometry of the radio-opaque tube in box (x,y,w,h): (band mask, radio-opaque stripe mask), uint8 of `shape`.
+    Shared by draw_tube (uint8 RGB images) and the P1 location test (P1's float intensity scale)."""
     rng = np.random.default_rng(stable_int("tube_style_v1", image_id) if style_seed is None else style_seed)
-    arr = np.asarray(img.convert("RGB")).astype(np.float32)
-    m = np.zeros(arr.shape[:2], np.uint8)
+    m = np.zeros(shape, np.uint8)
     t = np.linspace(0, 1, 200)
     bend = rng.uniform(-0.35, 0.35) * h
     cx = x + t * (w - 1)
@@ -183,6 +182,15 @@ def draw_tube(img: Image.Image, x: int, y: int, w: int, h: int, image_id: str = 
     cv2.polylines(stripe, [pts], False, 1, thickness=max(1, thick // 3), lineType=cv2.LINE_8)
     m = m & _box(m.shape, x, y, w, h)
     stripe = stripe & m
+    return m, stripe
+
+
+def draw_tube(img: Image.Image, x: int, y: int, w: int, h: int, image_id: str = "",
+              style_seed: Optional[int] = None) -> Tuple[Image.Image, np.ndarray]:
+    """Radio-opaque tube segment inside box (x,y,w,h): a bright, slightly curved band
+    with a radio-opaque stripe and side-hole gaps (chest-drain / catheter appearance)."""
+    arr = np.asarray(img.convert("RGB")).astype(np.float32)
+    m, stripe = tube_masks(arr.shape[:2], x, y, w, h, image_id, style_seed)
     val = arr.mean(-1, keepdims=True)
     bright = np.clip(val + 70, 0, 255)
     out = np.where(m[..., None] == 1, 0.35 * arr + 0.65 * bright, arr)
