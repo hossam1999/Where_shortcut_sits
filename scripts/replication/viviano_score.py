@@ -47,8 +47,13 @@ def main():
     ap.add_argument("--splits", default="train,valid,test")
     ap.add_argument("--mask_all", choices=["as_config", "on", "off"], default="as_config",
                     help="override the dataset mask_all flag (arm a input choice); default = their config as loaded")
+    ap.add_argument("--external_roi", default=None,
+                    help="dir with roi224_<split>.npz (ids, masks) from p1_arms.py --stage rois: images are multiplied by "
+                         "these label-free masks after their preprocessing (amendment A11, RSNA arm a)")
     args = ap.parse_args()
 
+    # shared GPU: cap this process so it can never push a training job out of memory
+    torch.cuda.set_per_process_memory_fraction(float(os.environ.get("GPU_FRACTION", "0.15")))
     cfg = configuration.load_config(args.config)
     model = torch.load(args.model, map_location="cuda", weights_only=False).cuda().eval()
     feats = {}
@@ -59,10 +64,19 @@ def main():
             list(cfg["dataset"][split].values())[0]["mask_all"] = args.mask_all == "on"
         ds = configuration.setup_dataset(cfg, args.seed, split=split)(configuration.setup_transform(cfg, split))
         ids = image_ids(ds)
-        dl = torch.utils.data.DataLoader(ds, batch_size=64, shuffle=False, num_workers=16)
+        ext = None
+        if args.external_roi:
+            z = np.load(f"{args.external_roi}/roi224_{split}.npz")
+            pos = {k: j for j, k in enumerate(z["ids"].astype(str))}
+            ext = torch.from_numpy(z["masks"][[pos[i] for i in ids]].astype(np.float32))[:, None]
+        dl = torch.utils.data.DataLoader(ds, batch_size=16, shuffle=False, num_workers=16)
         logits, fs, ys = [], [], []
+        k0 = 0
         with torch.no_grad():
             for X, seg, y in dl:
+                if ext is not None:
+                    X = X * torch.nn.functional.interpolate(ext[k0:k0 + len(X)], size=X.shape[-2:], mode="nearest")
+                k0 += len(X)
                 X = X.cuda()
                 seg = torch.abs(seg - 1).type(torch.BoolTensor).cuda()
                 logits.append(model.forward(X, seg)["y_pred"].cpu())

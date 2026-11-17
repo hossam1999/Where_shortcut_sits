@@ -23,6 +23,15 @@ jobs_list | while read t m s; do
     WTSS_DATA=${WTSS_DATA:-/workspace/data} /workspace/venv-wtss/bin/python $Q/p1_gate.py > $RUNS/../gate.txt 2>&1; sleep 300
   done
   need=$([ "$m" = resnet_actdiff ] && echo 10000 || echo 6200)   # MiB measured per method (+ margin)
+  # P3 interleave (author, 2026-11-17): once the gate is open, the next free shared slot goes to P3 ISNet on P3's original
+  # corner benchmark (seed 0), so it is trained when BIMCV completes; P1's other seeds follow
+  P3MARK=$RUNS/../P3_ISNET_STARTED
+  if [ "$s" != 1234 ] && [ -f $RUNS/../GATE_OK ] && [ ! -f $P3MARK ]; then
+    while [ $(gpu_jobs) -ge 2 ] || [ $(free_mib) -lt 11500 ]; do sleep 60; done
+    echo "$(date +%F_%T) start P3 ISNet corner/all seed 0"; touch $P3MARK
+    nohup $Q/run_p3.sh isnet_corner_all_seed0 --model isnet --position corner --presence all --seed 0 --batch 16 >/dev/null 2>&1 &
+    sleep 300
+  fi
   # P2 priority (author, 2026-11-17): after the gate, while P2 trains, P2 has at most one other job beside it
   cap=$N; [ "$s" != 1234 ] && p2_running && cap=1
   while [ $(running) -ge $cap ] || [ $(gpu_jobs) -ge $((cap + 1)) ] || [ $(free_mib) -lt $need ]; do sleep 60; done

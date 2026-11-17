@@ -88,7 +88,9 @@ def main():
     ap.add_argument("--task", choices=["xray", "rsna"], required=True)
     ap.add_argument("--seed", type=int, required=True)
     ap.add_argument("--split_csv", required=True, help="viviano_score output of any of their runs for this seed")
-    ap.add_argument("--arm_a_features", required=True, help="viviano_score features npz (masked, every split)")
+    ap.add_argument("--arm_a_features", default=None, help="viviano_score features npz (masked, every split)")
+    ap.add_argument("--stage", choices=["rois", "arms"], default="arms",
+                    help="rois: PSPNet ROIs only, plus 224-px copies keyed by image id for viviano_score --external_roi")
     args = ap.parse_args()
     from sklearn.linear_model import LogisticRegression
     from sklearn.metrics import roc_auc_score
@@ -96,14 +98,22 @@ def main():
     from wtss.features import extract_view
     from wtss.umte import UMtE
 
+    torch.cuda.set_per_process_memory_fraction(float(os.environ.get("GPU_FRACTION", "0.30")))  # shared GPU
     out = Path(f"{D}/replication/viviano/arms/{args.task}_{args.seed}"); out.mkdir(parents=True, exist_ok=True)
     sp = pd.read_csv(args.split_csv)
-    Fa = np.load(args.arm_a_features)
+    Fa = np.load(args.arm_a_features) if args.stage == "arms" else None
     S = {s: sp[sp.split == s].reset_index(drop=True) for s in ("train", "valid", "test")}
     paths = {s: [image_path(args.task, i, int(c)) for i, c in zip(d.image_id, d.site)] for s, d in S.items()}
     y = {s: d.y.to_numpy().astype(int) for s, d in S.items()}
     a = {s: d.site.to_numpy().astype(int) for s, d in S.items()}
     summary = {"task": args.task, "seed": args.seed, "n": {s: len(d) for s, d in S.items()}}
+    if args.stage == "rois":
+        for s in ("train", "valid", "test"):
+            R = rois(args.task, paths[s], out / f"roi_{s}.npy")
+            m224 = np.stack([cv2.resize(r, (224, 224), interpolation=cv2.INTER_NEAREST) for r in R])
+            np.savez_compressed(out / f"roi224_{s}.npz", ids=S[s].image_id.astype(str).to_numpy(), masks=m224)
+            print(s, len(R), "mean ROI fraction", round(float(m224.mean()), 3), flush=True)
+        return
 
     def save(arm, prob, extra):
         S["test"].assign(score=prob)[["image_id", "y", "site", "score"]].to_csv(out / f"preds_{arm}.csv.gz", index=False)
@@ -121,13 +131,13 @@ def main():
     for s in ("train", "valid", "test"):
         R[s] = rois(args.task, paths[s], out / f"roi_{s}.npy")
         X[s] = extract_view(bb, [str(k) for k in range(len(paths[s]))], masked_render(paths[s], R[s]),
-                            out / f"dino518_masked_{s}.npz", dev, batch_size=32, num_workers=12)
+                            out / f"dino518_masked_{s}.npz", dev, batch_size=16, num_workers=12)
     h, mode, C, v = fit_mask_cmc(X["train"], y["train"], a["train"], X["valid"], y["valid"], args.seed)
     save("b_dino518_mask_cmc", h.prob(X["test"]), {"mode": mode, "C": C, "val_auroc": v})
 
     # c) U-MtE, label-free, exactly as the public tool: fit() on training images + ROIs (generic overlays inserted into
     #    the ROI; its own raw-feature encoding), transform() every split, class-balanced head with C on validation
-    um = UMtE(bb, device="cuda", seed=args.seed)
+    um = UMtE(bb, device="cuda", seed=args.seed, batch_size=16)
     pil = {s: [Image.fromarray(gray(p)).convert("RGB") for p in paths[s]] for s in paths}
     roi = {s: [r.astype(bool) for r in R[s]] for s in R}
     um.fit(pil["train"], roi["train"], keys=list(S["train"].image_id))
