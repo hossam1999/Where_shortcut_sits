@@ -38,6 +38,13 @@ def p1():
                             "score": d.score}))
 
 
+def p1_location():
+    for f in sorted(glob.glob(f"{D}/replication/viviano/location/*/scores.csv.gz")):
+        pos = Path(f).parent.name
+        d = pd.read_csv(f)
+        write("viviano", f"location_{pos}_1234", d[d.test_set.isin(["corr", "rev", "clean"])])   # test sets only
+
+
 def p2():
     for f in sorted(glob.glob(f"{D}/replication/pahde/scores/*.csv.gz")):
         d = pd.read_csv(f)
@@ -62,4 +69,4 @@ def p4():
 
 
 if __name__ == "__main__":
-    p1(); p2(); p3(); p4()
+    p1(); p1_location(); p2(); p3(); p4()
