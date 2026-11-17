@@ -7,7 +7,7 @@
 cd /root/Where_shortcut_sits
 Q=scripts/replication; D=/workspace/data; LOC=$D/replication/viviano/location
 isnet_running(){ ps -eo args | grep -q "[p]3_train.py --name isnet"; }
-wait_turn(){ while isnet_running; do sleep 300; done; }
+wait_turn(){ while isnet_running || [ -e $D/replication/ISNET_CHAIN_ACTIVE ]; do sleep 300; done; }
 step(){ local done_file=$1 need=$2; shift 2
   [ -e "$done_file" ] && return 0
   wait_turn
