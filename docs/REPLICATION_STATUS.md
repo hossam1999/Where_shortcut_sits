@@ -517,3 +517,18 @@ failed for want of the CAV file, and the chain, which did not check its steps, s
 still waiting for an empty GPU (no ISNet job had started) and was stopped by PID. Fixes: the seed call (`int(idx)`, the
 same seed), and `p2_chain.sh` now stops at the first failed step and hands over to P3 only when all 6 RR-ClArC score
 files exist. No P2 result existed or was seen; nothing was re-tuned.
+
+### 2026-11-17 22:20 UTC — P1 location test: outside Standard kept a pre-shortcut epoch (checked; not a bug)
+Outside, Standard (their model, their selection) shows no shortcut: correlated / reversed / clean AUROC 0.901 / 0.894 /
+0.898 (inside 0.943 / 0.514 / 0.866). Checks:
+- the tube reaches the network at the outside position: rendered through the same dataset class at 128 px, 200 training
+  images with a tube each have 89–120 changed pixels (mean 109, as inside), 0.01% of them inside lungs ∪ heart; presence
+  90.5% of positives / 9.6% of negatives in training, as registered; visually checked (scratch only, nothing saved);
+- **cause: their model selection** (`training.py`: `burn_in=5`, then the lowest validation loss; P1's validation is
+  reversed, 10/90). Inside, the shortcut appears at epoch 5 (reversed-val loss 0.73 → 2.26) and the kept epoch is 11 (val
+  loss 1.005, val AUROC ≈ 0.50). Outside, the shortcut appears only at epoch 11 (0.45 → 0.65; late epochs val AUROC
+  ≈ 0.70–0.75, weaker than inside), and the kept epoch is 8 (val loss 0.414, val AUROC 0.902), i.e. before it was learned.
+Consequence for the registered analysis (unchanged, reported as is): at the outside position the Standard model has no
+shortcut for Masked to remove, so Masked's crossover (+0.032 [+0.023, +0.041]) comes from Masked costing less outside
+(−0.013) than inside (−0.045), not from Masked removing an outside shortcut. Their `last_model_1234.pth.tar` (epoch 100)
+is on disk for both positions; any use of it would be a post-hoc sensitivity analysis and needs the author's decision.
