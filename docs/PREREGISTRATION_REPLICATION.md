@@ -367,3 +367,24 @@ variants, which then have **370 normals**, matching P3's evaluated test.
 - **Equivalence check (A9) extended:** besides "macro-F1 within 0.03 of 0.773", `COVIDIsNet.pt`'s confusion matrix on each
   variant is reported next to P3's Table 4 ISNet matrix (normal 210 / 157 / 3; pneumonia 81 / 1,210 / 4; COVID-19
   93 / 156 / 1,266) and its Table 2 per-class F1 (0.555 / 0.858 / 0.907). The verdict gate stays the registered macro-F1 rule.
+
+**A11 (2026-11-17, before any arm-a result; author's decision; evidence below).** P1's RSNA "Masked" path makes the
+masked test image depend on the label.
+- **Evidence (their code, as restored at `32f7b7d`; TorchXRayVision 0.0.18, the version they pin):**
+  - `torchxrayvision/datasets.py` `RSNA_Pneumonia_Dataset.get_mask_dict` (lines 492–515) starts each mask as
+    `np.zeros([size, size])` and sets only the pneumonia boxes to 1. Negatives have no box.
+  - `activmask/datasets/xray.py` `JointXRayRSNADataset.__getitem__` takes `seg = sample["pathology_masks"][0]` (line 650)
+    and, with `mask_all`, applies `img *= seg` (lines 669–671).
+  - The Masked config sets `mask_all` on the test split (A5/YAML note).
+  - Checked on seed 1234's test split: **all 200 negatives inspected have a 0-pixel mask and become the identical constant
+    image** (one distinct value, 0.0). Positives keep only their boxes (3,396 of 50,176 pixels on average).
+  - Example images (4 negatives, 4 positives): `$WTSS_DATA/replication/viviano/figures/rsna_masked_test_examples.png`,
+    not committed (patient images).
+- **Consequences:**
+  1. **Arm a on RSNA** uses label-free PSPNet lung ROIs on every split (the same ROI as arm b), passed through their trained
+     Masked network. This replaces "their mask" for RSNA only.
+  2. **Their RSNA "Masked" result** (paper 0.56 ± 0.16; ours, seed 1234, 0.759) is reported as **"label-dependent at test
+     time"** and is **not** the RSNA head-to-head target. The RSNA target becomes their best method whose test input does
+     not depend on the label: **ActDiff (0.68 ± 0.05)**. The Holm family keeps its size: comparisons 4–6 of section 2 are
+     against ActDiff, as already registered for RSNA pneumonia.
+  3. **Cardiomegaly is unaffected:** the circle mask does not depend on the label, and Masked (0.77 ± 0.09) stays its target.
