@@ -10,7 +10,7 @@ import sys
 
 R = os.path.expandvars("$WTSS_DATA/replication/viviano/runs")
 PAPER = {("xray", "resnet"): (0.70, 0.05), ("rsna", "resnet"): (0.20, 0.03),
-         ("xray", "resnet_actdiff"): (0.73, 0.03), ("rsna", "resnet_actdiff"): (0.68, 0.05)}
+         ("rsna", "resnet_actdiff"): (0.68, 0.05)}   # A12: cardiomegaly ActDiff cancelled; gate on kept runs only
 rows, done = [], True
 for (t, m), (mu, sd) in PAPER.items():
     f = f"{R}/{t}_{m}_1234/results/{t}-seeds_{m}/stats_1234.pkl"

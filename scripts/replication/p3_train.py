@@ -114,6 +114,7 @@ def main():
     ap.add_argument("--batch", type=int, default=16)
     ap.add_argument("--max_batches", type=int, default=0, help="smoke test only")
     ap.add_argument("--name", required=True)
+    ap.add_argument("--score_only", action="store_true", help="score best.pt on the test cache (after BIMCV completes)")
     args = ap.parse_args()
     torch.manual_seed(args.seed); np.random.seed(args.seed)
     torch.use_deterministic_algorithms(True, warn_only=True)
@@ -142,8 +143,10 @@ def main():
     va.gray, va.roi = gray[vidx], roi[vidx]
     tr_idx = np.where(split == "train")[0]
     tr.gray, tr.roi = gray[tr_idx], roi[tr_idx]
-    dl = lambda d, sh: torch.utils.data.DataLoader(d, batch_size=args.batch, shuffle=sh, num_workers=12, drop_last=False,
-                                                   generator=torch.Generator().manual_seed(args.seed))
+    # a fresh generator per epoch seeded by (seed, epoch): the order and the workers' augmentation draws change every epoch
+    # (as in P3's Lightning training) and are reproducible, including after a resume
+    dl = lambda d, sh, ep=0: torch.utils.data.DataLoader(d, batch_size=args.batch, shuffle=sh, num_workers=12, drop_last=False,
+                                                         generator=torch.Generator().manual_seed(args.seed * 1000 + ep))
     heat = args.model == "isnet"
     net = L.IsDense121Lightning(multiLabel=False, multiMask=False, classes=3, heat=heat, LR=1e-3, P=0.7, Ea=1,
                                 A=1, B=3, d=0.9, momentum=0.99).cuda()
@@ -151,10 +154,19 @@ def main():
     opt = torch.optim.SGD(net.parameters(), lr=1e-3, momentum=0.99)
     scaler = torch.amp.GradScaler("cuda")
     batch = (lambda b: tuple(t.cuda() for t in b)) if heat else (lambda b: (b[0].cuda(), b[2].cuda()))
-    best, log = float("inf"), []
-    for ep in range(args.epochs):
+    best, log, start = float("inf"), [], 0
+    if args.score_only:
+        net.load_state_dict(torch.load(out / "best.pt")); net.eval()
+        return score(net, heat, out, args)
+    if (out / "checkpoint.pt").exists():   # resume after a crash (scheduling rule 5)
+        c = torch.load(out / "checkpoint.pt", weights_only=False)
+        net.load_state_dict(c["net"]); opt.load_state_dict(c["opt"]); scaler.load_state_dict(c["scaler"])
+        best, log, start = c["best"], c["log"], c["epoch"] + 1
+        torch.set_rng_state(c["rng"]); torch.cuda.set_rng_state(c["cuda_rng"])
+        print(f"resumed after epoch {c['epoch']}", flush=True)
+    for ep in range(start, args.epochs):
         net.train(); t0 = time.time(); tl = []
-        for k, b in enumerate(dl(tr, True)):
+        for k, b in enumerate(dl(tr, True, ep)):
             if args.max_batches and k >= args.max_batches:
                 break
             opt.zero_grad(set_to_none=True)
@@ -175,6 +187,10 @@ def main():
         print(log[-1], flush=True)
         if v < best:
             best = v; torch.save(net.state_dict(), out / "best.pt")
+        torch.save({"net": net.state_dict(), "opt": opt.state_dict(), "scaler": scaler.state_dict(), "epoch": ep,
+                    "best": best, "log": log, "rng": torch.get_rng_state(), "cuda_rng": torch.cuda.get_rng_state()},
+                   out / "checkpoint.tmp")
+        (out / "checkpoint.tmp").replace(out / "checkpoint.pt")   # atomic: a crash never leaves a half-written file
     net.load_state_dict(torch.load(out / "best.pt")); net.eval()
     score(net, heat, out, args)
 
