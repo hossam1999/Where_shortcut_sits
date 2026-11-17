@@ -442,3 +442,18 @@ values (cardiomegaly Standard 0.627, RSNA Standard 0.186, RSNA ActDiff 0.708) an
 10. **Location test:** one fixed artifact moved inside vs outside the lesion in their ISIC setup, Segmentation-ERM + ours,
    1 seed. Phase 5: a segmentation-supervised ERM arm on our ROI masks.
 11. **Priority:** after the P1–P3 runs already queued; P4 fills free slots.
+
+**A13 addendum (2026-11-17, before any P4 result; author's decision).** The equivalence gate (A13 item 4) gains a second
+reference.
+- **Reference values:** P4's evaluation notebook (`notebooks/isic_evaluation.ipynb`, saved outputs) scores its own
+  checkpoints on the split-1 772-image trap test: Binary-ERM **0.310** (0.3098) and Segmentation-ERM **0.772** (0.7724).
+  These checkpoints are not released as files: the notebook shows paths on the authors' machine, and the repository
+  contains no weights. The reference values are therefore the notebook's printed scores (split 1, one model each), not
+  checkpoints we re-score.
+- **Gate:**
+  - Binary-ERM passes if our 3-seed mean robust AUROC is within 0.03 of **either** the paper (0.359) **or** the notebook
+    value (0.310);
+  - Segmentation-ERM passes if it is within 0.03 of **either** the paper (0.727) **or** the notebook value (0.772);
+  - verdicts require both to pass.
+- **Reporting:** the paper, the notebook value and ours are reported side by side for both methods. For comparison with
+  the notebook, our split-1 value is also shown on its own, since the notebook scores split 1 only.
