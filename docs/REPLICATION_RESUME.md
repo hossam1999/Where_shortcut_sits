@@ -63,4 +63,15 @@ Findings and deviations: `docs/REPLICATION_STATUS.md`. Results: `docs/REPLICATIO
   (`unzip -q ISIC2018_Task1-2_Training_Input.zip; unzip -q ISIC2018_Task1_Training_GroundTruth.zip`).
 
 <!-- HEARTBEAT START -->
+### Heartbeat 2026-11-17 09:19 UTC (auto-generated)
+
+GPU jobs (PID, MiB, command):
+```
+130207  1884 MiB    05:35:10 python -u -m model_training.start_training --config_file /workspace/data/replication/pahde/runs/vanilla_resnet50d_seed0/config.yaml
+170448  1338 MiB       09:37 /workspace/venv-wtss/bin/python -u /root/Where_shortcut_sits/scripts/replication/p1_arms.py --task rsna --seed 1234 --split_csv /workspace
+```
+- P2 Vanilla: Epoch 84: of 300; checkpoints: 
+- P3 isnet_corner_all_seed0: last epoch 2 of 47
+- BIMCV: 224 of 531 archives (0 SHA1 failures)
+- Disk: 242G used, 790G free
 <!-- HEARTBEAT END -->
