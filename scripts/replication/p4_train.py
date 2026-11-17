@@ -111,6 +111,42 @@ def build(method):
     return m, fc
 
 
+class Ckpt(nn.Module):
+    """Activation (gradient) checkpointing of one block: the forward pass is recomputed during backward instead of storing
+    activations. Same arithmetic; RNG state is preserved by torch.utils.checkpoint."""
+    def __init__(self, m):
+        super().__init__()
+        self.m = m
+
+    def forward(self, *a, **k):
+        if self.training and torch.is_grad_enabled():
+            return torch.utils.checkpoint.checkpoint(self.m, *a, use_reentrant=False, **k)
+        return self.m(*a, **k)
+
+
+def add_checkpointing(model):
+    """Wrap SE-ResNeXt encoder stages 1-4 and every U-Net decoder block (the stem is left as is: smp slices it)."""
+    for n in ("layer1", "layer2", "layer3", "layer4"):
+        setattr(model.encoder, n, Ckpt(getattr(model.encoder, n)))
+    model.decoder.blocks = nn.ModuleList([Ckpt(b) for b in model.decoder.blocks])
+    return model
+
+
+class BNGuard:
+    """Recomputing a block during backward runs its BatchNorm layers in training mode a second time, which would update
+    their running statistics twice. Snapshot them after the forward pass and restore them after backward, so the
+    checkpointed model matches the plain one exactly (running stats included)."""
+    def __init__(self, model):
+        self.bns = [m for m in model.modules() if isinstance(m, nn.modules.batchnorm._BatchNorm)]
+
+    def snapshot(self):
+        self.s = [(b.running_mean.clone(), b.running_var.clone(), b.num_batches_tracked.clone()) for b in self.bns]
+
+    def restore(self):
+        for b, (m, v, n) in zip(self.bns, self.s):
+            b.running_mean.copy_(m); b.running_var.copy_(v); b.num_batches_tracked.copy_(n)
+
+
 def image_scores(model, fc, x):
     out = model(x)
     if fc is None:
@@ -127,6 +163,7 @@ def main():
     ap.add_argument("--batch", type=int, default=16)
     ap.add_argument("--max_batches", type=int, default=0, help="timing/smoke only")
     ap.add_argument("--name", default=None)
+    ap.add_argument("--grad_ckpt", action="store_true", help="activation checkpointing (Seg-ERM at batch 16 on 16 GB)")
     args = ap.parse_args()
     from sklearn.metrics import roc_auc_score
     k = args.split
@@ -140,7 +177,10 @@ def main():
     seg = args.method == "seg"
     out = Path(f"{D}/replication/saab/runs/{args.name or f'{args.method}_split{k}'}"); out.mkdir(parents=True, exist_ok=True)
     model, fc = build(args.method)
+    if args.grad_ckpt:
+        add_checkpointing(model)
     model.cuda(); fc = fc.cuda() if fc is not None else None
+    guard = BNGuard(model) if args.grad_ckpt else None
     params = list(model.parameters()) + (list(fc.parameters()) if fc is not None else [])
     opt = torch.optim.Adam(params, lr=5e-4 if seg else 1e-5, weight_decay=0.0)
     lossf = nn.CrossEntropyLoss()
@@ -168,7 +208,12 @@ def main():
             opt.zero_grad(set_to_none=True)
             _, o = image_scores(model, fc, x)
             loss = lossf(o, (sg if seg else y).cuda())
-            loss.backward(); opt.step(); tl.append(float(loss)); n += len(x)
+            if guard:
+                guard.snapshot()
+            loss.backward()
+            if guard:
+                guard.restore()
+            opt.step(); tl.append(float(loss)); n += len(x)
         model.eval(); fc is not None and fc.eval(); ps, ys, dice = [], [], []
         with torch.no_grad():
             for b, (x, sg, y) in enumerate(loader(va, False)):
