@@ -33,6 +33,15 @@ Findings and deviations: `docs/REPLICATION_STATUS.md`. Results: `docs/REPLICATIO
 | Short-job queue | see `ps` (`short_queue.sh`) | waiting for the inside run; then outside, P4 ERM ×3, P4 Seg ×3 | per job | `nohup scripts/replication/short_queue.sh > /workspace/logs/short_queue.log 2>&1 &` (skips finished steps) |
 | BIMCV fetch | 6956 | 224 / 531 archives | `$WTSS_DATA/bimcv/done.txt` | `WTSS_DATA=/workspace/data nohup scripts/replication/bimcv_fetch.sh &` (resumes; logs in `$WTSS_DATA/bimcv/fetch_log.tsv`) |
 
+## Chains running unattended (started 2026-11-17 ~15:00)
+- `scripts/replication/p2_chain.sh` (PID see `ps`): waits for Vanilla epoch 300, then scores Vanilla (+ arm-a features),
+  their class-0 activation preprocessing, the RR-ClArC grid (6 configs in `$WTSS_DATA/replication/pahde/mitigation/`),
+  per-image scores, and finally **starts `p3_chain.sh`** (ISNet alone; flag `$WTSS_DATA/replication/ISNET_CHAIN_ACTIVE`).
+  Restart: `nohup scripts/replication/p2_chain.sh > /workspace/logs/p2_chain.log 2>&1 &` (skips finished steps).
+- `scripts/replication/short_queue.sh`: location inside → outside → P4 ERM ×3 → P4 Seg ×3; pauses while the ISNet flag
+  exists. Restart: `nohup scripts/replication/short_queue.sh > /workspace/logs/short_queue.log 2>&1 &`.
+- Never edit a running bash script (bash reads it as it executes); stop it by PID, edit, restart.
+
 ## Queued next (run order, A12–A14; long jobs one at a time, short jobs beside them only if a measured pairing helps)
 1. P2 Vanilla → epoch 300.
 2. P2 RR-ClArC: their `run_preprocessing` (activations) on our Vanilla, then their mitigation grid (λ ∈ {10, 50} × last 3
