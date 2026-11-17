@@ -448,3 +448,36 @@ If any is outside, P1 pauses for the author (the queue holds seeds 3232 and 3221
     (~2.5 min per training epoch).
 - **P2 priority.** After the P1 gate, while P2 trains, the P1 queue starts a run only when P2 has no more than one other job
   beside it (`queue_viviano.sh`). P3 runs follow the same rule and wait for that slot.
+
+## Queue, GPU-hours and run order (2026-11-17 09:10)
+
+**Pairing measurements** (scheduling rule 2):
+- ISNet beside P2: ISNet 37.0 min/epoch vs 14.7 alone (0.38), P2 72.8 vs 137 img/s alone (0.53); together 0.91 of one GPU,
+  so **ISNet runs alone**.
+- ISNet's last full epoch alone: 14.7 min, so a 48-epoch run takes ~11.8 h.
+- P2 alone: 137 img/s, ~2.8 min/epoch with its evaluation every 5 epochs.
+- P1 runs: ~5 h each beside one other job (seed-1234 runs).
+
+**Long jobs one at a time** (author, 2026-11-17). ISNet results cannot be scored before BIMCV completes, so P2 goes first:
+1. P2 Vanilla to epoch 300 (~10 h; checkpoint at epoch 100; nothing risky beside it before then);
+2. P2 RR-ClArC (activations + λ × layer grid, ~4 h, estimate);
+3. P3 ISNet chain alone: corner (resumes after epoch 2), inside (P3 design), inside 90/10 (~35 h).
+
+ISNet was stopped cleanly after its epoch-2 checkpoint; P2 was paused (SIGSTOP) for one solo ISNet epoch and resumed.
+
+**Short jobs beside the long ones only if a measurement shows a gain:** P1 kept runs (4), P1 location test (2), P4 timing,
+then P4 runs (7), and our arms' feature passes. Otherwise they run after the long chain.
+
+| item | GPU-hours left |
+|---|---|
+| P2 Vanilla + RR-ClArC | ~14 |
+| P3 ISNet × 3 | ~35 |
+| P1 kept + location test | ~30 |
+| P4 (6 runs + location test; not yet timed) | ~27 |
+| our arms (feature passes) | ~5 |
+| **total** | **~111** |
+
+- Calendar: ~2.5 days if every short job pairs at a measured gain; ~4.5 days if none does.
+- GPU wall-clock used so far: ~22 h, including 8 superseded P1 runs (A7) and the crashed P2 run.
+- BIMCV: 209 of 531 archives; ~30 h left; it gates only P3 scoring.
+- Blockers: none.
