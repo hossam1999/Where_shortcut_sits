@@ -457,3 +457,16 @@ reference.
   - verdicts require both to pass.
 - **Reporting:** the paper, the notebook value and ours are reported side by side for both methods. For comparison with
   the notebook, our split-1 value is also shown on its own, since the notebook scores split 1 only.
+
+**A14 (2026-11-17; only the experiments the claims need; author's decision; before any affected result).** Results seen when
+this was recorded: P1 seed-1234 gate values and the P1 seed-1234 arms (cardiomegaly a/b/c; RSNA arm b 0.767). None
+changes under A14.
+1. **P1:** the remaining head-to-head seeds are cancelled (cardiomegaly Standard 3232/3221, RSNA ActDiff 3232/3221; none had
+   started). Both P1 head-to-heads are **secondary** (global shortcut) and are reported as **"preliminary, 1 seed, no
+   verdict"**. A3 item 3's 3-seed P1 verdict and section 2's comparisons 1–6 are therefore not computed; the Holm family
+   of section 2 shrinks to P2 (3) + P3 (1) = 4 comparisons. **The P1 location test is kept** (Standard with the tube inside /
+   outside; Masked scored from it, A5); it is P1's primary result.
+2. **P4:** the P4 location test is cancelled; Saab's own overlap analysis (section 5.1) and phase 5 cover it.
+3. **Phase 5:** one cohort, thyroid; Trap A, plus Trap B as the sanity check; 3 folds; arms = each paper's best method +
+   ours. Other cohorts only if time remains after everything else, decided later as a new amendment.
+4. Everything else is unchanged.
