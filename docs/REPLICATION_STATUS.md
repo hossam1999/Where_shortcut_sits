@@ -499,3 +499,13 @@ then P4 runs (7), and our arms' feature passes. Otherwise they run after the lon
   helps (ISNet + P2 did not: 0.91). Expect **~2.2 days if they pair, ~3.5 days if they run after**.
 - Next measurements: P4 Segmentation-ERM memory/speed at batch 16 and P1 ResNet-18 beside P2. Both start after P2's
   epoch-100 checkpoint.
+
+## Pairing measurement: P1 location run + P2 Vanilla (2026-11-17 13:30)
+- P1 location run (cardiomegaly Standard, tube inside): 108 s/epoch alone (P2 paused 2 epochs with SIGSTOP; P2 has its
+  epoch-100 checkpoint), 190 s/epoch paired, so 0.57 of its solo speed.
+- P2: 153 img/s alone, 133 paired, so 0.87.
+- **Total 1.44 > 1: pairing kept.** Short jobs run one at a time beside the long job (`scripts/replication/short_queue.sh`:
+  location inside → outside → P4 Binary-ERM splits 1–3 → P4 Segmentation-ERM splits 1–3 with `--grad_ckpt`), never beside
+  ISNet.
+- P1 location test: placements feasible inside 99.92% (9 images keep their best placement) and outside 100%; ROI (lungs ∪
+  heart) covers 36.2% of the image; tube rendering checked visually.
