@@ -60,7 +60,8 @@ def main():
             if m not in set(s.method):
                 continue
             r = {"position": pos, "method": m,
-                 "tube_pixels_kept_by_their_circle": float(circ.loc[pos, "mean share of tube pixels inside their circle"])}
+                 "tube_pixels_kept_by_their_circle": float(circ.loc[pos, "mean share of tube pixels inside their circle"]),
+                 "tube_pixels_kept_by_lungs_heart": float(circ.loc[pos, "mean share of tube pixels inside lungs+heart"])}
             for t in ("corr", "rev", "clean"):
                 q = s[(s.method == m) & (s.test_set == t)]
                 r[f"{t}_auroc"] = float(_metric("auroc", q.label.to_numpy(), q.score.to_numpy())[1])
@@ -83,14 +84,15 @@ def main():
     md = ["# P1 location test (A15/A16): tube inside vs outside the lungs + heart ROI, P1's pipeline, seed 1234", "",
           "One seed: paired image-only bootstrap (10,000 replicates); training-seed variance is not included (A3). "
           "Crossover = gain over Standard outside − gain inside (reversed test). 'Kept by circle' = mean share of tube pixels "
-          "inside P1's circle mask (what Masked keeps).", "",
-          "| position | method | kept by circle | correlated | reversed | clean | reversed gain vs Standard | Δ vs Masked (reversed) [95% CI] | crossover [95% CI] |",
-          "|---|---|---|---|---|---|---|---|---|"]
+          "inside P1's circle mask (what Masked and arm a keep); 'kept by lungs + heart' = the same for the PSPNet lungs ∪ heart mask "
+          "(what arms b and c keep).", "",
+          "| position | method | kept by circle | kept by lungs + heart | correlated | reversed | clean | reversed gain vs Standard | Δ vs Masked (reversed) [95% CI] | crossover [95% CI] |",
+          "|---|---|---|---|---|---|---|---|---|---|"]
     f = lambda v: "—" if v is None or (isinstance(v, float) and np.isnan(v)) else f"{v:+.3f}" if isinstance(v, float) else str(v)
     for _, r in t.iterrows():
         dv = f"{r.get('rev_delta_vs_masked', np.nan):+.3f} {r.get('rev_delta_vs_masked_ci', '')}" if isinstance(r.get("rev_delta_vs_masked_ci"), str) else "—"
         cx = f"{r['crossover']:+.3f} {r['crossover_ci']}" if "crossover_ci" in r and isinstance(r.get("crossover_ci"), str) else "—"
-        md.append(f"| {r.position} | {NAMES[r.method]} | {r.tube_pixels_kept_by_their_circle:.3f} | {r.corr_auroc:.3f} | {r.rev_auroc:.3f} | "
+        md.append(f"| {r.position} | {NAMES[r.method]} | {r.tube_pixels_kept_by_their_circle:.3f} | {r.tube_pixels_kept_by_lungs_heart:.3f} | {r.corr_auroc:.3f} | {r.rev_auroc:.3f} | "
                   f"{r.clean_auroc:.3f} | {f(r.rev_gain_over_standard)} | {dv} | {cx} |")
     (rd / "location_1234.md").write_text("\n".join(md) + "\n")
     print("\n".join(md))
