@@ -43,6 +43,9 @@ def p1_location():
         pos = Path(f).parent.name
         d = pd.read_csv(f)
         write("viviano", f"location_{pos}_1234", d[d.test_set.isin(["corr", "rev", "clean"])])   # test sets only
+    for f in sorted(glob.glob(f"{D}/replication/viviano/location/*/arms/preds_*.csv.gz")):   # our arms (A16), test sets only
+        pos, arm = Path(f).parents[1].name, Path(f).name[6:-7]
+        write("viviano", f"location_{pos}_{arm}_1234", pd.read_csv(f))
 
 
 def p2():
