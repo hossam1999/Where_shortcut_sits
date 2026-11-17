@@ -50,6 +50,25 @@ already done).
 - P2: the Vanilla network (RR-ClArC's base);
 - P3: no network of theirs is needed (DINOv2 + mask_cmc, U-MtE).
 
+**Arm d: trained small encoder + mask_cmc (added 2026-11-18, amendment A20; registered before any arm-d result).**
+- **Why:** every competitor trains its whole network on the task data; arm b keeps DINOv2 frozen and loses clean
+  accuracy where the task needs task-specific features (P2: clean 0.685 vs Vanilla 0.839). Arm d answers whether the
+  constraint still works when our encoder is trained like theirs. Disclosed as motivated by arm b's P2 clean result.
+- **Encoder: ResNet-18, ImageNet weights (torchvision), 11.7 M parameters, 1.8 GFLOPs at 224 px.** It is the simplest
+  and lowest-compute network among the competitors (P1's own architecture; P2 ResNet-50 25.6 M / 4.1 GFLOPs, P3
+  DenseNet-121 8.0 M / 2.9 GFLOPs, P4 SE-ResNeXt50 U-Net > 25 M). The smallest DINOv2 (ViT-S/14, 22 M) is larger than
+  ResNet-18 and DenseNet-121, so it is not used.
+- **Training (one fixed recipe for every paper, nothing tuned on a test):** ROI-masked inputs (the same ROIs as arm b),
+  the paper's resolution and label task, standard ERM (cross-entropy, or BCE where the paper is multi-label), the
+  paper's own augmentation, Adam lr 1e-4, batch 64, up to 50 epochs, early stopping on the paper's validation metric
+  (patience 5), seed 1234, mixed precision. Then penultimate features → mask_cmc (same artifact labels and mode
+  selection as arm a) → linear head refit on the training set, on CPU.
+- **Where:** each head-to-head on the paper's own test where mask_cmc applies (P1 cardiomegaly and RSNA, P2, P3 90/10
+  inside variant, P4 split 1), the P1 location test (tube inside and outside), and phase 5 (Trap A, 4 cohorts, 3 folds;
+  Trap B thyroid). Same success rules as the other arms; 1 seed, image-only bootstrap, said in every table.
+- **Priority:** after the registered runs on the critical path; ResNet-18 jobs are the "small job" that may pair with
+  ISNet (rule 3), only if measured throughput rises.
+
 **Phase 5, lean:**
 - their best method vs ours, **Trap A only** (where the claim is made);
 - the 4 registered cohorts, 3 folds;
