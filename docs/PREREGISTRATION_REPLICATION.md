@@ -494,3 +494,18 @@ P1's own pipeline (their code, Standard config, seed 1234):
   arm c (U-MtE, ROI = lungs ∪ heart).
 - **Metric:** reversed-test AUROC (primary), each method's gain over Standard, the crossover (gain outside − gain inside) and
   clean AUROC (section 5). One seed: image-only bootstrap (A3).
+
+**A16 (2026-11-17, before any arm result of the P1 location test; author's decision).** Results seen when this was recorded:
+Standard and Masked, inside position (reversed AUROC 0.514 / 0.469; correlated 0.943 / 0.935; clean 0.866 / 0.837). None of
+our arms has been computed for the location test.
+- **All three of our arms** run at both positions of the P1 location test (A15):
+  - a: mask_cmc on their trained Standard network's features of circle-masked images, every split;
+  - b: DINOv2 ViT-B/14 @ 518 on lungs ∪ heart-masked images + mask_cmc (added back; A2/A12 had dropped it from phase 4);
+  - c: U-MtE (ROI = lungs ∪ heart), label-free.
+- For mask_cmc (arms a and b), the artifact label at training time is the pasted-tube indicator, known for every image.
+  Mode and C are chosen on P1's validation split (reversed presence, A15) by AUROC.
+- **Table:** reversed, correlated and clean AUROC per method and position; each method's gain over Standard; the crossover
+  (gain outside − gain inside) with a 95% CI; and the paired difference vs Masked with a 95% CI. The bootstrap resamples
+  test images only (one seed, A3); the test images are the same at both positions, so the crossover CI shares the image
+  weights across positions. A column gives the share of tube pixels kept by P1's circle (inside 0.986, outside 0.000;
+  `results/replication/viviano/location_tube_vs_circle.csv`).
