@@ -431,3 +431,20 @@ If any is outside, P1 pauses for the author (the queue holds seeds 3232 and 3221
   done). TorchXRayVision PSPNet weights match the SHA-256 in `docs/ENVIRONMENT.md` (`019b167e…cadc044fc`).
 - **P3 trainer smoke tests:** DenseNet and ISNet (corner / inside, all / 90-10) run end to end. The 90/10 rule marks 89.5–90.3%
   per class. Inside placement reaches ≥ 0.95 overlap for 99.94% of images; the rest are reported per image.
+
+## Engineering notes (2026-11-17)
+
+- **P2 Vanilla crash and restart.** The first P2 Vanilla run (seed 0, started 2026-11-16 19:22) **crashed at 22:49 with
+  CUDA out-of-memory at epoch 34**. Our ad-hoc P3 cache build and smoke tests took GPU memory beside three training jobs.
+  - The status given at 03:40 ("P2 at epoch 34, ~15 min/epoch") was wrong: it read the last line of the crashed run's log.
+  - The run (no checkpoint yet; their trainer stores every 100 epochs) was restarted from scratch on 2026-11-17 03:44 with the
+    same config and seed. The crashed run is kept in `runs/vanilla_resnet50d_seed0_crashed_oom_2026-11-16/` and not used.
+  - From now on no GPU job is started outside the memory-aware launchers.
+- **P2 speed profile (not loader-bound; no caching needed).**
+  - P2's DataLoader alone (their dataset, transforms and augmentation; 8 workers; batch 12; no model) delivers **343 img/s**.
+  - Training ran at 5.7–6.4 min/epoch (~55–60 img/s) beside two P1 jobs, with GPU utilisation 100% and CPU load ~7 of 96 cores.
+  - So P2 is GPU-bound because of sharing, not loader-bound. The author's suggested preprocessing cache was **not**
+    implemented, since it would not change the speed. After the restart, with less crowding, P2 trains at ~134 img/s
+    (~2.5 min per training epoch).
+- **P2 priority.** After the P1 gate, while P2 trains, the P1 queue starts a run only when P2 has no more than one other job
+  beside it (`queue_viviano.sh`). P3 runs follow the same rule and wait for that slot.

@@ -8,6 +8,8 @@ SEEDS="1234 3232 3221"   # amendment A3: first three of P1's seed list
 running(){  # training processes whose parent is not itself a training process (DataLoader workers excluded)
   ps -eo pid,ppid,args | awk '/activmask\/main.py train/ && !/awk/ {p[$1]=$2} END {n=0; for (i in p) if (!(p[i] in p)) n++; print n}'
 }
+p2_running(){ ps -eo args | grep -q "[m]odel_training.start_training"; }
+gpu_jobs(){ nvidia-smi --query-compute-apps=pid --format=csv,noheader | wc -l; }
 free_mib(){ nvidia-smi --query-gpu=memory.free --format=csv,noheader,nounits | head -1; }
 jobs_list(){
   for s in $SEEDS; do for t in rsna xray; do for m in resnet resnet_maskall resnet_actdiff; do echo "$t $m $s"; done; done; done   # A4: best method + baseline only
@@ -21,7 +23,9 @@ jobs_list | while read t m s; do
     WTSS_DATA=${WTSS_DATA:-/workspace/data} /workspace/venv-wtss/bin/python $Q/p1_gate.py > $RUNS/../gate.txt 2>&1; sleep 300
   done
   need=$([ "$m" = resnet_actdiff ] && echo 10000 || echo 6200)   # MiB measured per method (+ margin)
-  while [ $(running) -ge $N ] || [ $(free_mib) -lt $need ]; do sleep 60; done
+  # P2 priority (author, 2026-11-17): after the gate, while P2 trains, P2 has at most one other job beside it
+  cap=$N; [ "$s" != 1234 ] && p2_running && cap=1
+  while [ $(running) -ge $cap ] || [ $(gpu_jobs) -ge $((cap + 1)) ] || [ $(free_mib) -lt $need ]; do sleep 60; done
   echo "$(date +%F_%T) start $t $m $s"; nohup $Q/run_viviano.sh $t $m $s >/dev/null 2>&1 &
   sleep 120
 done
