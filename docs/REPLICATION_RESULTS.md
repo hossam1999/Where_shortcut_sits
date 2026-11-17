@@ -43,7 +43,25 @@ In P1's RSNA pneumonia task, "Masked" multiplies each image by its pneumonia bou
 *pending (gate after seed 1234; A8)*
 
 ### Head-to-head on P1's original tests (secondary: global shortcut (hospital / AP-PA view), not a localized artifact)
-*preliminary seed-1234 tables: `results/replication/viviano/preliminary_<task>_1234.md`; 3-seed verdicts pending*
+**Preliminary, 1 seed (1234), no verdict (A14).** Paired image-only bootstrap; training-seed variance not included. Full tables:
+`results/replication/viviano/preliminary_xray_1234.md`, `preliminary_rsna_1234.md`; per-image test scores in
+`results/replication/viviano/scores/`.
+
+| task (target) | target AUROC | Standard | arm a | arm b | arm c (U-MtE) |
+|---|---|---|---|---|---|
+| cardiomegaly (Masked, A5) | 0.829 (paper 0.77 ± 0.09) | 0.627 (paper 0.70) | 0.866, Δ +0.037 [+0.031, +0.043] | 0.869, Δ +0.040 [+0.026, +0.054] | 0.593, Δ −0.236 [−0.256, −0.216] |
+| RSNA pneumonia (ActDiff, A11) | 0.708 (paper 0.68 ± 0.05) | 0.186 (paper 0.20) | 0.610, Δ −0.099 [−0.132, −0.065] | 0.767, Δ +0.059 [+0.021, +0.098] | 0.378, Δ −0.330 [−0.375, −0.285] |
+
+Notes:
+- **Arm a on RSNA** (`a_mask_cmc_their_net`) is the registered arm a: mask_cmc on the ActDiff network's features of
+  PSPNet-lung-masked images (A11 ROI, A12 network). Verified: the ActDiff network's final layer reproduces the saved logits of
+  the feature pass to 5e-7, the Masked network's does not (1.7). The table's *diagnostic* row (`arma_lungs`) is the ActDiff
+  network's own logits on those lung-masked images (0.689): lung masking alone barely changes ActDiff; it is not a method.
+- **RSNA Masked** (0.759 in their definition, 0.840 as logit-difference AUROC) is label-dependent at test time (A11). The two
+  definitions disagree because every negative gets the identical score, and ties are handled differently.
+- **Clean (within-site / within-view) AUROC:** RSNA ActDiff 0.471 (below chance): its reversed-test AUROC comes mostly from the
+  view, not the disease. Arm b keeps 0.763.
+- U-MtE is designed for localized overlays inside the ROI and does not remove a global shortcut; it fails on both P1 tasks.
 
 ### Location test (primary for P1; phase 4)
 *pending*

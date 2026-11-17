@@ -1,8 +1,10 @@
 # P1 cardiomegaly (site shortcut), seed 1234: preliminary head-to-head
 
-**Preliminary, 1 of 3 seeds, no verdict.** Paired image-only bootstrap (10,000 replicates); training-seed variance is not included. The verdict is the registered 3-seed rule.
+**Preliminary, 1 seed, no verdict** (A14: P1's head-to-heads are secondary — global shortcut — and stay at one seed). Paired image-only bootstrap (10,000 replicates); training-seed variance is not included.
 
 Target: **Masked** (A5: Standard model scored with test masking)
+
+Rows: their methods; a = mask_cmc on their Standard/Masked network's circle-masked features (every split); b = DINOv2 + mask_cmc; c = U-MtE.
 
 | method | AUROC (their definition) | AUROC | clean: within-site AUROC | paper | Δ vs Masked [95% CI] | Δ vs Standard [95% CI] |
 |---|---|---|---|---|---|---|

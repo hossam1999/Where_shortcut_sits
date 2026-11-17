@@ -1,7 +1,6 @@
 """Preliminary per-seed P1 head-to-head (their methods vs our arms a, b, c) on one seed's test images.
 
-Label (author, 2026-11-17): "preliminary, 1 of 3 seeds, no verdict". The verdict stays on the registered 3-seed mean
-(section 2, A3). Paired image-only bootstrap (10,000 replicates; training-seed variance NOT included).
+Label (A14): "preliminary, 1 seed, no verdict"; P1 head-to-heads are secondary and are not taken to 3 seeds. Paired image-only bootstrap (10,000 replicates; training-seed variance NOT included).
 Targets: cardiomegaly Masked (A5: the Standard model scored with test masking); RSNA ActDiff (A11: their RSNA Masked test
 input is label-dependent, so it is shown but flagged, never the target).
 Their AUROC is reported in their own definition (roc_auc_score on one-hot targets vs both logits, as in their training
@@ -40,7 +39,8 @@ def main():
     t, s = args.task, args.seed
     P = Path(f"{D}/replication/viviano/preds"); A = Path(f"{D}/replication/viviano/arms/{t}_{s}")
     rows, scores = [], {}
-    for name, f in (("Standard", f"{t}_standard_{s}"), ("Masked", f"{t}_masked_{s}"), ("ActDiff", f"{t}_actdiff_{s}")):
+    for name, f in (("Standard", f"{t}_standard_{s}"), ("Masked", f"{t}_masked_{s}"), ("ActDiff", f"{t}_actdiff_{s}"),
+                    ("ActDiff net on lung-masked images (diagnostic, not a method)", f"{t}_arma_lungs_{s}")):
         p = P / f"{f}.csv.gz"
         if not p.exists():
             continue
@@ -49,7 +49,7 @@ def main():
         oh = OneHotEncoder(sparse_output=False).fit_transform(d.y.to_numpy().reshape(-1, 1))
         rows.append({"method": name, "theirs": True, "auroc_their_def": roc_auc_score(oh, d[["logit0", "logit1"]].to_numpy()),
                      "auroc": roc_auc_score(d.y, d.score), "clean_within_site": within_site(d, "score"),
-                     "paper": PAPER[t][name]})
+                     "paper": PAPER[t].get(name, "")})
         scores[name] = d.set_index("image_id")[["y", "site", "score"]]
     for arm in ("a_mask_cmc_their_net", "b_dino518_mask_cmc", "c_umte"):
         p = A / f"preds_{arm}.csv.gz"
@@ -75,10 +75,15 @@ def main():
     out.to_csv(rd / f"preliminary_{t}_{s}.csv", index=False)
     task = {"xray": "cardiomegaly (site shortcut)", "rsna": "RSNA pneumonia (view shortcut)"}[t]
     md = [f"# P1 {task}, seed {s}: preliminary head-to-head",
-          "", "**Preliminary, 1 of 3 seeds, no verdict.** Paired image-only bootstrap (10,000 replicates); training-seed "
-          "variance is not included. The verdict is the registered 3-seed rule.", "",
+          "", "**Preliminary, 1 seed, no verdict** (A14: P1's head-to-heads are secondary — global shortcut — and stay at one "
+          "seed). Paired image-only bootstrap (10,000 replicates); training-seed variance is not included.", "",
           f"Target: **{target}**" + (" (A11: their RSNA Masked test input is label-dependent; shown, flagged, not a target)"
                                       if t == "rsna" else " (A5: Standard model scored with test masking)"), "",
+          ("Rows: their methods; `a_mask_cmc_their_net` = **registered arm a** (A11/A12: mask_cmc on the ActDiff network's "
+           "features of PSPNet-lung-masked images, every split); the 'diagnostic' row is the ActDiff network's own logits on "
+           "the same lung-masked images (the feature pass that feeds arm a), not a method; b = DINOv2 + mask_cmc; "
+           "c = U-MtE." if t == "rsna" else "Rows: their methods; a = mask_cmc on their Standard/Masked network's circle-masked "
+           "features (every split); b = DINOv2 + mask_cmc; c = U-MtE."), "",
           "| method | AUROC (their definition) | AUROC | clean: within-site AUROC | paper | Δ vs " + target + " [95% CI] | Δ vs Standard [95% CI] |",
           "|---|---|---|---|---|---|---|"]
     for r in rows:
