@@ -564,3 +564,22 @@ Rule 4 (longest chains first) overrides rule 2 (pair when total throughput rises
 - 06:19:33: P4 Seg-ERM split 1 stopped (SIGTERM, by PID) right after its epoch-66 checkpoint (`checkpoint.pt`, epoch 66
   verified). Two orphaned DataLoader workers (ppid 1) still held its 7.3 GB; killed by verified PID at 06:20, GPU freed.
   It resumes from epoch 67 when `P4_HOLD` is removed.
+
+### 2026-11-18 08:40 UTC — P2 gate: RR-ClArC NOT reproduced (0.338 vs 0.76); candidate cause found; waiting for the author
+Selection on validation (section 3) chose λ = 10, last_conv (val mean 0.597). Test, scored once (1 seed, image-only CIs):
+RR-ClArC clean 0.840 [0.826, 0.854], biased **0.338 [0.320, 0.356]**; Vanilla clean 0.839, biased 0.311. Paper: Vanilla
+0.87 / 0.28, RR-ClArC 0.86 / **0.76**. |0.338 − 0.76| > 0.03 → **not reproduced**. Our Vanilla matches the paper within
+~0.03 on both tests, so the biased test is built as theirs; the gap is in the correction step.
+Diagnosis (no rerun, nothing tuned):
+- Their `utils/training_utils.py:13-16` (`get_optimizer`) loads `optimizer_state_dict` from `ckpt_path`. Our Vanilla
+  checkpoint (their trainer, `model_training/train_model.py:21,96`) stores Adam with `lr = 1e-05` (their config: lr 0.001,
+  milestones 150, 250, 300 epochs). The loaded state overrides the configured `lr: 0.001` of the RR-ClArC configs, and
+  their MultiStepLR keeps it, so **all 6 fine-tunes ran at lr 1e-5** (100× below the configured rate).
+- Consistent with this: the logged RR-ClArC term (`train_auxloss`) does not fall over 10 epochs and is identical step for
+  step between λ = 10 and λ = 50 (Adam is invariant to the loss scale, so λ barely changes the path at this rate).
+- Their configs point to `…/resnet50d_p_artifact0.2_p_backdoor0_adam_lr0.001_last.pth`, a renamed copy; their code only
+  writes checkpoints with optimizer state, so whether the paper's file carried it (and the paper's fine-tune ran at 1e-5
+  or 1e-3) cannot be determined from the repository.
+- Their `Freeze` callback is not used by `start_model_correction.py` (all parameters train).
+Results: `results/replication/pahde/p2_reproduction.{md,csv}`, `rrclarc_selection.csv`; per-image scores in
+`results/replication/pahde/scores/`.
