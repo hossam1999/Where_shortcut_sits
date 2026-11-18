@@ -1,0 +1,12 @@
+split,region,n,share,median_px_to_nearest_top_or_bottom_edge
+test,above ROI,1059,0.382,9.0
+test,below ROI,1316,0.4747,10.0
+test,beside ROI,396,0.1429,21.0
+test,empty ROI,1,0.0004,8.0
+train,above ROI,2130,0.3842,9.0
+train,below ROI,2603,0.4695,10.0
+train,beside ROI,809,0.1459,22.0
+train,empty ROI,2,0.0004,7.5
+valid,above ROI,1042,0.3759,9.0
+valid,below ROI,1318,0.4755,11.0
+valid,beside ROI,412,0.1486,21.0

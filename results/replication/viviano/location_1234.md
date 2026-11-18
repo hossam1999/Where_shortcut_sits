@@ -1,6 +1,8 @@
-# P1 location test (A15/A16): tube inside vs outside the lungs + heart ROI, P1's pipeline, seed 1234
+# P1 location test (A15/A16): marker inside vs outside the lungs + heart ROI, P1's pipeline, seed 1234
 
-One seed: paired image-only bootstrap (10,000 replicates); training-seed variance is not included (A3). Crossover = gain over Standard outside − gain inside (reversed test). 'Kept by circle' = mean share of tube pixels inside P1's circle mask (what Masked and arm a keep); 'kept by lungs + heart' = the same for the PSPNet lungs ∪ heart mask (what arms b and c keep).
+Artifact: a synthetic bar-shaped radio-opaque marker (43 x 6 px at 224 px; straight, bright, with a central stripe), not a realistic tube. Outside placements lie near the image edge: below the lungs + heart near the bottom edge (47.5% of test images), above the lungs near the top edge (38.2%) or beside the ROI (14.3%). Realism is covered elsewhere in the thesis (real device traps on NIH / RANZCR; transplant of real artifacts).
+
+One seed: paired image-only bootstrap (10,000 replicates); training-seed variance is not included (A3). Crossover = gain over Standard outside − gain inside (reversed test). 'Kept by circle' = mean share of marker pixels inside P1's circle mask (what Masked and arm a keep); 'kept by lungs + heart' = the same for the PSPNet lungs ∪ heart mask (what arms b and c keep).
 
 | position | method | kept by circle | kept by lungs + heart | correlated | reversed | clean | reversed gain vs Standard [95% CI] | Δ vs Masked (reversed) [95% CI] | crossover [95% CI] |
 |---|---|---|---|---|---|---|---|---|---|

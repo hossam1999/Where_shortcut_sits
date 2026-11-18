@@ -65,13 +65,17 @@ Notes:
 
 ### Location test (primary for P1; phase 4; A15, A16; post-hoc sensitivity A17)
 **Design.** P1's own pipeline (their code, Standard config, seed 1234) on P1's balanced cardiomegaly split. The artifact
-is **a small synthetic tube-like marker (43 x 6 px at 224 px)**: a straight bright band with a brighter stripe, drawn on
-the 224-px image after their intensity normalisation and before their resize to 128 px. It is not a realistic tube: real
-chest drains are long, thin, curved and faint (the 9 examples sent to the author, 2026-11-18, show both; not committed,
-patient pixels). The marker sits either inside the lungs ∪ heart ROI (PSPNet mask; 99.95% of its pixels inside; 98.6%
-inside P1's circle) or outside both the ROI and P1's circle (0% inside either). Presence: 90% of positives / 10% of
-negatives in training; validation reversed (P1's design); tests on P1's test split: correlated (90/10), reversed (10/90),
-clean (none). Masked = the same Standard model scored with P1's circle mask (A5).
+is **a synthetic bar-shaped radio-opaque marker (43 x 6 px at 224 px; straight, bright, with a central stripe), not a
+realistic tube**. It is drawn on the 224-px image after their intensity normalisation and before their resize to 128 px.
+Real chest drains look different (long, thin, curved, faint; 9 examples, marker vs NEATX drains, were sent to the author
+on 2026-11-18 and are not committed because they contain patient pixels); realism is covered elsewhere in the thesis
+(real device traps on NIH / RANZCR; transplant of real artifacts). The marker sits either inside the lungs ∪ heart ROI
+(PSPNet mask; 99.95% of its pixels inside; 98.6% inside P1's circle) or outside both the ROI and P1's circle (0% inside
+either). The outside placements lie near the image edge: below the lungs + heart near the bottom edge in 47.5% of test
+images, above the lungs near the top edge in 38.2% (both: median 9–10 px from that edge at 224 px), beside the ROI in
+14.3% (`results/replication/viviano/location_outside_regions.csv`).
+Presence: 90% of positives / 10% of negatives in training; validation reversed (P1's design); tests on P1's test split:
+correlated (90/10), reversed (10/90), clean (none). Masked = the same Standard model scored with P1's circle mask (A5).
 
 **Registered result (primary).** One seed: paired image-only bootstrap, 10,000 replicates; training-seed variance is not
 included (A3). Gain and Δ are on the reversed test; crossover = gain outside − gain inside.

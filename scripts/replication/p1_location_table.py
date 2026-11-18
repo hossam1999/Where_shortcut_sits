@@ -21,6 +21,10 @@ D = os.environ.get("WTSS_DATA", "/workspace/data")
 L = Path(f"{D}/replication/viviano/location")
 ROOT = Path(__file__).resolve().parents[2]
 ARMS = ("a_mask_cmc_their_net", "b_dino518_mask_cmc", "c_umte")
+ARTIFACT = ("Artifact: a synthetic bar-shaped radio-opaque marker (43 x 6 px at 224 px; straight, bright, with a central "
+            "stripe), not a realistic tube. Outside placements lie near the image edge: below the lungs + heart near the "
+            "bottom edge (47.5% of test images), above the lungs near the top edge (38.2%) or beside the ROI (14.3%). "
+            "Realism is covered elsewhere in the thesis (real device traps on NIH / RANZCR; transplant of real artifacts).")
 NAMES = {"standard": "Standard (theirs)", "masked": "Masked (theirs, A5)", "a_mask_cmc_their_net": "a: mask_cmc on their net",
          "b_dino518_mask_cmc": "b: DINOv2 + mask_cmc", "c_umte": "c: U-MtE"}
 
@@ -94,15 +98,15 @@ def main():
         t.insert(0, "analysis", "POST HOC (A17): their epoch-100 models; arms b, c reused")
     stem = "location_1234_posthoc_last" if sfx else "location_1234"
     rd = ROOT / "results/replication/viviano"; t.to_csv(rd / f"{stem}.csv", index=False)
-    md = ["# P1 location test (A15/A16): tube inside vs outside the lungs + heart ROI, P1's pipeline, seed 1234", ""] if not sfx else [
+    md = ["# P1 location test (A15/A16): marker inside vs outside the lungs + heart ROI, P1's pipeline, seed 1234", ""] if not sfx else [
           "# POST HOC sensitivity analysis (A17) — P1 location test on their epoch-100 models (`last_model_1234.pth.tar`)", "",
           "**Every number in this table is POST HOC** (decided after the registered table was seen). The registered table "
           "(`location_1234.md`, their selection rule: epoch 11 inside, epoch 8 outside) is the primary result; this one is "
           "descriptive only, with no verdict. Standard, Masked and arm a use their epoch-100 network at both positions; arms b "
           "and c do not use their network and are the registered predictions, reused unchanged.", ""]
-    md += [
+    md += [ARTIFACT, "",
           "One seed: paired image-only bootstrap (10,000 replicates); training-seed variance is not included (A3). "
-          "Crossover = gain over Standard outside − gain inside (reversed test). 'Kept by circle' = mean share of tube pixels "
+          "Crossover = gain over Standard outside − gain inside (reversed test). 'Kept by circle' = mean share of marker pixels "
           "inside P1's circle mask (what Masked and arm a keep); 'kept by lungs + heart' = the same for the PSPNet lungs ∪ heart mask "
           "(what arms b and c keep).", "",
           "| position | method | kept by circle | kept by lungs + heart | correlated | reversed | clean | reversed gain vs Standard [95% CI] | Δ vs Masked (reversed) [95% CI] | crossover [95% CI] |",
