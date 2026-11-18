@@ -118,7 +118,30 @@ whole marker.
   lies inside the region U-MtE keeps and U-MtE is label-free.
 
 **Post-hoc sensitivity analysis (A17; every number POST HOC, descriptive, no verdict).** Their epoch-100 models
-(`last_model_1234.pth.tar`) at both positions: Standard, Masked and arm a; arms b and c reused. *Pending.*
+(`last_model_1234.pth.tar`) at both positions: Standard, Masked and arm a; arms b and c reused unchanged (their gains
+change only because the Standard reference is now the epoch-100 model). Same test images and bootstrap as the registered
+table. Recorded as A17 before any epoch-100 model was scored.
+
+| position | method | kept by circle | kept by lungs + heart | correlated | reversed | clean | reversed gain vs Standard [95% CI] | Δ vs Masked (reversed) [95% CI] | crossover [95% CI] |
+|---|---|---|---|---|---|---|---|---|---|
+| POST HOC inside | Standard (theirs) | 0.986 | 1.000 | 0.966 | 0.468 | 0.897 | +0.000  | +0.042 [+0.025, +0.058] | — |
+| POST HOC inside | Masked (theirs, A5) | 0.986 | 1.000 | 0.929 | 0.426 | 0.799 | -0.042 [-0.058, -0.025] | — | +0.211 [+0.193, +0.229] |
+| POST HOC inside | a: mask_cmc on their net | 0.986 | 1.000 | 0.921 | 0.633 | 0.844 | +0.166 [+0.150, +0.182] | +0.208 [+0.198, +0.218] | +0.006 [-0.013, +0.025] |
+| POST HOC inside | b: DINOv2 + mask_cmc | 0.986 | 1.000 | 0.904 | 0.877 | 0.895 | +0.410 [+0.390, +0.429] | +0.452 [+0.430, +0.473] | -0.225 [-0.242, -0.207] |
+| POST HOC inside | c: U-MtE | 0.986 | 1.000 | 0.960 | 0.598 | 0.881 | +0.130 [+0.112, +0.149] | +0.172 [+0.149, +0.194] | +0.063 [+0.042, +0.085] |
+| POST HOC outside | Standard (theirs) | 0.000 | 0.000 | 0.962 | 0.714 | 0.910 | +0.000  | -0.169 [-0.183, -0.156] | — |
+| POST HOC outside | Masked (theirs, A5) | 0.000 | 0.000 | 0.884 | 0.884 | 0.884 | +0.169 [+0.156, +0.183] | — | +0.211 [+0.193, +0.229] |
+| POST HOC outside | a: mask_cmc on their net | 0.000 | 0.000 | 0.886 | 0.886 | 0.886 | +0.172 [+0.157, +0.187] | +0.003 [-0.006, +0.011] | +0.006 [-0.013, +0.025] |
+| POST HOC outside | b: DINOv2 + mask_cmc | 0.000 | 0.000 | 0.899 | 0.899 | 0.899 | +0.185 [+0.169, +0.201] | +0.016 [+0.004, +0.027] | -0.225 [-0.242, -0.207] |
+| POST HOC outside | c: U-MtE | 0.000 | 0.000 | 0.908 | 0.908 | 0.908 | +0.193 [+0.177, +0.210] | +0.024 [+0.013, +0.036] | +0.063 [+0.042, +0.085] |
+
+POST HOC reading (descriptive, no verdict): with both positions scored at the end of their training run, the outside
+Standard model has learned the marker (correlated 0.962 vs reversed 0.714), Masked removes it outside (gain +0.169
+[+0.156, +0.183]) and not inside (−0.042 [−0.058, −0.025]), and its crossover is +0.211 [+0.193, +0.229]: the location
+pattern E-L1 describes, which the registered selection rule had hidden. Arm a (mask_cmc on the epoch-100 network) gains
+inside (+0.166) and outside (+0.172), with no crossover (+0.006 [−0.013, +0.025]); its inside gain is half the
+registered one (+0.342), as the epoch-100 network's features carry the marker more strongly. Arms b and c gain at both
+positions. One seed; image-only bootstrap. Source: `results/replication/viviano/location_1234_posthoc_last.{md,csv}`.
 
 ## P2 — Pahde et al., Machine Learning 2025 (primary)
 *pending (Vanilla training, seed 0)*
