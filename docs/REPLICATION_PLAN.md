@@ -91,8 +91,10 @@ already done).
 5. **Checkpoint every few epochs and resume after a crash.** The P2 crash lost 34 epochs.
 6. **Reuse, do not recompute:** cached DINOv2 features, the thesis's saved predictions, their released weights where
    valid.
-7. **Phase 5 only:** mixed precision and the same early-stopping rule for every arm. Both are registered before the
-   first run and applied identically, so the comparison stays fair. Their environment keeps their exact recipes.
+7. **Phase 5 only:** fp32 (changed from mixed precision on 2026-11-18, author: LRP is precision-sensitive and the
+   networks are small) and the same early-stopping rule for every network (patience 5, at most 48 epochs). Both are
+   registered before the first run and applied identically, so the comparison stays fair. Their environment keeps their
+   exact recipes.
 
 ## The principle: beat each paper in two environments (decided 2026-11-17)
 Every target must be beaten twice. Both are required for a claim of "better than paper X".
@@ -116,8 +118,20 @@ Every target must be beaten twice. Both are required for a claim of "better than
   compared with us in their own environments only. RR-ClArC and ISNet are the two methods that could plausibly work when
   the artifact lies inside the ROI (RR-ClArC acts on a concept direction, not on location; ISNet is the strongest
   location-based method), so they carry phase 5; one cohort with real in-ROI markers keeps the cost bounded.
+- **Decisions (author, 2026-11-18):**
+  - RR-ClArC base: **ResNet-50 (their architecture, timm `resnet50d.a3_in1k`, as P2's paper states on p. 22)**, an ERM base
+    trained under the phase-5 rule below; their layer names unchanged. Reason: their chosen λ depends strongly on the
+    architecture (ResNet 5·10⁹, VGG 10¹⁰, ViT 10¹), so on ConvNeXt the grid {5·10⁸, 5·10⁹, 5·10¹⁰} would have no basis;
+    every competitor then runs on its published architecture (ISNet on DenseNet-121). The thesis's ConvNeXt-Tiny ERM
+    stays as the plain baseline row.
+  - **Epoch rule, identical for every phase-5 network** (RR-ClArC's ResNet-50 ERM base, ISNet, arm d's encoder): early
+    stopping on validation (patience 5), at most 48 epochs (P3's count), so ISNet is not under-trained. RR-ClArC's own
+    fine-tune keeps their 10 epochs. Our DINOv2 arms are unchanged (frozen encoder, CPU heads).
+  - **Precision: fp32 for every phase-5 network** (no mixed precision: LRP is precision-sensitive and the networks are
+    small).
+  - ERM checkpoints of the thesis do not exist (never saved); the thyroid cohort is rebuilt on CPU (approved).
 - About 18 networks plus the RR-ClArC λ fine-tunes. A timing test on Trap A fold 1 with all three methods comes first,
-  then `docs/PREREGISTRATION_PHASE5.md` for the author's approval.
+  then `docs/PREREGISTRATION_PHASE5.md` and the updated GPU-hour estimate for the author's approval.
 
 ### Phase 5 sketch (pre-register before any phase-5 run; start after P1–P3 phases 2–3)
 - **Where:** our end-to-end pipeline, `src/wtss/experiments/finetune.py`. It already runs `erm`, `mask`, `balanced`,

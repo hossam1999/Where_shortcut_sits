@@ -664,3 +664,9 @@ SEE-AI 36,968 / 1,262,400,157; capsule contamination masks 29,403 / 532,520,931.
   flags' mask_cmc directions are combined into one subspace (mode chosen on validation).
 - EfficientNet-B0 at 512 px does not fit beside ISNet; P4's arm-d run needs a GPU without ISNet (memory at batch 64 to be
   checked first).
+
+### 2026-11-18 — P2: pretrained-weights discrepancy between paper and code (recorded; P2 decision unchanged)
+P2's paper (arXiv 2501.13818, p. 22, A.6) names the ResNet50 starting weights `resnet50d.a3_in1k` (timm); their released
+code (`models/resnet_timm.py:28`) loads `resnet50d.a1_in1k`, and our P2 runs (their code) therefore started from a1. Under
+the paper-wins rule a3 is the stated recipe. P2 is closed as "not reproduced" by the author's decision (2026-11-18, no
+further tuning); this is reported next to the P2 result. Phase 5 uses a3 (author).
