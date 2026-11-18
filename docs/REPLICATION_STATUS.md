@@ -770,3 +770,14 @@ No P7 fine-tune had started (nothing stopped). Priority P4 > P6 > P7. P6 step 1:
 MaskMedPaint (ML4H 2024 findings; code `github.com/QixuanJin99/generative_validation` @ 40048f7) was examined and not taken:
 its ISIC dataset is read from a prebuilt folder on the authors' server that the repository does not build, and its training
 set is perfectly confounded (only melanoma-with-marking and benign-without-marking groups), so mask_cmc cannot be estimated.
+
+### 2026-11-18 ~14:00 UTC (machine 2's clock) — machine 2: P6 (EPVT / PLDG) step 1, items 1–2 done; runs queued after P4
+- Papers read; code pinned; data rebuilt (their Drive archive is 404): `third_party/epvt/SOURCE.md`. Bias-0 split-1 counts equal
+  the paper's domain counts, validation and test sizes; training 12,343 vs 12,360.
+- **Their trap-set results exist only as figures** (EPVT Fig. 3a, PLDG Fig. 8); digitised (±≈0.5): bias 1 ERM 65.3, EPVT 74.6;
+  bias 0 ERM 92.3, EPVT 91.0. No spread shown although the text says five seeds.
+- **PLDG skin path:** runnable from `train_latent_epvt.py` despite the commented README command (details in SOURCE.md).
+- Scheduling (author: P4 first; pair only if measured not to slow P4): P4 splits 1 + 2 already share the GPU (14.9 of 16.3 GB);
+  a ViT-B/16 at batch 130 in fp32 needs ≈ 12 GB, which does not fit beside one Seg-ERM run (≈ 8.5 GB free), so the 12 P6 runs
+  (ERM and EPVT × 6 bias levels, split 1, README hparams) start after P4 split 3 (`scripts/replication/m2_p6_queue.sh`; ETA
+  start ≈ 20:15 UTC). Nothing of ours is scored before the report and A30.

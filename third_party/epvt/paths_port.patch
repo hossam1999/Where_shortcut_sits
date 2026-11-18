@@ -1,0 +1,96 @@
+diff --git a/domainbed/scripts/test_epvt.py b/domainbed/scripts/test_epvt.py
+index 1094e9a..89c4787 100644
+--- a/domainbed/scripts/test_epvt.py
++++ b/domainbed/scripts/test_epvt.py
+@@ -48,7 +48,7 @@ if __name__ == '__main__':
+             torch.backends.cudnn.deterministic = True
+             torch.backends.cudnn.benchmark = False
+     set_random_seed(0)
+-    root = '/mount/neuron/Lamborghini/dir/pythonProject/MICCAI/'
++    root = os.environ['EPVT_ROOT']
+     BEST_MODEL_PATH=root+'code_submission/results/exp/'+args.model_name
+     # RUN TESTS
+     print("Performing tests. Loading model at {}".format(BEST_MODEL_PATH))
+diff --git a/domainbed/scripts/test_erm.py b/domainbed/scripts/test_erm.py
+index 3f1ff3e..38bb386 100644
+--- a/domainbed/scripts/test_erm.py
++++ b/domainbed/scripts/test_erm.py
+@@ -49,7 +49,7 @@ if __name__ == '__main__':
+ 
+ 
+     # set_random_seed(0)
+-    root = '/mount/neuron/Lamborghini/dir/pythonProject/MICCAI/'
++    root = os.environ['EPVT_ROOT']
+     BEST_MODEL_PATH=root+'code_submission/results/exp/'+args.model_name
+     # RUN TESTS
+     print("Performing tests. Loading model at {}".format(BEST_MODEL_PATH))
+@@ -191,9 +191,9 @@ if __name__ == '__main__':
+ 
+ 
+     eval_class = FastDataLoader
+-    eval_root = '/mount/neuron/Lamborghini/dir/pythonProject/MICCAI/prompt_derm/data_proc/'
+-    test_df = pd.read_csv(eval_root + 'test_bias_0_1.csv')
+-    imfolder = '/mount/neuron/Lamborghini/dir/pythonProject/CVPR/data/ISIC_2019_Training/'
++    eval_root = os.environ['EPVT_EVAL_ROOT']
++    test_df = pd.read_csv(eval_root + 'test_bias_'+os.environ.get('EPVT_SPLIT','0_1')+'.csv')
++    imfolder = os.environ['EPVT_IMFOLDER']
+     test = datasets.MelanomaDataset(df=test_df,
+                                     imfolder=imfolder)
+     test_loaders = eval_class(
+diff --git a/domainbed/scripts/train_epvt.py b/domainbed/scripts/train_epvt.py
+index bec4d02..3f16e5e 100644
+--- a/domainbed/scripts/train_epvt.py
++++ b/domainbed/scripts/train_epvt.py
+@@ -175,11 +175,11 @@ if __name__ == "__main__":
+     batch_size_eval = 128 if args.dataset != "DomainNet" else 128
+     eval_class = FastDataLoader if args.dataset != "DomainNet" else dataloader
+     ###eval dataset and test dataset
+-    eval_root ='/mount/neuron/Lamborghini/dir/pythonProject/MICCAI/prompt_derm/data_proc/'
+-    imfolder ='/mount/neuron/Lamborghini/dir/pythonProject/CVPR/data/ISIC_2019_Training/'
++    eval_root =os.environ['EPVT_EVAL_ROOT']
++    imfolder =os.environ['EPVT_IMFOLDER']
+ 
+-    test_df = pd.read_csv(eval_root +'test_bias_0_1.csv')
+-    val_df =pd.read_csv(eval_root +'val_bias_0_1.csv')
++    test_df = pd.read_csv(eval_root +'test_bias_'+os.environ.get('EPVT_SPLIT','0_1')+'.csv')
++    val_df =pd.read_csv(eval_root +'val_bias_'+os.environ.get('EPVT_SPLIT','0_1')+'.csv')
+     val = datasets.MelanomaDataset(df=val_df,
+                                    imfolder=imfolder)
+ 
+@@ -198,7 +198,7 @@ if __name__ == "__main__":
+         num_workers=num_workers_eval)
+ 
+     ### OOD dataloader
+-    root = '/mount/neuron/Lamborghini/dir/pythonProject/MICCAI/'
++    root = os.environ['EPVT_ROOT']
+     # val_transform = transforms.Compose([
+     #     transforms.Resize((224, 224)),
+     #     transforms.ToTensor(),
+@@ -218,7 +218,7 @@ if __name__ == "__main__":
+ 
+     if args.ood_vis:
+     ### OOD dataloader
+-        root = '/mount/neuron/Lamborghini/dir/pythonProject/MICCAI/'
++        root = os.environ['EPVT_ROOT']
+         # val_transform = transforms.Compose([
+         #     transforms.Resize((224, 224)),
+         #     transforms.ToTensor(),
+diff --git a/domainbed/scripts/train_erm.py b/domainbed/scripts/train_erm.py
+index efcf947..3ab4d4d 100644
+--- a/domainbed/scripts/train_erm.py
++++ b/domainbed/scripts/train_erm.py
+@@ -166,10 +166,10 @@ if __name__ == "__main__":
+     batch_size_eval = 128 if args.dataset != "DomainNet" else 128
+     eval_class = FastDataLoader if args.dataset != "DomainNet" else dataloader
+     ###eval dataset and test dataset
+-    eval_root ='/mount/neuron/Lamborghini/dir/pythonProject/MICCAI/prompt_derm/data_proc/'
+-    imfolder ='/mount/neuron/Lamborghini/dir/pythonProject/CVPR/data/ISIC_2019_Training/'
+-    test_df = pd.read_csv(eval_root +'test_bias_0_1.csv')
+-    val_df =pd.read_csv(eval_root +'val_bias_0_1.csv')
++    eval_root =os.environ['EPVT_EVAL_ROOT']
++    imfolder =os.environ['EPVT_IMFOLDER']
++    test_df = pd.read_csv(eval_root +'test_bias_'+os.environ.get('EPVT_SPLIT','0_1')+'.csv')
++    val_df =pd.read_csv(eval_root +'val_bias_'+os.environ.get('EPVT_SPLIT','0_1')+'.csv')
+     val = datasets.MelanomaDataset(df=val_df,
+                                    imfolder=imfolder)
+ 
