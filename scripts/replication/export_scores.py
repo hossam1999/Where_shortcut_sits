@@ -74,6 +74,12 @@ def p3():
         write("isnet", f"{run}_{test}", d.assign(method=run, test_set=test).rename(columns={"y": "label"}))
 
 
+def p3_arms():
+    f = Path(f"{D}/replication/isnet/arms_bc/preds_test.csv.gz")   # P3 90/10 inside, arms b and c (test rows only)
+    if f.exists():
+        write("isnet", "p3_9010_inside_arms_bc", pd.read_csv(f))
+
+
 def p4():
     for r in sorted(glob.glob(f"{D}/replication/saab/runs/*/preds_test.csv")):
         run = Path(r).parent.name
@@ -88,4 +94,4 @@ def armd():
 
 
 if __name__ == "__main__":
-    p1(); p1_location(); p2(); p3(); p4(); armd()
+    p1(); p1_location(); p2(); p3(); p3_arms(); p4(); armd()

@@ -1,0 +1,13 @@
+arm,mode,C,test,variant,n,macro_f1
+b_dino518_mask_cmc,pooled,0.1,biased,primary,4190,0.9958299752304947
+b_dino518_mask_cmc,pooled,0.1,biased,size-matched,3180,0.9972897841474708
+b_dino518_mask_cmc,pooled,0.1,standard,primary,4190,0.419186857049952
+b_dino518_mask_cmc,pooled,0.1,standard,size-matched,3180,0.41619410938794976
+b_dino518_mask_cmc,pooled,0.1,deceiving,primary,4190,0.03166960263331935
+b_dino518_mask_cmc,pooled,0.1,deceiving,size-matched,3180,0.02639916998266662
+c_umte,k = 64,1.0,biased,primary,4190,0.9654856962973004
+c_umte,k = 64,1.0,biased,size-matched,3180,0.9735224385883973
+c_umte,k = 64,1.0,standard,primary,4190,0.4126148350567109
+c_umte,k = 64,1.0,standard,size-matched,3180,0.41940927232464337
+c_umte,k = 64,1.0,deceiving,primary,4190,0.07285458720401493
+c_umte,k = 64,1.0,deceiving,size-matched,3180,0.06371634411179056
