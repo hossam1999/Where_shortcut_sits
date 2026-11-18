@@ -10,6 +10,7 @@ Writes results/replication/pahde/rrclarc_selection[_a18].csv and p2_reproduction
 import argparse
 import glob
 import os
+import re
 from pathlib import Path
 
 import numpy as np
@@ -46,7 +47,8 @@ for f in sorted(glob.glob(str(SC / "resnet50d_RRClarc_*.csv.gz"))):
     d = pd.read_csv(f, usecols=["split", "test_set", "label", "pred"])
     v = d[d.split == "val"]
     c, b = acc(v[v.test_set == "clean"]), acc(v[v.test_set == "biased"])
-    rows.append({"model": name, "lambda": int(name.split("lamb")[1].split("_")[0]), "layer": name.split("lr0.001_")[1],
+    m = re.match(r".*_lamb([^_]+)_adam_lr[0-9.]+_(.+)$", name)   # λ: "10", "50" or "5e9"; layer: identity_1 / identity_2 / last_conv
+    rows.append({"model": name, "lambda": float(m.group(1)), "layer": m.group(2),
                  "val_clean_acc": c, "val_biased_acc": b, "val_mean": (c + b) / 2})
 sel = pd.DataFrame(rows).sort_values("val_mean", ascending=False).reset_index(drop=True)
 assert len(sel) == NRUNS, len(sel)
@@ -72,7 +74,7 @@ md = [f"# P2 (Pahde et al. 2025) — RR-ClArC reproduction, ISIC 2019, seed 0 �
       "One seed (A3): 95% CIs are image-only bootstrap intervals (10,000 replicates); training-seed variance is not included.", "",
       "## Selection on P2's validation split (section 3: mean of clean and biased accuracy)", "",
       "| λ | layer | val clean | val biased | mean | chosen |", "|---|---|---|---|---|---|"]
-md += [f"| {x['lambda']} | {x.layer} | {x.val_clean_acc:.3f} | {x.val_biased_acc:.3f} | {x.val_mean:.3f} | {'**yes**' if x.chosen else ''} |"
+md += [f"| {x['lambda']:g} | {x.layer} | {x.val_clean_acc:.3f} | {x.val_biased_acc:.3f} | {x.val_mean:.3f} | {'**yes**' if x.chosen else ''} |"
        for _, x in sel.iterrows()]
 md += ["", "## Test (scored once, chosen model and Vanilla)", "", "| method | test | n | accuracy [95% CI] |", "|---|---|---|---|"]
 md += [f"| {x.method} | {x.test} | {x.n} | {x.accuracy:.3f} [{x.ci95_lo:.3f}, {x.ci95_hi:.3f}] |" for _, x in r.iterrows()]
