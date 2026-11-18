@@ -532,3 +532,11 @@ Consequence for the registered analysis (unchanged, reported as is): at the outs
 shortcut for Masked to remove, so Masked's crossover (+0.032 [+0.023, +0.041]) comes from Masked costing less outside
 (−0.013) than inside (−0.045), not from Masked removing an outside shortcut. Their `last_model_1234.pth.tar` (epoch 100)
 is on disk for both positions; any use of it would be a post-hoc sensitivity analysis and needs the author's decision.
+
+### 2026-11-18 03:30 UTC — P4 Binary-ERM, 3 splits (gate, Binary half)
+Robust AUROC on the 772-image trap test (their split k, best epoch by validation AUROC, test scored once per run):
+split 1 0.3548, split 2 0.3614, split 3 0.3735 → **mean 0.363 ± 0.010 (SD over splits)**. Paper 0.359 ± 0.016
+(range ±2 SD 0.327–0.391); notebook 0.310. Gate (A13 addendum, paper OR notebook; it widens the accepted range to
+0.28–0.39 for Binary-ERM, stated openly): **passed on the paper's own value** (within ±2 SD), so the widening was not needed
+for Binary-ERM. Segmentation-ERM (×3, `--grad_ckpt`) runs next; the P4 gate is decided when both are in.
+Per-image scores: `results/replication/saab/scores/erm_split{1,2,3}.csv.gz`.
