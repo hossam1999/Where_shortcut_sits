@@ -1,7 +1,7 @@
 """A9 equivalence check: P3's released COVIDIsNet.pt (Bassi et al. 2024, Table 2 ISNet macro-F1 0.773 on the o.o.d.
 COVID-19 test) scored on our rebuilt test (primary: 370 / 1,319 / 2,501; size-matched: 370 / 1,295 / 1,515, A9/A10) with
 P3's preprocessing (p3_prepare.py cache: histogram-equalized 224-px grayscale, [0, 1], repeated to 3 channels), no marks.
-Logits from the network's classifier (`IsDense.DenseNet`, the LRP branch is not needed for scoring). Reports macro-F1 per
+Logits from IsDense with heat=False (its forward returns the classifier logits; the LRP branch is not needed for scoring). Reports macro-F1 per
 variant against 0.773 (within 0.03 -> P3 verdicts allowed on that variant, A9) and the confusion matrix against P3's
 Table 4 (ISNet: normal 210/157/3, pneumonia 81/1210/4, COVID-19 93/156/1266). Pahde env (their model code).
 
@@ -28,11 +28,12 @@ c = Path(f"{D}/replication/isnet/cache_test")
 gray = np.load(c / "gray.npy", mmap_mode="r"); ids = (c / "ids.txt").read_text().split()
 t = pd.read_csv(f"{D}/replication/isnet/test_cohort.csv").drop_duplicates("image_id").set_index("image_id").loc[ids]
 net = torch.load(f"{D}/replication/../isnet_weights/COVIDIsNet.pt", map_location="cuda", weights_only=False).eval()
+net.heat = False   # IsDense.forward then returns the logits and clears the LRP activation lists (globals.X / XI) each batch
 L = []
 with torch.no_grad():
-    for s in range(0, len(ids), 64):
-        x = torch.from_numpy(np.asarray(gray[s:s + 64])).float().div(255.0)[:, None].repeat(1, 3, 1, 1).cuda()
-        L.append(net.DenseNet(x).float().cpu())
+    for s in range(0, len(ids), 32):
+        x = torch.from_numpy(np.asarray(gray[s:s + 32])).float().div(255.0)[:, None].repeat(1, 3, 1, 1).cuda()
+        L.append(net(x).float().cpu())
 lg = torch.cat(L).numpy()
 pd.DataFrame({"image_id": ids, "y": t.y.to_numpy(), "size_matched": t.size_matched.to_numpy(), "logit0": lg[:, 0],
               "logit1": lg[:, 1], "logit2": lg[:, 2]}).to_csv(f"{D}/replication/isnet/covidisnet_test_logits.csv.gz", index=False)
