@@ -1,0 +1,4 @@
+model,lambda,layer,val_clean_acc,val_biased_acc,val_mean,chosen
+resnet50d_RRClarc_lamb5e9_adam_lr0.0001_identity_2,5000000000.0,identity_2,0.8432688511646269,0.5298065534938807,0.6865377023292538,True
+resnet50d_RRClarc_lamb5e9_adam_lr0.0001_last_conv,5000000000.0,last_conv,0.8416896960126332,0.37583892617449666,0.608764311093565,False
+resnet50d_RRClarc_lamb5e9_adam_lr0.0001_identity_1,5000000000.0,identity_1,0.8468219502566127,0.35294117647058826,0.5998815633636004,False
