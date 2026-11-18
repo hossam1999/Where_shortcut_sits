@@ -611,3 +611,16 @@ steps (U-Net prediction, DINOv2 extraction) with fine-tunes 2–3 is measured th
 λ = 5·10⁹ / identity_1 (clean 0.842, biased 0.360), which I read while checking progress, before the layer selection.
 Selection uses validation only (section 3, A18) and is not affected; nothing will be changed in response. From now on the
 progress checks read only the "scored" lines of the window log.
+
+### 2026-11-18 13:30 UTC — A18 gate: RR-ClArC NOT reproduced at the paper's settings (0.524 vs 0.76); waiting for the author
+- Window: the 3 A18 fine-tunes and their scores finished; the sidecar finished U-Net (held-out Dice 0.942), lesion ROIs
+  (HAM 10,015 / ISIC 2018 772 / U-Net 14,544; 7 empty U-Net masks) and the DINOv2 features for arms b, c. The window's A18
+  selection step then crashed (12:55; my parser read λ as an integer and the layer by "lr0.001_"), so by design the
+  window restarted ISNet and exited before extracting arm a' features. Fixed (a79572f; section-3 selection unchanged)
+  and run on CPU at 13:25.
+- Selection on validation (mean of clean and biased accuracy): identity_2 (val 0.843 / 0.530, mean 0.687) over last_conv
+  (0.609) and identity_1 (0.600). **Test, scored once: clean 0.839 [0.825, 0.853], biased 0.524 [0.505, 0.543]**; Vanilla
+  0.839 / 0.311. |0.524 − 0.76| > 0.03 → **not reproduced** (gate failed). The paper's settings raise biased accuracy from
+  0.338 (section-3 runs) to 0.524, but not to 0.76.
+- Arm a' (A19) still needs its features from the selected network (GPU, ~5 min); ISNet is running again. Arms b, c heads
+  run on CPU now.
