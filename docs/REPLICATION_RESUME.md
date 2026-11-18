@@ -76,21 +76,22 @@ Findings and deviations: `docs/REPLICATION_STATUS.md`. Results: `docs/REPLICATIO
 - ISIC 2018 Task 1/2 (P4): done and unzipped.
 
 <!-- HEARTBEAT START -->
-### Heartbeat 2026-11-18 03:22 UTC (auto-generated)
+### Heartbeat 2026-11-18 05:22 UTC (auto-generated)
 
 GPU jobs (PID, MiB, command):
 ```
-267104  8552 MiB    01:45:04 /workspace/envs/saab/bin/python -u scripts/replication/p4_train.py --method erm --split 3
-270504  2458 MiB    01:26:13 /workspace/envs/pahde/bin/python -u -m experiments.mitigation_experiments.start_model_correction --config_file /workspace/data/replication
+270504  2458 MiB    03:26:31 /workspace/envs/pahde/bin/python -u -m experiments.mitigation_experiments.start_model_correction --config_file /workspace/data/replication
+282983  7304 MiB    01:54:35 /workspace/envs/saab/bin/python -u scripts/replication/p4_train.py --method seg --split 1 --grad_ckpt
 ```
 - P2 Vanilla: Epoch 300: of 300; checkpoints: checkpoint_resnet50d_100.pth checkpoint_resnet50d_200.pth checkpoint_resnet50d_300.pth checkpoint_resnet50d_last.pth 
 - P3 isnet_corner_all_seed0: last epoch 2 of 47
 - P4 erm_split1: last epoch 149 of 149
 - P4 erm_split2: last epoch 149 of 149
-- P4 erm_split3: last epoch 141 of 149
+- P4 erm_split3: last epoch 149 of 149
+- P4 seg_split1: last epoch 44 of 149
 - P4 timing_erm_b16: last epoch 0 of 149
 - P4 timing_seg_b4: last epoch 0 of 149
 - P4 timing_seg_b8: last epoch 0 of 149
-- BIMCV: 427 of 531 archives (0 SHA1 failures)
-- Disk: 274G used, 758G free
+- BIMCV: 442 of 531 archives (0 SHA1 failures)
+- Disk: 275G used, 757G free
 <!-- HEARTBEAT END -->
