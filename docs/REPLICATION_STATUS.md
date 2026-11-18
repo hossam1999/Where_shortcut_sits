@@ -596,3 +596,12 @@ Read from the rendered pages (pages 24, 31, 43 checked as images):
   same grid but with every value from 10² to 5·10¹² commented out, leaving λ ∈ {10, 50}. Our pre-registration (section 3)
   took {10, 50} from that generator and wrongly says the paper leaves λ open; Tab. 12 states it.
 - Layer and number of fine-tune epochs are not stated in the paper (their configs: last 3 blocks, 10 epochs).
+
+### 2026-11-18 10:30 UTC — utilisation check and pairing in the P2 window
+At 10:11 the GPU was 17–56% busy (65 of 180 W, 2.4 of 16.3 GB) with only the A18 fine-tune running; its main process is
+bound to one CPU core (~90%; their trainer runs with `detect_anomaly=True`, kept as theirs). CPU load ~12 of 96 cores.
+So the A18-independent GPU steps of `p2_window.sh` (lesion U-Net, ROIs, DINOv2 features for arms b, c) were started beside
+it as `scripts/replication/p2_sidecar.sh` (same commands and outputs; the window skips finished steps). Measured pairing:
+A18 fine-tune 2.60 it/s paired vs 4.1 alone (0.63); U-Net ~121 s/epoch paired vs ~85 s alone (~0.70; epoch timings
+straddle the end of fine-tune 1, so approximate) → **~1.33 of one GPU, kept**. The pairing of the remaining sidecar
+steps (U-Net prediction, DINOv2 extraction) with fine-tunes 2–3 is measured the same way when they overlap.
