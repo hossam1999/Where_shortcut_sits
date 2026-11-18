@@ -73,7 +73,12 @@ on 2026-11-18 and are not committed because they contain patient pixels); realis
 (PSPNet mask; 99.95% of its pixels inside; 98.6% inside P1's circle) or outside both the ROI and P1's circle (0% inside
 either). The outside placements lie near the image edge: below the lungs + heart near the bottom edge in 47.5% of test
 images, above the lungs near the top edge in 38.2% (both: median 9–10 px from that edge at 224 px), beside the ROI in
-14.3% (`results/replication/viviano/location_outside_regions.csv`).
+14.3% (`results/replication/viviano/location_outside_regions.csv`). **Limitation:** because "outside" must avoid P1's
+central circle (and lungs ∪ heart), outside markers necessarily lie near the image border (median 8 px from the nearest
+edge at 224 px; 99.7% within 25 px of an edge) and inside markers near the centre (median 55 px; 2.6% within 25 px), so
+position relative to the ROI is partly confounded with centre vs edge (`results/replication/viviano/location_edge_distance.csv`);
+the thesis's transplant experiment (the same real artifact moved across a lesion boundary) addresses location without
+this confound.
 Presence: 90% of positives / 10% of negatives in training; validation reversed (P1's design); tests on P1's test split:
 correlated (90/10), reversed (10/90), clean (none). Masked = the same Standard model scored with P1's circle mask (A5).
 

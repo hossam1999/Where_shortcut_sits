@@ -1,0 +1,7 @@
+split,position,n,median_px_to_nearest_edge,share_within_25px_of_an_edge,median_px_centre_to_image_centre
+test,inside,2772,55.0,0.026,45.5
+test,outside,2772,8.0,0.9975,111.7
+train,inside,5544,54.0,0.0281,45.7
+train,outside,5544,8.0,0.9971,111.5
+valid,inside,2772,56.0,0.0271,44.8
+valid,outside,2772,8.0,0.9964,112.1
