@@ -5,3 +5,7 @@ Lesion-masked images through our reproduced Seg-ERM's SE-ResNeXt50 encoder (best
 | split | best epoch | mode | C (edge) | robust AUROC | Seg-ERM | Δ Seg-ERM [95% CI] | Δ Binary-ERM [95% CI] |
 |---|---|---|---|---|---|---|---|
 | 1 | 125 | pooled | 10 (highest) | 0.528 | 0.609 | -0.081 [-0.140, -0.022] | +0.174 [+0.108, +0.240] |
+| 2 | 138 | pooled | 10 (highest) | 0.481 | 0.611 | -0.129 [-0.188, -0.068] | +0.120 [+0.056, +0.184] |
+| 3 | 148 | pooled | 10 (highest) | 0.445 | 0.676 | -0.231 [-0.292, -0.166] | +0.072 [-0.002, +0.144] |
+
+Mean over 3 splits: arm a 0.485 ± 0.042, Seg-ERM 0.632 ± 0.038

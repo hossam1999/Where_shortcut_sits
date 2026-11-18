@@ -18,7 +18,7 @@ for b in ${BIASES:-1}; do
     mkdir -p $O; echo "$(date -u +%F_%T) start $m bias $b"
     if [ $m = erm ]; then CMD="$PY -m domainbed.scripts.train_erm --data_dir=$D/epvt/bias${b}_1/ --steps $ST --dataset SKIN --test_env 0 --algorithm ERM --output_dir $O --hparams '$H' --exp erm"
     else CMD="$PY -m domainbed.scripts.train_epvt --data_dir=$D/epvt/bias${b}_1/ --steps $ST --dataset SKIN --test_env 0 --algorithm DoPrompt_group_decompose --output_dir $O --hparams '$HP' --exp epvt"; fi
-    (cd $E && EPVT_SPLIT=${b}_1 $Q/gpu_wait.sh 12000 bash -c "$CMD > $O/train.log 2>&1") || { echo "$(date -u +%F_%T) FAILED train $m bias $b"; exit 1; }
+    (cd $E && EPVT_SPLIT=${b}_1 MAX_OTHER_JOBS=0 $Q/gpu_wait.sh 14000 bash -c "$CMD > $O/train.log 2>&1") || { echo "$(date -u +%F_%T) FAILED train $m bias $b"; exit 1; }
     (cd $E && EPVT_SPLIT=${b}_1 $PY $Q/p6_epvt_score.py --ckpt $O/$m.pkl --test test_bias_${b}_1.csv >> $O/score.log 2>&1) || { echo "FAILED score $m $b"; exit 1; }
     echo "$(date -u +%F_%T) done $m bias $b: $(tail -1 $O/score.log)"
   done
