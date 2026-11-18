@@ -1,4 +1,4 @@
-# P2 (Pahde et al. 2025) — RR-ClArC reproduction, ISIC 2019, seed 0
+# P2 (Pahde et al. 2025) — RR-ClArC reproduction, ISIC 2019, seed 0 — section-3 runs, their code path: λ ∈ {10, 50}, effective lr 1e-5 from the loaded optimizer state
 
 One seed (A3): 95% CIs are image-only bootstrap intervals (10,000 replicates); training-seed variance is not included.
 

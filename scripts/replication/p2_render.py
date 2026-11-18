@@ -3,7 +3,7 @@ code at 224 px with the microscope inserted by their rule (train "as trained": 2
 every image), through the same subsets and indices as p2_score.py. CPU only (pahde env).
 
     python scripts/replication/p2_render.py --config <their Vanilla yaml>
-Writes $WTSS_DATA/replication/pahde/render224/<set>.u8 (N x 224 x 224 x 3 memmap) and <set>.csv (index, image, label,
+Writes $WTSS_DATA/replication/pahde/render224/<set>.npy (N x 224 x 224 x 3 uint8) and <set>.csv (index, image, label,
 artifact) for set in train_as_trained, val_clean, val_biased, test_clean, test_biased.
 """
 import argparse

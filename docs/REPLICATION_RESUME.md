@@ -35,6 +35,13 @@ Findings and deviations: `docs/REPLICATION_STATUS.md`. Results: `docs/REPLICATIO
 | Short-job queue (`short_queue.sh`) | outside train → outside score → P4 ERM ×3 → P4 Seg ×3 | per job | `nohup scripts/replication/short_queue.sh > /workspace/logs/short_queue.log 2>&1 &` |
 | BIMCV fetch | see heartbeat | `$WTSS_DATA/bimcv/done.txt` | `WTSS_DATA=/workspace/data nohup scripts/replication/bimcv_fetch.sh &` |
 
+## P2 window (2026-11-18, A18; `scripts/replication/p2_window.sh`, log `/workspace/logs/p2_window.log`)
+Stops the ISNet chain at its next epoch checkpoint, then alone on the GPU: A18 RR-ClArC ×3 (+ scores in
+`$WTSS_DATA/replication/pahde/scores_a18/`), lesion U-Net train + predict, lesion ROIs, DINOv2 features for P2 arms b, c;
+restarts the ISNet chain (also on failure), then CPU: `p2_select.py --set a18`, `p2_arms.py --arm bc --stage heads`.
+Restart: `nohup scripts/replication/p2_window.sh > /workspace/logs/p2_window.log 2>&1 &` (every step skips finished
+work; an incomplete A18 fine-tune directory is moved aside and rerun). If it stopped with FAILED, ISNet has been restarted.
+
 ## Chains (how they hand over)
 - `p2_chain.sh` starts `p3_chain.sh` (ISNet alone; flag `$WTSS_DATA/replication/ISNET_CHAIN_ACTIVE`) **only** when all 6
   RR-ClArC score files exist. ISNet run 1 `isnet_corner_all_seed0` resumes after epoch 2.
