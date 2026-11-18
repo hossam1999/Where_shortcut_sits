@@ -639,3 +639,9 @@ one GPU, kept** (A20: an arm-d job may pair with ISNet only if total throughput 
 free; EfficientNet-B0 peaks at 2.8 GiB at 224 px (fits), not at 512 px (P4 runs without ISNet). Two failed starts
 before any training step, fixed in the trainer: a launcher request above the free memory (4,000 MiB), and DataLoader
 workers exceeding the container's task limit (2,816) — now one thread per worker.
+
+### 2026-11-18 14:45 UTC — BIMCV complete; P3 test rebuilt
+BIMCV fetch finished (531 / 531 archives). `p3_test_select.py` (A9/A10): full variant normal 370 (Montgomery 67 +
+Shenzhen 303), pneumonia 1,319 (NIH, 938 patients), COVID-19 2,501 (BIMCV, 1,631 patients); **size-matched variant 370 /
+1,295 / 1,515 = 3,180, P3's Table 4 row sums**; every image on disk. Next: `p3_prepare.py --which test` (queued on the
+GPU launcher), then the ISNet runs' `--score_only` and the COVIDIsNet.pt equivalence check (A9).
