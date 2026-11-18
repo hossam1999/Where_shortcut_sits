@@ -63,8 +63,53 @@ Notes:
   view, not the disease. Arm b keeps 0.763.
 - U-MtE is designed for localized overlays inside the ROI and does not remove a global shortcut; it fails on both P1 tasks.
 
-### Location test (primary for P1; phase 4)
-*pending*
+### Location test (primary for P1; phase 4; A15, A16; post-hoc sensitivity A17)
+**Design.** P1's own pipeline (their code, Standard config, seed 1234) on P1's balanced cardiomegaly split. The artifact
+is **a small synthetic tube-like marker (43 x 6 px at 224 px)**: a straight bright band with a brighter stripe, drawn on
+the 224-px image after their intensity normalisation and before their resize to 128 px. It is not a realistic tube: real
+chest drains are long, thin, curved and faint (the 9 examples sent to the author, 2026-11-18, show both; not committed,
+patient pixels). The marker sits either inside the lungs ∪ heart ROI (PSPNet mask; 99.95% of its pixels inside; 98.6%
+inside P1's circle) or outside both the ROI and P1's circle (0% inside either). Presence: 90% of positives / 10% of
+negatives in training; validation reversed (P1's design); tests on P1's test split: correlated (90/10), reversed (10/90),
+clean (none). Masked = the same Standard model scored with P1's circle mask (A5).
+
+**Registered result (primary).** One seed: paired image-only bootstrap, 10,000 replicates; training-seed variance is not
+included (A3). Gain and Δ are on the reversed test; crossover = gain outside − gain inside.
+
+| position | method | kept by circle | kept by lungs + heart | correlated | reversed | clean | reversed gain vs Standard [95% CI] | Δ vs Masked (reversed) [95% CI] | crossover [95% CI] |
+|---|---|---|---|---|---|---|---|---|---|
+| inside | Standard (theirs) | 0.986 | 1.000 | 0.943 | 0.514 | 0.866 | +0.000  | +0.045 [+0.035, +0.054] | — |
+| inside | Masked (theirs, A5) | 0.986 | 1.000 | 0.935 | 0.469 | 0.837 | -0.045 [-0.054, -0.035] | — | +0.032 [+0.023, +0.041] |
+| inside | a: mask_cmc on their net | 0.986 | 1.000 | 0.893 | 0.856 | 0.884 | +0.342 [+0.324, +0.360] | +0.387 [+0.369, +0.405] | -0.328 [-0.347, -0.310] |
+| inside | b: DINOv2 + mask_cmc | 0.986 | 1.000 | 0.904 | 0.877 | 0.895 | +0.364 [+0.343, +0.384] | +0.408 [+0.387, +0.430] | -0.359 [-0.379, -0.338] |
+| inside | c: U-MtE | 0.986 | 1.000 | 0.960 | 0.598 | 0.881 | +0.084 [+0.063, +0.105] | +0.129 [+0.107, +0.150] | -0.070 [-0.092, -0.049] |
+| outside | Standard (theirs) | 0.000 | 0.000 | 0.901 | 0.894 | 0.898 | +0.000  | +0.013 [+0.006, +0.019] | — |
+| outside | Masked (theirs, A5) | 0.000 | 0.000 | 0.881 | 0.881 | 0.881 | -0.013 [-0.019, -0.006] | — | +0.032 [+0.023, +0.041] |
+| outside | a: mask_cmc on their net | 0.000 | 0.000 | 0.908 | 0.908 | 0.908 | +0.014 [+0.007, +0.021] | +0.027 [+0.021, +0.033] | -0.328 [-0.347, -0.310] |
+| outside | b: DINOv2 + mask_cmc | 0.000 | 0.000 | 0.899 | 0.899 | 0.899 | +0.005 [-0.004, +0.015] | +0.018 [+0.007, +0.029] | -0.359 [-0.379, -0.338] |
+| outside | c: U-MtE | 0.000 | 0.000 | 0.908 | 0.908 | 0.908 | +0.014 [+0.004, +0.023] | +0.026 [+0.015, +0.037] | -0.070 [-0.092, -0.049] |
+
+Source: `results/replication/viviano/location_1234.{md,csv}`; per-image scores in `results/replication/viviano/scores/`.
+
+**Why the outside Standard model shows no shortcut (checked; not a bug).** The marker reaches the network at the outside
+position (about 109 changed pixels per image at 128 px, as inside; presence as registered). Their selection rule
+(`training.py`: burn-in 5 epochs, then the lowest loss on P1's reversed validation split) kept epoch 11 inside, after the
+marker was learned (epoch 5), but **epoch 8 outside, before the marker was learned (epoch 11)**; late outside epochs reach
+only reversed-validation AUROC ≈ 0.70–0.75, so the outside marker is also learned less strongly. At the outside position
+there is therefore no shortcut in the kept model for any method to remove, and the outside rows are near Standard for
+every method. Masked, arm a and arms b and c score identically on the three outside tests because their masks remove the
+whole marker.
+
+**Registered expectations (section 5), before Holm (the family also contains the P3 location test, still pending):**
+- E-L1 (Masked): crossover +0.032 [+0.023, +0.041] > 0 and gain inside −0.045 ≤ 0 → *supported by the letter*, but not
+  for the reason the expectation states: the outside Standard model has no shortcut, so the crossover reflects Masked
+  costing less outside than inside, not Masked removing an outside shortcut.
+- E-L2 (mask_cmc, arms a and b): gain inside +0.342 [+0.324, +0.360] and +0.364 [+0.343, +0.384] → supported.
+- E-L3 (U-MtE, arm c): gain inside +0.084 [+0.063, +0.105] → supported; much smaller than mask_cmc, because the marker
+  lies inside the region U-MtE keeps and U-MtE is label-free.
+
+**Post-hoc sensitivity analysis (A17; every number POST HOC, descriptive, no verdict).** Their epoch-100 models
+(`last_model_1234.pth.tar`) at both positions: Standard, Masked and arm a; arms b and c reused. *Pending.*
 
 ## P2 — Pahde et al., Machine Learning 2025 (primary)
 *pending (Vanilla training, seed 0)*
