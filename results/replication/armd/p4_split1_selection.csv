@@ -1,0 +1,15 @@
+mode,k,C,val_auroc,chosen
+pooled,7,0.001,1.0,True
+pooled,7,0.003,1.0,False
+pooled,7,0.01,1.0,False
+pooled,7,0.03,1.0,False
+pooled,7,0.1,1.0,False
+pooled,7,1.0,1.0,False
+pooled,7,10.0,1.0,False
+per_class,14,0.001,1.0,False
+per_class,14,0.003,1.0,False
+per_class,14,0.01,1.0,False
+per_class,14,0.03,1.0,False
+per_class,14,0.1,1.0,False
+per_class,14,1.0,1.0,False
+per_class,14,10.0,1.0,False

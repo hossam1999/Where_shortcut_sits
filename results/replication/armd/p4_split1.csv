@@ -1,0 +1,2 @@
+test,n,arm_d_auroc,Binary-ERM_auroc,delta_vs_Binary-ERM,ci_vs_Binary-ERM
+test,772,0.665910141638297,0.35478922372126254,0.31112091791703445,"[+0.258, +0.363]"
