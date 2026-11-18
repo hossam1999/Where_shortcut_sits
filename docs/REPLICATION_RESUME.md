@@ -42,6 +42,11 @@ restarts the ISNet chain (also on failure), then CPU: `p2_select.py --set a18`, 
 Restart: `nohup scripts/replication/p2_window.sh > /workspace/logs/p2_window.log 2>&1 &` (every step skips finished
 work; an incomplete A18 fine-tune directory is moved aside and rerun). If it stopped with FAILED, ISNet has been restarted.
 
+## When the ISNet corner run finishes (author, 2026-11-18)
+`p3_train.py` scores it on the rebuilt test automatically (`runs/isnet_corner_all_seed0/preds_{biased,standard,deceiving}.csv.gz`).
+Report its macro-F1 on both A9 variants beside P3's 0.775 (deceiving test, Table 1), labelled **descriptive supporting
+evidence of test equivalence, not a gate** (P3 stays descriptive: A9 check 0.223 / 0.260).
+
 ## Chains (how they hand over)
 - `p2_chain.sh` starts `p3_chain.sh` (ISNet alone; flag `$WTSS_DATA/replication/ISNET_CHAIN_ACTIVE`) **only** when all 6
   RR-ClArC score files exist. ISNet run 1 `isnet_corner_all_seed0` resumes after epoch 2.
