@@ -747,3 +747,19 @@ GPU)**, 1.87 min/epoch each, 14.9 of 16.3 GB used → kept (rule 2). Three at on
 `scripts/replication/m2_p4_pair.sh` (at most two splits at once; same command; split 3 starts when one finishes; the first
 queue was stopped by PID before it launched anything else). New ETA: splits 1 and 2 ≈ 17:10 UTC, split 3 ≈ 20:00 UTC (it
 pairs with the phase-5 timing test if that is measured faster). Split 1's epoch 2 straddles the pairing start.
+
+### 2026-11-18 ~14:00 UTC (machine 2's clock) — machine 2: P6 (RR-ClArC, AAAI 2024) step 1 reproduced; SpurBreast dropped; A28
+- **New candidates searched (author's request).** Kept: **P6 = Dreyer, Pahde et al., AAAI 2024** (RR-ClArC), as a secondary
+  paper (A28). Dropped: **SpurBreast (MICCAI 2025)** — data on Zenodo 17128791 (field-strength split checked: 9,562 / 3,576 /
+  6,788 images, as its Table 1), but no method to beat (dataset paper; baselines ResNet-50 / ViT-B test accuracy ≈ 0.52–0.55)
+  and its strong spurious splits are **perfectly confounded** (every training positive 1.5 T, every negative 3 T; or every
+  positive facing up), so no within-class artifact difference exists for mask_cmc.
+- **P6 step 1 (released Vanilla checkpoints, their code, test scored once): reproduced for all three architectures**
+  (`results/replication/rrclarc/step1.md`): clean / biased accuracy VGG-16 0.764 / 0.349 (paper 0.762 / 0.349), ResNet-18
+  0.816 / 0.557 (0.818 / 0.568), EfficientNet-B0 0.839 / 0.625 (0.842 / 0.629). Run on CPU (the first GPU attempt ran out
+  of memory beside the two P4 runs before any image was scored; the P4 runs were unaffected). Checkpoint SHA-256: VGG-16
+  `428fcfc4…`, ResNet-18 `5d14a30d…`, EfficientNet-B0 `88b1259d…` (Drive files dated 2023-08-17). Their LSB trigger is
+  deterministic bit-writing (no font, no RNG), so the P5 font issue cannot arise.
+- **Discrepancies recorded (A28):** the paper's chosen RR-ClArC λ (Table A.3: 5·10⁸ / 10¹¹ / 5·10⁹) lie outside their
+  released generator's grid (≤ 10⁷); the paper's p-bias 8.0 / 12.5 / 8.0 % vs 10 % in their correction configs. The paper
+  wins. RR-ClArC fine-tunes (3, 10 epochs each) run when GPU memory frees (after P4 splits 1–2).

@@ -651,3 +651,48 @@ splits 1–3, P4 arm d split 1; no P4 Segmentation-ERM result).
 - **Machine 1 keeps P3.** Machine 2 runs nothing for P3.
 - Every STATUS entry from machine 2 is labelled "machine 2"; times are machine 2's UTC clock (it reads about 17 h behind
   the timestamps of machine 1's latest heartbeat commit, so cross-machine ordering is by git history, not by timestamp).
+
+**A28 (2026-11-18 ~14:00 UTC by machine 2's clock; P6 added as a SECONDARY paper; author's decision; before any P6
+correction run or arm result).** Results seen when this was recorded: P6 step 1 only — the released Vanilla ISIC
+checkpoints scored with their code reproduce Table 1 for all three architectures (test accuracy, clean / biased: VGG-16
+0.764 / 0.349 vs 0.762 / 0.349; ResNet-18 0.816 / 0.557 vs 0.818 / 0.568; EfficientNet-B0 0.839 / 0.625 vs 0.842 / 0.629;
+`results/replication/rrclarc/step1.md`). P5 is dropped (step 1 failed); SpurBreast (MICCAI 2025) was examined and dropped
+(dataset paper with no method to beat; its strong spurious splits are perfectly confounded with the label, so mask_cmc
+cannot be estimated).
+- **P6 = Dreyer, Pahde, Anders, Samek, Lapuschkin, "From Hope to Safety: Unlearning Biases of Deep Models via Gradient
+  Penalization in Latent Space", AAAI 2024** (code `github.com/frederikpahde/rrclarc` @ a3e2d15; checkpoints from the Google
+  Drive folder in its README). ISIC 2019, 8 classes, 80/10/10 split (`default_rng(0)`), synthetic **LSB** artifact (a text
+  message written into the lowest 3 / 3 / 2 bits of every pixel) in a fraction of MEL images.
+- **Secondary, like P1:** the LSB artifact is invisible and covers the whole image, so it is not a localized artifact and
+  says nothing about inside vs outside the ROI. P6 shows only whether our constraint also removes a whole-image shortcut
+  that a concept-level method targets. Its comparisons form their own Holm family, separate from the primary families.
+- **Their best method: RR-ClArC.** Targets (Table 1, biased-test accuracy): VGG-16 0.570, ResNet-18 0.712,
+  EfficientNet-B0 0.756 (clean 0.743 / 0.785 / 0.787). **Reproduced if |ours − published| ≤ 0.03 on biased accuracy**, per
+  architecture; clean accuracy reported beside it.
+- **Settings: the paper wins over the code** (standing rule). Paper Sec. 4.3 and App. A.3: fine-tune 10 epochs from the
+  Vanilla checkpoint, cross-entropy, lr 1e-4, SGD (VGG-16, ResNet-18) / Adam (EfficientNet-B0), CAV at the last
+  convolutional layer (`features.28` / `last_conv` / `last_conv`) with layers up to it frozen (their `Freeze` callback), gradient
+  target = logits weighted by a random ±1 vector (their `all_logits_random`), `l2_mean`, `cavs_max`, `signal` direction, CAV on
+  the training set; **λ as chosen in their Table A.3: VGG-16 5·10⁸, ResNet-18 10¹¹, EfficientNet-B0 5·10⁹.** Their released
+  generator's grid stops at 10⁷ and does not contain these values (recorded discrepancy, as in P2); no grid is run.
+  Artifact rate of the fine-tune data: the paper's p-bias (Table A.1) **8.0 % / 12.5 % / 8.0 %** of MEL (their correction
+  configs say 10 %; recorded). One run per architecture (the paper states no seeds). Batch 64 (their local config).
+- **Tests:** their clean and biased (trigger in every image of every class) test sets, each scored once; accuracy (paper's
+  metric) and macro-F1.
+- **Our arms** (artifact label at training time only = LSB inserted yes/no):
+  - **a)** mask_cmc on their **Vanilla** network of each architecture: penultimate global-average-pooled features of the
+    unmasked images as their network sees them, within-class artifact mean differences projected out (only MEL has both
+    groups, so one δ), class-balanced multinomial logistic regression refit on the training set;
+  - **a′)** the same on **our reproduced RR-ClArC** network of each architecture (A19 practice);
+  - **b)** DINOv2 ViT-B/14, frozen, **at 224 px on the unmasked 224-px images** (224 = 16 × 14, so no resampling destroys the
+    bit-level trigger before the encoder; P2's 518-px lesion-masked view would resample it away and test nothing), CLS token,
+    L2-normalised, + the same mask_cmc head;
+  - not run: arm c (U-MtE's generic overlays do not model a bit-level trigger) and arm d (their own EfficientNet-B0 Vanilla
+    is already a trained small encoder; arm a on it fills that role).
+  - Head grid: C ∈ {0.001, 0.003, 0.01, 0.03, 0.1, 1, 10} (A21), chosen on validation; edge choices reported.
+- **Validation rule:** their validation split scored clean and biased; selection metric = mean of the two accuracies (as P2,
+  section 3). It chooses only our C (RR-ClArC has no open setting left).
+- **"Beaten":** section 2 with one run per architecture (image-only paired bootstrap, 10,000 replicates; Holm over the
+  P6 family = 3 arms × 3 architectures), on biased accuracy against **our** RR-ClArC of the same architecture; clean accuracy
+  reported, with the registered clean-drop margin (0.01) flagged. If RR-ClArC is not reproduced for an architecture, that
+  architecture's comparisons are descriptive (section 1).
