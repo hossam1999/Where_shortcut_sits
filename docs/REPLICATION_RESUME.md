@@ -47,6 +47,11 @@ work; an incomplete A18 fine-tune directory is moved aside and rerun). If it sto
 Report its macro-F1 on both A9 variants beside P3's 0.775 (deceiving test, Table 1), labelled **descriptive supporting
 evidence of test equivalence, not a gate** (P3 stays descriptive: A9 check 0.223 / 0.260).
 
+## When P4 Seg-ERM split 1 is scored (author, 2026-11-18)
+Re-run `armd_train.py --setting p4_split1 --stage heads` (CPU): `heads_p4` adds the paired comparison with our Seg-ERM
+split 1 automatically once `saab/runs/seg_split1/preds_test.csv` exists (arm d 0.666 vs Binary-ERM 0.355 so far).
+Descriptive until the P4 gate (A13).
+
 ## Chains (how they hand over)
 - `p2_chain.sh` starts `p3_chain.sh` (ISNet alone; flag `$WTSS_DATA/replication/ISNET_CHAIN_ACTIVE`) **only** when all 6
   RR-ClArC score files exist. ISNet run 1 `isnet_corner_all_seed0` resumes after epoch 2.
