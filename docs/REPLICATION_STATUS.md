@@ -877,3 +877,13 @@ below Seg-ERM on every split, C at the top edge (10) each time. Arm d vs Seg-ERM
 - Examined and not taken: SCORE (arXiv 2605.13340), SpurCon (arXiv 2608.17598), Learning To Focus (arXiv 2607.10851) — preprints,
   no venue, no code; Le et al. DFR on ISIC (IJCAI XAI workshop 2023) — no code found; Boland et al. (MELBA 2025) — no code;
   MIMM-X (MICCAI FAIMI workshop 2025) — CheXpert/MRI, no localized artifact.
+- **Bissoto 2022 rejected by the author ("not good enough").** Further search, none taken:
+  - SimBA (Stanley et al., MICCAI 2023 / JAMIA 2024 / eBioMedicine 2025; code `github.com/estanley16/SimBA` @ 2f7da7a; JAMIA data
+    doi:10.5683/SP3/0A1IA0, 13.7 GB, CC BY-NC 4.0): synthetic 3D brain MRI, bias in 70 % / 30 % of the classes, "near" (left
+    putamen, adjacent to the left-insula disease region) vs "far" (right postcentral gyrus). Its best method (reweighing)
+    already brings the subgroup disparity to ≈ 0 (relative ΔTPR / ΔFPR 0.44 % / … near, −0.80 ± 0.64 % / −0.32 ± 2.13 % far;
+    5 seeds), so nothing is left to beat, and "near" is adjacent, not inside, the disease region. Useful as a controlled
+    test bed (its generator can place a bias inside the disease region), not as a target.
+  - Yan et al., CVPR 2023 (ConfDerm, concept rewriting): no code or data release (project page 404; not in the authors' repos).
+  - SilverLining (WACV 2026): no code, datasets not named. Tsue et al. 2023 (mammography view markers): private data.
+  - Kvasir green-box overlay, endoscopy, pathology pen marks: no published mitigation benchmark with code found.
