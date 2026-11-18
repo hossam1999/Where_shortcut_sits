@@ -26,6 +26,8 @@ in Table 1? In particular:
    optimizer state from `ckpt_path`, which sets the learning rate to the decayed value of the Vanilla run (1e-5 after
    the 150/250 schedule) instead of the configured one. Was the fine-tune in the paper run with that optimizer state, or
    from the model weights only?
+5. which timm weights the Table 1 ResNet50 (Vanilla) started from: `resnet50d.a1_in1k`, as loaded in
+   `models/resnet_timm.py`, or `resnet50d.a3_in1k`, as stated on p. 22 (A.6)?
 
 If the configuration files used for the paper are available, those would answer all of this at once. We will of course
 report your answer, and cite your paper and code.
