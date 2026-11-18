@@ -27,12 +27,14 @@ TABLE4 = np.array([[210, 157, 3], [81, 1210, 4], [93, 156, 1266]])
 c = Path(f"{D}/replication/isnet/cache_test")
 gray = np.load(c / "gray.npy", mmap_mode="r"); ids = (c / "ids.txt").read_text().split()
 t = pd.read_csv(f"{D}/replication/isnet/test_cohort.csv").drop_duplicates("image_id").set_index("image_id").loc[ids]
-net = torch.load(f"{D}/replication/../isnet_weights/COVIDIsNet.pt", map_location="cuda", weights_only=False).eval()
+DEV = os.environ.get("CHECK_DEVICE", "cpu")   # inference only; their LRP DenseNet keeps all activations (GPU OOM beside ISNet)
+torch.set_num_threads(int(os.environ.get("CHECK_THREADS", "32")))
+net = torch.load(f"{D}/replication/../isnet_weights/COVIDIsNet.pt", map_location=DEV, weights_only=False).eval()
 net.heat = False   # IsDense.forward then returns the logits and clears the LRP activation lists (globals.X / XI) each batch
 L = []
 with torch.no_grad():
     for s in range(0, len(ids), 32):
-        x = torch.from_numpy(np.asarray(gray[s:s + 32])).float().div(255.0)[:, None].repeat(1, 3, 1, 1).cuda()
+        x = torch.from_numpy(np.asarray(gray[s:s + 32])).float().div(255.0)[:, None].repeat(1, 3, 1, 1).to(DEV)
         L.append(net(x).float().cpu())
 lg = torch.cat(L).numpy()
 pd.DataFrame({"image_id": ids, "y": t.y.to_numpy(), "size_matched": t.size_matched.to_numpy(), "logit0": lg[:, 0],
