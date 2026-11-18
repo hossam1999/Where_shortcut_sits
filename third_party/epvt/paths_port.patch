@@ -1,3 +1,45 @@
+diff --git a/domainbed/networks.py b/domainbed/networks.py
+index 24d3dc2..86add72 100644
+--- a/domainbed/networks.py
++++ b/domainbed/networks.py
+@@ -1,6 +1,8 @@
++import os
+ from typing import Callable
+ from functools import partial
+ import torch
++import torch.utils.checkpoint
+ import torch.nn as nn
+ import torch.nn.functional as F
+ import torchvision.models
+@@ -194,6 +196,19 @@ class ContextNet(nn.Module):
+         return self.context_net(x)
+ 
+ 
++def _checkpoint_blocks(layers):
++    """Recompute each encoder block in the backward pass instead of storing its activations (16 GB GPU). The block's forward
++    is wrapped in place, so parameter names (and saved checkpoints) are unchanged. torchvision ViT-B/16 blocks have dropout 0
++    and no BatchNorm, so outputs and gradients are those of the plain block."""
++    for blk in layers:
++        f = blk.forward
++        def fwd(x, f=f, blk=blk):
++            if blk.training and torch.is_grad_enabled():
++                return torch.utils.checkpoint.checkpoint(f, x, use_reentrant=False)
++            return f(x)
++        blk.forward = fwd
++
++
+ class ViT(nn.Module):
+     """
+     ViT: Visual Identity Transformation
+@@ -219,6 +234,8 @@ class ViT(nn.Module):
+ 
+             del self.network.heads
+             self.network.heads = Identity()
++            if os.environ.get("EPVT_GRAD_CKPT") == "1":   # machine-2 port: activation checkpointing (identical math, see SOURCE.md)
++                _checkpoint_blocks(self.network.encoder.layers)
+ 
+     def forward(self, x):
+         """Encode x into a feature vector of size n_outputs."""
 diff --git a/domainbed/scripts/test_epvt.py b/domainbed/scripts/test_epvt.py
 index 1094e9a..89c4787 100644
 --- a/domainbed/scripts/test_epvt.py

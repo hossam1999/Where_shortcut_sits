@@ -78,3 +78,13 @@ and `misc.eval_indomain`, without the OOD block of their test scripts). CPU smok
   `Latent_EPVT.update` hard-codes `domain_labels=False` and uses the cluster labels, so the method is label-free as described; its
   training set is built with `split='val'`, so **no training augmentation** is applied in the released code (paper: flips, crop,
   rotation, colour jitter); 5,900 steps, one batch of 130; their validation/test `imfolder` points at the grouped training folder.
+
+## Activation checkpointing (machine 2, 2026-11-18; engineering, not a recipe change)
+Their batch (26 per domain × 5 = 130) in fp32 does not fit a 16 GB GPU: the first ERM run stopped with CUDA out-of-memory
+(15.4 GiB in use; their papers used RTX 3090s, 24 GB). With `EPVT_GRAD_CKPT=1`, each torchvision ViT-B/16 encoder block's
+`forward` is wrapped in `torch.utils.checkpoint` (non-reentrant) in place (`domainbed/networks.py`, `_checkpoint_blocks`;
+parameter names unchanged). The blocks have dropout 0 and LayerNorm only (no BatchNorm), so nothing differs mathematically.
+Check (`scripts/replication/p6_ckpt_check.py`; 8 real bias-1 training images, identical initial weights, deterministic
+algorithms): loss 0.74716187 plain vs 0.74716187 checkpointed (|Δ| 0); gradients of all 152 parameter tensors identical
+(max relative difference 0). Peak memory of one training step at batch 26 × 5: ERM 4.25 GiB, EPVT 4.78 GiB (of 15.47).
+The first OOM'd attempts (20:11 beside P4's arm-a feature pass; 21:33 alone) left no checkpoint and are not results.

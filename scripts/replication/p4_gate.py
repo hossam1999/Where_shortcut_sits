@@ -11,21 +11,24 @@ import numpy as np, pandas as pd
 from sklearn.metrics import roc_auc_score
 ROOT = Path(__file__).resolve().parents[2]; sys.path.insert(0, str(ROOT / "src"))
 from wtss.replication_stats import paired_bootstrap
-D = os.environ.get("WTSS_DATA", "/workspace/data"); R = ROOT / "results/replication/saab"; (R / "scores").mkdir(parents=True, exist_ok=True)
+D = os.environ.get("WTSS_DATA", "/workspace/data")
+RUN = os.environ.get("P4_RUN", "seg")   # seg (first runs) | seg_pil (A31 reruns on the PIL cache)
+R = ROOT / "results/replication/saab"; (R / "scores").mkdir(parents=True, exist_ok=True)
 rows, seg = [], {}
 for k in (1, 2, 3):
     e = pd.read_csv(R / f"scores/erm_split{k}.csv.gz")
     rows.append({"method": "Binary-ERM", "split": k, "robust_auroc": roc_auc_score(e.label, e.score), "source": "machine 1 (git)"})
-    p = Path(f"{D}/replication/saab/runs/seg_split{k}/preds_test.csv")
+    p = Path(f"{D}/replication/saab/runs/{RUN}_split{k}/preds_test.csv")
     if p.exists():
         d = pd.read_csv(p); seg[k] = d
         pd.DataFrame({"image_id": d.id, "label": d.target, "method": "seg_erm", "test_set": "test", "score": d.score}).to_csv(
-            R / f"scores/seg_split{k}.csv.gz", index=False)
+            R / f"scores/{RUN}_split{k}.csv.gz", index=False)
         log = pd.read_csv(Path(p).parent / "log.csv")
         rows.append({"method": "Seg-ERM", "split": k, "robust_auroc": roc_auc_score(d.target, d.score), "source": "machine 2",
                      "best_epoch": int(log.valid_dice.idxmax()), "best_val_dice": float(log.valid_dice.max())})
-t = pd.DataFrame(rows); t.to_csv(R / "p4_gate.csv", index=False)
-md = ["# P4 (Saab et al., MLHC 2022, ISIC) — reproduction gate (A13 + addendum); Seg-ERM on machine 2 (A27)", "",
+t = pd.DataFrame(rows); t.to_csv(R / ("p4_gate.csv" if RUN == "seg" else f"p4_gate_{RUN}.csv"), index=False)
+md = ["# P4 (Saab et al., MLHC 2022, ISIC) — reproduction gate (A13 + addendum); Seg-ERM on machine 2 (A27)"
+      + (" — A31 reruns (PIL-resized cache)" if RUN != "seg" else ""), "",
       "| method | split | robust AUROC | note |", "|---|---|---|---|"]
 for _, x in t.iterrows():
     md.append(f"| {x.method} | {x.split} | {x.robust_auroc:.4f} | {x.source}" + (f", best val Dice {x.best_val_dice:.3f} at epoch {x.best_epoch}" if x.method == "Seg-ERM" else "") + " |")
@@ -48,4 +51,4 @@ if 1 in seg:
            f"arm d {b['ours_mean']:.3f} vs Seg-ERM {b['theirs_mean']:.3f}: "
            f"Δ {b['delta']:+.3f} [{b['ci95_lo']:+.3f}, {b['ci95_hi']:+.3f}], p = {b['p_boot_two_sided']:.4f}. One network each, image-only "
            "bootstrap (10,000). Descriptive until the P4 gate."]
-(R / "p4_gate.md").write_text("\n".join(md) + "\n"); print("\n".join(md))
+(R / ("p4_gate.md" if RUN == "seg" else f"p4_gate_{RUN}.md")).write_text("\n".join(md) + "\n"); print("\n".join(md))

@@ -40,18 +40,33 @@ WEIGHTS = f"{D}/weights/se_resnext50_32x4d-a260b3a4.pth"
 
 
 def cache(split_ids):
-    """512-px RGB images and Task 1 lesion masks, resized once (their loader resizes every image to 512 x 512)."""
-    c = Path(f"{D}/replication/saab/cache512"); c.mkdir(parents=True, exist_ok=True)
+    """512-px RGB images and Task 1 lesion masks, resized once (their loader resizes every image to 512 x 512).
+    A31: resized exactly as their src/data/isic.py img_loader: imageio.imread -> PIL -> torchvision Resize([512, 512]) (PIL
+    bilinear, antialiased); masks the same, then ToTensor() > 0.5. P4_CACHE=cv2 rebuilds the first (pre-A31) cv2 cache."""
+    old = os.environ.get("P4_CACHE", "pil") == "cv2"
+    c = Path(f"{D}/replication/saab/cache512" + ("" if old else "_pil")); c.mkdir(parents=True, exist_ok=True)
     ids = sorted(set(split_ids))
     if (c / "ids.txt").exists() and (c / "ids.txt").read_text().split() == ids:
         return np.load(c / "img.npy", mmap_mode="r"), np.load(c / "mask.npy", mmap_mode="r"), ids
     img = np.lib.format.open_memmap(c / "img.npy", "w+", np.uint8, (len(ids), S, S, 3))
     msk = np.lib.format.open_memmap(c / "mask.npy", "w+", np.uint8, (len(ids), S, S))
+    if not old:
+        import imageio.v2 as imageio
+        import torchvision.transforms as TT
+        from PIL import Image
+        rs = TT.Resize([S, S])
     for k, i in enumerate(ids):
-        im = cv2.cvtColor(cv2.imread(f"{D}/isic2018/ISIC2018_Task1-2_Training_Input/{i}.jpg"), cv2.COLOR_BGR2RGB)
-        img[k] = cv2.resize(im, (S, S), interpolation=cv2.INTER_LINEAR)   # torchvision Resize default: bilinear
-        m = cv2.imread(f"{D}/isic2018/ISIC2018_Task1_Training_GroundTruth/{i}_segmentation.png", cv2.IMREAD_GRAYSCALE)
-        msk[k] = (cv2.resize(m, (S, S), interpolation=cv2.INTER_LINEAR) > 127).astype(np.uint8)
+        fi = f"{D}/isic2018/ISIC2018_Task1-2_Training_Input/{i}.jpg"
+        fm = f"{D}/isic2018/ISIC2018_Task1_Training_GroundTruth/{i}_segmentation.png"
+        if old:
+            im = cv2.cvtColor(cv2.imread(fi), cv2.COLOR_BGR2RGB)
+            img[k] = cv2.resize(im, (S, S), interpolation=cv2.INTER_LINEAR)
+            m = cv2.imread(fm, cv2.IMREAD_GRAYSCALE)
+            msk[k] = (cv2.resize(m, (S, S), interpolation=cv2.INTER_LINEAR) > 127).astype(np.uint8)
+        else:
+            img[k] = np.asarray(rs(Image.fromarray(np.uint8(imageio.imread(fi)))))
+            m = np.asarray(rs(Image.fromarray(np.uint8(imageio.imread(fm))))).astype(np.float32) / 255.0   # ToTensor
+            msk[k] = (m > 0.5).astype(np.uint8)
     img.flush(); msk.flush(); (c / "ids.txt").write_text("\n".join(ids))
     return img, msk, ids
 

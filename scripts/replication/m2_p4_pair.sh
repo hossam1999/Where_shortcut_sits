@@ -3,17 +3,18 @@
 # Starts every split k in 1..3 that has no preds_test.csv and no running process, keeping at most 2 running.
 #   nohup scripts/replication/m2_p4_pair.sh > /workspace/logs/m2_p4_pair.log 2>&1 &
 D=${WTSS_DATA:-/workspace/data}; Q=/root/Where_shortcut_sits/scripts/replication
-running(){ ps -eo args | grep -c "^/workspace/envs/saab/bin/python -u $Q/p4_train.py --method seg --split $1 "; }
+P=${P4_RUN:-seg}   # run-name prefix: seg (first runs, cv2 cache) | seg_pil (A31 reruns, PIL cache)
+running(){ ps -eo args | grep -c "^/workspace/envs/saab/bin/python -u $Q/p4_train.py --method seg --split $1 .*--name ${P}_split$1"; }
 nrun(){ ps -eo args | grep "^/workspace/envs/saab/bin/python -u $Q/p4_train.py --method seg" | awk '{print $7}' | sort -u | wc -l; }
 while :; do
   left=0
   for k in 1 2 3; do
-    [ -s $D/replication/saab/runs/seg_split$k/preds_test.csv ] && continue
+    [ -s $D/replication/saab/runs/${P}_split$k/preds_test.csv ] && continue
     left=1
     [ "$(running $k)" -gt 0 ] && continue
     [ "$(nrun)" -ge 2 ] && continue
     echo "$(date -u +%F_%T) start seg split $k"
-    MAX_OTHER_JOBS=1 $Q/gpu_wait.sh 8000 bash -c "/workspace/envs/saab/bin/python -u $Q/p4_train.py --method seg --split $k --grad_ckpt >> $D/replication/saab/seg_split$k.log 2>&1" &
+    MAX_OTHER_JOBS=1 $Q/gpu_wait.sh 8000 bash -c "/workspace/envs/saab/bin/python -u $Q/p4_train.py --method seg --split $k --grad_ckpt --name ${P}_split$k >> $D/replication/saab/${P}_split$k.log 2>&1" &
     sleep 120
   done
   [ $left -eq 0 ] && break

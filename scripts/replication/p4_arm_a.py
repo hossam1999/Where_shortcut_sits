@@ -27,6 +27,7 @@ import pandas as pd
 ROOT = Path(__file__).resolve().parents[2]
 sys.path[:0] = [str(ROOT / "src"), str(ROOT / "scripts" / "round8"), str(ROOT / "scripts" / "replication")]
 D = os.environ.get("WTSS_DATA", "/workspace/data")
+RUN = os.environ.get("P4_RUN", "seg")   # seg (first runs) | seg_pil (A31 reruns on the PIL cache)
 OUT = Path(f"{D}/replication/saab/arm_a")
 RES = ROOT / "results/replication/saab"
 CS = (0.01, 0.1, 1.0, 10.0)
@@ -43,7 +44,7 @@ def features(k):
     pos = {i: j for j, i in enumerate(ids)}
     model, _ = T.build("seg")
     T.add_checkpointing(model)            # same module names as the saved state dict (Ckpt is inactive in eval mode)
-    c = torch.load(f"{D}/replication/saab/runs/seg_split{k}/best.pt", map_location="cpu", weights_only=False)
+    c = torch.load(f"{D}/replication/saab/runs/{RUN}_split{k}/best.pt", map_location="cpu", weights_only=False)
     model.load_state_dict(c["model"]); model.cuda().eval()
     OUT.mkdir(parents=True, exist_ok=True)
     X = []
@@ -56,7 +57,7 @@ def features(k):
                 xs.append(((x.astype(np.float32) / 255.0 - T.MEAN) / T.STD).transpose(2, 0, 1))
             f = model.encoder(torch.from_numpy(np.stack(xs)).cuda())[-1]
             X.append(f.mean((2, 3)).float().cpu().numpy())
-    np.savez(OUT / f"seg_split{k}_encoder_masked.npz", ids=np.array(ids_k, dtype="U"), X=np.concatenate(X),
+    np.savez(OUT / f"{RUN}_split{k}_encoder_masked.npz", ids=np.array(ids_k, dtype="U"), X=np.concatenate(X),
              best_epoch=c["epoch"])
     print(f"split {k}: {len(ids_k)} feature rows from best epoch {c['epoch']}", flush=True)
 
@@ -77,7 +78,7 @@ def heads():
           "vs Seg-ERM of the same split (same test images). Descriptive until the P4 gate (A13). Validation (259 images) "
           "lies inside training (Bissoto's trap sets, A13), so validation-based choices say little.", ""]
     for k in (1, 2, 3):
-        f = OUT / f"seg_split{k}_encoder_masked.npz"
+        f = OUT / f"{RUN}_split{k}_encoder_masked.npz"
         if not f.exists():
             continue
         z = np.load(f); pos = {i: j for j, i in enumerate(z["ids"].astype(str))}
@@ -102,7 +103,7 @@ def heads():
         row = {"split": k, "arm": "a_segerm_mask_cmc", "best_epoch": int(z["best_epoch"]), "mode": mode, "C": C,
                "C_edge": "lowest" if C == CS[0] else "highest" if C == CS[-1] else "", "val_auroc": v,
                "robust_auroc": auc, "flags": ",".join(used)}
-        for n, run in (("Seg-ERM", f"seg_split{k}"), ("Binary-ERM", f"erm_split{k}")):
+        for n, run in (("Seg-ERM", f"{RUN}_split{k}"), ("Binary-ERM", f"erm_split{k}")):
             p = Path(f"{D}/replication/saab/runs/{run}/preds_test.csv")
             if not p.exists():
                 p = ROOT / f"results/replication/saab/scores/{run}.csv.gz"   # Binary-ERM: machine 1's scores in git
@@ -114,9 +115,9 @@ def heads():
                 row[f"vs_{n}"] = f"{b['delta']:+.3f} [{b['ci95_lo']:+.3f}, {b['ci95_hi']:+.3f}]"
         res.append(row)
         preds.append(pd.DataFrame({"image_id": r["test"].id, "label": y["test"], "method": row["arm"], "split": k, "score": sc}))
-    res = pd.DataFrame(res); RES.mkdir(parents=True, exist_ok=True); res.to_csv(RES / "p4_arm_a.csv", index=False)
+    res = pd.DataFrame(res); RES.mkdir(parents=True, exist_ok=True); res.to_csv(RES / ("p4_arm_a.csv" if RUN == "seg" else f"p4_arm_a_{RUN}.csv"), index=False)
     (RES / "scores").mkdir(exist_ok=True)
-    pd.concat(preds).to_csv(RES / "scores/p4_arm_a.csv.gz", index=False)
+    pd.concat(preds).to_csv(RES / ("scores/p4_arm_a.csv.gz" if RUN == "seg" else f"scores/p4_arm_a_{RUN}.csv.gz"), index=False)
     cols = [c for c in res.columns if c.startswith("vs_")]
     md += ["| split | best epoch | mode | C (edge) | robust AUROC | Seg-ERM | " + " | ".join(f"Δ {c[3:]} [95% CI]" for c in cols) + " |",
            "|---|---|---|---|---|---|" + "---|" * len(cols)]
@@ -126,7 +127,7 @@ def heads():
     if len(res) > 1:
         md += ["", f"Mean over {len(res)} splits: arm a {res.robust_auroc.mean():.3f} ± {res.robust_auroc.std(ddof=1):.3f}"
                + (f", Seg-ERM {res['Seg-ERM_auroc'].mean():.3f} ± {res['Seg-ERM_auroc'].std(ddof=1):.3f}" if "Seg-ERM_auroc" in res else "")]
-    (RES / "p4_arm_a.md").write_text("\n".join(md) + "\n")
+    (RES / ("p4_arm_a.md" if RUN == "seg" else f"p4_arm_a_{RUN}.md")).write_text("\n".join(md) + "\n")
     print("\n".join(md))
 
 

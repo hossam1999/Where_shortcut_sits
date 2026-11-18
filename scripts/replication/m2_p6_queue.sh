@@ -6,8 +6,8 @@
 # Waits until P4 Seg-ERM splits 1-3 are scored (author: P4 first; pair only if measured not to slow P4), then runs alone.
 #   nohup scripts/replication/m2_p6_queue.sh > /workspace/logs/m2_p6_queue.log 2>&1 &
 D=${WTSS_DATA:-/workspace/data}; Q=/root/Where_shortcut_sits/scripts/replication; E=/workspace/third_party/epvt; PY=/workspace/envs/epvt/bin/python
-export EPVT_PATIENCE=22 WANDB_MODE=disabled EPVT_EVAL_ROOT=/workspace/third_party/bissoto_ag/trap_sets/ EPVT_IMFOLDER=$D/epvt/isic2019_plain/ EPVT_ROOT=$D/epvt/
-until [ -s $D/replication/saab/runs/seg_split1/preds_test.csv ] && [ -s $D/replication/saab/runs/seg_split2/preds_test.csv ] && [ -s $D/replication/saab/runs/seg_split3/preds_test.csv ]; do sleep 120; done
+export EPVT_GRAD_CKPT=1 EPVT_PATIENCE=22 WANDB_MODE=disabled EPVT_EVAL_ROOT=/workspace/third_party/bissoto_ag/trap_sets/ EPVT_IMFOLDER=$D/epvt/isic2019_plain/ EPVT_ROOT=$D/epvt/
+until [ -s $D/replication/saab/runs/seg_pil_split1/preds_test.csv ] && [ -s $D/replication/saab/runs/seg_pil_split2/preds_test.csv ] && [ -s $D/replication/saab/runs/seg_pil_split3/preds_test.csv ]; do sleep 120; done
 H='{"lr": 5e-6, "lr_classifier": 5e-5,"batch_size":26,"wd_classifier":1e-5}'
 HP='{"lr": 5e-6, "lr_classifier": 5e-5,"batch_size":26,"wd_classifier": 1e-5, "prompt_dim":10}'
 for b in ${BIASES:-1}; do
@@ -18,7 +18,7 @@ for b in ${BIASES:-1}; do
     mkdir -p $O; echo "$(date -u +%F_%T) start $m bias $b"
     if [ $m = erm ]; then CMD="$PY -m domainbed.scripts.train_erm --data_dir=$D/epvt/bias${b}_1/ --steps $ST --dataset SKIN --test_env 0 --algorithm ERM --output_dir $O --hparams '$H' --exp erm"
     else CMD="$PY -m domainbed.scripts.train_epvt --data_dir=$D/epvt/bias${b}_1/ --steps $ST --dataset SKIN --test_env 0 --algorithm DoPrompt_group_decompose --output_dir $O --hparams '$HP' --exp epvt"; fi
-    (cd $E && EPVT_SPLIT=${b}_1 MAX_OTHER_JOBS=0 $Q/gpu_wait.sh 14000 bash -c "$CMD > $O/train.log 2>&1") || { echo "$(date -u +%F_%T) FAILED train $m bias $b"; exit 1; }
+    (cd $E && EPVT_SPLIT=${b}_1 MAX_OTHER_JOBS=0 $Q/gpu_wait.sh 8000 bash -c "$CMD > $O/train.log 2>&1") || { echo "$(date -u +%F_%T) FAILED train $m bias $b"; exit 1; }
     (cd $E && EPVT_SPLIT=${b}_1 $PY $Q/p6_epvt_score.py --ckpt $O/$m.pkl --test test_bias_${b}_1.csv >> $O/score.log 2>&1) || { echo "FAILED score $m $b"; exit 1; }
     echo "$(date -u +%F_%T) done $m bias $b: $(tail -1 $O/score.log)"
   done

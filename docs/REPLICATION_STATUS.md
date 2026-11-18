@@ -849,3 +849,12 @@ below Seg-ERM on every split, C at the top edge (10) each time. Arm d vs Seg-ERM
    `trap-sets/isic_annotated_test1.csv`, which has 772 rows in every commit of that repository (single data commit 841cc17,
    2020); ours are the same files (2,853 rows; 772 test, 618 benign / 154 melanoma). The paper's "513" (p. 12) matches no file
    or split: recorded as a paper inconsistency.
+
+### 2026-11-18 ~21:50 UTC (machine 2's clock) — machine 2: P6 out-of-memory fixed (activation checkpointing, identical gradients); A31 reruns first
+- P6 ERM bias 1 failed twice before training: out of memory at 20:11 (started the second split 3 ended, beside P4 arm-a's
+  3.9 GB feature pass — a launch race) and at 21:33 alone (their batch 130 in fp32 needs > 15.4 GiB). Fix: activation
+  checkpointing of the ViT-B/16 blocks (`EPVT_GRAD_CKPT=1`), checked identical (loss |Δ| 0; all 152 gradient tensors identical);
+  peak 4.25 GiB (ERM) / 4.78 GiB (EPVT). Details in `third_party/epvt/SOURCE.md`; P6 queue now requires an exclusive GPU.
+- Order (P4 keeps priority; changes A31's scheduling line, which assumed P6 bias 1 would already be running): A31 PIL cache
+  (CPU, building) → Seg-ERM reruns `seg_pil_split1–3` (two paired, then the third) with arm a and the gate after each →
+  P6 bias 1 (ERM, EPVT) → timing report. Expected: reruns ≈ 05:30 UTC on 19 Nov, P6 bias 1 ≈ 06:30.
