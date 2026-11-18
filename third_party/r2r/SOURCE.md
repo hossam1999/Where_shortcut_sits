@@ -20,3 +20,17 @@
   (`config_files/config_generator_training_isic_attacked.py:20`); the paper's Appendix A.2 states 10% of melanoma. Per the
   author (2026-11-19) we follow the paper and the checkpoint script for step 1; which rate the released attacked checkpoint
   was trained with is not stated in the code.
+
+## Machine 2 (A27, 2026-11-18)
+- Full `git clone` succeeded on machine 2; HEAD = f00ce0614947b48bb8320beeff64c700c6d94c09 (`/workspace/third_party/r2r`).
+- Checkpoints downloaded from the two URLs above: `checkpoint_resnet18_isic_last.pth` SHA-256
+  `3d653706b6216b6bf642542659e71dd16ec28670e180bfae71e85633db2d316a`, `checkpoint_resnet18_isic_attacked.pth` SHA-256
+  `30aa74dc0aa5f1715c61f53927af5ed1e06c0204a6261ea486b1ac9d988d7213` (plain state dicts, 9 outputs).
+- On the rate discrepancy: their `scripts/download_checkpoints_isic_attacked.sh:5` labels the attacked checkpoints
+  "MEL 0.1 (train/val/test)", and their correction configs (`config_files/correcting_isic_attacked/local/*.yaml`) set
+  `p_artifact: 0.1`; only the training generator says 0.8. Step 1 uses 0.1.
+- Environment `/workspace/envs/r2r`: Python 3.11, torch 2.11.0+cu128, their `requirements.txt`; **pandas pinned to 2.2.3**
+  (their `datasets/isic.py` calls `metadata.agg(sum)` over a frame with string columns; pandas 3 no longer maps the builtin
+  `sum` to `Series.sum` and raises). Pillow 13.0.0: its default font is FreeType, not the bitmap font of Pillow < 10.1 that
+  their `ImageDraw.text` call (no font argument) used in 2023 — the rendered "Clever Hans" text therefore differs from the
+  training artifact (recorded as a candidate cause in `results/replication/r2r/step1.md`).

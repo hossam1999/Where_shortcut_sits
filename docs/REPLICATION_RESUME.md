@@ -18,6 +18,18 @@ Findings and deviations: `docs/REPLICATION_STATUS.md`. Results: `docs/REPLICATIO
 - GPU rules (mandatory): all GPU work through `scripts/replication/gpu_wait.sh` (memory + at most one other job); never kill
   by pattern; stop a job by PID **and its DataLoader workers** (`pgrep -P <pid>`), else they keep GPU memory.
 
+## Machine 2 (A27; updated 2026-11-18 12:35 UTC, machine 2's clock)
+RTX 5070 Ti 16 GB, 28 cores, 62 GB RAM, 288 GB disk, **no persistent volume** (re-download data if recycled; only git
+survives). Repo `/root/Where_shortcut_sits`; `WTSS_DATA=/workspace/data`; third-party clones `/workspace/third_party/{saab,bissoto,pahde,isnet,r2r}`
+(pahde patched with `cu128_port.patch`); envs `/workspace/venv-wtss`, `/workspace/envs/{saab,pahde,r2r}` (`docs/ENVIRONMENT_MACHINE2.md`).
+| job | state | resume |
+|---|---|---|
+| P4 Seg-ERM splits 1→2→3 (`m2_p4_queue.sh`) | split 1 running, 1.15 min/epoch; ETA all ≈ 21:15 UTC | `nohup scripts/replication/m2_p4_queue.sh > /workspace/logs/m2_p4_queue.log 2>&1 &` (resumes from each `checkpoint.pt`) |
+| P4 arm a | after each split: `saab` env `p4_arm_a.py --stage features --split k`, then our env `p4_arm_a.py --stage heads` | — |
+| P4 arm-d split-1 comparison | needs arm d's features from machine 1 (not in git); arm d's test scores are in git (`results/replication/armd/scores/p4_split1.csv.gz`), so the paired comparison with Seg-ERM split 1 is computed from scores | — |
+| P5 step 1 | **done, check failed** (0.838/0.552 vs 0.895/0.356); P5 dropped pending the author | — |
+| Phase 5 | thyroid cohort rebuilt; trainer + unit tests next, then timing test, `PREREGISTRATION_PHASE5.md`, wait | — |
+
 ## Done (results in git)
 - Phase 0–1, amendments A1–A14 (pushed).
 - **P1 Viviano, seed 1234 (preliminary, 1 seed, no verdict — A14):**

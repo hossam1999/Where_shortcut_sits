@@ -720,3 +720,23 @@ Machine 1 now runs only: the P3 ISNet chain (`isnet_inside_all_seed0`, then `isn
 the rebuilt test, the A24 in-distribution evaluations, the P3 arm feature passes (arms b, c, d on the A24 validation
 images), and the exploratory track (CPU, validation only). Machine 1 never edits files machine 2 writes (P4, P5, phase-5
 results and their STATUS entries).
+
+### 2026-11-18 12:35 UTC (machine 2's clock) — machine 2: set up, data verified, P4 Seg-ERM split 1 running, P5 step 1 failed its check
+- **Hardware (measured):** RTX 5070 Ti 16 GB (not an RTX 5080 as noted above), driver 595.91.07 / CUDA 13.2; Xeon E5-2680 v4,
+  28 logical cores; 62 GB RAM; 288 GB container disk, **no persistent volume** (A27). Environments: `docs/ENVIRONMENT_MACHINE2.md`.
+- **Data, checked against `docs/DATA_MANIFEST.md`:** ISIC 2019 (P5) 25,335 files / 9,803,958,095 B, listing hash **match**;
+  TN3K (phase 5) 6,995 / 375,692,454 B, **match**; ISIC 2018 Task 1/2 (P4) 2,594 images + 2,594 Task 1 masks, complete; its
+  listing differs from the thesis machine's by 2 files / 4 B outside the images (ISIC's `LICENSE.txt` / `ATTRIBUTION.txt`;
+  ISIC moved the files on 2026-10-28). Bissoto trap sets at f93c865; SE-ResNeXt50 weights from the Internet Archive, SHA-256
+  `a260b3a40f82dfe3…` (as `third_party/saab/SOURCE.md`). Thyroid cohort rebuilt on CPU (`scan_thyroid.py`, `prepare_thyroid.py`):
+  3,493 images, Trap A 1,150, Trap B 326, marker-free 1,801, largest pHash group 3 — **identical to
+  `docs/PREREGISTRATION_THYROID_TRAPS.md`**.
+- **P4 Segmentation-ERM split 1** (A27: from scratch, machine 1's checkpoint unused), same command (`--grad_ckpt`, batch 16,
+  fp32) via `scripts/replication/m2_p4_queue.sh` (splits 1 → 2 → 3): **1.15 min/epoch (26 img/s, peak 6.3 GiB)**, ≈ 2.9 h per
+  split; all three expected ≈ 21:15 UTC. Arm a: `scripts/replication/p4_arm_a.py` (features per split on GPU, heads on CPU).
+- **P5 step 1: Vanilla NOT within 0.03 of Table 1** (`results/replication/r2r/step1.md`): attacked ResNet-18, test accuracy
+  original 0.838 / poisoned 0.552 (paper 0.895 / 0.356), macro-F1 0.772 / 0.622 (paper 0.821 / 0.390). The clean gap (−0.06)
+  involves no artifact (the original checkpoint also gives 0.831); the poisoned gap has a candidate cause (Pillow ≥ 10.1
+  renders the text artifact with a different default font). Per the author's rule, **P5 is dropped**; no amendment A26, no
+  correction run. Waiting for the author on whether the font point warrants anything (any re-score of the test would be a
+  second scoring and needs a dated amendment first).
