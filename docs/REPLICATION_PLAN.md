@@ -104,6 +104,21 @@ Every target must be beaten twice. Both are required for a claim of "better than
    - **Our test design:** correlated, reversed and clean tests; Trap A (artifact inside the ROI) vs Trap B (outside);
      the transplant; the unaltered test sets.
 
+### Phase 5, minimal scope (author, 2026-11-18; replaces the sketch below where they differ)
+- **Cohort:** thyroid only (TN3K, real calipers). **Trap A and Trap B, 3 folds each.**
+- **Their methods:** RR-ClArC (P2) and ISNet's LRP penalty outside our ROI (P3).
+  RR-ClArC: λ ∈ {5·10⁸, 5·10⁹, 5·10¹⁰} chosen on validation, lr = training lr / 10, fresh optimizer, layer and epochs per
+  their configs (A18 practice).
+- **Ours:** arm d (EfficientNet-B0 trained on ROI-masked images + mask_cmc, A20/A21; the same resolution, augmentation
+  and early-stopping rule as the other phase-5 arms), plus the thesis's arms on the same folds: DINOv2 + mask_cmc refit
+  on CPU with the A21 C grid, and U-MtE. ERM and mask from the thesis's runs.
+- **Dropped, and why:** ActDiff (P1), Segmentation-ERM (P4), and the ovary, capsule and ISIC-hair cohorts. P1 and P4 are
+  compared with us in their own environments only. RR-ClArC and ISNet are the two methods that could plausibly work when
+  the artifact lies inside the ROI (RR-ClArC acts on a concept direction, not on location; ISNet is the strongest
+  location-based method), so they carry phase 5; one cohort with real in-ROI markers keeps the cost bounded.
+- About 18 networks plus the RR-ClArC λ fine-tunes. A timing test on Trap A fold 1 with all three methods comes first,
+  then `docs/PREREGISTRATION_PHASE5.md` for the author's approval.
+
 ### Phase 5 sketch (pre-register before any phase-5 run; start after P1–P3 phases 2–3)
 - **Where:** our end-to-end pipeline, `src/wtss/experiments/finetune.py`. It already runs `erm`, `mask`, `balanced`,
   `mte_post`, `umte_ft` on our traps with ResNet-50 and folds. Their methods are added as new arms, ported from
