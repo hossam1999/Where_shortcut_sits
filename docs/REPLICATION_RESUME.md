@@ -95,14 +95,14 @@ Descriptive until the P4 gate (A13).
 - ISIC 2018 Task 1/2 (P4): done and unzipped.
 
 <!-- HEARTBEAT START -->
-### Heartbeat 2026-11-18 19:25 UTC (auto-generated)
+### Heartbeat 2026-11-18 21:26 UTC (auto-generated)
 
 GPU jobs (PID, MiB, command):
 ```
-399654  12134 MiB    03:48:20 /workspace/envs/pahde/bin/python -u scripts/replication/p3_train.py --name isnet_corner_all_seed0 --model isnet --seed 0 --batch 16 --posi
+399654  12134 MiB    05:49:05 /workspace/envs/pahde/bin/python -u scripts/replication/p3_train.py --name isnet_corner_all_seed0 --model isnet --seed 0 --batch 16 --posi
 ```
 - P2 Vanilla: Epoch 300: of 300; checkpoints: checkpoint_resnet50d_100.pth checkpoint_resnet50d_200.pth checkpoint_resnet50d_300.pth checkpoint_resnet50d_last.pth 
-- P3 isnet_corner_all_seed0: last epoch 29 of 47
+- P3 isnet_corner_all_seed0: last epoch 37 of 47
 - P4 erm_split1: last epoch 149 of 149
 - P4 erm_split2: last epoch 149 of 149
 - P4 erm_split3: last epoch 149 of 149
