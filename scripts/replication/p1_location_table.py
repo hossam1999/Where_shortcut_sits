@@ -3,9 +3,11 @@ Per position and test set: AUROC; on the reversed test: gain over Standard, pair
 crossover = gain outside - gain inside (95% CI). Image-only bootstrap (one seed, A3), 10,000 replicates; the test images
 are the same at both positions, so one Poisson weight per image is shared across positions and methods.
 
-    python scripts/replication/p1_location_table.py
-Writes results/replication/viviano/location_1234.{csv,md}.
+    python scripts/replication/p1_location_table.py              # registered (A15/A16), primary
+    python scripts/replication/p1_location_table.py --model last # A17, POST HOC: their epoch-100 models (arms b, c reused)
+Writes results/replication/viviano/location_1234.{csv,md} (or location_1234_posthoc_last.{csv,md}).
 """
+import argparse
 import os
 from pathlib import Path
 
@@ -23,12 +25,12 @@ NAMES = {"standard": "Standard (theirs)", "masked": "Masked (theirs, A5)", "a_ma
          "b_dino518_mask_cmc": "b: DINOv2 + mask_cmc", "c_umte": "c: U-MtE"}
 
 
-def load(pos):
-    s = pd.read_csv(L / pos / "scores.csv.gz")
+def load(pos, sfx=""):
+    s = pd.read_csv(L / pos / f"scores{sfx}.csv.gz")
     s = s[s.test_set.isin(["corr", "rev", "clean"])][["image_id", "label", "method", "test_set", "score"]]
     parts = [s]
-    for arm in ARMS:
-        f = L / pos / "arms" / f"preds_{arm}.csv.gz"
+    for arm in ARMS:   # A17: only arm a uses their network; b and c are reused from the registered run
+        f = L / pos / (f"arms{sfx}" if arm.startswith("a_") else "arms") / f"preds_{arm}.csv.gz"
         if f.exists():
             parts.append(pd.read_csv(f)[["image_id", "label", "method", "test_set", "score"]])
     return pd.concat(parts)
@@ -52,7 +54,11 @@ def crossover(sc, method, n_boot=10000, seed=20260918):
 
 
 def main():
-    sc = {p: load(p) for p in ("inside", "outside") if (L / p / "scores.csv.gz").exists()}
+    ap = argparse.ArgumentParser()
+    ap.add_argument("--model", choices=["best", "last"], default="best")
+    sfx = "" if ap.parse_args().model == "best" else "_last"
+    ph = "POST HOC " if sfx else ""
+    sc = {p: load(p, sfx) for p in ("inside", "outside") if (L / p / f"scores{sfx}.csv.gz").exists()}
     circ = pd.read_csv(ROOT / "results/replication/viviano/location_tube_vs_circle.csv").set_index("position")
     rows = []
     for pos, s in sc.items():
@@ -84,8 +90,17 @@ def main():
                 pt, lo, hi, p = crossover(sc, m)
                 t.loc[t.method == m, "crossover"] = pt
                 t.loc[t.method == m, "crossover_ci"] = f"[{lo:+.3f}, {hi:+.3f}]"
-    rd = ROOT / "results/replication/viviano"; t.to_csv(rd / "location_1234.csv", index=False)
-    md = ["# P1 location test (A15/A16): tube inside vs outside the lungs + heart ROI, P1's pipeline, seed 1234", "",
+    if sfx:
+        t.insert(0, "analysis", "POST HOC (A17): their epoch-100 models; arms b, c reused")
+    stem = "location_1234_posthoc_last" if sfx else "location_1234"
+    rd = ROOT / "results/replication/viviano"; t.to_csv(rd / f"{stem}.csv", index=False)
+    md = ["# P1 location test (A15/A16): tube inside vs outside the lungs + heart ROI, P1's pipeline, seed 1234", ""] if not sfx else [
+          "# POST HOC sensitivity analysis (A17) — P1 location test on their epoch-100 models (`last_model_1234.pth.tar`)", "",
+          "**Every number in this table is POST HOC** (decided after the registered table was seen). The registered table "
+          "(`location_1234.md`, their selection rule: epoch 11 inside, epoch 8 outside) is the primary result; this one is "
+          "descriptive only, with no verdict. Standard, Masked and arm a use their epoch-100 network at both positions; arms b "
+          "and c do not use their network and are the registered predictions, reused unchanged.", ""]
+    md += [
           "One seed: paired image-only bootstrap (10,000 replicates); training-seed variance is not included (A3). "
           "Crossover = gain over Standard outside − gain inside (reversed test). 'Kept by circle' = mean share of tube pixels "
           "inside P1's circle mask (what Masked and arm a keep); 'kept by lungs + heart' = the same for the PSPNet lungs ∪ heart mask "
@@ -96,9 +111,9 @@ def main():
     for _, r in t.iterrows():
         dv = f"{r.get('rev_delta_vs_masked', np.nan):+.3f} {r.get('rev_delta_vs_masked_ci', '')}" if isinstance(r.get("rev_delta_vs_masked_ci"), str) else "—"
         cx = f"{r['crossover']:+.3f} {r['crossover_ci']}" if "crossover_ci" in r and isinstance(r.get("crossover_ci"), str) else "—"
-        md.append(f"| {r.position} | {NAMES[r.method]} | {r.tube_pixels_kept_by_their_circle:.3f} | {r.tube_pixels_kept_by_lungs_heart:.3f} | {r.corr_auroc:.3f} | {r.rev_auroc:.3f} | "
+        md.append(f"| {ph}{r.position} | {NAMES[r.method]} | {r.tube_pixels_kept_by_their_circle:.3f} | {r.tube_pixels_kept_by_lungs_heart:.3f} | {r.corr_auroc:.3f} | {r.rev_auroc:.3f} | "
                   f"{r.clean_auroc:.3f} | {f(r.rev_gain_over_standard)} {r.get('rev_gain_over_standard_ci', '') if isinstance(r.get('rev_gain_over_standard_ci'), str) else ''} | {dv} | {cx} |")
-    (rd / "location_1234.md").write_text("\n".join(md) + "\n")
+    (rd / f"{stem}.md").write_text("\n".join(md) + "\n")
     print("\n".join(md))
 
 

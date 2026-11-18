@@ -7,6 +7,7 @@ and `configuration.setup_dataset` is redirected to it at runtime (no file of the
 
     python scripts/replication/p1_location.py train --position inside|outside        # trains Standard (seed 1234)
     python scripts/replication/p1_location.py score --position inside|outside        # Standard + Masked (A5) scores
+    python scripts/replication/p1_location.py score --position ... --model last      # A17 (post hoc): their epoch-100 model
 Outputs: $WTSS_DATA/replication/viviano/location/<position>/ (run dir with their results/, scores_*.csv.gz).
 """
 import argparse
@@ -94,6 +95,7 @@ def main():
     ap = argparse.ArgumentParser()
     ap.add_argument("stage", choices=["train", "score"])
     ap.add_argument("--position", choices=["inside", "outside"], required=True)
+    ap.add_argument("--model", choices=["best", "last"], default="best")   # last: A17 post-hoc sensitivity analysis
     args = ap.parse_args()
     os.environ.setdefault("MLFLOW_DISABLE_AGENT_HINT", "1")
     out = L / args.position; out.mkdir(parents=True, exist_ok=True); os.chdir(out)
@@ -106,7 +108,8 @@ def main():
     import torch
     from sklearn.metrics import roc_auc_score
     torch.cuda.set_per_process_memory_fraction(0.15)
-    model = torch.load(out / f"results/xray-location_{args.position}/best_model_{SEED}.pth.tar", map_location="cuda",
+    sfx = "" if args.model == "best" else "_last"
+    model = torch.load(out / f"results/xray-location_{args.position}/{args.model}_model_{SEED}.pth.tar", map_location="cuda",
                        weights_only=False).eval()
     feats = {}
     model.encoder.avgpool.register_forward_hook(lambda m, i, o: feats.__setitem__("f", o.flatten(1).cpu()))
@@ -131,8 +134,8 @@ def main():
                 F[env] = torch.cat(fs).numpy()
             if split == "test":
                 print(args.position, method, env, "AUROC", round(roc_auc_score(d.label, d.score), 4), flush=True)
-    pd.concat(rows).to_csv(out / "scores.csv.gz", index=False)
-    np.savez_compressed(out / "features_masked.npz", **F)
+    pd.concat(rows).to_csv(out / f"scores{sfx}.csv.gz", index=False)
+    np.savez_compressed(out / f"features_masked{sfx}.npz", **F)
 
 
 if __name__ == "__main__":

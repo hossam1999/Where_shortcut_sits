@@ -7,6 +7,7 @@ Environments: train (tube 90/10), valid (10/90), test sets corr (90/10), rev (10
 are the same stable hashes as p1_location.py (checked against its saved tube column).
 
     python scripts/replication/p1_location_arms.py --position inside|outside
+    python scripts/replication/p1_location_arms.py --position ... --model last   # A17 (post hoc): arm a on the epoch-100 net only
 Writes $WTSS_DATA/replication/viviano/location/<position>/arms/preds_<arm>.csv.gz (test sets) and summary.json.
 """
 import argparse
@@ -46,8 +47,10 @@ def gray(path):
 def main():
     ap = argparse.ArgumentParser()
     ap.add_argument("--position", choices=["inside", "outside"], required=True)
+    ap.add_argument("--model", choices=["best", "last"], default="best")   # last: A17, arm a only (b, c do not use their net)
     args = ap.parse_args()
-    torch.cuda.set_per_process_memory_fraction(float(os.environ.get("GPU_FRACTION", "0.3")))
+    if args.model == "best":   # A17 (last) runs arm a only: a CPU head on saved features
+        torch.cuda.set_per_process_memory_fraction(float(os.environ.get("GPU_FRACTION", "0.3")))
     from sklearn.linear_model import LogisticRegression
     from sklearn.metrics import roc_auc_score
     import candidates as CA
@@ -58,7 +61,8 @@ def main():
     from wtss.umte import UMtE
 
     pos = args.position
-    out = L / pos / "arms"; out.mkdir(parents=True, exist_ok=True)
+    sfx = "" if args.model == "best" else "_last"
+    out = L / pos / f"arms{sfx}"; out.mkdir(parents=True, exist_ok=True)
     sp = pd.read_csv(L / "nospc_1234.csv").sort_values(["split", "pos"])
     sp["key"] = sp.site.astype(str) + "/" + sp.image_id
     pl = pd.read_csv(L / "placements_1234.csv").set_index("key")
@@ -90,9 +94,12 @@ def main():
         return best
 
     # a) their network, circle-masked features (every split), mask_cmc
-    F = np.load(L / pos / "features_masked.npz")
+    F = np.load(L / pos / f"features_masked{sfx}.npz")
     h, mode, C, v = mask_cmc({e: F[e] for e in P_TUBE})
     save("a_mask_cmc_their_net", {e: h.prob(F[e]) for e in ("corr", "rev", "clean")}, {"mode": mode, "C": C, "val_auroc": v})
+    if args.model == "last":
+        (out / "summary.json").write_text(json.dumps(summary, indent=1))
+        return
 
     # b) DINOv2 @ 518 on lungs u heart-masked images with the tube drawn as in their run
     dev = torch.device("cuda")

@@ -46,6 +46,12 @@ def p1_location():
     for f in sorted(glob.glob(f"{D}/replication/viviano/location/*/arms/preds_*.csv.gz")):   # our arms (A16), test sets only
         pos, arm = Path(f).parents[1].name, Path(f).name[6:-7]
         write("viviano", f"location_{pos}_{arm}_1234", pd.read_csv(f))
+    for f in sorted(glob.glob(f"{D}/replication/viviano/location/*/scores_last.csv.gz")):   # A17, POST HOC (epoch 100)
+        d = pd.read_csv(f)
+        write("viviano", f"location_{Path(f).parent.name}_last_1234", d[d.test_set.isin(["corr", "rev", "clean"])])
+    for f in sorted(glob.glob(f"{D}/replication/viviano/location/*/arms_last/preds_*.csv.gz")):
+        pos, arm = Path(f).parents[1].name, Path(f).name[6:-7]
+        write("viviano", f"location_{pos}_last_{arm}_1234", pd.read_csv(f))
 
 
 def p2():
