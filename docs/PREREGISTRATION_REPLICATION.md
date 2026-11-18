@@ -529,3 +529,25 @@ the tube shortcut appeared only at epoch 11, so the kept outside model predates 
   table layout as A16. No verdict and no Holm family membership: descriptive only. Output:
   `results/replication/viviano/location_1234_posthoc_last.{csv,md}`, scores
   `results/replication/viviano/scores/location_<position>_last_1234.csv.gz` and the arm-a file next to them.
+
+**A18 (2026-11-18, after the P2 RR-ClArC result was seen; author's decision; standing rule "the paper wins over the code
+unless git history shows the code produced the table").** Results seen when this was recorded: the six RR-ClArC
+fine-tunes of section 3 (λ ∈ {10, 50} × 3 layers), selection λ = 10 / last_conv, test clean 0.840 / biased 0.338
+(not reproduced; `results/replication/pahde/p2_reproduction.md`), and arm a (`arm_a.md`).
+- **What was wrong.** Section 3 took λ ∈ {10, 50} from their config generator
+  (`config_generator_mitigation_isic_attacked.py:92-105`), where the paper's other values are commented out, and says the
+  paper leaves λ open. It does not: the paper tests λ ∈ {10¹, 5·10¹, …, 5·10¹²} (p. 31) and reports the chosen value,
+  **λ = 5·10⁹ for RR-ClArC, ISIC2019, ResNet** (Tab. 12, p. 43). The paper also states the fine-tune learning rate:
+  "the learning rate used during training (see Tab. 4) divided by 10" (p. 31), i.e. **1e-4** (Tab. 4, p. 24: Adam,
+  0.001). Their code instead loads the Vanilla checkpoint's optimizer state, whose learning rate after their schedule is
+  1e-5 (`utils/training_utils.py:13-16`). The repository has a single commit (4990898), so git history cannot show that
+  the code produced the table; the paper wins.
+- **Primary P2 RR-ClArC run (replaces section 3's grid for RR-ClArC):** our Vanilla's **weights only** (fresh Adam),
+  **lr 1e-4, λ = 5·10⁹**, each of the 3 layers of their configs (identity_1, identity_2, last_conv), **10 epochs**
+  (their configs; the paper is silent), all other settings from their configs. The layer is chosen on P2's validation
+  split by the mean of clean and biased accuracy (section 3), and the gate (section 1, |biased − 0.76| ≤ 0.03) is applied
+  to this run.
+- **Reported alongside:** the six section-3 runs (their code path: λ ∈ {10, 50}, effective lr 1e-5 from the loaded
+  optimizer state), with that explanation; not a verdict.
+- Implementation: no file of theirs is edited. A copy of our Vanilla checkpoint with `model_state_dict` only makes their
+  `get_optimizer` build a fresh Adam at the configured lr; the CAV activations of section 3 (same Vanilla) are reused.
