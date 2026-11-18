@@ -1,5 +1,7 @@
 # Draft email to Pahde et al. (not sent; the author sends it)
 
+**Sent 2026-11-18 by the author (no Cc). Answer, when it arrives, is recorded in docs/REPLICATION_STATUS.md.**
+
 **To:** wojciech.samek@hhi.fraunhofer.de, sebastian.lapuschkin@hhi.fraunhofer.de (corresponding authors, paper p. 1)
 **Cc:** Frederik Pahde (first author; address to be added)
 **Subject:** Question about the RR-ClArC configuration for ISIC2019 (Table 1), "Ensuring Medical AI Safety"

@@ -1,5 +1,7 @@
 # Draft email to Bassi et al. (not sent; the author sends it)
 
+**Sent 2026-11-18 by the author (no Cc). Answer, when it arrives, is recorded in docs/REPLICATION_STATUS.md.**
+
 **To:** pedro.salvadorbassi2@unibo.it, andrea.cavalli@unibo.it (addresses printed in the paper)
 **Subject:** Question about the released COVIDIsNet.pt model (ISNet, Nature Communications 2024)
 
