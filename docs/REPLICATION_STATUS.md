@@ -645,3 +645,9 @@ BIMCV fetch finished (531 / 531 archives). `p3_test_select.py` (A9/A10): full va
 Shenzhen 303), pneumonia 1,319 (NIH, 938 patients), COVID-19 2,501 (BIMCV, 1,631 patients); **size-matched variant 370 /
 1,295 / 1,515 = 3,180, P3's Table 4 row sums**; every image on disk. Next: `p3_prepare.py --which test` (queued on the
 GPU launcher), then the ISNet runs' `--score_only` and the COVIDIsNet.pt equivalence check (A9).
+
+### 2026-11-18 14:35 UTC — phase-5 cohorts re-downloaded and verified
+`scripts/data/fetch_phase5.sh` (TN3K Google Drive archive, MMOTU and SEE-AI via the Kaggle API with the token in the
+environment only, figshare 27645021 contamination masks) and `scripts/data/verify_phase5.py`: **all four match
+`docs/DATA_MANIFEST.md` exactly** (files / bytes / listing SHA-256): TN3K 6,995 / 375,692,454; MMOTU 6,565 / 169,894,610;
+SEE-AI 36,968 / 1,262,400,157; capsule contamination masks 29,403 / 532,520,931. (Tools added: bsdtar, kaggle, six.)
