@@ -11,7 +11,7 @@ Stages:
     python scripts/replication/armd_train.py --setting p2 --stage train      # GPU
     python scripts/replication/armd_train.py --setting p2 --stage features   # GPU, best checkpoint, all sets
     python scripts/replication/armd_train.py --setting p2 --stage heads      # CPU
-Settings implemented: p2 (P1, P3, P4 adapters are added before their runs).
+Settings implemented: p2, p1_cardio, p1_rsna (P1 location test, P3 and P4 adapters are added before their runs).
 Outputs: $WTSS_DATA/replication/armd/<setting>/ (checkpoint.pt, best.pt, log.csv, features.npz, preds_test.csv.gz) and
 results/replication/armd/<setting>.{md,csv}.
 """
@@ -129,7 +129,92 @@ class MaskedNpy:
         return t, torch.tensor(int(self.y[j]))
 
 
-SETTINGS = {"p2": P2}
+class P1:
+    """P1 (Viviano), seed-1234 split, their original tests (secondary head-to-head, no verdict: A14). Images and ROIs as
+    arm b (p1_arms.py: their image files, TorchXRayVision PSPNet ROI at 512 px, lungs ∪ heart for cardiomegaly, lungs
+    for RSNA), at the resolution their network sees: cardiomegaly 128 px, RSNA 224 px (their XRayCenterCrop +
+    XRayResizer). Their configs apply no training augmentation, so none here. Masked images are cached once (CPU).
+    Binary task, 2-way cross-entropy; validation metric AUROC on P1's validation split. Artifact label (head only):
+    site (cardiomegaly NIH/PadChest) or view (RSNA PA/AP), as arms a-c."""
+    n_out = 2
+    sets = ("train", "valid", "test")
+    train_set, val_sets = "train", ("valid",)
+    TASK = SIZE = None
+
+    def __init__(self):
+        import cv2
+        from PIL import Image
+        from wtss.ops import apply_roi_mask
+        V = Path(f"{D}/replication/viviano")
+        sp = pd.read_csv(V / f"preds/{self.TASK}_standard_1234.csv.gz", usecols=["image_id", "split", "site", "y"])
+        self.part = {k: sp[sp.split == k].reset_index(drop=True) for k in self.sets}
+        out = Path(f"{D}/replication/armd/{self.KEY}"); out.mkdir(parents=True, exist_ok=True)
+        self.npy = {}
+        for k in self.sets:
+            f = out / f"img{self.SIZE}_{k}.npy"
+            self.npy[k] = str(f)
+            if f.exists():
+                continue
+            R = np.load(V / f"arms/{self.TASK}_1234/roi_{k}.npy", mmap_mode="r")
+            d = self.part[k]
+            assert len(R) == len(d), (k, len(R), len(d))
+            mm = np.lib.format.open_memmap(f.with_suffix(".tmp.npy"), mode="w+", dtype=np.uint8, shape=(len(d), self.SIZE, self.SIZE, 3))
+            for j, (i, site) in enumerate(zip(d.image_id, d.site)):
+                path = (f"{D}/cxr_at/kaggle-pneumonia-jpg/stage_2_train_images_jpg/{i}.jpg" if self.TASK == "rsna"
+                        else f"{D}/cxr_at/{'NIH' if int(site) == 0 else 'PC'}/images-224/{i}")
+                a = cv2.imread(path, cv2.IMREAD_UNCHANGED)
+                a = a if a.ndim == 2 else cv2.cvtColor(a, cv2.COLOR_BGR2GRAY)
+                a = cv2.normalize(a, None, 0, 255, cv2.NORM_MINMAX).astype(np.uint8) if a.dtype != np.uint8 else a
+                h, w = a.shape; c = min(h, w); a = a[(h - c) // 2:(h - c) // 2 + c, (w - c) // 2:(w - c) // 2 + c]   # center crop
+                r = np.asarray(R[j]); rh, rw = r.shape; rc = min(rh, rw)
+                r = r[(rh - rc) // 2:(rh - rc) // 2 + rc, (rw - rc) // 2:(rw - rc) // 2 + rc]
+                im = Image.fromarray(a).convert("RGB").resize((self.SIZE, self.SIZE), Image.BILINEAR)
+                roi = cv2.resize(r.astype(np.uint8), (self.SIZE, self.SIZE), interpolation=cv2.INTER_NEAREST).astype(bool)
+                mm[j] = np.asarray(apply_roi_mask(im, roi))
+            mm.flush(); del mm
+            f.with_suffix(".tmp.npy").replace(f)
+            print("cached", k, len(d), flush=True)
+
+    def dataset(self, k, train):
+        return CachedNpy(self.npy[k], self.part[k].y.to_numpy())
+
+    def val_metric(self, preds):
+        from sklearn.metrics import roc_auc_score
+        y, p = preds["valid"]
+        return float(roc_auc_score(y, p[:, 1] - p[:, 0]))
+
+    def labels(self, k):
+        return self.part[k].y.to_numpy().astype(int), self.part[k].site.to_numpy().astype(int)
+
+
+class P1Cardio(P1):
+    TASK, SIZE, KEY = "xray", 128, "p1_cardio"
+    REF = {"Masked (theirs, A5)": "xray_masked_1234", "Standard (theirs)": "xray_standard_1234"}
+
+
+class P1RSNA(P1):
+    TASK, SIZE, KEY = "rsna", 224, "p1_rsna"
+    REF = {"ActDiff (theirs)": "rsna_actdiff_1234", "Standard (theirs)": "rsna_standard_1234"}
+
+
+class CachedNpy:
+    """Pre-masked uint8 N x S x S x 3 memmap -> ImageNet-normalised tensor (no augmentation)."""
+
+    def __init__(self, npy, y):
+        self.npy, self.y, self.mm = npy, y, None
+
+    def __len__(self):
+        return len(self.y)
+
+    def __getitem__(self, j):
+        import torch
+        import torchvision.transforms.functional as TF
+        if self.mm is None:
+            self.mm = np.load(self.npy, mmap_mode="r")
+        return TF.normalize(TF.to_tensor(np.asarray(self.mm[j])), IMNET_MEAN, IMNET_STD), torch.tensor(int(self.y[j]))
+
+
+SETTINGS = {"p2": P2, "p1_cardio": P1Cardio, "p1_rsna": P1RSNA}
 
 
 # --------------------------------------------------------------------------------------------------------- train
@@ -284,6 +369,74 @@ def heads_p2(S, out):
     print("\n".join(md))
 
 
+def heads_binary(S, out, name, title, ref_scores):
+    """mask_cmc (mode pooled / per_class) + class-balanced logistic regression, (mode, C) in the A21 grid by validation
+    AUROC; test AUROC scored once; paired image-only bootstrap vs each reference (descriptive)."""
+    import candidates as CA
+    from sklearn.linear_model import LogisticRegression
+    from sklearn.metrics import roc_auc_score
+    from wtss.replication_stats import paired_bootstrap
+    F = np.load(out / "features.npz")
+    ytr, atr = S.labels(S.train_set)
+    vk = S.val_sets[0]
+    sel, best = [], None
+    for mode in CA.CMC_MODES:
+        P = CA.Projector(CA.cmc_directions(F[S.train_set], ytr, atr, mode))
+        Z = {k: P(F[k]) for k in S.sets}
+        for C in CS:
+            clf = LogisticRegression(C=C, class_weight="balanced", max_iter=5000, solver="liblinear", random_state=0).fit(Z[S.train_set], ytr)
+            v = float(roc_auc_score(S.labels(vk)[0], clf.decision_function(Z[vk])))
+            sel.append({"mode": mode, "k": P.Q.shape[1], "C": C, "val_auroc": v})
+            if best is None or v > best[1]:
+                best = (clf, v, mode, C, Z)
+    clf, _, mode, C, Z = best
+    sel = pd.DataFrame(sel).assign(chosen=lambda d: (d["mode"] == mode) & (d.C == C))
+    edge = "lowest" if C == CS[0] else "highest" if C == CS[-1] else "no"
+    md = [f"# Arm d (A20/A21) — {title}, seed 1234", "",
+          "One seed: 95% CIs are image-only bootstrap intervals (10,000 replicates), paired on the same test images; "
+          "training-seed variance is not included.", ""]
+    lg = pd.read_csv(out / "log.csv")
+    md += [f"Encoder (EfficientNet-B0) training: {len(lg)} epochs, best validation AUROC {lg.val_metric.max():.3f} at epoch "
+           f"{int(lg.val_metric.idxmax())}. Head: mode {mode}, C = {C:g} (edge of the A21 grid: **{edge}**).", ""]
+    rows, preds = [], []
+    for k in [x for x in S.sets if x not in (S.train_set, *S.val_sets)]:
+        y = S.labels(k)[0]
+        sc = clf.decision_function(Z[k])
+        ids = S.part[k].image_id.astype(str).tolist()
+        preds.append(pd.DataFrame({"image_id": ids, "label": y, "method": name, "test_set": k, "score": sc}))
+        r = {"test": k, "n": len(y), "arm_d_auroc": float(roc_auc_score(y, sc))}
+        for rn, rf in ref_scores.items():
+            ref = rf(k).set_index("image_id").loc[ids]
+            res = paired_bootstrap({0: (ids, y, sc, ref.score.to_numpy())}, "auroc")
+            r[f"{rn}_auroc"] = float(roc_auc_score(y, ref.score.to_numpy()))
+            r[f"delta_vs_{rn}"] = res["delta"]; r[f"ci_vs_{rn}"] = f"[{res['ci95_lo']:+.3f}, {res['ci95_hi']:+.3f}]"
+        rows.append(r)
+    pd.concat(preds).to_csv(out / "preds_test.csv.gz", index=False)
+    res = pd.DataFrame(rows)
+    OUTR.mkdir(parents=True, exist_ok=True)
+    sel.to_csv(OUTR / f"{S.KEY}_selection.csv", index=False); res.to_csv(OUTR / f"{S.KEY}.csv", index=False)
+    md += ["| test | n | arm d AUROC | " + " | ".join(f"{rn} | Δ vs {rn} [95% CI]" for rn in ref_scores) + " |",
+           "|---|---|---|" + "---|---|" * len(ref_scores)]
+    for _, r in res.iterrows():
+        md.append(f"| {r.test} | {r.n} | {r.arm_d_auroc:.3f} | " + " | ".join(
+            f"{r[f'{rn}_auroc']:.3f} | {r[f'delta_vs_{rn}']:+.3f} {r[f'ci_vs_{rn}']}" for rn in ref_scores) + " |")
+    (OUTR / f"{S.KEY}.md").write_text("\n".join(md) + "\n")
+    print("\n".join(md))
+
+
+def heads_p1(S, out):
+    V = Path(f"{D}/replication/viviano/preds")
+
+    def ref(run):
+        def f(k):
+            d = pd.read_csv(V / f"{run}.csv.gz")
+            d = d[d.split == k]
+            return pd.DataFrame({"image_id": d.image_id.astype(str), "score": d.logit1 - d.logit0})
+        return f
+    heads_binary(S, out, "d_effb0_roi_mask_cmc", f"P1 {S.TASK} (their original test; secondary, no verdict, A14)",
+                 {n: ref(r) for n, r in S.REF.items()})
+
+
 def boot(hit, n=10000, seed=20260918):
     rng = np.random.default_rng(seed)
     out = []
@@ -306,7 +459,7 @@ def main():
     elif a.stage == "features":
         features(S, out, a.workers)
     else:
-        {"p2": heads_p2}[a.setting](S, out)
+        {"p2": heads_p2, "p1_cardio": heads_p1, "p1_rsna": heads_p1}[a.setting](S, out)
 
 
 if __name__ == "__main__":
