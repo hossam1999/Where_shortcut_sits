@@ -144,18 +144,46 @@ registered one (+0.342), as the epoch-100 network's features carry the marker mo
 positions. One seed; image-only bootstrap. Source: `results/replication/viviano/location_1234_posthoc_last.{md,csv}`.
 
 ## P2 — Pahde et al., Machine Learning 2025 (primary)
-*RR-ClArC reproduction: pending (A18 rerun at the paper's stated settings; the section-3 runs, their code path, gave
-0.338 biased accuracy, not reproduced; `results/replication/pahde/p2_reproduction.md`).*
 
-### Arm a: mask_cmc on our Vanilla ResNet-50d (seed 0; image-only bootstrap)
-| test | n | arm a [95% CI] | our Vanilla | Δ vs Vanilla [95% CI] | paper Vanilla | paper RRR | paper RR-ClArC |
-|---|---|---|---|---|---|---|---|
-| clean | 2533 | 0.822 [0.807, 0.836] | 0.839 | -0.017 [-0.029, -0.005] | 0.87 | 0.84 | 0.86 |
-| biased | 2533 | 0.691 [0.673, 0.709] | 0.311 | +0.380 [+0.360, +0.401] | 0.28 | 0.51 | 0.76 |
+**Reproduction: not reproduced (final; author's decision 2026-11-18).** Target: RR-ClArC biased-test accuracy 0.76
+(Table 1, ResNet-50, ISIC 2019). Primary run (A18, the paper's stated settings: λ = 5·10⁹ from Tab. 12, lr 1e-4 = training
+lr / 10 from p. 31, our Vanilla's weights with a fresh Adam, 10 epochs, layer chosen on validation): **0.524 [0.505, 0.543]**,
+clean 0.839. The section-3 runs (their code path: λ ∈ {10, 50} from their config generator, effective lr 1e-5 because
+their `get_optimizer` loads the Vanilla's decayed optimizer state) gave 0.338. Our Vanilla matches the paper (clean 0.839
+vs 0.87; biased 0.311 vs 0.28), so the biased test is built as theirs. The exact configuration behind Table 1 has been
+requested from the authors (`docs/EMAIL_DRAFT_PAHDE_RRCLARC.md`). **No verdict** in any comparison with RR-ClArC
+(section 6); the comparisons below are descriptive. The decisive RR-ClArC comparison is carried by phase 5 (thyroid Trap
+A, both methods run by us at the paper's stated settings).
 
-**Note on the C grid.** Arm a's selected C = 0.01 is the smallest value of the registered grid {0.01, 0.1, 1, 10}
-(validation mean of clean and biased accuracy: 0.772 at C = 0.01, falling with larger C). The registered grid is kept;
-any wider grid would be post hoc only (sensitivity analysis, no verdict). Source: `results/replication/pahde/arm_a.md`.
+**Selection criterion.** RR-ClArC's layer (among 3) and our arms' C (among 4) are chosen by the same criterion: the mean of
+clean and biased accuracy on P2's 2,533 validation images (accuracy of the argmax prediction). RR-ClArC is taken at the
+end of its 10 epochs (`last.ckpt`, as in their evaluation); no method selects an epoch.
+
+**All methods, P2's tests (seed 0; image-only bootstrap, 10,000 replicates; training-seed variance not included; Δ paired
+on the same test images):**
+
+| method | clean [95% CI] | biased [95% CI] | Δ biased vs our RR-ClArC [95% CI] | Δ biased vs Vanilla [95% CI] |
+|---|---|---|---|---|
+| Paper: Vanilla / RRR / RR-ClArC | 0.87 / 0.84 / 0.86 | 0.28 / 0.51 / 0.76 | — | — |
+| Our Vanilla | 0.839 [0.825, 0.853] | 0.311 [0.293, 0.329] | — | — |
+| Our RR-ClArC (A18, identity_2) | 0.839 [0.825, 0.853] | 0.524 [0.505, 0.543] | — | — |
+| a: mask_cmc on our Vanilla | 0.822 [0.807, 0.836] | 0.691 [0.673, 0.709] | — | +0.380 [+0.360, +0.401] |
+| a': mask_cmc on our RR-ClArC (A19) | 0.818 [0.803, 0.833] | 0.667 [0.648, 0.685] | +0.143 [+0.126, +0.161] | +0.356 [+0.335, +0.377] |
+| b: DINOv2-518 on lesion-masked images + mask_cmc | 0.685 [0.666, 0.703] | 0.681 [0.663, 0.700] | — | +0.370 [+0.345, +0.397] |
+| c: U-MtE (lesion ROI), label-free | 0.680 [0.662, 0.698] | 0.678 [0.660, 0.697] | — | +0.367 [+0.341, +0.394] |
+
+Arm a' on clean: −0.021 [−0.033, −0.009] vs our RR-ClArC. Sources: `results/replication/pahde/{p2_reproduction_a18,
+p2_reproduction, arm_a, arm_aprime, arm_b, arm_c}.md`; per-image test predictions in `results/replication/pahde/scores/`.
+
+**Reading (descriptive).** On the network side (a, a'), projecting out the one artifact direction recovers most of the
+biased accuracy at a small clean cost (−0.02). Lesion masking with a frozen DINOv2 encoder (b, c) removes the microscope
+almost completely (clean ≈ biased) but costs about 0.155 clean accuracy against the fine-tuned ResNet on this 8-class
+task. Arm a' is not better than arm a on the biased test.
+
+**Notes on the C grid.** The selected C is the smallest value of the registered grid {0.01, 0.1, 1, 10} for arm a
+(validation mean 0.772), arm a' (0.751) and arm c (0.694); arm b chose 0.01 as well (`arm_b.md`). The registered grid is
+kept; any wider grid is post hoc only (sensitivity, no verdict). U-MtE kept k = 64 directions (its maximum, `max_k`).
+Lesion ROIs: HAM10000 manual 10,015, ISIC 2018 manual 772, U-Net 14,544 (held-out Dice 0.942; 7 empty masks, kept).
 
 ## P3 — Bassi et al., Nature Communications 2024 (primary)
 *pending (data ready; ISNet starts after the P1 gate; BIMCV test images fetching)*
