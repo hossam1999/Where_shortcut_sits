@@ -858,3 +858,8 @@ below Seg-ERM on every split, C at the top edge (10) each time. Arm d vs Seg-ERM
 - Order (P4 keeps priority; changes A31's scheduling line, which assumed P6 bias 1 would already be running): A31 PIL cache
   (CPU, building) → Seg-ERM reruns `seg_pil_split1–3` (two paired, then the third) with arm a and the gate after each →
   P6 bias 1 (ERM, EPVT) → timing report. Expected: reruns ≈ 05:30 UTC on 19 Nov, P6 bias 1 ≈ 06:30.
+- **Pairing decision (author, 21:40):** P6 bias 1 (ERM, then EPVT) starts beside A31 rerun split 3 (≈ 6.3 + ≈ 5 GB) once
+  splits 1–2 are scored. `scripts/replication/m2_pair_measure.sh` measures it: split-3 min/epoch paired (2 fully paired
+  epochs) vs alone (1.14, measured earlier on machine 2), P6 s/epoch paired vs alone (split 3 paused by SIGSTOP/SIGCONT for
+  3 P6 epochs). Kept only if the total exceeds 1.0 of one GPU; otherwise P6 is stopped by PID and re-queued after split 3.
+  The measurement will be recorded here.
