@@ -676,3 +676,13 @@ The P3 README's Google Drive folder (1hIJp4c11R65db2K7EN4rYQ7dcr7ce72t), listed 
 ISNet without synthetic bias, Table 2), `FacesSyntheticBiasISNet.ckpt`, `ISNetDogsSyntheticBias.ckpt` (synthetic-bias
 models for faces and dogs, Table 1), `ISNetChexpert.ckpt`, `TBISNet.ckpt`. **No synthetic-bias (corner-mark) COVID-19
 model is released**, so the corner benchmark ISNet must be trained (chain unchanged; A22 not recorded).
+
+### 2026-11-18 15:20 UTC — A9 equivalence check: COVIDIsNet.pt fails even on P3's training sources → suspected input/loading mismatch; waiting for the author
+Run on CPU (inference only; on the GPU beside ISNet their LRP DenseNet ran out of memory). On our rebuilt test:
+primary macro-F1 **0.223**, size-matched **0.260** (target 0.773); nearly every image predicted "pneumonia" (COVID-19:
+2,352 of 2,501; normal: 334 of 370). Diagnostic (not part of A9): on a 900-image sample of our P3 cohort **validation**
+split — BrixIA COVID-19 and CheXpert, P3's own training sources, through our identical preprocessing — the model also
+predicts output 1 for 91% of images and never output 2 (macro-F1 0.281). So the failure is not about our test: the
+released model does not receive the input it was trained on (preprocessing mismatch) or does not load correctly (a
+pickled module under torch 2.x). The check is **not interpretable as an equivalence test**; no P3 verdict depends on it
+until this is resolved. `results/replication/isnet/covidisnet_check.md` is kept as run.
