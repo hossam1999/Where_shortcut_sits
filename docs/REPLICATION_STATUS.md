@@ -605,3 +605,9 @@ it as `scripts/replication/p2_sidecar.sh` (same commands and outputs; the window
 A18 fine-tune 2.60 it/s paired vs 4.1 alone (0.63); U-Net ~121 s/epoch paired vs ~85 s alone (~0.70; epoch timings
 straddle the end of fine-tune 1, so approximate) → **~1.33 of one GPU, kept**. The pairing of the remaining sidecar
 steps (U-Net prediction, DINOv2 extraction) with fine-tunes 2–3 is measured the same way when they overlap.
+
+### 2026-11-18 10:56 UTC — test numbers of one unselected A18 config seen (recorded for transparency)
+`p2_score.py` prints the accuracy of every set it scores, so the window log shows the test accuracy of A18 config
+λ = 5·10⁹ / identity_1 (clean 0.842, biased 0.360), which I read while checking progress, before the layer selection.
+Selection uses validation only (section 3, A18) and is not affected; nothing will be changed in response. From now on the
+progress checks read only the "scored" lines of the window log.
