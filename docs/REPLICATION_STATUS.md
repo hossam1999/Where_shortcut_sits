@@ -887,3 +887,13 @@ below Seg-ERM on every split, C at the top edge (10) each time. Arm d vs Seg-ERM
   - Yan et al., CVPR 2023 (ConfDerm, concept rewriting): no code or data release (project page 404; not in the authors' repos).
   - SilverLining (WACV 2026): no code, datasets not named. Tsue et al. 2023 (mammography view markers): private data.
   - Kvasir green-box overlay, endoscopy, pathology pen marks: no published mitigation benchmark with code found.
+- Search round 4 (author: keep searching), none taken:
+  - Friedrich, Stammer, Schramowski, Kersting, "A typology for exploring the mitigation of shortcut behaviour", Nature Machine
+    Intelligence 2023 (arXiv 2203.03668; code ml-research/A-Typology-to-Explore-the-Mitigation-of-Shortcut-Behavior, Zenodo
+    10.5281/zenodo.6781501): ISIC 2019 with real colour patches; RRR, RRR-G, RBR, CDEP, HINT, CE with annotation masks. On
+    ISIC19 the paper reports **no accuracy improvement** (all ≈ 88 %, test still confounded; Table 2a) and its headline is
+    an explanation score (wr), not a shortcut-broken test → no performance target.
+  - MAGI (ICCV 2023): LIDC-IDRI / MSD nodule classification with explanation supervision; no shortcut or OOD test.
+  - RES (KDD 2022, code YuyangGao/RES): gender and scene datasets only (not medical).
+  - Fundus: Bressler et al. 2023 (BJO; laser-scar detection, not mitigation); Fernandes et al. 2025 (arXiv, age/sex attributes).
+  - Chest X-ray lung-mask attention papers: arXiv preprints or no shortcut test (2301.10687, 2202.10971, 2512.23089).
