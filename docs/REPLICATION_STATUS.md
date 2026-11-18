@@ -624,3 +624,10 @@ progress checks read only the "scored" lines of the window log.
   0.338 (section-3 runs) to 0.524, but not to 0.76.
 - Arm a' (A19) still needs its features from the selected network (GPU, ~5 min); ISNet is running again. Arms b, c heads
   run on CPU now.
+
+### 2026-11-18 13:40 UTC — P2 decision (author)
+RR-ClArC on P2's own test is **"not reproduced" (0.524 vs 0.76)** as the final registered result. The head-to-heads vs
+RR-ClArC carry no verdict; arms a, a', b, c are reported descriptively against our A18 RR-ClArC and the paper's numbers.
+No further post-hoc tuning of RR-ClArC. A short email to Pahde et al. asking for the exact Table 1 configuration is
+drafted in `docs/EMAIL_DRAFT_PAHDE_RRCLARC.md` (the author sends it). The decisive RR-ClArC comparison moves to phase 5
+(thyroid Trap A), with RR-ClArC ported at the paper's stated settings (`docs/REPLICATION_PLAN.md`, phase 5 sketch).

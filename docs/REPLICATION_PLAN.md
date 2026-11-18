@@ -86,6 +86,18 @@ Every target must be beaten twice. Both are required for a claim of "better than
   - **P1 Viviano:** Masked (already = our `mask` arm), ActDiff, and GradMask if it is cheap. The ROI is our lesion,
     nodule or organ mask.
   - **P2 Pahde:** RR-ClArC, with the artifact concept direction learned from our image-level artifact labels.
+    **Decided 2026-11-18 (author):** phase 5 now carries the decisive RR-ClArC comparison (thyroid Trap A, both
+    methods run by us under identical conditions), because P2's own result was not reproduced (A18: 0.524 vs 0.76).
+    RR-ClArC is ported with **the paper's stated settings**, not the released code's defaults:
+    - λ from the paper's RR-ClArC grid {10¹, 5·10¹, …, 5·10¹²} (p. 31) as far as it applies to our cohort, selected on
+      validation; the ISIC2019 ResNet value 5·10⁹ (Tab. 12) is in it. The exact grid is fixed in the phase-5
+      pre-registration after the timing test;
+    - learning rate = our ERM training learning rate / 10 (p. 31);
+    - fine-tuning from the trained ERM network's **weights only, with a fresh optimizer** (not the decayed optimizer
+      state their code loads, A18);
+    - the layer(s) and number of epochs are not stated in the paper: their configs' last 3 ResNet blocks and 10 epochs,
+      the layer chosen on validation as in A18;
+    - CAV settings as in their configs (`cavs_max`, `signal`, `all_logits_random`), CAV computed on the training set.
   - **P3 ISNet:** LRP relevance penalty outside our ROI masks. It is the most expensive arm (LRP per step).
   - **P4 Saab:** segmentation-supervised ERM (their best method), with our ROI masks as the segmentation target.
   - **Ours:** mask_cmc on the fine-tuned features, U-MtE (`mte_post`, `umte_ft`).
@@ -99,7 +111,7 @@ Every target must be beaten twice. Both are required for a claim of "better than
   AUROC must not drop by more than the registered margin (0.01).
 - **Expected message:** methods that act by location (Masked, ActDiff, ISNet, and Saab's segmentation supervision)
   help in Trap B but not in Trap A. Ours helps in both. RR-ClArC is the strongest competitor in Trap A, and the
-  comparison with it is the decisive one.
+  comparison with it is the decisive one; after A18 it is carried by phase 5 (thyroid Trap A), not by P2's own test.
 - **Cost:** not yet estimated. A timing test on one cohort (thyroid, Trap A, 1 fold, every arm) comes first.
 
 ## How to frame each paper's result (decided 2026-11-17)
