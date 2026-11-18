@@ -651,3 +651,16 @@ GPU launcher), then the ISNet runs' `--score_only` and the COVIDIsNet.pt equival
 environment only, figshare 27645021 contamination masks) and `scripts/data/verify_phase5.py`: **all four match
 `docs/DATA_MANIFEST.md` exactly** (files / bytes / listing SHA-256): TN3K 6,995 / 375,692,454; MMOTU 6,565 / 169,894,610;
 SEE-AI 36,968 / 1,262,400,157; capsule contamination masks 29,403 / 532,520,931. (Tools added: bsdtar, kaggle, six.)
+
+### 2026-11-18 15:00 UTC — arm d adapters for P1, P1 location, P3, P4 (before any of their results)
+- P1 (cardiomegaly 128 px, RSNA 224 px): their configs apply no training augmentation, so arm d has none either; images
+  and ROIs as arm b. P1 location test: arm b's rendering at 128 px; arm d's predictions also enter the A16 table.
+- P3 90/10 inside: exactly the data of the ISNet run `isnet_inside_9010_seed0` (mark presence keyed by data seed 0),
+  P3's joint augmentation, PSPNet lungs as ROI; validation macro-F1.
+- P4 split 1: 512-px cache, their albumentations pipeline (albumentations 1.3.1 added to our environment without
+  dependencies, the version of P4's environment), lesion ROI. **Artifact-flag rule (A13 item 8) read as "at least 3
+  training images in each of the four artifact × diagnosis groups"**, the reading under which its own example (patches,
+  2 melanomas) is skipped: flags used dark_corner, hair, gel_border, gel_bubble, ruler, ink, vasc; patches skipped. The
+  flags' mask_cmc directions are combined into one subspace (mode chosen on validation).
+- EfficientNet-B0 at 512 px does not fit beside ISNet; P4's arm-d run needs a GPU without ISNet (memory at batch 64 to be
+  checked first).

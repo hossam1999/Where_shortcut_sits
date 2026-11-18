@@ -11,7 +11,7 @@ Stages:
     python scripts/replication/armd_train.py --setting p2 --stage train      # GPU
     python scripts/replication/armd_train.py --setting p2 --stage features   # GPU, best checkpoint, all sets
     python scripts/replication/armd_train.py --setting p2 --stage heads      # CPU
-Settings implemented: p2, p1_cardio, p1_rsna, p1_loc_inside, p1_loc_outside, p3_9010_inside (P4 is added before its run).
+Settings implemented: p2, p1_cardio, p1_rsna, p1_loc_inside, p1_loc_outside, p3_9010_inside, p4_split1.
 Outputs: $WTSS_DATA/replication/armd/<setting>/ (checkpoint.pt, best.pt, log.csv, features.npz, preds_test.csv.gz) and
 results/replication/armd/<setting>.{md,csv}.
 """
@@ -336,6 +336,64 @@ class P3Masked:
         return TF.normalize(x, IMNET_MEAN, IMNET_STD), y.reshape(()).long()
 
 
+class P4:
+    """P4 (Saab), ISIC 2018, Bissoto trap set split 1 (train 1,822, validation 259, trap test 772). Images and Task 1 lesion
+    masks from p4_train's 512-px cache (their loader resizes every image to 512 x 512 for Seg-ERM); their albumentations
+    training augmentation (p4_train.augmenter: their train_transform.json without Resize/Normalize) applied jointly to
+    image and mask; the lesion ROI then applied (outside = arm b's mean colour), ImageNet normalisation. Binary
+    (melanoma); validation metric AUROC. Artifact labels (head only): every Bissoto flag with all four artifact x
+    diagnosis groups in training, a group counting as present with >= 3 images (A13 item 8 skips patches, which has 2
+    melanomas)."""
+    n_out = 2
+    sets = ("train", "val", "test")
+    train_set, val_sets = "train", ("val",)
+    KEY, SPLIT, FLAGS = "p4_split1", 1, ("dark_corner", "hair", "gel_border", "gel_bubble", "ruler", "ink", "patches", "vasc")
+
+    def __init__(self):
+        import p4_train as P4T
+        self.T = P4T
+        self.part = {}
+        for k in self.sets:
+            d = pd.read_csv(f"{P4T.B}/isic_annotated_{k}{self.SPLIT}.csv").rename(columns={"label": "target"})
+            d["id"] = d.image.str.split(".").str[0]; d["image_id"] = d["id"]
+            self.part[k] = d.reset_index(drop=True)
+        self.img, self.msk, ids = P4T.cache([i for k in self.sets for i in self.part[k].id])
+        self.pos = {i: j for j, i in enumerate(ids)}
+        tr = self.part["train"]
+        self.used = [f for f in self.FLAGS if (pd.crosstab(tr[f], tr.target).reindex(index=[0, 1], columns=[0, 1], fill_value=0) >= 3).all().all()]
+
+    def dataset(self, k, train):
+        return P4Masked(self.img, self.msk, self.part[k], self.pos, self.T.augmenter() if train else None)
+
+    def val_metric(self, preds):
+        from sklearn.metrics import roc_auc_score
+        y, p = preds["val"]
+        return float(roc_auc_score(y, p[:, 1] - p[:, 0]))
+
+    def labels(self, k):
+        d = self.part[k]
+        return d.target.to_numpy().astype(int), d[self.used].to_numpy().astype(int)
+
+
+class P4Masked:
+    def __init__(self, img, msk, rows, pos, aug):
+        self.img, self.msk, self.rows, self.pos, self.aug = img, msk, rows, pos, aug
+
+    def __len__(self):
+        return len(self.rows)
+
+    def __getitem__(self, k):
+        import torch
+        import torchvision.transforms.functional as TF
+        from wtss.ops import MEAN_RGB
+        r = self.rows.iloc[k]; j = self.pos[r.id]
+        x, m = np.asarray(self.img[j]), np.asarray(self.msk[j])
+        if self.aug is not None:
+            o = self.aug(image=x, mask=m); x, m = o["image"], o["mask"]
+        x = np.where(m[..., None] > 0, x, np.asarray(MEAN_RGB, np.uint8)).astype(np.uint8)
+        return TF.normalize(TF.to_tensor(x), IMNET_MEAN, IMNET_STD), torch.tensor(int(r.target))
+
+
 class CachedNpy:
     """Pre-masked uint8 N x S x S x 3 memmap -> ImageNet-normalised tensor (no augmentation)."""
 
@@ -354,7 +412,7 @@ class CachedNpy:
 
 
 SETTINGS = {"p2": P2, "p1_cardio": P1Cardio, "p1_rsna": P1RSNA, "p1_loc_inside": P1LocInside, "p1_loc_outside": P1LocOutside,
-            "p3_9010_inside": P3}
+            "p3_9010_inside": P3, "p4_split1": P4}
 
 
 # --------------------------------------------------------------------------------------------------------- train
@@ -509,6 +567,20 @@ def heads_p2(S, out):
     print("\n".join(md))
 
 
+def cmc_basis(X, y, a, mode):
+    """mask_cmc directions for one artifact label (1-D a) or several (2-D a, one column per flag, P4): the union of each
+    flag's directions, orthonormalised."""
+    import candidates as CA
+    a = np.asarray(a)
+    if a.ndim == 1:
+        return CA.cmc_directions(X, y, a, mode)
+    Q = np.concatenate([CA.cmc_directions(X, y, a[:, j], mode) for j in range(a.shape[1])], 1)
+    if Q.shape[1] == 0:
+        return Q
+    q, r = np.linalg.qr(Q)
+    return q[:, np.abs(np.diag(r)) > 1e-10 * max(1.0, np.abs(r).max())]
+
+
 def heads_binary(S, out, name, title, ref_scores):
     """mask_cmc (mode pooled / per_class) + class-balanced logistic regression, (mode, C) in the A21 grid by validation
     AUROC; test AUROC scored once; paired image-only bootstrap vs each reference (descriptive)."""
@@ -521,7 +593,7 @@ def heads_binary(S, out, name, title, ref_scores):
     vk = S.val_sets[0]
     sel, best = [], None
     for mode in CA.CMC_MODES:
-        P = CA.Projector(CA.cmc_directions(F[S.train_set], ytr, atr, mode))
+        P = CA.Projector(cmc_basis(F[S.train_set], ytr, atr, mode))
         Z = {k: P(F[k]) for k in S.sets}
         for C in CS:
             clf = LogisticRegression(C=C, class_weight="balanced", max_iter=5000, solver="liblinear", random_state=0).fit(Z[S.train_set], ytr)
@@ -629,6 +701,19 @@ def heads_p3(S, out):
     print("\n".join(md))
 
 
+def heads_p4(S, out):
+    """vs our Binary-ERM split 1 (done) and Segmentation-ERM split 1 (when scored): descriptive until the P4 gate (A13)."""
+    R = Path(f"{D}/replication/saab/runs")
+
+    def ref(run):
+        def f(k):
+            d = pd.read_csv(R / run / "preds_test.csv")
+            return pd.DataFrame({"image_id": d.id.astype(str), "score": d.score})
+        return f
+    refs = {n: ref(r) for n, r in (("Binary-ERM", "erm_split1"), ("Seg-ERM", "seg_split1")) if (R / r / "preds_test.csv").exists()}
+    heads_binary(S, out, "d_effb0_mask_cmc", f"P4 split 1, trap test (flags used: {', '.join(S.used)})", refs)
+
+
 def heads_p1(S, out):
     V = Path(f"{D}/replication/viviano/preds")
 
@@ -665,7 +750,7 @@ def main():
         features(S, out, a.workers)
     else:
         {"p2": heads_p2, "p1_cardio": heads_p1, "p1_rsna": heads_p1, "p1_loc_inside": heads_p1loc,
-         "p1_loc_outside": heads_p1loc, "p3_9010_inside": heads_p3}[a.setting](S, out)
+         "p1_loc_outside": heads_p1loc, "p3_9010_inside": heads_p3, "p4_split1": heads_p4}[a.setting](S, out)
 
 
 if __name__ == "__main__":
