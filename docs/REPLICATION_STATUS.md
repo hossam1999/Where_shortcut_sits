@@ -631,3 +631,11 @@ RR-ClArC carry no verdict; arms a, a', b, c are reported descriptively against o
 No further post-hoc tuning of RR-ClArC. A short email to Pahde et al. asking for the exact Table 1 configuration is
 drafted in `docs/EMAIL_DRAFT_PAHDE_RRCLARC.md` (the author sends it). The decisive RR-ClArC comparison moves to phase 5
 (thyroid Trap A), with RR-ClArC ported at the paper's stated settings (`docs/REPLICATION_PLAN.md`, phase 5 sketch).
+
+### 2026-11-18 14:25 UTC — arm d (EfficientNet-B0) + ISNet pairing measured on P2: kept
+Arm d P2 training 467 img/s paired vs 690 alone (0.68; one full epoch during a 56-s SIGSTOP of ISNet); ISNet epoch 11
+22.9 min-equivalent paired vs 14.7 alone (0.64; from its logged duration minus the pause and its solo part) → **1.32 of
+one GPU, kept** (A20: an arm-d job may pair with ISNet only if total throughput rises). Memory: beside ISNet 3.7 GB are
+free; EfficientNet-B0 peaks at 2.8 GiB at 224 px (fits), not at 512 px (P4 runs without ISNet). Two failed starts
+before any training step, fixed in the trainer: a launcher request above the free memory (4,000 MiB), and DataLoader
+workers exceeding the container's task limit (2,816) — now one thread per worker.
