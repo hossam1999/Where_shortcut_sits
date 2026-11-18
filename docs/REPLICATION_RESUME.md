@@ -38,6 +38,8 @@ Findings and deviations: `docs/REPLICATION_STATUS.md`. Results: `docs/REPLICATIO
 ## Chains (how they hand over)
 - `p2_chain.sh` starts `p3_chain.sh` (ISNet alone; flag `$WTSS_DATA/replication/ISNET_CHAIN_ACTIVE`) **only** when all 6
   RR-ClArC score files exist. ISNet run 1 `isnet_corner_all_seed0` resumes after epoch 2.
+- `short_queue.sh` pauses while the ISNet flag **or `$WTSS_DATA/replication/P4_HOLD`** exists (2026-11-18: P4 waits for
+  the whole ISNet chain; `p3_chain.sh` removes the hold at its end). P4 Seg-ERM split 1 resumes from its `checkpoint.pt`.
 - `short_queue.sh` pauses while the ISNet flag exists. If `p2_chain.sh` stops with FAILED, fix, record, and restart it.
 - Never edit a running bash script (bash reads it as it executes); stop it by PID, edit, restart.
 - **Before restarting `p2_chain.sh`:** their Lightning callback writes `last.ckpt` after *every* epoch, and the chain skips

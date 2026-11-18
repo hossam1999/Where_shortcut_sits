@@ -15,3 +15,4 @@ run isnet_corner_all_seed0 --position corner --presence all
 run isnet_inside_all_seed0 --position inside --presence all
 run isnet_inside_9010_seed0 --position inside --presence 9010
 echo "$(date +%F_%T) P3 ISNet chain done"
+rm -f /workspace/data/replication/P4_HOLD   # release P4 (short_queue.sh); ISNet + P4 Seg-ERM do not fit on 16 GB together

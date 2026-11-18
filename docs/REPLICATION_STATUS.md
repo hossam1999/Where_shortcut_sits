@@ -547,3 +547,17 @@ over 90 s with Seg-ERM paused); Seg-ERM 12.1 img/s paired vs 13.6 alone (0.89, o
 166 s). Together **1.12** of one GPU, so the pairing is kept (rule: pair only if total throughput rises), although it
 slows P2's remaining fine-tunes about 4× (≈ 23 min/epoch instead of ≈ 6) and so delays the ISNet chain by several hours.
 Seg-ERM epochs 57 and 58 include the pauses (their logged img/s are not training-speed measurements).
+
+### 2026-11-18 06:25 UTC — scheduling note (author's decision): critical path first
+Rule 4 (longest chains first) overrides rule 2 (pair when total throughput rises) here: P2 feeds the critical path
+(P2 → ISNet chain, ~35 h); P4 does not. Hence:
+1. After the 4th RR-ClArC model is scored, P4 Seg-ERM split 1 is stopped cleanly right after its next epoch checkpoint
+   (`checkpoint.pt` is written atomically each epoch; it resumes from it with model, optimiser, best score and log).
+2. The last two RR-ClArC fine-tunes run alone; `p2_chain.sh` then starts the ISNet chain (alone).
+3. **ISNet + Seg-ERM cannot be paired on this GPU** (RTX 5060 Ti, 16.3 GB): ISNet peaks at 10.4 GiB allocated (≈ 11.5 GB
+   per process), Seg-ERM with activation checkpointing at 6.3 GiB (≈ 7.3 GB per process), ≈ 18.6 GB together; the
+   launcher would not start Seg-ERM beside ISNet (it needs 8 GB free) and forcing it would risk an out-of-memory crash
+   of ISNet. So the pairing was not measured, and P4 runs after the ISNet chain: `short_queue.sh` now also waits while
+   `$WTSS_DATA/replication/P4_HOLD` exists, and `p3_chain.sh` removes that file when the chain is done. (There are no
+   gaps inside the ISNet chain: its three runs follow each other.)
+4. The A17 post-hoc scoring (~2 min of GPU per position) may take a slot at the boundary after the 4th fine-tune.
