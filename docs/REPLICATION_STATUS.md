@@ -901,3 +901,26 @@ below Seg-ERM on every split, C at the top edge (10) each time. Arm d vs Seg-ERM
   accuracy (no XIL method beats Vanilla 88.4 ± 0.5; patch images removed from the test) and the wr explanation score (best
   RRR-G 0.9 % GradCAM); the patches lie beside the lesion (outside the ROI); data built through the retired ISIC archive API +
   CDEP patch masks. Cited as related work only (mask-based XIL lowers attention on the artifact without accuracy gains).
+
+### 2026-11-18 ~23:10 UTC (machine 2's clock) — new direction found: the ISIC trap-set benchmark lineage (DISC ICML 2023 → CBDebug ICLR 2026)
+Author's request: "another direction in the same problem that more papers tackle; what 2026 is doing; who is near to us".
+- **One shared test with a published lineage, the P4 data:** Bissoto's 2020 ISIC 2018 trap sets (5 splits; train 1,822 /
+  val 259 / test 772; 7 artifacts incl. hair and gel bubbles that "could co-exist and cover the skin lesion region" — DISC
+  p. 6). Papers reporting on it: Bissoto CVPRW 2020; **Saab MLHC 2022** (P4; Seg-ERM 0.727); **DISC, Wu et al., ICML 2023**
+  (code github.com/Wuyxin/DISC @ d9865a8; ResNet-50; Table 1 ISIC average AUROC over the train-test splits, 3 runs:
+  ERM 36.4 ± 0.7, GroupDRO 36.4, JTT 33.8, IRM 45.5, LISA 38.0, + 7 more, **DISC 55.1 ± 2.3**); **CBDebug, Enouen &
+  Galhotra, ICLR 2026** (code github.com/ericenouen/cbdebug; post-hoc CBM on a frozen BioMedCLIP backbone, linear layer
+  retrained after removing expert-flagged spurious concepts; Table 2 ISIC AUROC: original 39.3 ± 3.7, **CBDebug 58.0 ± 11.6**);
+  a further OpenReview submission follows DISC's ISIC setup (not retrieved).
+- **Data identity checked:** DISC's released ISIC archive (Google Drive 1Os34EapIAJM34DrwZMw2rRRJij3HAUDV, 11.2 GB): trap-set
+  CSVs for splits 2–5 byte-identical to Bissoto f93c865; split 1 identical image IDs, labels and artifact flags (only the
+  file extension in `image` differs, .jpg vs .png); images = ISIC 2018 Task 1/2 (2,594). Our P4 Binary-ERM (0.363, splits
+  1–3) already matches DISC's ERM (36.4).
+- **Near to us (novelty, cite):** SCER (Park et al., ICLR 2026; code MLAI-Yonsei/SCER): "Spurious Direction = average of
+  differences in mean embeddings across domains within the same class" — the same within-class mean-difference construction
+  as our δ_y, used to regularise classifier weights (not projected out); vision benchmarks only (Waterbirds, CelebA,
+  MetaShift, ColorMNIST). CBDebug (above): frozen foundation backbone + linear retraining after concept removal, the same
+  regime as our arm b. Neither addresses where the artifact lies relative to the ROI.
+- Descriptive only (nothing registered): our P4 arms on splits 1–3 of the same trap sets — arm b (DINOv2 + mask_cmc)
+  0.658 ± 0.003, arm c (U-MtE) 0.605 ± 0.006, arm d (split 1) 0.666 — are above DISC's 55.1 and CBDebug's 58.0, but on 3 of
+  their 5 splits and not yet with their protocol; any claim needs a registered comparison (P8) first.
