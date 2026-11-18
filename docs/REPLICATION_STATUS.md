@@ -540,3 +540,10 @@ split 1 0.3548, split 2 0.3614, split 3 0.3735 → **mean 0.363 ± 0.010 (SD ove
 0.28–0.39 for Binary-ERM, stated openly): **passed on the paper's own value** (within ±2 SD), so the widening was not needed
 for Binary-ERM. Segmentation-ERM (×3, `--grad_ckpt`) runs next; the P4 gate is decided when both are in.
 Per-image scores: `results/replication/saab/scores/erm_split{1,2,3}.csv.gz`.
+
+### 2026-11-18 06:10 UTC — pairing measured: P2 RR-ClArC fine-tune + P4 Seg-ERM (`--grad_ckpt`)
+Measured with short SIGSTOP/SIGCONT pauses (no job killed or restarted): P2 fine-tune 11 img/s paired vs 48 alone (0.23,
+over 90 s with Seg-ERM paused); Seg-ERM 12.1 img/s paired vs 13.6 alone (0.89, one full epoch, epoch 58, with P2 paused
+166 s). Together **1.12** of one GPU, so the pairing is kept (rule: pair only if total throughput rises), although it
+slows P2's remaining fine-tunes about 4× (≈ 23 min/epoch instead of ≈ 6) and so delays the ISNet chain by several hours.
+Seg-ERM epochs 57 and 58 include the pauses (their logged img/s are not training-speed measurements).
