@@ -7,7 +7,7 @@
 # Each step is skipped when its output exists.   nohup scripts/replication/p2_window.sh > /workspace/logs/p2_window.log 2>&1 &
 set -uo pipefail
 ROOT=/root/Where_shortcut_sits; cd $ROOT
-Q=scripts/replication; D=/workspace/data; R=$D/replication/pahde; P=/workspace/third_party/pahde
+Q=$ROOT/scripts/replication; D=/workspace/data; R=$D/replication/pahde; P=/workspace/third_party/pahde
 PYP=/workspace/envs/pahde/bin/python; PYW=/workspace/venv-wtss/bin/python
 RUN=$D/replication/isnet/runs/isnet_corner_all_seed0
 export WANDB_MODE=disabled WTSS_DATA=$D
