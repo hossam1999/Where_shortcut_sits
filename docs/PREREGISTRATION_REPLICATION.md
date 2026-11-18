@@ -602,3 +602,11 @@ registered grid.
   edge reported; fixed in `docs/PREREGISTRATION_PHASE5.md` before any phase-5 result.
 - **Unchanged:** P2 arms a, a', b, c (and every other already-registered arm) keep the registered grid
   {0.01, 0.1, 1, 10}; their edge choice stays reported as is (any wider grid there is post hoc only).
+
+**A20 correction (2026-11-18, before any arm-d run or result; author).** Arm d uses the resolution **their** network sees
+for each task: P1 cardiomegaly 128 px (`JointDataset` default `new_size=128`), **P1 RSNA 224 px** (A20 wrongly said 128 for
+all of P1; STATUS (d): RSNA images are built at 224 × 224), P1 location test 128 px (cardiomegaly pipeline), P2 224 px,
+P3 224 px, P4 512 px (their loader resizes every image to 512 × 512 for Seg-ERM). **Phase 5:** arm d uses the same input
+resolution, augmentation and early-stopping rule as the other phase-5 arms in `src/wtss/experiments/finetune.py`, so the
+comparison stays identical; this is registered in `docs/PREREGISTRATION_PHASE5.md`, not as a separate choice (A20's own
+recipe applies to P1–P4 and the P1 location test only).
