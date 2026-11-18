@@ -561,3 +561,6 @@ Rule 4 (longest chains first) overrides rule 2 (pair when total throughput rises
    `$WTSS_DATA/replication/P4_HOLD` exists, and `p3_chain.sh` removes that file when the chain is done. (There are no
    gaps inside the ISNet chain: its three runs follow each other.)
 4. The A17 post-hoc scoring (~2 min of GPU per position) may take a slot at the boundary after the 4th fine-tune.
+- 06:19:33: P4 Seg-ERM split 1 stopped (SIGTERM, by PID) right after its epoch-66 checkpoint (`checkpoint.pt`, epoch 66
+  verified). Two orphaned DataLoader workers (ppid 1) still held its 7.3 GB; killed by verified PID at 06:20, GPU freed.
+  It resumes from epoch 67 when `P4_HOLD` is removed.
