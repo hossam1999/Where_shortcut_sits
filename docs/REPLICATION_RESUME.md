@@ -24,7 +24,7 @@ survives). Repo `/root/Where_shortcut_sits`; `WTSS_DATA=/workspace/data`; third-
 (pahde patched with `cu128_port.patch`); envs `/workspace/venv-wtss`, `/workspace/envs/{saab,pahde,r2r}` (`docs/ENVIRONMENT_MACHINE2.md`).
 | job | state | resume |
 |---|---|---|
-| P4 Seg-ERM splits 1→2→3 (`m2_p4_queue.sh`) | split 1 running, 1.15 min/epoch; ETA all ≈ 21:15 UTC | `nohup scripts/replication/m2_p4_queue.sh > /workspace/logs/m2_p4_queue.log 2>&1 &` (resumes from each `checkpoint.pt`) |
+| P4 Seg-ERM splits 1–3 (`m2_p4_pair.sh`, two at a time, 1.23× measured) | splits 1 + 2 running, 1.87 min/epoch each; ETA 1+2 ≈ 17:10, 3 ≈ 20:00 UTC | `nohup scripts/replication/m2_p4_pair.sh > /workspace/logs/m2_p4_pair.log 2>&1 &` (resumes from each `checkpoint.pt`) |
 | P4 arm a | after each split: `saab` env `p4_arm_a.py --stage features --split k`, then our env `p4_arm_a.py --stage heads` | — |
 | P4 arm-d split-1 comparison | needs arm d's features from machine 1 (not in git); arm d's test scores are in git (`results/replication/armd/scores/p4_split1.csv.gz`), so the paired comparison with Seg-ERM split 1 is computed from scores | — |
 | P5 step 1 | **done, check failed** (0.838/0.552 vs 0.895/0.356); P5 dropped pending the author | — |

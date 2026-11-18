@@ -740,3 +740,10 @@ results and their STATUS entries).
   renders the text artifact with a different default font). Per the author's rule, **P5 is dropped**; no amendment A26, no
   correction run. Waiting for the author on whether the font point warrants anything (any re-score of the test would be a
   second scoring and needs a dated amendment first).
+
+### 2026-11-18 12:40 UTC (machine 2's clock) — machine 2: P4 Seg-ERM splits 1 + 2 paired, measured, kept
+Split 1 alone: 26.3 img/s (1.14 min/epoch, epochs 0–1). Splits 1 and 2 together: 16.2 + 16.2 = **32.3 img/s (1.23 of one
+GPU)**, 1.87 min/epoch each, 14.9 of 16.3 GB used → kept (rule 2). Three at once would need ≈ 22 GB, so no. Queue replaced by
+`scripts/replication/m2_p4_pair.sh` (at most two splits at once; same command; split 3 starts when one finishes; the first
+queue was stopped by PID before it launched anything else). New ETA: splits 1 and 2 ≈ 17:10 UTC, split 3 ≈ 20:00 UTC (it
+pairs with the phase-5 timing test if that is measured faster). Split 1's epoch 2 straddles the pairing start.
