@@ -565,3 +565,29 @@ A18 RR-ClArC network (their best model + our method):
   (10,000 replicates; one seed, A3), Δ = arm a' − RR-ClArC with its 95% CI. Also reported against our Vanilla.
 - Note (write-up): arm a's selected C = 0.01 is the smallest value of the registered grid; any wider grid is post hoc
   only (sensitivity, no verdict). The same applies to arm a'.
+
+**A20 (2026-11-18, before any arm-d run or result; author's decision; details in `docs/REPLICATION_PLAN.md`, "Arm d",
+commit 112c75e).** **Disclosure:** arm d was added after, and because of, arm b's P2 clean result (clean 0.685 vs our
+Vanilla 0.839; `results/replication/pahde/arm_b.md`): arm b keeps a frozen encoder, every competitor trains its network on
+the task. Results seen when this was recorded: all registered P1 and P2 results and the P1 location test (registered and
+A17 post hoc); no P3 or P4 head-to-head result.
+- **Arm d = trained small encoder + mask_cmc.** torchvision ResNet-18, ImageNet weights, trained end-to-end on
+  **ROI-masked images** (the same ROIs as arm b: P1 cardiomegaly and P1 location test lungs ∪ heart; P1 RSNA lungs;
+  P2 lesion; P3 lungs; P4 lesion; phase 5 the cohort ROI), outside the ROI filled as in arm b.
+- **One fixed recipe for every paper, nothing tuned on any test:** standard ERM on the paper's label task
+  (cross-entropy; BCE where the paper is multi-label), the paper's input resolution and its own training augmentation,
+  Adam lr 1e-4, batch 64, at most 50 epochs, early stopping on the paper's validation metric with patience 5 (the
+  checkpoint with the best validation value is kept), seed 1234, mixed precision. Per paper: P1 128 px (their resize),
+  validation AUROC; P2 224 px, their `isic_augmentation`, validation = mean of clean and biased accuracy (section 3);
+  P3 224 px, their augmentation (P3 Supp. 5.1), validation macro-F1 on their biased validation; P4 512 px, their
+  augmentation, validation AUROC; phase 5 as fixed in `docs/PREREGISTRATION_PHASE5.md`.
+- **Head:** penultimate (512-d) features → mask_cmc with the same artifact labels and validation-chosen mode as arm a →
+  linear head refit on the training set (class-balanced logistic regression, C ∈ {0.01, 0.1, 1, 10}, chosen by the
+  paper's validation metric), on CPU. Test scored once.
+- **Where:** the their-environment head-to-heads where mask_cmc applies (P1 cardiomegaly and RSNA, seed-1234 split;
+  P2; P3 90/10 inside variant; P4 split 1), the P1 location test (inside and outside; A16 table layout), and phase 5
+  (Trap A, 4 cohorts × 3 folds; Trap B thyroid), added to the phase-5 timing test and `PREREGISTRATION_PHASE5.md`.
+- **Success rules:** the same as the other arms (sections 2, 5, 6); one seed, image-only bootstrap, stated in every
+  table. Where a comparison has no verdict (P1 original tests A14, P2 A18 decision), arm d is descriptive too.
+- **Scheduling:** after the registered critical-path runs; a ResNet-18 job may pair with ISNet only if the measured total
+  throughput rises; checkpoint every epoch and resume.
