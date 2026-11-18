@@ -509,3 +509,23 @@ our arms has been computed for the location test.
   test images only (one seed, A3); the test images are the same at both positions, so the crossover CI shares the image
   weights across positions. A column gives the share of tube pixels kept by P1's circle (inside 0.986, outside 0.000;
   `results/replication/viviano/location_tube_vs_circle.csv`).
+
+**A17 (2026-11-18, POST HOC; author's decision; recorded before any epoch-100 model is scored).** Results seen when this
+was recorded: the full registered P1 location table (A15/A16; `results/replication/viviano/location_1234.md`), including
+the outside Standard result (correlated / reversed / clean 0.901 / 0.894 / 0.898). Their selection rule (`training.py`:
+burn-in 5 epochs, then the lowest loss on P1's reversed validation split) kept epoch 11 inside and epoch 8 outside; outside,
+the tube shortcut appeared only at epoch 11, so the kept outside model predates it (`docs/REPLICATION_STATUS.md`,
+2026-11-17 22:20).
+- **The registered table stays the primary result**, reported as is with this explanation; E-L1 to E-L3 are judged on it
+  only.
+- **Post-hoc sensitivity analysis, labelled "post hoc" on every number:** the same analysis on their saved
+  `last_model_1234.pth.tar` (epoch 100, the model at the end of their training run) at **both** positions, so that the
+  crossover compares models chosen by the same rule:
+  - Standard (epoch 100) and Masked (= the epoch-100 model scored with test masking, A5);
+  - arm a: mask_cmc on the epoch-100 network's features of circle-masked images (every split), mode and C chosen on P1's
+    validation split by AUROC, exactly as registered for arm a;
+  - arms b and c do not depend on their epoch selection; their registered predictions are reused unchanged.
+- Same test images, presence, metrics, bootstrap (image-only, 10,000 replicates, shared weights across positions) and
+  table layout as A16. No verdict and no Holm family membership: descriptive only. Output:
+  `results/replication/viviano/location_1234_posthoc_last.{csv,md}`, scores
+  `results/replication/viviano/scores/location_<position>_last_1234.csv.gz` and the arm-a file next to them.
