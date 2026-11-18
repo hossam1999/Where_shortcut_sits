@@ -696,3 +696,11 @@ cannot be estimated).
   P6 family = 3 arms × 3 architectures), on biased accuracy against **our** RR-ClArC of the same architecture; clean accuracy
   reported, with the registered clean-drop margin (0.01) flagged. If RR-ClArC is not reproduced for an architecture, that
   architecture's comparisons are descriptive (section 1).
+
+**A29 (2026-11-18 by machine 2's clock; renumbering and priority only; author's decision; before any P7 correction run and
+before any result of the new P6).** The paper registered in A28 (Dreyer, Pahde et al., RR-ClArC, AAAI 2024) is renamed
+**P7**; everything in A28 stands for P7 unchanged. **P6** is now **EPVT (Yan et al., MICCAI 2023) with its journal version PLDG
+(IEEE TMI 2025)**; its step 1 (read both papers, obtain their processed data, reproduce their ERM and EPVT once) runs now, and
+its registration follows as **A30** (A28 is taken) only if EPVT reproduces. Priority on machine 2: P4 > P6 > P7. P6 runs
+beside P4 only if a measured pairing does not slow P4; otherwise after P4 split 3. Results seen: as in A28, plus the P7
+step-1 table (`results/replication/rrclarc/step1.md`, unchanged).

@@ -763,3 +763,10 @@ pairs with the phase-5 timing test if that is measured faster). Split 1's epoch 
 - **Discrepancies recorded (A28):** the paper's chosen RR-ClArC λ (Table A.3: 5·10⁸ / 10¹¹ / 5·10⁹) lie outside their
   released generator's grid (≤ 10⁷); the paper's p-bias 8.0 / 12.5 / 8.0 % vs 10 % in their correction configs. The paper
   wins. RR-ClArC fine-tunes (3, 10 epochs each) run when GPU memory frees (after P4 splits 1–2).
+
+### 2026-11-18 (machine 2's clock) — machine 2: renumbering (A29): RR-ClArC → P7; EPVT/PLDG → P6, step 1 started
+No P7 fine-tune had started (nothing stopped). Priority P4 > P6 > P7. P6 step 1: read EPVT (arXiv 2304.01508) and PLDG (arXiv
+2401.03002), get their processed data, reproduce ERM and EPVT once; then report and wait. Its registration will be A30.
+MaskMedPaint (ML4H 2024 findings; code `github.com/QixuanJin99/generative_validation` @ 40048f7) was examined and not taken:
+its ISIC dataset is read from a prebuilt folder on the authors' server that the repository does not build, and its training
+set is perfectly confounded (only melanoma-with-marking and benign-without-marking groups), so mask_cmc cannot be estimated.
