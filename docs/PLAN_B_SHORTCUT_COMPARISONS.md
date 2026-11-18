@@ -1,4 +1,4 @@
-# Plan B — comparing against many shortcut papers when single-paper replications fail
+# Plan B — securing one good paper to beat (and fallbacks)
 
 Drafted 2026-11-18 on machine 2 for the author. Nothing here is registered; any part that is used gets a dated amendment
 before its first result.
@@ -16,7 +16,34 @@ So the scarce resource is not methods but **published numbers on shared shortcut
 paper by paper and instead (a) gathers many published numbers on a few shared tests, and (b) runs many published methods
 from their official code on our tests.
 
-## 2. Plan B options (most recommended first)
+## 2. Plan B for the target paper (author, 2026-11-18: the thesis needs one good paper, reproduced and beaten)
+
+**Ranking of targets by fit** (venue, localized artifact that can sit inside the ROI, artifact label usable by our method,
+code, data, published shortcut-broken number):
+1. **P6 EPVT (MICCAI 2023) + PLDG (IEEE TMI 2025)** — passes every requirement: ISIC 2019 artifact domains (dark corner, hair,
+   gel bubble, ruler — hair and bubbles lie over the lesion), artifact labels, code, data rebuilt (counts match the paper),
+   trap-set numbers (bias 1: ERM 65.3, EPVT 74.6) and OOD Table 1 (EPVT 84.11). Citation search found no later main-venue
+   paper on the same benchmark, so EPVT/PLDG is the state of the art there. **Make P6 the critical path:** bias-1
+   reproduction → A30 → our arms a / b / d vs EPVT (and arm c vs PLDG) → bias 0.9 and the OOD sets.
+2. **P3 ISNet (Nature Communications 2024; machine 1)** — strongest venue; its inside-the-lungs variant is the thesis question;
+   stays descriptive unless its gate passes.
+3. **P4 Saab (MLHC 2022)** — A31 rerun pending; if it fails, the authors are asked for the Table 1 code / checkpoints.
+
+**Unlock near-misses through the authors** (cheap, parallel, no GPU; drafts in `docs/`, the author sends them):
+- **Yan et al., CVPR 2023** ("Towards Trustable Skin Cancer Diagnosis via Rewriting Model's Decision"; same Monash group as
+  EPVT/PLDG, whose code is public): ask for the ConfDerm splits and code. ConfDerm = ISIC 2019/2020 subsets, one confounder
+  per class (dark corners, rulers, borders, air pockets, hair), unconfounded test; published per-class accuracies (e.g. dark
+  corners: melanoma 23.48 % → 84.95 %). If shared, it is a top-venue target on the same images as P6.
+- **Bevan & Atapour-Abarghouei, ICML 2022** (surgical markings and rulers; ruler test AUC 0.831 → 0.958 with CLGR; code public):
+  ask whether the Heidelberg marked/ruler test set (Winkler et al.) can be shared under a data agreement.
+- **Saab et al.**: the code version and checkpoints behind Table 1 (also resolves P4).
+- **Pahde et al.**: the exact Table 1 configuration (draft already in `docs/EMAIL_DRAFT_PAHDE_RRCLARC.md`).
+
+**Relax one requirement only where it keeps the comparison fair:** if a paper's test set can be rebuilt exactly from released
+lists and our ERM reproduces its baseline, compare against its printed number even without its code (the papers' own
+practice). Do not relax R8 (mask_cmc needs within-class artifact variation) or R6 for the primary target.
+
+## 3. Fallback options if no target survives (most recommended first)
 
 ### B1 — Method zoo from official code on the location benchmark (phase 5 extended)  ★ recommended
 **Idea.** Every comparison is "their method, their official code and recipe, on our shortcut test", identical data, folds and
@@ -69,7 +96,7 @@ For every paper whose reproduction fails (P2, P5, possibly P4), keep their metho
 failed reproduction openly (already registered for P2, A18). No "beaten" claim against their printed number; "beaten" only
 against our run of their code under identical conditions.
 
-## 3. When to switch, and in what order
+## 4. When to switch, and in what order
 - **Trigger:** after the A31 P4 rerun and the P6 step-1 check. If P4 fails again and P6 (EPVT) does not reproduce, start B1
   with the methods already running here (ClArC family, ISNet, Seg-ERM, Masked/ActDiff, GroupDRO+NoiseCrop, EPVT) on thyroid
   and ISIC hair, Trap A first; add B2 on the shared ISIC trap sets in parallel (CPU heads); B3 if time remains.
