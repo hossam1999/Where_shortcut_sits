@@ -107,7 +107,8 @@ def heads():
             if not p.exists():
                 p = ROOT / f"results/replication/saab/scores/{run}.csv.gz"   # Binary-ERM: machine 1's scores in git
             if p.exists():
-                d = pd.read_csv(p); ref = d.set_index(d.id.astype(str)).loc[r["test"].id, "score"].to_numpy()
+                d = pd.read_csv(p); key = "id" if "id" in d.columns else "image_id"
+                ref = d.set_index(d[key].astype(str)).loc[r["test"].id, "score"].to_numpy()
                 b = paired_bootstrap({0: (r["test"].id.tolist(), y["test"], sc, ref)}, "auroc")
                 row[f"{n}_auroc"] = roc_auc_score(y["test"], ref)
                 row[f"vs_{n}"] = f"{b['delta']:+.3f} [{b['ci95_lo']:+.3f}, {b['ci95_hi']:+.3f}]"
