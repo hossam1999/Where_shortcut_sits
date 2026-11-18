@@ -11,7 +11,7 @@ Stages:
     python scripts/replication/armd_train.py --setting p2 --stage train      # GPU
     python scripts/replication/armd_train.py --setting p2 --stage features   # GPU, best checkpoint, all sets
     python scripts/replication/armd_train.py --setting p2 --stage heads      # CPU
-Settings implemented: p2, p1_cardio, p1_rsna (P1 location test, P3 and P4 adapters are added before their runs).
+Settings implemented: p2, p1_cardio, p1_rsna, p1_loc_inside, p1_loc_outside (P3, P4 adapters are added before their runs).
 Outputs: $WTSS_DATA/replication/armd/<setting>/ (checkpoint.pt, best.pt, log.csv, features.npz, preds_test.csv.gz) and
 results/replication/armd/<setting>.{md,csv}.
 """
@@ -29,7 +29,7 @@ import numpy as np
 import pandas as pd
 
 ROOT = Path(__file__).resolve().parents[2]
-sys.path[:0] = [str(ROOT / "src"), str(ROOT / "scripts" / "round8")]
+sys.path[:0] = [str(ROOT / "src"), str(ROOT / "scripts" / "round8"), str(ROOT / "scripts" / "replication")]
 D = os.environ.get("WTSS_DATA", "/workspace/data")
 OUTR = ROOT / "results/replication/armd"
 SEED, LR, BS, MAX_EPOCHS, PATIENCE = 1234, 1e-4, 64, 50, 5
@@ -197,6 +197,76 @@ class P1RSNA(P1):
     REF = {"ActDiff (theirs)": "rsna_actdiff_1234", "Standard (theirs)": "rsna_standard_1234"}
 
 
+class P1Loc:
+    """P1 location test (A15/A16), seed 1234, tube inside or outside the lungs ∪ heart ROI. Images rendered as arm b
+    (p1_location_arms.py: same presence hashes, placements and draw_tube on the 224-px image; PSPNet lungs ∪ heart ROI),
+    then at the resolution their network sees (128 px, bilinear) with the ROI applied at 128 px (nearest). No
+    augmentation (their config). Validation metric AUROC on the validation environment (reversed presence, A15).
+    Artifact label (head only): pasted-tube indicator (A16)."""
+    n_out = 2
+    sets = ("train", "valid", "corr", "rev", "clean")
+    train_set, val_sets = "train", ("valid",)
+    POS = KEY = None
+    SIZE = 128
+
+    def __init__(self):
+        import cv2
+        from PIL import Image
+        import p1_location_arms as LA
+        from wtss.ops import apply_roi_mask
+        from wtss.synthetic import draw_tube
+        L = Path(f"{D}/replication/viviano/location")
+        sp = pd.read_csv(L / "nospc_1234.csv").sort_values(["split", "pos"])
+        sp["key"] = sp.site.astype(str) + "/" + sp.image_id
+        pl = pd.read_csv(L / "placements_1234.csv").set_index("key")
+        z = np.load(L / "roi224_1234.npz"); roi = dict(zip(z["ids"], z["masks"]))
+        self.part = {}
+        for e in self.sets:
+            d = sp[sp.split == LA.SPLIT[e]].reset_index(drop=True)
+            d["tube"] = LA.presence(d.key, d.y, e)
+            d["image_id"] = d.key
+            self.part[e] = d
+        out = Path(f"{D}/replication/armd/{self.KEY}"); out.mkdir(parents=True, exist_ok=True)
+        self.npy = {}
+        for e in self.sets:
+            f = out / f"img{self.SIZE}_{e}.npy"; self.npy[e] = str(f)
+            if f.exists():
+                continue
+            d = self.part[e]
+            mm = np.lib.format.open_memmap(f.with_suffix(".tmp.npy"), mode="w+", dtype=np.uint8, shape=(len(d), self.SIZE, self.SIZE, 3))
+            for j, row in d.iterrows():
+                im = Image.fromarray(LA.gray(row.path)).convert("RGB")
+                if row.tube:
+                    q = pl.loc[row.key]
+                    x, yy = (int(q.in_x), int(q.in_y)) if self.POS == "inside" else (int(q.out_x), int(q.out_y))
+                    im, _ = draw_tube(im, x, yy, LA.W, LA.H, row.key)
+                im = im.resize((self.SIZE, self.SIZE), Image.BILINEAR)
+                r = cv2.resize(roi[row.key].astype(np.uint8), (self.SIZE, self.SIZE), interpolation=cv2.INTER_NEAREST).astype(bool)
+                mm[j] = np.asarray(apply_roi_mask(im, r))
+            mm.flush(); del mm
+            f.with_suffix(".tmp.npy").replace(f)
+            print("cached", e, len(d), flush=True)
+
+    def dataset(self, k, train):
+        return CachedNpy(self.npy[k], self.part[k].y.to_numpy())
+
+    def val_metric(self, preds):
+        from sklearn.metrics import roc_auc_score
+        y, p = preds["valid"]
+        return float(roc_auc_score(y, p[:, 1] - p[:, 0]))
+
+    def labels(self, k):
+        return self.part[k].y.to_numpy().astype(int), self.part[k].tube.to_numpy().astype(int)
+
+
+class P1LocInside(P1Loc):
+    POS, KEY = "inside", "p1_loc_inside"
+
+
+class P1LocOutside(P1Loc):
+    POS, KEY = "outside", "p1_loc_outside"
+
+
 class CachedNpy:
     """Pre-masked uint8 N x S x S x 3 memmap -> ImageNet-normalised tensor (no augmentation)."""
 
@@ -214,7 +284,7 @@ class CachedNpy:
         return TF.normalize(TF.to_tensor(np.asarray(self.mm[j])), IMNET_MEAN, IMNET_STD), torch.tensor(int(self.y[j]))
 
 
-SETTINGS = {"p2": P2, "p1_cardio": P1Cardio, "p1_rsna": P1RSNA}
+SETTINGS = {"p2": P2, "p1_cardio": P1Cardio, "p1_rsna": P1RSNA, "p1_loc_inside": P1LocInside, "p1_loc_outside": P1LocOutside}
 
 
 # --------------------------------------------------------------------------------------------------------- train
@@ -424,6 +494,24 @@ def heads_binary(S, out, name, title, ref_scores):
     print("\n".join(md))
 
 
+def heads_p1loc(S, out):
+    """As heads_binary against the registered Standard and Masked, and the test predictions are also written next to arms
+    a-c (location/<pos>/arms/preds_d_effb0_mask_cmc.csv.gz), so the A16 table and its crossover include arm d."""
+    L = Path(f"{D}/replication/viviano/location/{S.POS}")
+    sc = pd.read_csv(L / "scores.csv.gz")
+
+    def ref(method):
+        def f(k):
+            d = sc[(sc.method == method) & (sc.test_set == k)]
+            return pd.DataFrame({"image_id": d.image_id.astype(str), "score": d.score})
+        return f
+    heads_binary(S, out, "d_effb0_mask_cmc", f"P1 location test, tube {S.POS} (A15/A16 design)",
+                 {"Standard": ref("standard"), "Masked": ref("masked")})
+    p = pd.read_csv(out / "preds_test.csv.gz")
+    (L / "arms").mkdir(exist_ok=True)
+    p.to_csv(L / "arms/preds_d_effb0_mask_cmc.csv.gz", index=False)
+
+
 def heads_p1(S, out):
     V = Path(f"{D}/replication/viviano/preds")
 
@@ -459,7 +547,8 @@ def main():
     elif a.stage == "features":
         features(S, out, a.workers)
     else:
-        {"p2": heads_p2, "p1_cardio": heads_p1, "p1_rsna": heads_p1}[a.setting](S, out)
+        {"p2": heads_p2, "p1_cardio": heads_p1, "p1_rsna": heads_p1, "p1_loc_inside": heads_p1loc,
+         "p1_loc_outside": heads_p1loc}[a.setting](S, out)
 
 
 if __name__ == "__main__":

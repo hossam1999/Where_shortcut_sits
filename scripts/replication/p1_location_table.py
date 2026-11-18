@@ -20,13 +20,14 @@ from wtss.stats import _ci, boot_p
 D = os.environ.get("WTSS_DATA", "/workspace/data")
 L = Path(f"{D}/replication/viviano/location")
 ROOT = Path(__file__).resolve().parents[2]
-ARMS = ("a_mask_cmc_their_net", "b_dino518_mask_cmc", "c_umte")
+ARMS = ("a_mask_cmc_their_net", "b_dino518_mask_cmc", "c_umte", "d_effb0_mask_cmc")
 ARTIFACT = ("Artifact: a synthetic bar-shaped radio-opaque marker (43 x 6 px at 224 px; straight, bright, with a central "
             "stripe), not a realistic tube. Outside placements lie near the image edge: below the lungs + heart near the "
             "bottom edge (47.5% of test images), above the lungs near the top edge (38.2%) or beside the ROI (14.3%). "
             "Realism is covered elsewhere in the thesis (real device traps on NIH / RANZCR; transplant of real artifacts).")
 NAMES = {"standard": "Standard (theirs)", "masked": "Masked (theirs, A5)", "a_mask_cmc_their_net": "a: mask_cmc on their net",
-         "b_dino518_mask_cmc": "b: DINOv2 + mask_cmc", "c_umte": "c: U-MtE"}
+         "b_dino518_mask_cmc": "b: DINOv2 + mask_cmc", "c_umte": "c: U-MtE",
+         "d_effb0_mask_cmc": "d: EfficientNet-B0 trained on ROI-masked images + mask_cmc (A20)"}
 
 
 def load(pos, sfx=""):
@@ -34,7 +35,7 @@ def load(pos, sfx=""):
     s = s[s.test_set.isin(["corr", "rev", "clean"])][["image_id", "label", "method", "test_set", "score"]]
     parts = [s]
     for arm in ARMS:   # A17: only arm a uses their network; b and c are reused from the registered run
-        f = L / pos / (f"arms{sfx}" if arm.startswith("a_") else "arms") / f"preds_{arm}.csv.gz"
+        f = L / pos / (f"arms{sfx}" if arm.startswith("a_") else "arms") / f"preds_{arm}.csv.gz"   # A17: b, c, d reused
         if f.exists():
             parts.append(pd.read_csv(f)[["image_id", "label", "method", "test_set", "score"]])
     return pd.concat(parts)
