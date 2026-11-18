@@ -2,7 +2,7 @@
 # ISNet pause for P2 (author, 2026-11-18): stop the ISNet chain cleanly at its next epoch checkpoint, run alone on the GPU
 #   1. A18 RR-ClArC (λ 5e9, lr 1e-4, Vanilla weights only, fresh Adam; 3 layers, 10 epochs) + per-image scores,
 #   2. lesion U-Net (train, predict all ISIC 2019), lesion ROIs (CPU),
-#   3. DINOv2-518 features for P2 arms b, c,
+#   3. A18 selection (CPU) and A19 arm a' features from the selected RR-ClArC network; DINOv2-518 features for arms b, c,
 # then restart the ISNet chain (it resumes from its checkpoint) — also on failure — and run the CPU steps.
 # Each step is skipped when its output exists.   nohup scripts/replication/p2_window.sh > /workspace/logs/p2_window.log 2>&1 &
 set -uo pipefail
@@ -39,6 +39,8 @@ for f in $R/mitigation_a18/*.yaml; do
   [ -f $R/scores_a18/$name.csv.gz ] && continue
   [ -d $R/checkpoints_corrected_a18/$name ] && mv $R/checkpoints_corrected_a18/$name $R/checkpoints_corrected_a18/${name}_incomplete_$(date +%s)
   (cd $P && alone 6000 $PYP -u -m experiments.mitigation_experiments.start_model_correction --config_file $f > $R/mitigation_a18/$name.log 2>&1) || fail "fine-tune $name"
+  # A19 must be recorded before any A18 result is scored (author, 2026-11-18)
+  until grep -q '^\*\*A19' docs/PREREGISTRATION_REPLICATION.md && [ -f $R/A19_INPUT ]; do sleep 60; done
   alone 4000 $PYP -u $Q/p2_score.py --config $f --ckpt $R/checkpoints_corrected_a18/$name/last.ckpt --out $R/scores_a18/$name.csv.gz || fail "scoring $name"
   log "A18 $name scored"
 done
@@ -50,12 +52,17 @@ U=$D/isic2019/unet
 [ -f $R/lesion_roi224.npz ] || CUDA_VISIBLE_DEVICES= PYTHONPATH=$ROOT/src $PYW -u $Q/p2_lesion_rois.py > $R/lesion_rois.log 2>&1 || fail "lesion ROIs"
 log "lesion ROIs ready"
 
-# 4. DINOv2-518 features for arms b, c
+# 4. A18 selection (CPU, validation only for the choice; test scored once), A19 arm a' features, then DINOv2-518 features
+CUDA_VISIBLE_DEVICES= $PYW $Q/p2_select.py --set a18 > $R/select_a18.log 2>&1 || fail "A18 selection"
+CH=$($PYW -c "import pandas as pd; d=pd.read_csv('results/replication/pahde/rrclarc_selection_a18.csv'); print(d[d.chosen].model.iloc[0])")
+log "A18 chosen: $CH"
+IN=$(cat $R/A19_INPUT)
+[ -f $R/scores_a18/aprime_features_$IN.npz ] || PYTHONPATH=$ROOT/src alone 4000 $PYP -u $Q/p2_aprime_features.py \
+  --config $R/mitigation_a18/$CH.yaml --ckpt $R/checkpoints_corrected_a18/$CH/last.ckpt --input $IN > $R/aprime_features.log 2>&1 || fail "arm a' features"
 PYTHONPATH=$ROOT/src alone 6000 $PYW -u $Q/p2_arms.py --arm bc --stage features > $R/arms_bc_features.log 2>&1 || fail "arms b/c features"
 log "GPU steps done"
 
 # 5. ISNet back; CPU steps
 resume_isnet
-CUDA_VISIBLE_DEVICES= $PYW $Q/p2_select.py --set a18 > $R/select_a18.log 2>&1 || log "FAILED: A18 selection"
 OMP_NUM_THREADS=16 CUDA_VISIBLE_DEVICES= PYTHONPATH=$ROOT/src nice -n 5 $PYW -u $Q/p2_arms.py --arm bc --stage heads > $R/arms_bc_heads.log 2>&1 || log "FAILED: arms b/c heads"
 log "P2 window done"
