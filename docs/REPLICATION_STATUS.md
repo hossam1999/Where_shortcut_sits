@@ -938,3 +938,25 @@ our arms on P3 are reported as a limitation. Only registered runs that are nearl
   for our arms b, c, d were not run** (not on the kept list); the arms are reported on the rebuilt test only, marked so.
 - Then machine 1's GPU moves to the exploratory track: candidate (b), up to ~6 GPU-h, developed on the P1 location-inside
   validation only.
+
+### 2026-11-18 ~23:30 UTC (machine 2's clock) — P8 = DISC (ICML 2023) set up; CBDebug (ICLR 2026) checked against R1–R8 (paper and code only, no runs)
+**P8 (author's decision):** DISC, step 1 = reproduce their ERM and DISC on the ISIC trap sets with their code
+(`third_party/disc/SOURCE.md`). Environment and concept bank being prepared; runs queue after P6 bias 1. P8 keeps priority over
+CBDebug.
+**CBDebug, Enouen & Galhotra, "Debugging Concept Bottleneck Models through Removal and Retraining":**
+- Venue: **ICLR 2026** (proceedings PDF header "Published as a conference paper at ICLR 2026", proceedings.iclr.cc).
+- Medical experiment ("frozen BioMedCLIP 39.3 → 58.0 ± 11.6"): Table 2, Post-hoc CBM with **automated feedback**; ISIC benign vs
+  malignant "following the setup from DISC (Wu et al., 2023) with five different splits" (App. A, p. 15) — i.e. Bissoto's 2020
+  trap sets (the P4/P8 data); spurious attributes dark corners, hair, gel borders, gel bubbles, ruler, ink, patches (localized;
+  vary within each class in these trap sets); backbone **BioMedCLIP** (frozen; linear layer retrained); concept bank: DISC's
+  texture concepts + the eight ISIC concepts of Yuksekgonul et al. (2023); γ = 5; metric **test AUROC** (27 groups); "three
+  random seeds per dataset … averaged across seeds" — how the five splits enter the number is not stated. The large spread
+  (± 11.6) is noted.
+- **Code: the release does not cover the medical experiment.** github.com/ericenouen/cbdebug @ 3808f71 (2025-09-28) has data
+  loaders and concept sets for Waterbirds, MetaShift and CelebA only (`pcbm/data_utils`, `pcbm/concepts/*.txt`); no ISIC
+  loader, no ISIC concept list, no BioMedCLIP backbone; `pcbm/models/derma_models.py` is the PCBM upstream HAM10000 model.
+- Against our requirements: R1 ✓ classification; R2 ✓ ICLR 2026; R3 ✓; **R4 ✗ for ISIC** (code covers the non-medical datasets
+  only); R5 ✓ (DISC's ISIC data, checked identical to ours); R6 ✓ localized artifacts, some over the lesion; R7 ✓ AUROC on the
+  reversed trap tests (but seeds/splits aggregation unclear, ± 11.6); R8 ✓ (artifacts present in both classes in training).
+  Fails only R4; reproducing it would mean re-implementing the ISIC pieces (BioMedCLIP Post-hoc CBM, the concept set) from the
+  paper. Not started.
