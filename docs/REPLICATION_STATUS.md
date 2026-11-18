@@ -785,3 +785,20 @@ set is perfectly confounded (only melanoma-with-marking and benign-without-marki
   patience 22 on `val_bias` ROC-AUC, paper augmentation (= their code's). "Epoch" in their code's unit (one pass over the
   smallest domain's in-split): bias 1 → 1,001 steps. Recorded in `third_party/epvt/SOURCE.md`. Queue restarted for bias 1 only
   (ERM, then EPVT), timed; it still waits for P4 split 3.
+
+### 2026-11-18 ~16:30 UTC (machine 2's clock) — machine 2: phase-5 trainer and toy-batch unit tests (CPU, nice 19)
+- `src/wtss/experiments/phase5.py` (library), `scripts/phase5/p5_run.py` (one network per trap / fold), `tests/test_phase5.py`
+  (**10 passed**, CPU, untrained weights, 64-px toy batches): joint image/ROI augmentation stays aligned; dataset draws are
+  reproducible; early stopping (patience 5, ties and NaN never count, max-epoch stop); RR-ClArC aux loss equals the manual
+  `l2_mean` formula and vanishes for gradients orthogonal to the CAV; their `compute_cav('signal')` (imported unchanged)
+  points at the artifact channel; ResNet-50d with Pahde's hook names, one RR-ClArC step (all parameters receive gradients);
+  ISNet training step and classification-only prediction on a toy batch; EfficientNet-B0 1,280-d features; `fit` in fp32
+  with resume; arm-d head (mask_cmc + A21 grid, chosen on val_clean AUROC) removes the marker direction.
+- Environment: our venv + pytorch_lightning 2.6.6 / torchmetrics 1.9.0 (the pahde env's versions; their ISNet module imports
+  Lightning; torch kept at 2.11.0+cu128). ISNet requires `cudnn.deterministic=True` (their code refuses otherwise).
+- Driver smoke test on CPU (1 batch, Trap A fold 1): arm d and the ResNet-50d ERM base run end to end. Thyroid environments
+  (seed 42; n / malignant / marker) e.g. Trap A fold 1: train 957/214/267, val_clean 370/82/185, test_rev 357/166/189;
+  Trap B fold 1: train 827/74/142, val_clean 106/24/53, test_rev 217/166/63.
+- Not yet fixed (for `docs/PREREGISTRATION_PHASE5.md`, after the GPU timing test): ISNet initialisation (P3: random; others
+  ImageNet), each network's optimiser and batch (current defaults: ERM base / RR-ClArC AdamW 1e-4 / 1e-5 head ×10 batch 48;
+  ISNet SGD 1e-3 m 0.99 batch 16; arm d Adam 1e-4 batch 64), constant learning rate under early stopping.
