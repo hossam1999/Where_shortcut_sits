@@ -781,3 +781,7 @@ set is perfectly confounded (only melanoma-with-marking and benign-without-marki
   a ViT-B/16 at batch 130 in fp32 needs ≈ 12 GB, which does not fit beside one Seg-ERM run (≈ 8.5 GB free), so the 12 P6 runs
   (ERM and EPVT × 6 bias levels, split 1, README hparams) start after P4 split 3 (`scripts/replication/m2_p6_queue.sh`; ETA
   start ≈ 20:15 UTC). Nothing of ours is scored before the report and A30.
+- **Correction (author, before any P6 result):** the paper's protocol, not the README's 1501 steps: 100 epochs, early stopping
+  patience 22 on `val_bias` ROC-AUC, paper augmentation (= their code's). "Epoch" in their code's unit (one pass over the
+  smallest domain's in-split): bias 1 → 1,001 steps. Recorded in `third_party/epvt/SOURCE.md`. Queue restarted for bias 1 only
+  (ERM, then EPVT), timed; it still waits for P4 split 3.

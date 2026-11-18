@@ -38,7 +38,7 @@ index 3f1ff3e..38bb386 100644
                                      imfolder=imfolder)
      test_loaders = eval_class(
 diff --git a/domainbed/scripts/train_epvt.py b/domainbed/scripts/train_epvt.py
-index bec4d02..3f16e5e 100644
+index bec4d02..5137504 100644
 --- a/domainbed/scripts/train_epvt.py
 +++ b/domainbed/scripts/train_epvt.py
 @@ -175,11 +175,11 @@ if __name__ == "__main__":
@@ -75,8 +75,17 @@ index bec4d02..3f16e5e 100644
          # val_transform = transforms.Compose([
          #     transforms.Resize((224, 224)),
          #     transforms.ToTensor(),
+@@ -325,7 +325,7 @@ if __name__ == "__main__":
+         torch.save(save_dict, os.path.join(args.output_dir, filename))
+ 
+     last_results_keys = None
+-    es_patience = 200  # Early Stopping patience - for how many epochs with no improvements to wait
++    es_patience = int(os.environ.get('EPVT_PATIENCE', '200'))  # Early Stopping patience - for how many epochs with no improvements to wait
+     best_val = 0  # Best validation score within this fold
+     patience = es_patience  # Current patience counter
+     for step in range(start_step, n_steps):
 diff --git a/domainbed/scripts/train_erm.py b/domainbed/scripts/train_erm.py
-index efcf947..3ab4d4d 100644
+index efcf947..2bf48c6 100644
 --- a/domainbed/scripts/train_erm.py
 +++ b/domainbed/scripts/train_erm.py
 @@ -166,10 +166,10 @@ if __name__ == "__main__":
@@ -94,3 +103,12 @@ index efcf947..3ab4d4d 100644
      val = datasets.MelanomaDataset(df=val_df,
                                     imfolder=imfolder)
  
+@@ -233,7 +233,7 @@ if __name__ == "__main__":
+         torch.save(save_dict, os.path.join(args.output_dir, filename))
+ 
+     last_results_keys = None
+-    es_patience = 200  # Early Stopping patience - for how many epochs with no improvements to wait
++    es_patience = int(os.environ.get('EPVT_PATIENCE', '200'))  # Early Stopping patience - for how many epochs with no improvements to wait
+     best_val = 0  # Best validation score within this fold
+     patience = es_patience  # Current patience counter
+     for step in range(start_step, n_steps):
