@@ -82,5 +82,10 @@ def p4():
                                          "score": d.score}))
 
 
+def armd():
+    for f in sorted(glob.glob(f"{D}/replication/armd/*/preds_test.csv.gz")):   # arm d (A20/A21), test rows only
+        write("armd", Path(f).parent.name, pd.read_csv(f))
+
+
 if __name__ == "__main__":
-    p1(); p1_location(); p2(); p3(); p4()
+    p1(); p1_location(); p2(); p3(); p4(); armd()
