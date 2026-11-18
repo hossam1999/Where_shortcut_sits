@@ -704,3 +704,18 @@ before any result of the new P6).** The paper registered in A28 (Dreyer, Pahde e
 its registration follows as **A30** (A28 is taken) only if EPVT reproduces. Priority on machine 2: P4 > P6 > P7. P6 runs
 beside P4 only if a measured pairing does not slow P4; otherwise after P4 split 3. Results seen: as in A28, plus the P7
 step-1 table (`results/replication/rrclarc/step1.md`, unchanged).
+
+**A31 (2026-11-18 21:35 UTC by machine 2's clock; P4 port-error fix, not tuning; author's rule "fix a port error, re-score the
+test once"; A30 stays reserved for P6).** Results seen when this was recorded: the P4 gate (Seg-ERM 0.609 / 0.611 / 0.676, mean
+0.632; fail), arm a (0.485 mean), arm d split 1 vs Seg-ERM. Evidence: `docs/REPLICATION_STATUS.md` 21:35 entry, item 3.
+- **Fix:** the 512-px cache is rebuilt as their `src/data/isic.py` does it: `imageio.imread` → `PIL.Image` →
+  `torchvision.transforms.Resize([512, 512])` (PIL bilinear with antialiasing) for images; the same for Task 1 masks, then
+  `ToTensor() > 0.5`. Stored in a new cache (`cache512_pil`); the cv2 cache and all runs on it are kept and reported as run.
+- **Rerun:** Segmentation-ERM splits 1–3 with the unchanged registered protocol (A13 / Appendix A.1, `--grad_ckpt`, batch 16,
+  fp32, 150 epochs, best validation Dice) on the fixed cache; **each test scored once**; the P4 gate (A13 + addendum) is
+  decided on these three runs. Binary-ERM was trained on the same cv2 cache (machine 1): it passed the gate and is **not**
+  rerun; this is stated next to the gate. Arm a is rerun on the fixed Seg-ERM encoders (same head, same grid). Arm d (machine
+  1, cv2 cache) stays as run and is compared descriptively.
+- **Not changed** (checked, not port errors): model selection, epochs, augmentation, learning rate, loss, scoring, test set.
+- **Scheduling:** the three reruns follow the P6 bias-1 step-1 runs already in progress (≈ 7.6 GPU-h: two splits paired, then
+  the third); P6 continues after them (P4 keeps priority).

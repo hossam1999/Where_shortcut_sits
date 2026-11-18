@@ -812,3 +812,40 @@ set is perfectly confounded (only melanoma-with-marking and benign-without-marki
 - **Arm d split 1** (machine 1's EfficientNet-B0 + mask_cmc scores) vs Seg-ERM split 1, same 772 images: 0.666 vs 0.609,
   Δ +0.057 [+0.003, +0.111] (image-only bootstrap, one network each).
 - All descriptive until the P4 gate. No other epoch of Seg-ERM was scored on the test.
+
+### 2026-11-18 21:35 UTC (machine 2's clock) — machine 2: P4 gate FAILED; reproduction-gap diagnosis (author's order; CPU, validation data only, no test variant scored)
+**Gate (A13 + addendum):** Seg-ERM splits 1–3 robust AUROC 0.609 / 0.611 / 0.676 (best validation Dice at epochs 125 / 138 / 148
+of 150), **mean 0.632 ± 0.038** vs paper 0.727 (|Δ| 0.095) and notebook 0.772 (|Δ| 0.140) → **fail**; Binary-ERM 0.363 → pass.
+**P4 stays descriptive** unless the fix below changes the gate. Arm a (descriptive): 0.528 / 0.481 / 0.445 (mean 0.485 ± 0.042),
+below Seg-ERM on every split, C at the top edge (10) each time. Arm d vs Seg-ERM split 1: +0.057 [+0.003, +0.111].
+`results/replication/saab/p4_gate.md`, `p4_arm_a.md`; scores in `results/replication/saab/scores/`.
+
+**Differences found, with sources** (`/workspace/third_party/saab` @ 1739cf2; history 9e06f97 2022-11-18 … 1739cf2 2023-02-25):
+1. **Model selection (not a port error).** `src/task.py`: `ModelCheckpoint(monitor="valid_dice", mode="max",
+   every_n_train_steps=5)`, Lightning default `save_top_k=1`, no early stopping; `cfg/config.yaml` `epochs: 100` in every commit.
+   So their final model is the best-validation-Dice checkpoint, as ours (theirs holds the weights up to 5 steps after the
+   validated epoch; ours the validated weights — recorded in SOURCE.md). **The notebook's Seg-ERM file is
+   `…/method_seg/lr_0.0005/wd_0/dropout_0/seed_1/domino/maf4yoer/checkpoints/epoch=1-step=115.ckpt`:** step 115 is the first
+   5-step save after the epoch-0 validation (113 steps per epoch at 1,822 / 16). With `save_top_k=1` and a validation set that
+   lies inside training (Dice rises with training: ours 0.80 at epoch 0 → 0.84–0.87 at the best epoch), a 100-epoch run would
+   have replaced it; the run that produced it most likely ended after about two epochs. Its save path lacks the
+   `dataset_<source>/` level that `get_save_dir` gained in 1739cf2, so it was trained with the code of f5839e9 / a48c338
+   (2022-11-21 / 2022-12-02). The ERM files the notebook scores are also early (`epoch=2-step=230`, 1739cf2; the earlier
+   notebook version, a48c338, scored `epoch=7-step=795` → 0.2641 and `epoch=1-step=115` → its printed ERM line). **All notebook
+   checkpoints postdate the paper (MLHC, August 2022), so none of them can be a Table 1 model.**
+2. **Protocol vs Table 1 (not a port error).** The repository history starts 2022-11-18, after the paper, so it cannot show
+   the Table 1 code (A13 item 6). Every commit: Adam lr 5e-4, wd 0, batch 16, plain cross-entropy (no class weights), 100
+   epochs, ISIC loader without augmentation (`train_transform.json` is used only by `cxr.py`). Paper Appendix A.1 (p. 20,
+   re-read): Adam, lr 0.0005, augmentation (affine, elastic, brightness, contrast), checkpoint on validation Dice, 150 epochs.
+   We follow A.1 (A13). Input 512 × 512, their ISIC mean/std, segmentation target `(label + 1) × mask`, image score = mean over
+   pixels of the class-2 softmax (`src/utils.score`) — identical in our port.
+3. **Image resizing — PORT ERROR.** Their `img_loader` (`src/data/isic.py`) reads with `imageio`, then
+   `transforms.Resize([512, 512])` on a PIL image (PIL bilinear, **antialiased** when shrinking); the mask goes through the same
+   loader and `> 0.5`. Our cache (`p4_train.cache`) used `cv2.resize(INTER_LINEAR)` (**no antialiasing**) for images and masks
+   (`> 127`). On the 259 validation images (width 576–6,748 px, median 3,008): mean |PIL − cv2| per image median 1.02 grey
+   levels (90th percentile 2.44, max 5.50; widths > 3,000 px: median 1.47). Small, but it is not what their code does →
+   amendment A31, fix, retrain, re-score once.
+4. **Data (no difference).** Their notebook builds 2,853 rows and scores **772** test images (printed output), from Bissoto's
+   `trap-sets/isic_annotated_test1.csv`, which has 772 rows in every commit of that repository (single data commit 841cc17,
+   2020); ours are the same files (2,853 rows; 772 test, 618 benign / 154 melanoma). The paper's "513" (p. 12) matches no file
+   or split: recorded as a paper inconsistency.
