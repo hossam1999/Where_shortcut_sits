@@ -187,3 +187,14 @@ Lesion ROIs: HAM10000 manual 10,015, ISIC 2018 manual 772, U-Net 14,544 (held-ou
 
 ## P3 — Bassi et al., Nature Communications 2024 (primary)
 *pending (data ready; ISNet starts after the P1 gate; BIMCV test images fetching)*
+
+**Framing decided 2026-11-18 (author).**
+- **A9 equivalence check:** `COVIDIsNet.pt` scores macro-F1 0.223 (primary) / 0.260 (size-matched) against 0.773, and fails
+  on P3's own training sources too; the diagnosis found no difference from P3's stated pipeline
+  (`docs/REPLICATION_STATUS.md`, 2026-11-18). **P3 stays descriptive as registered**; the authors are asked
+  (`docs/EMAIL_DRAFT_BASSI_ISNET.md`).
+- **Corner-run ISNet:** its macro-F1 on the rebuilt tests is reported beside P3's 0.775 as **descriptive supporting
+  evidence of test equivalence, not a gate**.
+- **Inside-the-lungs comparison** (ISNet and our arms trained by us on identical data, A6): reported with 95% CIs as a
+  **controlled, descriptive comparison**.
+
