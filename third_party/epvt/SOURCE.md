@@ -42,7 +42,10 @@ Renumbered by A29 (RR-ClArC is P7). Step 1 only until the author approves A30.
   DomainBed holds out 20 % of each domain (unused). So 100 epochs = 100 × steps_per_epoch + 1 steps (the +1 final evaluation as
   in their 1,501 = 75 × 20 + 1): **bias 1 split 1: 10 steps/epoch → 1,001 steps (≈ 13 passes over the 9,889 training
   images); bias 0: 20 → 2,001 steps**. The alternative reading (one pass over all training images per epoch, ≈ 76 steps) would
-  give ≈ 7,600 steps; it is not used. Patience: `EPVT_PATIENCE=22` (their code: 200). Seed 0, one run per method and bias
+  give ≈ 7,600 steps; it is not used. **Confirmed by the author (2026-11-18, before any P6 run): reading A.** Reason: the paper
+  does not define "epoch"; their code does, their patience counter uses it, and their README's 1,501 steps equals 75 × 20 + 1
+  in that unit, so this is the authors' own meaning (not a paper-vs-code conflict). DomainBed's 20 % per-domain holdout stays
+  unused, as theirs. Patience: `EPVT_PATIENCE=22` (their code: 200). Seed 0, one run per method and bias
   (step 1); bias 1 first and timed; if 6 levels × 2 methods would exceed ≈ 10 GPU-h, the author is asked before continuing.
 - **Hyper-parameters:** paper: AdamW, lr 5e-6, wd 1e-2, batch 130, prompt length 10 (EPVT) / 4 (PLDG skin), 60 epochs (OOD) /
   100 epochs (trap sets), early stopping 22. **README (superseded by the decision above for steps / patience; the rest is used):** `--steps 1501`, batch 26 per domain × 5
