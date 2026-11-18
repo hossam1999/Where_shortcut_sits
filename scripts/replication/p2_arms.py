@@ -17,6 +17,7 @@ Test (clean and biased), scored once: accuracy with an image-only bootstrap CI (
 to our Vanilla on the same images. Compared descriptively with the paper's Table 1 numbers.
 
     python scripts/replication/p2_arms.py --arm a
+    python scripts/replication/p2_arms.py --arm aprime                  # A19, CPU (after p2_window.sh)
     python scripts/replication/p2_arms.py --arm bc --stage features     # GPU
     python scripts/replication/p2_arms.py --arm bc --stage heads        # CPU
 Writes results/replication/pahde/arm_<arm>.{csv,md} and per-image predictions to $WTSS_DATA/replication/pahde/arms/.
@@ -154,6 +155,73 @@ def bc_heads():
     write_report("c", f"arm c: U-MtE (ROI = lesion, k = {er.k}), label-free", sel, res)
 
 
+def arm_aprime():
+    """A19: arm a on the selected A18 RR-ClArC network (unmasked input); head-to-head vs that RR-ClArC model and Vanilla."""
+    import candidates as CA
+    S18 = R / "scores_a18"
+    sel18 = pd.read_csv(OUT / "rrclarc_selection_a18.csv")
+    ch = sel18[sel18.chosen].model.iloc[0]
+    F = np.load(S18 / "aprime_features_unmasked.npz")
+    s = pd.read_csv(S18 / "aprime_unmasked_scores.csv.gz", usecols=["index", "image", "split", "test_set", "label", "pred", "artifact"])
+    part = {k: s[(s.split == sp) & (s.test_set == ts)].reset_index(drop=True)
+            for k, (sp, ts) in {"train": ("train", "as_trained"), "val_clean": ("val", "clean"), "val_biased": ("val", "biased"),
+                                "test_clean": ("test", "clean"), "test_biased": ("test", "biased")}.items()}
+    X = {"train": F["train_as_trained"], **{k: F[k] for k in ("val_clean", "val_biased", "test_clean", "test_biased")}}
+    for k in X:
+        assert len(X[k]) == len(part[k]), k
+    ytr, atr = part["train"].label.to_numpy(), part["train"].artifact.to_numpy()
+    P = CA.Projector(CA.cmc_directions(X["train"], ytr, atr, "pooled"))
+    assert P.Q.shape[1] == 1, P.Q.shape
+    Z = {k: P(v) for k, v in X.items()}
+    sel, best = [], None
+    for C in CS:
+        clf = LogisticRegression(C=C, class_weight="balanced", max_iter=5000, random_state=SEED).fit(Z["train"], ytr)
+        vc = float((clf.predict(Z["val_clean"]) == part["val_clean"].label).mean())
+        vb = float((clf.predict(Z["val_biased"]) == part["val_biased"].label).mean())
+        sel.append({"C": C, "val_clean_acc": vc, "val_biased_acc": vb, "val_mean": (vc + vb) / 2, "converged": bool(clf.n_iter_.max() < 5000)})
+        print(sel[-1], flush=True)
+        if best is None or (vc + vb) / 2 > best[1]:
+            best = (clf, (vc + vb) / 2, C)
+    clf, _, C = best
+    rr = pd.read_csv(S18 / f"{ch}.csv.gz", usecols=["index", "split", "test_set", "pred"])
+    van = pd.read_csv(R / "scores/vanilla_seed0.csv.gz", usecols=["index", "split", "test_set", "pred"])
+    preds, rows = [], []
+    for ts in ("clean", "biased"):
+        p = part[f"test_{ts}"]
+        pr = clf.predict(Z[f"test_{ts}"])
+        ref = {n: d[(d.split == "test") & (d.test_set == ts)].set_index("index").loc[p["index"], "pred"].to_numpy() for n, d in (("rr", rr), ("van", van))}
+        preds.append(pd.DataFrame({"index": p["index"], "image": p.image, "label": p.label, "method": "aprime_mask_cmc_rrclarc",
+                                   "test_set": ts, "pred": pr}))
+        y = p.label.to_numpy()
+        hit = np.stack([pr == y, ref["rr"] == y, ref["van"] == y], 1).astype(float)
+        bs = boot(hit)
+        q = lambda v: np.quantile(v, [0.025, 0.975])
+        (lo, hi), (rlo, rhi), (vlo, vhi) = q(bs[:, 0]), q(bs[:, 0] - bs[:, 1]), q(bs[:, 0] - bs[:, 2])
+        rows.append({"test": ts, "n": len(p), "arm_aprime_acc": hit[:, 0].mean(), "ci95_lo": lo, "ci95_hi": hi,
+                     "rrclarc_acc": hit[:, 1].mean(), "delta_vs_rrclarc": hit[:, 0].mean() - hit[:, 1].mean(), "d_rr_lo": rlo, "d_rr_hi": rhi,
+                     "vanilla_acc": hit[:, 2].mean(), "delta_vs_vanilla": hit[:, 0].mean() - hit[:, 2].mean(), "d_van_lo": vlo, "d_van_hi": vhi})
+    pd.concat(preds).to_csv(R / "arms/preds_aprime_mask_cmc_rrclarc.csv.gz", index=False)
+    sel = pd.DataFrame(sel).assign(chosen=lambda d: d.C == C)
+    res = pd.DataFrame(rows)
+    sel.to_csv(OUT / "arm_aprime_selection.csv", index=False)
+    res.to_csv(OUT / "arm_aprime.csv", index=False)
+    md = [f"# P2 — arm a' (A19): mask_cmc on the selected A18 RR-ClArC network ({ch}), ISIC 2019, seed 0", "",
+          "Identical to arm a except for the network (unmasked input, penultimate features, one δ, class-balanced multinomial "
+          "refit, C on validation). One seed (A3): 95% CIs are image-only bootstrap intervals (10,000 replicates), paired on "
+          "the same test images; training-seed variance is not included.", "",
+          "## Selection (validation: mean of clean and biased accuracy)", "", "| C | val clean | val biased | mean | chosen |", "|---|---|---|---|---|"]
+    md += [f"| {r.C:g} | {r.val_clean_acc:.3f} | {r.val_biased_acc:.3f} | {r.val_mean:.3f} | {'**yes**' if r.chosen else ''} |" for _, r in sel.iterrows()]
+    md += ["", "## Test (scored once): head-to-head vs RR-ClArC", "",
+           "| test | n | arm a' [95% CI] | RR-ClArC (A18) | Δ vs RR-ClArC [95% CI] | our Vanilla | Δ vs Vanilla [95% CI] |", "|---|---|---|---|---|---|---|"]
+    md += [f"| {r.test} | {r.n} | {r.arm_aprime_acc:.3f} [{r.ci95_lo:.3f}, {r.ci95_hi:.3f}] | {r.rrclarc_acc:.3f} | "
+           f"{r.delta_vs_rrclarc:+.3f} [{r.d_rr_lo:+.3f}, {r.d_rr_hi:+.3f}] | {r.vanilla_acc:.3f} | {r.delta_vs_vanilla:+.3f} [{r.d_van_lo:+.3f}, {r.d_van_hi:+.3f}] |"
+           for _, r in res.iterrows()]
+    md += ["", "Note: as for arm a, a selected C at the edge of the registered grid {0.01, 0.1, 1, 10} is reported as is; any "
+           "wider grid is post hoc only (sensitivity, no verdict)."]
+    (OUT / "arm_aprime.md").write_text("\n".join(md) + "\n")
+    print("\n".join(md))
+
+
 def arm_a():
     import candidates as CA
     F = np.load(R / "scores/vanilla_seed0_features.npz")
@@ -199,9 +267,12 @@ def arm_a():
 
 def main():
     ap = argparse.ArgumentParser()
-    ap.add_argument("--arm", choices=["a", "bc"], required=True)
+    ap.add_argument("--arm", choices=["a", "aprime", "bc"], required=True)
     ap.add_argument("--stage", choices=["features", "heads"], default="heads")
     args = ap.parse_args()
+    if args.arm == "aprime":
+        arm_aprime()
+        return
     if args.arm == "bc":
         bc_features() if args.stage == "features" else bc_heads()
         return
