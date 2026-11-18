@@ -686,3 +686,23 @@ predicts output 1 for 91% of images and never output 2 (macro-F1 0.281). So the 
 released model does not receive the input it was trained on (preprocessing mismatch) or does not load correctly (a
 pickled module under torch 2.x). The check is **not interpretable as an equivalence test**; no P3 verdict depends on it
 until this is resolved. `results/replication/isnet/covidisnet_check.md` is kept as run.
+
+### 2026-11-18 15:55 UTC — A9 diagnosis (author's order and limits): no bug found → P3 stays descriptive as registered
+Each step checked on P3's training-source validation images (BrixIA, CheXpert; our cohort cache), never on the test:
+1. **Strict load:** all 1,144 keys of `COVIDIsNet.pt` match a fresh `IsDense121Lightning(classes=3)` built from their
+   code (`backup/ISNetLightning.py:13-92`); no missing or unexpected keys; logits identical (max difference 0.0).
+   BatchNorm statistics are trained (num_batches_tracked 22,890; running_var mean 32.9).
+2. **eval():** no module in training mode after `eval()`.
+3. **Output:** with `heat=False`, `forward` returns `self.DenseNet(x)`, the classifier logits (`ISNetLightning.py:82-92`).
+   Their LRP DenseNet and the standard torchvision DenseNet-121 with the same weights give the same predictions (max
+   logit difference 0.33, LRP ε; same in-distribution macro-F1 0.272).
+4. **Input (Supp. Note 6.1, p. 32 of the Supplementary Information, MOESM1):** grayscale → histogram equalization → [0, 1]
+   → 224 × 224 → 3 channels (test images padded to square). Our cache follows this order. The first BatchNorm confirms
+   the scale: conv0 output on our [0, 1] inputs has mean 2.06 / variance 7.2 vs norm0's running 1.72 / 8.9 (variance
+   ratio 0.82; with 0–255 inputs it would be 53,000×). Cached images inspected: correct polarity, equalized.
+5. **Class order (Supp. Note 6.2, p. 33):** normal 0, pneumonia 1, COVID-19 2 — ours.
+Still, on P3's own training sources the model predicts "pneumonia" for 95% of BrixIA COVID-19 and 73% of CheXpert
+normal images and never outputs COVID-19 (in-distribution macro-F1 0.27–0.28). No difference between their stated
+pipeline and ours was found in text or code, so **nothing is changed and the test is not re-scored**; the A9 check stays
+as run (0.223 / 0.260), **P3 is descriptive only as registered**, and the ISNet chain is unaffected. Untestable from text
+or code: which CheXpert release P3 used (we use CheXpert-v1.0-small) and their exact equalization implementation.
