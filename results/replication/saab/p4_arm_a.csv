@@ -1,0 +1,2 @@
+split,arm,best_epoch,mode,C,C_edge,val_auroc,robust_auroc,flags,Seg-ERM_auroc,vs_Seg-ERM,Binary-ERM_auroc,vs_Binary-ERM
+1,a_segerm_mask_cmc,125,pooled,10.0,highest,0.9844527363184079,0.5282961375194385,"dark_corner,hair,gel_border,gel_bubble,ruler,ink,vasc",0.6090131551296599,"-0.081 [-0.140, -0.022]",0.35478922372126254,"+0.174 [+0.108, +0.240]"

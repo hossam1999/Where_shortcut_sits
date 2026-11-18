@@ -802,3 +802,13 @@ set is perfectly confounded (only melanoma-with-marking and benign-without-marki
 - Not yet fixed (for `docs/PREREGISTRATION_PHASE5.md`, after the GPU timing test): ISNet initialisation (P3: random; others
   ImageNet), each network's optimiser and batch (current defaults: ERM base / RR-ClArC AdamW 1e-4 / 1e-5 head ×10 batch 48;
   ISNet SGD 1e-3 m 0.99 batch 16; arm d Adam 1e-4 batch 64), constant learning rate under early stopping.
+
+### 2026-11-18 17:13 UTC (machine 2's clock) — machine 2: P4 Seg-ERM split 1 scored; arm a and arm-d comparison (descriptive)
+- **Seg-ERM split 1 (machine 2, from scratch, A27): robust AUROC 0.609** on the 772-image trap test (best validation Dice 0.841
+  at epoch 125 of 150, the registered selection; test scored once). Paper 0.727 ± 0.016 (3 seeds), notebook 0.772 (split 1).
+  Gate (A13 + addendum) needs the 3-split mean; splits 2 and 3 pending (split 3 started 17:11, alone, ≈ 2.9 h).
+- **Arm a split 1** (mask_cmc on this Seg-ERM's encoder, lesion-masked images): 0.528, Δ vs Seg-ERM −0.081 [−0.140, −0.022];
+  C = 10 is the highest edge of the registered grid {0.01, 0.1, 1, 10}.
+- **Arm d split 1** (machine 1's EfficientNet-B0 + mask_cmc scores) vs Seg-ERM split 1, same 772 images: 0.666 vs 0.609,
+  Δ +0.057 [+0.003, +0.111] (image-only bootstrap, one network each).
+- All descriptive until the P4 gate. No other epoch of Seg-ERM was scored on the test.

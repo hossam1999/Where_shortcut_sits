@@ -1,0 +1,5 @@
+method,split,robust_auroc,source,best_epoch,best_val_dice
+Binary-ERM,1,0.35478922372126254,machine 1 (git),,
+Seg-ERM,1,0.6090131551296599,machine 2,125.0,0.8407047880338688
+Binary-ERM,2,0.36141932501155805,machine 1 (git),,
+Binary-ERM,3,0.373492203589291,machine 1 (git),,
