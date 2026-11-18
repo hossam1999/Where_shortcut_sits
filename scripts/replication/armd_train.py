@@ -11,7 +11,7 @@ Stages:
     python scripts/replication/armd_train.py --setting p2 --stage train      # GPU
     python scripts/replication/armd_train.py --setting p2 --stage features   # GPU, best checkpoint, all sets
     python scripts/replication/armd_train.py --setting p2 --stage heads      # CPU
-Settings implemented: p2, p1_cardio, p1_rsna, p1_loc_inside, p1_loc_outside (P3, P4 adapters are added before their runs).
+Settings implemented: p2, p1_cardio, p1_rsna, p1_loc_inside, p1_loc_outside, p3_9010_inside (P4 is added before its run).
 Outputs: $WTSS_DATA/replication/armd/<setting>/ (checkpoint.pt, best.pt, log.csv, features.npz, preds_test.csv.gz) and
 results/replication/armd/<setting>.{md,csv}.
 """
@@ -267,6 +267,75 @@ class P1LocOutside(P1Loc):
     POS, KEY = "outside", "p1_loc_outside"
 
 
+class P3:
+    """P3 (Bassi), 90/10 inside variant (A6), with exactly the data of the ISNet run `isnet_inside_9010_seed0`: P3's cohort
+    cache (histogram-equalized 224 px, PSPNet lungs = the ROI, as arm b), marks inside the lungs, present on 90% of
+    training/validation images keyed by the data seed 0 (p3_train.present), drawn first and then P3's joint augmentation
+    of image and lung mask (translation <= 28 px, rotation +-40 deg, horizontal flip; p3_train.Data). The ROI is applied
+    after augmentation (outside = arm b's mean colour), then ImageNet normalisation. 3 classes; validation metric
+    macro-F1 on P3's validation split with its marks. Tests (after BIMCV): biased / standard / deceiving at the same
+    position rule. Artifact label (head only): mark present."""
+    n_out = 3
+    sets = ("train", "valid", "test_biased", "test_standard", "test_deceiving")
+    train_set, val_sets = "train", ("valid",)
+    KEY, DATA_SEED = "p3_9010_inside", 0
+
+    def __init__(self):
+        import p3_train as P3T
+        self.T = P3T
+        co = pd.read_csv(f"{D}/replication/isnet/cohort.csv").set_index("image_id")
+        gray, roi, ids = P3T.load("cohort")
+        pl = P3T.placements(ids, roi, "inside")
+        y = co.loc[ids, "y"].to_numpy(); split = co.loc[ids, "split"].to_numpy()
+        marks = [P3T.SHAPE[int(c)] if P3T.present(i, self.DATA_SEED, "9010") else None for i, c in zip(ids, y)]
+        self.src, self.part = {}, {}
+        for s_ in ("train", "valid"):
+            idx = np.where(split == s_)[0]
+            self.src[s_] = (gray, roi, idx, [ids[k] for k in idx], y[idx], pl, [marks[k] for k in idx])
+            self.part[s_] = pd.DataFrame({"image_id": [ids[k] for k in idx], "y": y[idx], "mark": [marks[k] is not None for k in idx]})
+        tc = Path(f"{D}/replication/isnet/cache_test")
+        if (tc / "ids.txt").exists():
+            g2, r2, ids2 = P3T.load("test")
+            t = pd.read_csv(f"{D}/replication/isnet/test_cohort.csv").drop_duplicates("image_id").set_index("image_id")
+            y2 = t.loc[ids2, "y"].to_numpy(); pl2 = P3T.placements(ids2, r2, "inside")
+            for test, mk in (("biased", lambda c: P3T.SHAPE[c]), ("standard", lambda c: None), ("deceiving", lambda c: P3T.DECEIVE[c])):
+                self.src[f"test_{test}"] = (g2, r2, np.arange(len(ids2)), ids2, y2, pl2, [mk(int(c)) for c in y2])
+                self.part[f"test_{test}"] = pd.DataFrame({"image_id": ids2, "y": y2, "size_matched": t.loc[ids2, "size_matched"].to_numpy()})
+
+    def dataset(self, k, train):
+        g, r, idx, ids, y, pl, marks = self.src[k]
+        return P3Masked(self.T.Data(g, r, ids, y, pl, marks, train, SEED), idx)
+
+    def val_metric(self, preds):
+        from sklearn.metrics import f1_score
+        y, p = preds["valid"]
+        return float(f1_score(y, p.argmax(1), average="macro"))
+
+    def labels(self, k):
+        d = self.part[k]
+        return d.y.to_numpy().astype(int), (d["mark"].to_numpy().astype(int) if "mark" in d else np.zeros(len(d), int))
+
+
+class P3Masked:
+    """p3_train.Data item (3-channel [0, 1] image, lung mask, label) -> ROI-masked, ImageNet-normalised tensor."""
+    FILL = None
+
+    def __init__(self, data, idx):
+        self.data, self.idx = data, idx
+
+    def __len__(self):
+        return len(self.data)
+
+    def __getitem__(self, k):
+        import torch
+        import torchvision.transforms.functional as TF
+        from wtss.ops import MEAN_RGB
+        g, m, y = self.data[k]
+        fill = torch.tensor(MEAN_RGB, dtype=torch.float32)[:, None, None] / 255.0
+        x = g * m + fill * (1 - m)
+        return TF.normalize(x, IMNET_MEAN, IMNET_STD), y.reshape(()).long()
+
+
 class CachedNpy:
     """Pre-masked uint8 N x S x S x 3 memmap -> ImageNet-normalised tensor (no augmentation)."""
 
@@ -284,7 +353,8 @@ class CachedNpy:
         return TF.normalize(TF.to_tensor(np.asarray(self.mm[j])), IMNET_MEAN, IMNET_STD), torch.tensor(int(self.y[j]))
 
 
-SETTINGS = {"p2": P2, "p1_cardio": P1Cardio, "p1_rsna": P1RSNA, "p1_loc_inside": P1LocInside, "p1_loc_outside": P1LocOutside}
+SETTINGS = {"p2": P2, "p1_cardio": P1Cardio, "p1_rsna": P1RSNA, "p1_loc_inside": P1LocInside, "p1_loc_outside": P1LocOutside,
+            "p3_9010_inside": P3}
 
 
 # --------------------------------------------------------------------------------------------------------- train
@@ -368,7 +438,7 @@ def features(S, out, workers, pretrained=True):
     model = make_model(S.n_out, pretrained).to(dev())
     model.load_state_dict(torch.load(out / "best.pt", map_location=dev())); model.eval()
     F = {}
-    for k in S.sets:
+    for k in [k for k in S.sets if not hasattr(S, "src") or k in S.src]:   # P3: test sets only once the test cache exists
         logits, f = predict(model, loader(S.dataset(k, False), False, workers), feats=True)
         F[k], F[k + "_logits"] = f, logits
         print(k, f.shape, flush=True)
@@ -512,6 +582,53 @@ def heads_p1loc(S, out):
     p.to_csv(L / "arms/preds_d_effb0_mask_cmc.csv.gz", index=False)
 
 
+def heads_p3(S, out):
+    """mask_cmc (mode pooled / per_class: one δ per class, mark present vs absent) + class-balanced multinomial LR,
+    (mode, C) in the A21 grid by validation macro-F1; test macro-F1 on both A9 variants, scored once. The head-to-head
+    vs the ISNet 90/10 inside run is computed when that run is scored (descriptive unless A9 allows verdicts)."""
+    import candidates as CA
+    from sklearn.linear_model import LogisticRegression
+    from sklearn.metrics import f1_score
+    F = np.load(out / "features.npz")
+    tests = [k for k in S.sets if k.startswith("test_")]
+    assert all(k in F.files for k in tests), "test features missing: run --stage features after the P3 test cache exists"
+    ytr, atr = S.labels("train")
+    sel, best = [], None
+    for mode in CA.CMC_MODES:
+        P = CA.Projector(CA.cmc_directions(F["train"], ytr, atr, mode))
+        Z = {k: P(F[k]) for k in S.sets}
+        for C in CS:
+            clf = LogisticRegression(C=C, class_weight="balanced", max_iter=5000, random_state=0).fit(Z["train"], ytr)
+            v = float(f1_score(S.labels("valid")[0], clf.predict(Z["valid"]), average="macro"))
+            sel.append({"mode": mode, "k": P.Q.shape[1], "C": C, "val_macro_f1": v})
+            if best is None or v > best[1]:
+                best = (clf, v, mode, C, Z)
+    clf, _, mode, C, Z = best
+    sel = pd.DataFrame(sel).assign(chosen=lambda d: (d["mode"] == mode) & (d.C == C))
+    edge = "lowest" if C == CS[0] else "highest" if C == CS[-1] else "no"
+    rows, preds = [], []
+    for k in tests:
+        d = S.part[k]; y = d.y.to_numpy(); lg = clf.predict_proba(Z[k])
+        preds.append(pd.DataFrame({"image_id": d.image_id, "y": y, "test_set": k, "size_matched": d.size_matched,
+                                   **{f"p{j}": lg[:, j] for j in range(3)}}))
+        for var, keep in (("primary", np.ones(len(y), bool)), ("size-matched", d.size_matched.to_numpy().astype(bool))):
+            rows.append({"test": k[5:], "variant": var, "n": int(keep.sum()), "macro_f1": float(f1_score(y[keep], lg[keep].argmax(1), average="macro"))})
+    pd.concat(preds).to_csv(out / "preds_test.csv.gz", index=False)
+    res = pd.DataFrame(rows)
+    OUTR.mkdir(parents=True, exist_ok=True)
+    sel.to_csv(OUTR / f"{S.KEY}_selection.csv", index=False); res.to_csv(OUTR / f"{S.KEY}.csv", index=False)
+    lgl = pd.read_csv(out / "log.csv")
+    md = ["# Arm d (A20/A21) — P3 90/10 inside variant (A6), EfficientNet-B0 on lung-masked images + mask_cmc, seed 1234", "",
+          "One seed: test values are point estimates on the rebuilt P3 test (A9/A10; both variants); the paired comparison "
+          "with the ISNet 90/10 inside run is added when that run is scored.", "",
+          f"Encoder training: {len(lgl)} epochs, best validation macro-F1 {lgl.val_metric.max():.3f} at epoch "
+          f"{int(lgl.val_metric.idxmax())}. Head: mode {mode}, C = {C:g} (edge of the A21 grid: **{edge}**).", "",
+          "| test | variant | n | macro-F1 |", "|---|---|---|---|"]
+    md += [f"| {r.test} | {r.variant} | {r.n} | {r.macro_f1:.3f} |" for _, r in res.iterrows()]
+    (OUTR / f"{S.KEY}.md").write_text("\n".join(md) + "\n")
+    print("\n".join(md))
+
+
 def heads_p1(S, out):
     V = Path(f"{D}/replication/viviano/preds")
 
@@ -548,7 +665,7 @@ def main():
         features(S, out, a.workers)
     else:
         {"p2": heads_p2, "p1_cardio": heads_p1, "p1_rsna": heads_p1, "p1_loc_inside": heads_p1loc,
-         "p1_loc_outside": heads_p1loc}[a.setting](S, out)
+         "p1_loc_outside": heads_p1loc, "p3_9010_inside": heads_p3}[a.setting](S, out)
 
 
 if __name__ == "__main__":
