@@ -130,6 +130,12 @@ Every target must be beaten twice. Both are required for a claim of "better than
   - **Precision: fp32 for every phase-5 network** (no mixed precision: LRP is precision-sensitive and the networks are
     small).
   - ERM checkpoints of the thesis do not exist (never saved); the thyroid cohort is rebuilt on CPU (approved).
+  - **One selection criterion for every tuned choice in phase 5, identical for their methods and ours: AUROC on the
+    thesis's `val_clean`** (the inner validation, 20% of the training groups, with the marker present in 50% of each
+    class, so it carries no label information; `src/wtss/data/isic2019_spec.py` RATES). This is the criterion the
+    thesis's own arms used (`wtss.heads.select_C`, called with `val_clean` in `src/wtss/experiments/spec_traps.py`; the
+    decision threshold is also set on `val_clean`). It decides early stopping of every network (RR-ClArC's ResNet-50 ERM
+    base, ISNet, arm d's encoder), RR-ClArC's λ and layer, and mask_cmc's mode and C (A21 grid).
 - About 18 networks plus the RR-ClArC λ fine-tunes. A timing test on Trap A fold 1 with all three methods comes first,
   then `docs/PREREGISTRATION_PHASE5.md` and the updated GPU-hour estimate for the author's approval.
 
