@@ -629,3 +629,25 @@ ISNet inside run has been scored.
   the same image-only bootstrap as the primary results.
 - **Labelled secondary everywhere:** these images were used for epoch and model selection (P3's validation split).
 - The **rebuilt external test stays the registered primary test** and is reported unchanged.
+
+**A27 (2026-11-18 12:20 UTC by machine 2's clock, before any machine-2 result; author's decision).** A second GPU machine
+("machine 2") runs the P4 Segmentation-ERM runs, P5 and phase 5; machine 1 keeps P3 (the ISNet chain) and the exploratory
+track. Results seen when this was recorded: everything in git at commit e562452 (P4 Binary-ERM splits 1–3, P4 arms b, c on
+splits 1–3, P4 arm d split 1; no P4 Segmentation-ERM result).
+- **Machine 2:** 1× NVIDIA GeForce RTX 5070 Ti, 16 GB (16,303 MiB), compute capability 12.0 (Blackwell), driver 595.91.07
+  (max CUDA 13.2); Intel Xeon E5-2680 v4, 28 logical cores; 62 GB RAM; 288 GB container disk. **No persistent volume:**
+  data, checkpoints and environments are lost if the instance is recycled or destroyed (only git survives).
+- **Identical code, recipes and seeds:** the same repository commits and third-party commits (`third_party/*/SOURCE.md`),
+  the same patches, torch 2.11.0+cu128 / torchvision 0.26.0 in every environment, the same scripts and command lines as
+  on machine 1. Environments: ours (Python 3.12, `requirements.txt`), saab (Python 3.10; smp 0.3.4, albumentations 1.3.1),
+  pahde (Python 3.11, their `requirements.txt` without `fast-slic`, which fails to build and is imported only by their
+  SHAP/SpRAy analysis scripts, not by training, activation collection or RR-ClArC; ISNet's code runs in this
+  environment, as on machine 1), r2r (Python 3.11, their `requirements.txt`). Exact package lists are committed with the
+  first results (`docs/ENVIRONMENT_MACHINE2.md`).
+- **P4 Segmentation-ERM split 1 restarts from scratch on machine 2.** Its epoch-66 checkpoint stays on machine 1 and is not
+  used; splits 2 and 3 also run here. Different GPU and cuDNN kernels mean bitwise-different trajectories from machine 1;
+  this is a hardware difference, not a recipe change. Every P4 Segmentation-ERM result, P4 arm a, the arm-d split-1
+  paired comparison with Segmentation-ERM, and the P4 gate (A13 and addendum) come from machine 2.
+- **Machine 1 keeps P3.** Machine 2 runs nothing for P3.
+- Every STATUS entry from machine 2 is labelled "machine 2"; times are machine 2's UTC clock (it reads about 17 h behind
+  the timestamps of machine 1's latest heartbeat commit, so cross-machine ordering is by git history, not by timestamp).
