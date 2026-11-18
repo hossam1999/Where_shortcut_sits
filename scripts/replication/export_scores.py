@@ -58,6 +58,8 @@ def p2():
     for f in sorted(glob.glob(f"{D}/replication/pahde/scores/*.csv.gz")):
         d = pd.read_csv(f)
         write("pahde", Path(f).name[:-7], d[d.split == "test"])   # test rows only (val/train stay under $WTSS_DATA)
+    for f in sorted(glob.glob(f"{D}/replication/pahde/arms/preds_*.csv.gz")):   # our arms: test rows only by construction
+        write("pahde", "arm_" + Path(f).name[6:-7], pd.read_csv(f))
 
 
 def p3():
