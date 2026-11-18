@@ -19,6 +19,9 @@ import argparse
 import json
 import os
 import sys
+
+for _v in ("OMP_NUM_THREADS", "OPENBLAS_NUM_THREADS", "MKL_NUM_THREADS"):   # DataLoader workers: one thread each
+    os.environ.setdefault(_v, "1")                                         # (container task limit 2,816; 2026-11-18)
 import time
 from pathlib import Path
 
@@ -130,11 +133,18 @@ SETTINGS = {"p2": P2}
 
 
 # --------------------------------------------------------------------------------------------------------- train
+def _one_thread(_):
+    import torch
+    torch.set_num_threads(1)
+
+
 def loader(ds, train, workers):
     import torch
     g = torch.Generator(); g.manual_seed(SEED)
-    return torch.utils.data.DataLoader(ds, batch_size=BS, shuffle=train, drop_last=train, num_workers=workers,
-                                       pin_memory=True, persistent_workers=workers > 0, generator=g if train else None)
+    w = workers if train else min(workers, 6)
+    return torch.utils.data.DataLoader(ds, batch_size=BS, shuffle=train, drop_last=train, num_workers=w, pin_memory=True,
+                                       persistent_workers=train and w > 0, worker_init_fn=_one_thread,
+                                       generator=g if train else None)
 
 
 def predict(model, dl, feats=False):
@@ -287,7 +297,7 @@ def main():
     ap = argparse.ArgumentParser()
     ap.add_argument("--setting", choices=sorted(SETTINGS), required=True)
     ap.add_argument("--stage", choices=["train", "features", "heads"], required=True)
-    ap.add_argument("--workers", type=int, default=24)
+    ap.add_argument("--workers", type=int, default=16)
     a = ap.parse_args()
     S = SETTINGS[a.setting]()
     out = Path(f"{D}/replication/armd/{a.setting}"); out.mkdir(parents=True, exist_ok=True)
