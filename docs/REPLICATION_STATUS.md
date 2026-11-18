@@ -897,3 +897,7 @@ below Seg-ERM on every split, C at the top edge (10) each time. Arm d vs Seg-ERM
   - RES (KDD 2022, code YuyangGao/RES): gender and scene datasets only (not medical).
   - Fundus: Bressler et al. 2023 (BJO; laser-scar detection, not mitigation); Fernandes et al. 2025 (arXiv, age/sex attributes).
   - Chest X-ray lung-mask attention papers: arXiv preprints or no shortcut test (2301.10687, 2202.10971, 2512.23089).
+- Friedrich et al. (NMI 2023) "in its own way" examined and **skipped by the author**: their ISIC19 metrics are test
+  accuracy (no XIL method beats Vanilla 88.4 ± 0.5; patch images removed from the test) and the wr explanation score (best
+  RRR-G 0.9 % GradCAM); the patches lie beside the lesion (outside the ROI); data built through the retired ISIC archive API +
+  CDEP patch masks. Cited as related work only (mask-based XIL lowers attention on the artifact without accuracy gains).
