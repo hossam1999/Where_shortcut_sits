@@ -863,3 +863,17 @@ below Seg-ERM on every split, C at the top edge (10) each time. Arm d vs Seg-ERM
   epochs) vs alone (1.14, measured earlier on machine 2), P6 s/epoch paired vs alone (split 3 paused by SIGSTOP/SIGCONT for
   3 P6 epochs). Kept only if the total exceeds 1.0 of one GPU; otherwise P6 is stopped by PID and re-queued after split 3.
   The measurement will be recorded here.
+
+### 2026-11-18 ~22:00 UTC (machine 2's clock) — candidate search (author's request while P4 reruns): one new primary candidate
+- **Bissoto, Barata, Valle, Avila, "Artifact-based domain generalization of skin lesion models", ISIC Workshop @ ECCV 2022**
+  (arXiv 2208.09756; code `github.com/alceubissoto/artifact-generalization-skin` @ 54b20fb, already cloned for P6). Same ISIC 2019
+  trap sets (bias 0–1, 10 splits) and artifact labels as P6; ResNet-50, up to 100 epochs, patience 22, 10 runs, standard error.
+  **Table 3 (bias 1, ROC AUC): ERM 0.58, GroupDRO on artifact environments 0.68, full pipeline (GroupDRO + NoiseCrop) 0.74.**
+  NoiseCrop = test-time ROI censoring (lesion convex hull, background replaced by uniform noise, crop/rescale) — an ROI method
+  whose failure mode for in-lesion artifacts (hair, gel bubbles) is the thesis question. Exact training commands in `run.sh`.
+  Gaps: the masks NoiseCrop reads (`/deconstructing-bias-skin-lesion/isic2019-seg-299/*.png`, DeepLabv3+ for images without
+  ground truth) are not released (that repository holds CSVs only); `data/skin_dataset.py` says the images were "already cropped
+  and centered" (preprocessing not in the repository); workshop venue.
+- Examined and not taken: SCORE (arXiv 2605.13340), SpurCon (arXiv 2608.17598), Learning To Focus (arXiv 2607.10851) — preprints,
+  no venue, no code; Le et al. DFR on ISIC (IJCAI XAI workshop 2023) — no code found; Boland et al. (MELBA 2025) — no code;
+  MIMM-X (MICCAI FAIMI workshop 2025) — CheXpert/MRI, no localized artifact.
