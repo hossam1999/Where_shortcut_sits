@@ -670,3 +670,9 @@ P2's paper (arXiv 2501.13818, p. 22, A.6) names the ResNet50 starting weights `r
 code (`models/resnet_timm.py:28`) loads `resnet50d.a1_in1k`, and our P2 runs (their code) therefore started from a1. Under
 the paper-wins rule a3 is the stated recipe. P2 is closed as "not reproduced" by the author's decision (2026-11-18, no
 further tuning); this is reported next to the P2 result. Phase 5 uses a3 (author).
+
+### 2026-11-18 — P3 pre-trained weights folder re-listed (author asked)
+The P3 README's Google Drive folder (1hIJp4c11R65db2K7EN4rYQ7dcr7ce72t), listed without download: `COVIDIsNet.pt` (COVID-19
+ISNet without synthetic bias, Table 2), `FacesSyntheticBiasISNet.ckpt`, `ISNetDogsSyntheticBias.ckpt` (synthetic-bias
+models for faces and dogs, Table 1), `ISNetChexpert.ckpt`, `TBISNet.ckpt`. **No synthetic-bias (corner-mark) COVID-19
+model is released**, so the corner benchmark ISNet must be trained (chain unchanged; A22 not recorded).
