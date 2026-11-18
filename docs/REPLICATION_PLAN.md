@@ -131,6 +131,9 @@ Every target must be beaten twice. Both are required for a claim of "better than
 - **Expected message:** methods that act by location (Masked, ActDiff, ISNet, and Saab's segmentation supervision)
   help in Trap B but not in Trap A. Ours helps in both. RR-ClArC is the strongest competitor in Trap A, and the
   comparison with it is the decisive one; after A18 it is carried by phase 5 (thyroid Trap A), not by P2's own test.
+- **C grid (A21, 2026-11-18):** every arm that fits a mask_cmc or linear head uses C ∈ {0.001, 0.003, 0.01, 0.03, 0.1,
+  1, 10}, chosen on validation only; tables report whether the choice hits an edge. Arm d (A20) is in phase 5 and in the
+  timing test.
 - **Cost:** not yet estimated. A timing test on one cohort (thyroid, Trap A, 1 fold, every arm) comes first.
 
 ## How to frame each paper's result (decided 2026-11-17)

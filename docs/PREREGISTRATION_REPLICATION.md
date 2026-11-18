@@ -591,3 +591,14 @@ A17 post hoc); no P3 or P4 head-to-head result.
   table. Where a comparison has no verdict (P1 original tests A14, P2 A18 decision), arm d is descriptive too.
 - **Scheduling:** after the registered critical-path runs; a ResNet-18 job may pair with ISNet only if the measured total
   throughput rises; checkpoint every epoch and resume.
+
+**A21 (2026-11-18, before any arm-d result and before any phase-5 run; author's decision).** Results seen when this was
+recorded: as in A20 (no arm-d run yet), plus the P2 arms a, a', b, c, which all chose C = 0.01, the smallest value of the
+registered grid.
+- **Arm d (A20), on P1–P4 and the P1 location test:** the mask_cmc / linear-head C grid is **{0.001, 0.003, 0.01, 0.03,
+  0.1, 1, 10}** (replacing A20's {0.01, 0.1, 1, 10}), chosen on validation only; every table reports whether the
+  chosen C is at an edge of this grid.
+- **Phase 5:** the same widened grid for every arm that fits a mask_cmc or linear head, chosen on validation only, with the
+  edge reported; fixed in `docs/PREREGISTRATION_PHASE5.md` before any phase-5 result.
+- **Unchanged:** P2 arms a, a', b, c (and every other already-registered arm) keep the registered grid
+  {0.01, 0.1, 1, 10}; their edge choice stays reported as is (any wider grid there is post hoc only).
