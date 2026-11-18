@@ -1,0 +1,2 @@
+test,n,arm_d_auroc,ActDiff (theirs)_auroc,delta_vs_ActDiff (theirs),ci_vs_ActDiff (theirs),Standard (theirs)_auroc,delta_vs_Standard (theirs),ci_vs_Standard (theirs)
+test,1352,0.49821653653583553,0.7082625783410945,-0.21004604180525893,"[-0.253, -0.166]",0.1855305311438675,0.3126860053919681,"[+0.281, +0.344]"

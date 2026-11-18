@@ -1,0 +1,2 @@
+test,n,arm_d_auroc,"Masked (theirs, A5)_auroc","delta_vs_Masked (theirs, A5)","ci_vs_Masked (theirs, A5)",Standard (theirs)_auroc,delta_vs_Standard (theirs),ci_vs_Standard (theirs)
+test,2776,0.7181190774775972,0.8292247672516174,-0.11110568977402024,"[-0.128, -0.095]",0.6271484066805638,0.09097067079703347,"[+0.075, +0.107]"
