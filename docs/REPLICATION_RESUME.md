@@ -85,11 +85,12 @@ work; an incomplete A18 fine-tune directory is moved aside and rerun). If it sto
 - ISIC 2018 Task 1/2 (P4): done and unzipped.
 
 <!-- HEARTBEAT START -->
-### Heartbeat 2026-11-18 09:23 UTC (auto-generated)
+### Heartbeat 2026-11-18 11:23 UTC (auto-generated)
 
 GPU jobs (PID, MiB, command):
 ```
-332674  2418 MiB       18:18 /workspace/envs/pahde/bin/python -u -m experiments.mitigation_experiments.start_model_correction --config_file /workspace/data/replication
+339621  2736 MiB       19:09 /workspace/envs/pahde/bin/python -u -m experiments.mitigation_experiments.start_model_correction --config_file /workspace/data/replication
+339939  2108 MiB       18:48 /workspace/venv-wtss/bin/python -u /root/Where_shortcut_sits/scripts/replication/p2_arms.py --arm bc --stage features
 ```
 - P2 Vanilla: Epoch 300: of 300; checkpoints: checkpoint_resnet50d_100.pth checkpoint_resnet50d_200.pth checkpoint_resnet50d_300.pth checkpoint_resnet50d_last.pth 
 - P3 isnet_corner_all_seed0: last epoch 6 of 47
@@ -100,6 +101,6 @@ GPU jobs (PID, MiB, command):
 - P4 timing_erm_b16: last epoch 0 of 149
 - P4 timing_seg_b4: last epoch 0 of 149
 - P4 timing_seg_b8: last epoch 0 of 149
-- BIMCV: 488 of 531 archives (0 SHA1 failures)
-- Disk: 283G used, 749G free
+- BIMCV: 513 of 531 archives (0 SHA1 failures)
+- Disk: 286G used, 746G free
 <!-- HEARTBEAT END -->
