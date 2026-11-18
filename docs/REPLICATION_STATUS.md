@@ -583,3 +583,16 @@ Diagnosis (no rerun, nothing tuned):
 - Their `Freeze` callback is not used by `start_model_correction.py` (all parameters train).
 Results: `results/replication/pahde/p2_reproduction.{md,csv}`, `rrclarc_selection.csv`; per-image scores in
 `results/replication/pahde/scores/`.
+
+### 2026-11-18 09:10 UTC — P2: what the paper states about the RR-ClArC fine-tune (arXiv 2501.13818, PDF pages)
+Read from the rendered pages (pages 24, 31, 43 checked as images):
+- **Learning rate**, p. 31 ("Hyperparameters"): "As learning rate, we use the learning rate used during training (see
+  Tab. 4) divided by 10." Tab. 4 (p. 24), ISIC2019 (attacked), ResNet50: "Adam, LR 0.001, 300 epochs" → **1e-4**. Neither
+  the configured 1e-3 nor the 1e-5 that their code path loads from the Vanilla checkpoint.
+- **λ grid**, p. 31: "we test values λ ∈ {1¹, 5·1¹, 1², 5·1², ..., 5·1⁹} for RRR, and λ ∈ {1¹, 5·1¹, 1², 5·1², ..., 5·1¹²}
+  for RR-ClArC" (the base is printed as 1; Tab. 12 shows it is 10). **Chosen λ**, Tab. 12 (p. 43), RR-ClArC, ISIC2019,
+  ResNet: **5·10⁹** (VGG 10¹⁰, ViT 10¹).
+- Their released generator (`config_generator_mitigation_isic_attacked.py:92-105`, single commit 4990898) lists the
+  same grid but with every value from 10² to 5·10¹² commented out, leaving λ ∈ {10, 50}. Our pre-registration (section 3)
+  took {10, 50} from that generator and wrongly says the paper leaves λ open; Tab. 12 states it.
+- Layer and number of fine-tune epochs are not stated in the paper (their configs: last 3 blocks, 10 epochs).
