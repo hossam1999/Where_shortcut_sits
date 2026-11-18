@@ -551,3 +551,17 @@ fine-tunes of section 3 (λ ∈ {10, 50} × 3 layers), selection λ = 10 / last_
   optimizer state), with that explanation; not a verdict.
 - Implementation: no file of theirs is edited. A copy of our Vanilla checkpoint with `model_state_dict` only makes their
   `get_optimizer` build a fresh Adam at the configured lr; the CAV activations of section 3 (same Vanilla) are reused.
+
+**A19 (2026-11-18, before any A18 RR-ClArC model is scored; author's decision).** Results seen when this was recorded: the
+section-3 RR-ClArC runs and arm a (as in A18); no A18 model has been scored. **Arm a'** = mask_cmc on top of the selected
+A18 RR-ClArC network (their best model + our method):
+- **identical to arm a except for the network**: the selected A18 RR-ClArC model (layer chosen on validation, A18) instead
+  of our Vanilla. Input **unmasked**, as arm a (their dataset images as the network was trained: train "as trained",
+  validation and test clean and biased); penultimate (global-average-pooled, 2048-d) features; the within-class artifact
+  mean difference projected out (one δ, MEL; pooled and per_class coincide); class-balanced multinomial logistic
+  regression refit on the training set; C ∈ {0.01, 0.1, 1, 10} chosen by the mean of clean and biased validation
+  accuracy (section 3). Test scored once.
+- **Head-to-head vs RR-ClArC** (the same selected A18 model) on P2's clean and biased tests: paired image-only bootstrap
+  (10,000 replicates; one seed, A3), Δ = arm a' − RR-ClArC with its 95% CI. Also reported against our Vanilla.
+- Note (write-up): arm a's selected C = 0.01 is the smallest value of the registered grid; any wider grid is post hoc
+  only (sensitivity, no verdict). The same applies to arm a'.
