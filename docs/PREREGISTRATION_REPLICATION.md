@@ -610,3 +610,11 @@ P3 224 px, P4 512 px (their loader resizes every image to 512 × 512 for Seg-ERM
 resolution, augmentation and early-stopping rule as the other phase-5 arms in `src/wtss/experiments/finetune.py`, so the
 comparison stays identical; this is registered in `docs/PREREGISTRATION_PHASE5.md`, not as a separate choice (A20's own
 recipe applies to P1–P4 and the P1 location test only).
+
+**A20 encoder change (2026-11-18, before any arm-d run or result; author; plan commit b46bd26).** Arm d's encoder is
+**torchvision EfficientNet-B0** (`efficientnet_b0`, IMAGENET1K_V1; 5.3 M parameters, 0.39 GFLOPs at 224 px), replacing
+ResNet-18, so that it is smaller than every competitor in both parameters and compute (P3 DenseNet-121, 8.0 M, is the
+smallest competitor by parameters). Penultimate features = the 1,280-d global-average-pooled output before the classifier.
+Everything else in A20 (with its correction) and A21 is unchanged. Disclosure: a ResNet-18 P2 job had been launched at
+13:46 UTC; it was stopped by PID while still waiting in the GPU launcher (empty log, no training step, no output) and its
+directory was removed.

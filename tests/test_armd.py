@@ -49,4 +49,4 @@ def test_train_resume_features(tmp_path, monkeypatch):
     assert c["epoch"] == 2 and len(c["log"]) == 3
     A.features(S, tmp_path, workers=0, pretrained=False)
     F = np.load(tmp_path / "features.npz")
-    assert F["train"].shape == (40, 512) and F["test_logits"].shape == (40, 3)
+    assert F["train"].shape == (40, 1280) and F["test_logits"].shape == (40, 3)

@@ -1,5 +1,6 @@
-"""Arm d (A20, A20 correction, A21): ResNet-18 (torchvision, ImageNet weights) trained end-to-end on ROI-masked images,
-then penultimate features -> mask_cmc -> linear head refit on train (CPU).
+"""Arm d (A20 with its correction and encoder change, A21): EfficientNet-B0 (torchvision `efficientnet_b0`, IMAGENET1K_V1;
+5.3 M parameters) trained end-to-end on ROI-masked images, then the 1,280-d pooled penultimate features -> mask_cmc ->
+linear head refit on train (CPU).
 
 One fixed recipe for every paper (nothing tuned on a test): standard ERM on the paper's label task, the resolution their
 network sees, their training augmentation, Adam lr 1e-4, batch 64, at most 50 epochs, early stopping on the paper's
@@ -42,8 +43,8 @@ def dev():
 def make_model(n_out, pretrained=True):
     import torch
     import torchvision
-    m = torchvision.models.resnet18(weights=torchvision.models.ResNet18_Weights.IMAGENET1K_V1 if pretrained else None)
-    m.fc = torch.nn.Linear(m.fc.in_features, n_out)
+    m = torchvision.models.efficientnet_b0(weights=torchvision.models.EfficientNet_B0_Weights.IMAGENET1K_V1 if pretrained else None)
+    m.classifier[1] = torch.nn.Linear(m.classifier[1].in_features, n_out)   # classifier = (Dropout 0.2, Linear 1280 -> n_out)
     return m
 
 
@@ -139,7 +140,8 @@ def loader(ds, train, workers):
 def predict(model, dl, feats=False):
     import torch
     out, F = [], []
-    hook = model.fc.register_forward_hook(lambda m, i, o: F.append(i[0].float().cpu())) if feats else None
+    # input of the classifier = the 1,280-d global-average-pooled features (dropout is identity in eval mode)
+    hook = model.classifier.register_forward_hook(lambda m, i, o: F.append(i[0].float().cpu())) if feats else None
     model.eval()
     with torch.no_grad(), torch.autocast("cuda", dtype=torch.float16):
         for x, _ in dl:
@@ -240,7 +242,7 @@ def heads_p2(S, out):
         y = p.label.to_numpy()
         pr = clf.predict(Z[k])
         ref = {n: d[(d.split == "test") & (d.test_set == ts)].set_index("index").loc[p["index"], "pred"].to_numpy() for n, d in (("van", van), ("rr", rr))}
-        preds.append(pd.DataFrame({"index": p["index"], "image": p.image, "label": y, "method": "d_resnet18_roi_mask_cmc", "test_set": ts, "pred": pr}))
+        preds.append(pd.DataFrame({"index": p["index"], "image": p.image, "label": y, "method": "d_effb0_roi_mask_cmc", "test_set": ts, "pred": pr}))
         hit = np.stack([pr == y, ref["van"] == y, ref["rr"] == y], 1).astype(float)
         bs = boot(hit)
         q = lambda v: np.quantile(v, [0.025, 0.975])
@@ -253,7 +255,7 @@ def heads_p2(S, out):
     lg = pd.read_csv(out / "log.csv")
     f3 = lambda c: f"[{c[0]:.3f}, {c[1]:.3f}]"
     f3s = lambda c: f"[{c[0]:+.3f}, {c[1]:+.3f}]"
-    md = ["# Arm d (A20/A21) on P2 — ResNet-18 trained on lesion-masked ISIC 2019 images + mask_cmc, seed 1234", "",
+    md = ["# Arm d (A20/A21) on P2 — EfficientNet-B0 trained on lesion-masked ISIC 2019 images + mask_cmc, seed 1234", "",
           "One seed: 95% CIs are image-only bootstrap intervals (10,000 replicates), paired on the same test images; "
           "training-seed variance is not included. P2's RR-ClArC was not reproduced (A18; author's decision 2026-11-18), "
           "so every comparison here is descriptive (no verdict).", "",
