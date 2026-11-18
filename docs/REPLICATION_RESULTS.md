@@ -144,7 +144,18 @@ registered one (+0.342), as the epoch-100 network's features carry the marker mo
 positions. One seed; image-only bootstrap. Source: `results/replication/viviano/location_1234_posthoc_last.{md,csv}`.
 
 ## P2 — Pahde et al., Machine Learning 2025 (primary)
-*pending (Vanilla training, seed 0)*
+*RR-ClArC reproduction: pending (A18 rerun at the paper's stated settings; the section-3 runs, their code path, gave
+0.338 biased accuracy, not reproduced; `results/replication/pahde/p2_reproduction.md`).*
+
+### Arm a: mask_cmc on our Vanilla ResNet-50d (seed 0; image-only bootstrap)
+| test | n | arm a [95% CI] | our Vanilla | Δ vs Vanilla [95% CI] | paper Vanilla | paper RRR | paper RR-ClArC |
+|---|---|---|---|---|---|---|---|
+| clean | 2533 | 0.822 [0.807, 0.836] | 0.839 | -0.017 [-0.029, -0.005] | 0.87 | 0.84 | 0.86 |
+| biased | 2533 | 0.691 [0.673, 0.709] | 0.311 | +0.380 [+0.360, +0.401] | 0.28 | 0.51 | 0.76 |
+
+**Note on the C grid.** Arm a's selected C = 0.01 is the smallest value of the registered grid {0.01, 0.1, 1, 10}
+(validation mean of clean and biased accuracy: 0.772 at C = 0.01, falling with larger C). The registered grid is kept;
+any wider grid would be post hoc only (sensitivity analysis, no verdict). Source: `results/replication/pahde/arm_a.md`.
 
 ## P3 — Bassi et al., Nature Communications 2024 (primary)
 *pending (data ready; ISNet starts after the P1 gate; BIMCV test images fetching)*
