@@ -1,0 +1,7 @@
+test,variant,n,macro_f1
+biased,primary,4190,0.4273228001483232
+biased,size-matched,3180,0.40259596578839857
+standard,primary,4190,0.38512281941247806
+standard,size-matched,3180,0.35747263138839086
+deceiving,primary,4190,0.38705280309770934
+deceiving,size-matched,3180,0.36202876367215464
