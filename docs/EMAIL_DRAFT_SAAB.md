@@ -1,7 +1,11 @@
 # Draft email to Saab et al. (not sent; the author sends it)
 
-**To:** Khaled Saab and the corresponding author of "Reducing Reliance on Spurious Features in Medical Image Classification
-with Spatial Specificity" (MLHC 2022, PMLR 182) — addresses from the paper's first page
+**To:** Khaled Saab <ksaab@stanford.edu> (first author)
+**Cc (suggested):** Daniel Rubin <dlrubin@stanford.edu>, Christopher Ré <chrismre@stanford.edu> (senior authors)
+*Addresses exactly as printed on p. 1 of the MLHC 2022 paper (PMLR 182:1–25). The paper does not mark a corresponding author;
+it prints an address for every author: Khaled Saab ksaab@stanford.edu, Sarah Hooper smhooper@stanford.edu, Mayee Chen
+mfchen@stanford.edu, Michael Zhang mzhang@cs.stanford.edu, Daniel Rubin dlrubin@stanford.edu, Christopher Ré
+chrismre@stanford.edu. Stanford addresses from 2022 may have changed since.*
 **Subject:** Question about the ISIC Segmentation-ERM result (Table 1), "Reducing Reliance on Spurious Features … with Spatial Specificity"
 
 Dear Dr. Saab and co-authors,
