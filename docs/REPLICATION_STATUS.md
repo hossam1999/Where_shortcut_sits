@@ -1087,4 +1087,17 @@ c. **Backbone / preprocessing / data — no port error.** torchvision `vit_b_16(
   (the decision does not change). Later pairing measurements use wall-clock epochs (`p8_measure.py`).
 - During the 70-s pause only DISC's main process was stopped (no DataLoader workers alive at that moment); it resumed.
 
+### 2026-11-19 13:30 UTC (machine 2's clock) — machine 2: P6 A33 gate MISSED (EPVT); A34 5 seeds queued; P8 at three lanes (measuring)
+- **P6 A33 rerun (bias 1, split 1, seed 0, 1,301 steps, scored once on `test_bias_1_1`, n = 6,181):** ERM **0.662**
+  (target 0.653, |Δ| 0.009 — within 0.03); EPVT **0.655** (target 0.746, |Δ| 0.091 — **misses**). EPVT early-stopped at epoch 67
+  (best validation AUROC 0.925), exactly as before A33 (0.654), as expected (STATUS ~09:30). ERM moved from 0.690 to 0.662.
+  **Gate missed** → per A34: ERM and EPVT at bias 1, seeds 0–4 (seed 0 = this run), gate on 5-seed means; queued after the P8
+  gate and our P8 arms, before P7 (`scripts/replication/m2_p6_5seeds.sh`). If the means still miss: P6 final "not reproduced",
+  `docs/EMAIL_DRAFT_YAN_EPVT.md` drafted (not sent).
+- **P8 two lanes (12:11–12:27, `pair_p8p8.json`, wall-clock, common 915-s window):** DISC 1 152.5 s/epoch (alone 96.6, ratio
+  0.63) + ERM 2 9.33 s/epoch (alone 9.6, ratio 1.03) → **total 1.66, kept**; CPU busy 20 %.
+- **Third lane started 12:27** (concurrency file 2): ERM 3 done; DISC 1, 2, 3 now run together (GPU memory 12.8 / 16 GB); the
+  three-lane measurement re-measures because ERM 3 ended inside its window; decision pending (total > 1.0, CPU < 85 %, total >
+  1.66). Progress: DISC 1 epoch 73, DISC 2 epoch 11, DISC 3 epoch 7; ERM 1–3 complete.
+
 ### Watchdog log (machine 2, automatic; `scripts/replication/m2_watchdog.sh`)
