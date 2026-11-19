@@ -1,0 +1,10 @@
+{
+ "disc_s_per_epoch_alone": 96.625,
+ "disc_s_per_epoch_paired": 122.0,
+ "disc_ratio": 0.7920081967213115,
+ "p6_s_per_epoch_alone": 4.0,
+ "p6_s_per_epoch_paired": 5.0,
+ "p6_ratio": 0.8,
+ "total": 1.5920081967213116,
+ "keep_pairing": true
+}
