@@ -1,0 +1,4 @@
+split,arm,best_epoch,mode,C,C_edge,val_auroc,robust_auroc,flags,Seg-ERM_auroc,vs_Seg-ERM,Binary-ERM_auroc,vs_Binary-ERM
+1,a_segerm_mask_cmc,146,pooled,10.0,highest,0.9805659203980099,0.5301664355062412,"dark_corner,hair,gel_border,gel_bubble,ruler,ink,vasc",0.6257722859664607,"-0.096 [-0.159, -0.031]",0.35478922372126254,"+0.175 [+0.105, +0.247]"
+2,a_segerm_mask_cmc,135,pooled,10.0,highest,0.9822775263951735,0.5702622620098348,"dark_corner,hair,gel_border,gel_bubble,ruler,ink,vasc",0.673401840877569,"-0.103 [-0.162, -0.044]",0.36141932501155805,"+0.209 [+0.144, +0.273]"
+3,a_segerm_mask_cmc,131,pooled,10.0,highest,0.9651436646255298,0.5542701634934644,"dark_corner,hair,gel_border,gel_bubble,ruler,ink,vasc",0.6411444542512504,"-0.087 [-0.153, -0.021]",0.373492203589291,"+0.181 [+0.109, +0.251]"

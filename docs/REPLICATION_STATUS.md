@@ -965,3 +965,19 @@ CBDebug.
   epoch, `run_expt.py:138–142`, AUROC of the class-1 softmax on that set's 772 test images, `utils/loss.py:194`); the paper averages
   per-set AUROC across the splits "as standard in Bissoto et al. (2020)" (5 fixed splits, mean ± SD) — no aggregation script
   is released. A32 registered.
+
+### 2026-11-19 08:50 UTC (machine 2's clock) — A31 P4 gate FAILED again; pairing not kept; P6 EPVT NOT reproduced at bias 1; P8 started
+- **Pairing measurement (P4 split 3 + P6 ERM bias 1, 02:31–02:42):** split 3 2.08 min/epoch paired vs 1.14 alone (0.55);
+  P6 9.0 s/epoch paired vs 4.0 alone (0.44, split 3 paused by SIGSTOP/SIGCONT); **total 0.993 ≤ 1.0 → not kept**; P6 was
+  stopped by PID and re-queued after split 3 (`/workspace/logs/pair_measure.json`); the stopped run is kept as
+  `paired_stopped_erm_bias1_1_0242` and is not a result.
+- **P4 A31 reruns (PIL-resized cache):** Seg-ERM robust AUROC 0.626 / 0.673 / 0.641 (best validation Dice at epochs 146 / 135 /
+  131), **mean 0.647 ± 0.024** vs 0.727 (|Δ| 0.080) / notebook 0.772 → **gate FAILED; P4 stays descriptive** (A13). The port
+  fix moved the mean from 0.632 to 0.647. `results/replication/saab/p4_gate_seg_pil.md`, `p4_arm_a_seg_pil.md`.
+- **P6 step 1, bias 1, split 1 (paper protocol, A29 + decisions):** their ERM **0.690** test AUROC (digitised target 0.653,
+  |Δ| 0.037 > 0.03); **EPVT 0.654** (target 0.746, |Δ| 0.092) → **EPVT not reproduced; ERM also outside 0.03.** Note EPVT ≤ ERM
+  here (paper: EPVT +9.4). Timing: ERM 26 min (early stop at code-epoch 76 of 100), EPVT 43 min (67 epochs, early stop);
+  all 6 levels × 2 would be ≈ 7 GPU-h. Scoring bug fixed before the EPVT score: the checkpoint's `model_num_domains` (4)
+  does not match the 5 trained domain prompts; the scorer now builds the model with 5 domains as their `test_epvt.py` does
+  (the first scoring attempt failed at loading, before any prediction). Per the author's rule P6 stops here and is reported.
+- **P8 (DISC, A32) started 08:47** (ERM trap set 1); queue: ERM + DISC on trap sets 1–5.

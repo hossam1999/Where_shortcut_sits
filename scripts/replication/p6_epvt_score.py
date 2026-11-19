@@ -16,8 +16,9 @@ from domainbed.lib.fast_data_loader import FastDataLoader
 ap = argparse.ArgumentParser(); ap.add_argument("--ckpt", required=True); ap.add_argument("--test", required=True)
 a = ap.parse_args()
 c = torch.load(a.ckpt, map_location="cpu", weights_only=False)
-alg = algorithms.get_algorithm_class(c["args"]["algorithm"])(c["model_input_shape"], c["model_num_classes"],
-                                                            c["model_num_domains"], c["model_hparams"])
+# their test_epvt.py / test_erm.py build the algorithm with 5 domains (the SKIN environments C, D, G, H, R); the checkpoint's
+# "model_num_domains" (= len(dataset) - len(test_envs) = 4) does not match the trained prompt tensors, so it is not used
+alg = algorithms.get_algorithm_class(c["args"]["algorithm"])(c["model_input_shape"], c["model_num_classes"], 5, c["model_hparams"])
 alg.load_state_dict(c["model_dict"]); alg.to("cuda" if torch.cuda.is_available() else "cpu")
 dev = next(alg.parameters()).device
 df = pd.read_csv(os.environ["EPVT_EVAL_ROOT"] + a.test)
