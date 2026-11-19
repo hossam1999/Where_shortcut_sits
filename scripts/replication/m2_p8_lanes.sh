@@ -33,10 +33,13 @@ while :; do
   done; done
   [ -z "$job" ] && { pending=0; for k in ${SPLITS:-1 2 3 4 5}; do complete "$(disc_dir $k)" || pending=1; done; [ $pending = 0 ] && break; sleep 60; continue; }
   set -- $job; m=$1; k=$2; echo "$(date -u +%F_%T) lane ${LANE:-a}: $m trap set $k"
+  # A37 (author): row-by-row check that trap set k's cache (if it exists yet) belongs to trap set k, before every run
+  $PY $Q/p8_cache_check.py $k --pre --root $(rootk $k) || { echo "FAILED CACHE CHECK $m $k (not started)"; rmdir $K/${m}_$k; exit 1; }
   if [ $m = erm ]; then
     (cd $E && MAX_OTHER_JOBS=$(maxo) $Q/gpu_wait.sh 4000 $PY run_expt.py -s confounder -d ISIC -t label -c hair --lr 0.001 --batch_size 16 \
       --weight_decay 1e-5 --model resnet50 --n_epochs 100 --root_dir $(rootk $k) --log_dir $L/ --save_best --save_last --seed $k \
       > $D/disc/erm_$k.log 2>&1) || { echo "FAILED ERM $k"; rmdir $K/erm_$k; exit 1; }
+    $PY $Q/p8_cache_check.py $k --root $(rootk $k) || { echo "FAILED CACHE CHECK erm $k (cache built by the run)"; exit 1; }
   else
     (cd $E && MAX_OTHER_JOBS=$(maxo) $Q/gpu_wait.sh 4000 $PY run_expt.py -s confounder -d ISIC -t label -c hair --lr 5e-4 --batch_size 16 \
       --weight_decay 1e-5 --model resnet50 --n_epochs 100 --root_dir $(rootk $k) --log_dir $L/ --erm_path $(erm_dir $k)/best_model.pth \

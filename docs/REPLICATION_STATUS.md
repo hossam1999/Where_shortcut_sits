@@ -1185,4 +1185,15 @@ c. **Backbone / preprocessing / data — no port error.** torchvision `vit_b_16(
   → the match stands.
 - **Row-by-row cache check before each run** (author): `p8_cache_check.py`, wired into the lanes; results below.
 
+### 2026-11-19 ~15:05 UTC (machine 2's clock) — machine 2: A37 row-by-row cache checks — all current caches PASS; checks wired into the lanes
+- `scripts/replication/p8_cache_check.py` (per row: max-over-RGB map of the cached image, invariant to the baked-in hue
+  jitter, vs a fresh 224-px resize of the image its CSV row names; tolerance 0.02 mean |dV|; plus a shuffled control):
+  - set 1 cache (`isic/`, used by ERM 1 and DISC 1): **2,594 / 2,594 rows match** (|dV| 0.0000), control 3 / 2,594 → PASS;
+  - negative control, the same shared cache read as set 2 (the original bug): **95 / 2,594** rows match → FAIL (as expected);
+  - set 2 (`isic_set2`, built 14:43 by the ERM 2 rerun), set 3 (14:46), set 4 (14:56): **2,594 / 2,594 each** → PASS.
+- DISC 2 started 15:01:35, about a minute before its cache check finished; the check covers the same file, unchanged since
+  14:43 (PASS). From 15:03 every lane runs the check **before every job** (a job whose existing cache fails is not started)
+  and **after every ERM run** on the cache it built; failures are logged as "FAILED CACHE CHECK" (watchdog alerts, no retry).
+  Running lane shells were replaced by the new script, each adopting its running job (ERM 4, DISC 2, ERM 3).
+
 ### Watchdog log (machine 2, automatic; `scripts/replication/m2_watchdog.sh`)
