@@ -864,3 +864,16 @@ DISC trap set 1's per-epoch log.
   `invalid_sharedcache_…_x`; their pushed results moved to `results/replication/disc/runs/invalid_sharedcache/`. Gate unchanged.
 - **Reporting:** a user following their README with one data root gets the same mix-up for every trap set after the first;
   whether their published numbers were affected cannot be known. Stated in the write-up and in any email to the authors.
+- **Decision (author, 2026-11-19 ~15:10, option A; recorded before any rerun result is read):** A37 stands. The original
+  ERM 2/3 are a data-misalignment port error (like A30) → **invalid**, reported separately, never used; the rerun ERM 2/3
+  count for the gate and DISC 2/3 start from them. (The author's earlier "originals count" rule was for accidental reruns and
+  does not apply to a documented bug.) The 13:40 "ERM mean 0.368" report is superseded.
+- **Hypothesis (author), pre-specified reading:** DISC's released code writes the converted images to one cache file shared
+  across trap sets, so the published numbers for sets 2–5 may have been produced with the same misalignment (our misaligned
+  ERM mean over sets 1–3, 0.368, matched the paper's 0.364). **If the corrected ERM 5-set mean misses 0.364 by > 0.03, the
+  gate is reported as failed, stating that the published numbers may carry this bug of their released code; if it lands
+  within 0.03, the match stands.**
+- **Verification (author):** before each P8 run (DISC 1–5, ERM 4–5; and the ERM 2–4 reruns' caches as soon as built), a
+  row-by-row check confirms that the run's cache belongs to its own trap set (`scripts/replication/p8_cache_check.py`: each
+  cached row's per-pixel max channel — invariant to the hue jitter their eval transform bakes in — against a fresh 224-px
+  resize of the image its CSV row names; every row must match). A run whose cache fails is not started (or is stopped).

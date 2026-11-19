@@ -1177,4 +1177,12 @@ c. **Backbone / preprocessing / data — no port error.** torchvision `vit_b_16(
   treats them as invalid, like the earlier port-error reruns (A31, A33). The reruns keep running (DISC 2/3 need an ERM
   checkpoint under either reading). **No rerun result is read and the P8 gate is not computed until the author decides.**
 
+### 2026-11-19 ~15:10 UTC (machine 2's clock) — machine 2: author's decision on ERM 2/3 = option A; hypothesis pre-specified (A37)
+- **Option A:** A37 stands; original ERM 2/3 invalid (data misalignment, like A30), never used; rerun ERM 2/3 count for the
+  gate; DISC 2/3 start from them. "ERM mean 0.368" (13:40) superseded. Recorded before any rerun result is read.
+- **Hypothesis (pre-specified, A37):** the published sets 2–5 may carry the same shared-cache misalignment (our misaligned mean
+  0.368 matched 0.364). If the corrected ERM 5-set mean misses 0.364 by > 0.03 → gate failed, with that statement; within 0.03
+  → the match stands.
+- **Row-by-row cache check before each run** (author): `p8_cache_check.py`, wired into the lanes; results below.
+
 ### Watchdog log (machine 2, automatic; `scripts/replication/m2_watchdog.sh`)
