@@ -960,3 +960,8 @@ CBDebug.
   reversed trap tests (but seeds/splits aggregation unclear, ± 11.6); R8 ✓ (artifacts present in both classes in training).
   Fails only R4; reproducing it would mean re-implementing the ISIC pieces (BioMedCLIP Post-hoc CBM, the concept set) from the
   paper. Not started.
+- **P8 checks before A32 (2026-11-19):** images: 2,594 / 2,594 identical MD5 between DISC's archive and our ISIC 2018 copy;
+  trap sets identical (see above). Aggregation: their code gives one AUROC per run (test AUROC at the best-validation-AUROC
+  epoch, `run_expt.py:138–142`, AUROC of the class-1 softmax on that set's 772 test images, `utils/loss.py:194`); the paper averages
+  per-set AUROC across the splits "as standard in Bissoto et al. (2020)" (5 fixed splits, mean ± SD) — no aggregation script
+  is released. A32 registered.

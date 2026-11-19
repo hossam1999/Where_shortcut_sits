@@ -719,3 +719,40 @@ test once"; A30 stays reserved for P6).** Results seen when this was recorded: t
 - **Not changed** (checked, not port errors): model selection, epochs, augmentation, learning rate, loss, scoring, test set.
 - **Scheduling:** the three reruns follow the P6 bias-1 step-1 runs already in progress (≈ 7.6 GPU-h: two splits paired, then
   the third); P6 continues after them (P4 keeps priority).
+
+**A32 (2026-11-19 by machine 2's clock; P8 = DISC registered; author's decision; before any P8 run and before any of our arms
+is scored on trap sets 4 or 5).**
+- **Paper:** Wu, Yuksekgonul, Zhang, Zou, "Discover and Cure: Concept-aware Mitigation of Spurious Correlation", ICML 2023
+  (code github.com/Wuyxin/DISC @ d9865a8; `third_party/disc/SOURCE.md`). Benchmark: Bissoto et al. (2020) ISIC 2018 trap sets
+  1–5 (train 1,822 / val 259 / test 772 each; artifact–label correlations reversed in each test).
+- **Data identity (checked before registration):** DISC's released ISIC archive = our P4 data image for image (2,594 / 2,594
+  JPEG files with identical MD5; trap-set CSVs 2–5 byte-identical, set 1 identical image ids, labels and artifact flags,
+  only `.jpg` vs `.png` in `image`).
+- **Disclosure — results seen before this amendment:** on trap sets 1–3 of this benchmark, P4 Binary-ERM (0.355 / 0.361 / 0.374),
+  P4 Segmentation-ERM (cv2 cache: 0.609 / 0.611 / 0.676) and our arms: a (on Seg-ERM, 0.528 / 0.481 / 0.445), b (DINOv2 +
+  mask_cmc, mean 0.658), c (U-MtE, mean 0.605), d (EfficientNet-B0 + mask_cmc, set 1 only, 0.666); and the published DISC
+  (55.1) and CBDebug (58.0) numbers. Nothing on sets 4–5 has been seen. **Our arms are re-run UNCHANGED** — the registered P4
+  settings (A13 item 8 flag rule: flags with ≥ 3 training images in each artifact × diagnosis group; lesion ROI = ISIC 2018
+  Task 1 masks; outside = mean colour; validation-only selection of mode and C) — under DISC's protocol on **all five trap sets,
+  including 4 and 5**, on the A31 (PIL-resized) 512-px cache:
+  - **b** DINOv2 ViT-B/14 @ 518, lesion-masked, mask_cmc, C ∈ {0.01, 0.1, 1, 10} (as registered for b);
+  - **d** EfficientNet-B0 on lesion-masked 512-px images (A20 recipe with its correction, A21 grid), retrained per trap set;
+  - **a** mask_cmc on the reproduced **DISC** ResNet-50 of each trap set (penultimate 2,048-d features of lesion-masked images
+    through their eval transform; same head and grid as P4 arm a);
+  - **c** U-MtE (label-free), as P4.
+- **Their protocol:** `scripts/isic.sh` as released (ERM: ResNet-50, lr 1e-3, batch 16, wd 1e-5, 100 epochs; DISC: lr 5e-4,
+  ERM initialisation, color + texture concepts from their released concept bank, 3 clusters); `--seed` = trap-set id; per run
+  the test AUROC at the epoch with the highest validation AUROC (their `run_expt.py`). **Aggregation: the mean over trap sets
+  1–5 of the per-set AUROC** (DISC p. 6: "average AUROC … across the train-test splits, as standard in Bissoto et al. (2020)";
+  Bissoto 2020 Table 3: 5 fixed splits, mean ± SD). One run per trap set; DISC's "repeated three times" cannot be mapped
+  onto their code (seed = trap-set id) and is recorded as an ambiguity.
+- **Gate:** reproduced if |ERM − 0.364| ≤ 0.03 **and** |DISC − 0.551| ≤ 0.03 (5-set means). Verdicts only if both pass;
+  otherwise P8 is descriptive.
+- **Head-to-head:** arms **b and d (primary)**, a and c (secondary) vs **our reproduced DISC**, on DISC's metric (5-set mean
+  AUROC), paired on the same test images of each set. **Image-only bootstrap**: 10,000 replicates, one Poisson(1) weight per
+  image id shared across the trap sets in which it appears and across both methods; trap sets fixed (not resampled); per-set
+  AUROC recomputed and averaged. "Beaten" = section 2 (higher mean, 95 % CI of the paired difference above 0, Holm-adjusted
+  p < 0.05); Holm family = the 4 P8 comparisons. Per-set results reported beside the mean.
+- **Published rows (descriptive, not reproduced):** DISC Table 1 baselines (ERM 36.4 … LISA 38.0) and **CBDebug (Enouen &
+  Galhotra, ICLR 2026) 58.0 ± 11.6** on the same benchmark, labelled "published number only — not reproduced: released code
+  has no ISIC experiment (R4)"; no claim is made against it.
