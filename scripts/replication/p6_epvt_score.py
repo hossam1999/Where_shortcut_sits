@@ -1,7 +1,9 @@
 """P6 (EPVT, MICCAI 2023): score one trained model of their code on a Bissoto ISIC 2019 trap test set, in-domain only.
-Their test_erm.py / test_epvt.py first evaluate the four OOD sets (not needed here: the P6 comparison is the trap sets)
-and then the in-domain ISIC test exactly like this: MelanomaDataset (Resize 224, ImageNet normalisation), the algorithm
-rebuilt from the checkpoint's own hparams, misc.eval_indomain -> metrics.compute_isic_metrics_binary (their ROC-AUC).
+Their test_erm.py evaluates the four OOD sets (not needed here: the P6 comparison is the trap sets) and then the in-domain
+ISIC test exactly like this: MelanomaDataset (Resize 224, ImageNet normalisation), misc.eval_indomain ->
+metrics.compute_isic_metrics_binary (their ROC-AUC). Their test_epvt.py scores only the OOD sets (no EPVT trap-set scorer is
+released; PLDG's in-domain block is commented out), so test_erm.py's in-domain block is applied to both (docs/P6_EPVT_AUDIT.md,
+g4). The algorithm is rebuilt from the checkpoint's own hparams.
 Per-image logits are saved for the paired comparisons later (nothing of ours is scored here).
 
     EPVT_* env as for training; python scripts/replication/p6_epvt_score.py --ckpt <run>/<exp>.pkl --test test_bias_1_1.csv

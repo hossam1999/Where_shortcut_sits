@@ -1100,4 +1100,22 @@ c. **Backbone / preprocessing / data — no port error.** torchvision `vit_b_16(
   three-lane measurement re-measures because ERM 3 ended inside its window; decision pending (total > 1.0, CPU < 85 %, total >
   1.66). Progress: DISC 1 epoch 73, DISC 2 epoch 11, DISC 3 epoch 7; ERM 1–3 complete.
 
+### 2026-11-19 ~13:40 UTC (machine 2's clock) — machine 2: P8 ERM trap sets 1–3; P6 EPVT fidelity audit (CPU) done; third-lane comparison corrected
+- **P8 ERM (their `run_expt.py`, test ROC-AUC at the best-validation-ROC-AUC epoch; 618 test images each, A35):** set 1
+  **0.531** (best epoch 18), set 2 **0.222** (13), set 3 **0.350** (6); mean of 1–3 **0.368** (SD 0.155) vs the paper's 5-set
+  mean 0.364 ± 0.03 — the ERM half of the gate is on track, but the per-set spread is large, so sets 4–5 decide it. (Best
+  epochs agree with "Best model saved at epoch …" in their logs.)
+- **P6 EPVT fidelity audit (author's request, before A34; CPU only, nothing scored): `docs/P6_EPVT_AUDIT.md`.** Their own logs
+  (EPVT and PLDG `train_output/`) hold only crashed PACS / diabetic-retinopathy debug runs — no skin run, no validation curve to
+  compare. 37 checklist items, two passes: **no port error.** New verification: activation checkpointing gives identical
+  losses and all 159 gradient tensors for the **full EPVT update** (the earlier check was ERM only). **Paper vs their code,
+  needs the author's decision before A34:** their domain mixup draws x_i, x_j, y_i, y_j from four independent pairings (labels
+  belong to other images' domains in 988 / 1,000 steps), whereas paper Eq. 3 uses the corresponding labels. Also recorded: no
+  EPVT trap-set scorer is released (we use `test_erm.py`'s in-domain block; our scorer docstring overstated this — corrected);
+  their OOD test scripts apply training augmentation at test (irrelevant to the trap-set gate).
+- **Third-lane decision (13:28, not kept) — comparison flaw (mine):** the three-DISC total 1.35 passed the author's two
+  conditions (> 1.0; CPU 42 % < 85 %) and failed only my added "> two-lane total 1.66", but 1.66 was measured on DISC + ERM
+  (ERM is barely slowed, ratio 1.03). Two DISC jobs together are being measured now (DISC 1 + DISC 2, 15 min,
+  `pair_p8_disc2.json`); if their total is below 1.35, lane c is restarted.
+
 ### Watchdog log (machine 2, automatic; `scripts/replication/m2_watchdog.sh`)
