@@ -1124,4 +1124,12 @@ c. **Backbone / preprocessing / data — no port error.** torchvision `vit_b_16(
   pass the author's conditions (> 1.0, CPU < 85 %) → concurrency file set to 2, **lane c restarted 13:44** (DISC 3 from scratch;
   the 13:28 partial run stays set aside). Windows were short (4–9 DISC epochs per job), so the totals are approximate.
 
+### 2026-11-19 ~14:05 UTC (machine 2's clock) — machine 2: A36 (P6 mixup per paper Eq. 3) recorded and implemented; A34 script updated
+- Author's decision: option B. **A36** recorded in the pre-registration before any A34 run; one pairing per step for images and
+  labels (`third_party/epvt/mixup_eq3.patch`), verified on CPU (300 / 300 steps: mixed images trained against their own
+  labels; x_i, x_j from different domains). A33's EPVT seed does not count; A34 = EPVT seeds 0–4 new (`epvt_a36_bias1_1_seed*`),
+  ERM seed 0 = A33 + seeds 1–4 new; `m2_p6_5seeds.sh` refuses to run without the patch and writes `A34_gate.json` (5-seed
+  means vs 0.653 / 0.746 ± 0.03). Queue unchanged: after the P8 gate and our P8 arms, before P7. Audit loop closed
+  (`docs/P6_EPVT_AUDIT.md` §4).
+
 ### Watchdog log (machine 2, automatic; `scripts/replication/m2_watchdog.sh`)

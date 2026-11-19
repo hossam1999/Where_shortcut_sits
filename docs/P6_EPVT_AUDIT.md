@@ -84,3 +84,11 @@ EPVT). Nothing to amend as a port fix.
 3. **OOD test-time augmentation (b3)**: matters only for a future OOD-table comparison, not for the P6 gate.
 
 **Not differences:** `--ood_vis` (RNG stream only), library versions (environment), 12,359 vs 12,360 (different setting / 1 image).
+
+## 4. Decision (author, 2026-11-19 ~14:00) and loop closure
+- **d6 → option B, amendment A36:** domain mixup follows paper Eq. 3 (one pairing for images and labels;
+  `third_party/epvt/mixup_eq3.patch`, applied at `domainbed/algorithms.py:2106`). Verified on CPU with the real method:
+  x_mix = λ·y_i + (1 − λ)·y_j in 300 / 300 steps (domain-id images and labels), x_i and x_j from different domains in 300 / 300.
+  A34 runs EPVT seeds 0–4 as new runs with A36; ERM seed 0 = A33, seeds 1–4 new; gate on 5-seed means, unchanged.
+- **Re-audit after the change:** only `forward_prompt` lines 2106–2110 differ from their code; every other row of section 1 is
+  untouched. No new difference → the loop stops.

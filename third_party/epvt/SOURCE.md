@@ -88,3 +88,8 @@ Check (`scripts/replication/p6_ckpt_check.py`; 8 real bias-1 training images, id
 algorithms): loss 0.74716187 plain vs 0.74716187 checkpointed (|Δ| 0); gradients of all 152 parameter tensors identical
 (max relative difference 0). Peak memory of one training step at batch 26 × 5: ERM 4.25 GiB, EPVT 4.78 GiB (of 15.47).
 The first OOM'd attempts (20:11 beside P4's arm-a feature pass; 21:33 alone) left no checkpoint and are not results.
+
+## A36 — domain mixup per paper Eq. 3 (author, 2026-11-19; before any A34 run)
+Their `forward_prompt` (`algorithms.py:2106–2109` @ 8d46593) draws x_i, x_j, y_i, y_j from four separate
+`random_pairs_of_minibatches` calls; the paper (p. 5, Eq. 3) trains x_mix against its own pair's labels. Changed to one pairing
+per step (`mixup_eq3.patch`); verification in `docs/P6_EPVT_AUDIT.md` §4. The A33 runs used the released version.

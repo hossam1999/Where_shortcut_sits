@@ -1,0 +1,20 @@
+diff --git a/domainbed/algorithms.py b/domainbed/algorithms.py
+index b49c7f0..886d1ab 100644
+--- a/domainbed/algorithms.py
++++ b/domainbed/algorithms.py
+@@ -2103,10 +2103,11 @@ class DoPrompt_group_decompose(ERM):
+     objective = 0
+ 
+     def forward_prompt(self, minibatches):
+-        all_xi = torch.cat([xi for (xi, yi), (xj, yj) in random_pairs_of_minibatches(minibatches)])
+-        all_xj = torch.cat([xj for (xi, yi), (xj, yj) in random_pairs_of_minibatches(minibatches)])
+-        all_yi = torch.cat([yi for (xi, yi), (xj, yj) in random_pairs_of_minibatches(minibatches)])
+-        all_yj = torch.cat([yj for (xi, yi), (xj, yj) in random_pairs_of_minibatches(minibatches)])
++        pairs = random_pairs_of_minibatches(minibatches)   # A36 (paper Eq. 3): one pairing for images and their labels
++        all_xi = torch.cat([xi for (xi, yi), (xj, yj) in pairs])
++        all_xj = torch.cat([xj for (xi, yi), (xj, yj) in pairs])
++        all_yi = torch.cat([yi for (xi, yi), (xj, yj) in pairs])
++        all_yj = torch.cat([yj for (xi, yi), (xj, yj) in pairs])
+         # all_x = torch.cat([x for x, y in minibatches])
+         lam = np.random.beta(0.2, 0.2)
+ 

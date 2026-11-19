@@ -829,3 +829,19 @@ Seen before this amendment: ERM trap set 1 finished (100 epochs); its log was op
     trap-set test CSV, artifact–label correlation reversed like the test), for DISC, ERM and the primary arm results alike.
 - **Third environment port (10:26):** `iterator.next()` (removed in torch 2) → `next(iterator)` at four sites; `np.int` →
   `int` in `mixup.py` (cut-mix only, not used here). Same patch file. DISC trap set 1 restarted ~10:27 and trains.
+
+**A36 (2026-11-19 ~14:00 UTC by machine 2's clock; P6 domain mixup follows the paper, author's decision under the standing
+rule "paper wins over code"; recorded before any A34 run; not tuning).** Results seen: A33 bias 1 split 1 seed 0 — ERM 0.662,
+EPVT 0.655 (released code), and the P6 fidelity audit (`docs/P6_EPVT_AUDIT.md`, item d6).
+- **Difference:** EPVT paper Eq. 3 (p. 5): L_mixup = λ·CE(G(x_mix), y_i) + (1 − λ)·CE(G(x_mix), y_j), x_mix = λx_i^k +
+  (1 − λ)x_j^q, with y_i, y_j "the corresponding labels". Their released `DoPrompt_group_decompose.forward_prompt`
+  (`domainbed/algorithms.py:2106–2109` @ 8d46593) builds x_i, x_j, y_i, y_j from **four separate** `random_pairs_of_minibatches`
+  calls (four independent domain permutations), so the mixed images are trained against other images' labels in 988 / 1,000
+  steps (audit check) — label noise. No log or repository history shows which version produced their figures.
+- **Change (one pairing per step, used for all four tensors):** `pairs = random_pairs_of_minibatches(minibatches)` once, then
+  x_i, x_j, y_i, y_j from `pairs` (`third_party/epvt/mixup_eq3.patch`). Nothing else changes (λ ~ Beta(0.2, 0.2), prompts,
+  adapter, losses, optimisers, A33 step count, patience 22, scorer).
+- **A34 under A36:** EPVT seeds **0–4 are all new runs** with the changed mixup (A33's EPVT seed-0 run does not count); ERM
+  seeds as planned (ERM has no mixup): seed 0 = the A33 ERM run, seeds 1–4 new. **Gate unchanged:** 5-seed means within 0.03
+  of ERM 0.653 / EPVT 0.746. Queue unchanged: after the P8 gate and our P8 arms, before P7. If the means still miss, P6 is
+  final "not reproduced" and `docs/EMAIL_DRAFT_YAN_EPVT.md` (not sent) cites the audit table and this mixup line.
