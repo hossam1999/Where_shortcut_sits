@@ -1001,3 +1001,22 @@ c. **Backbone / preprocessing / data — no port error.** torchvision `vit_b_16(
    match), plain-id symlink mirror. **12,343 vs 12,360 training images:** the released `train_bias_0_1.csv` has 12,343 rows
    (all annotated; val 2,057 and test 6,199 match the paper exactly); the paper's 12,360 matches no released file (17 images,
    0.14 %); recorded, unexplained.
+
+### 2026-11-19 ~09:30 UTC (machine 2's clock) — P6 second error-check round (CPU) + pairing P6 A33 with P8 (author)
+- **Correction to A33's description:** their code already defined epochs in its own unit for the pre-A33 runs —
+  `steps_per_epoch = int(350/26) = 13` over the whole domains — so **patience 22 was already counted in the right unit**; only the
+  total was short (1,001 steps = 77 code-epochs instead of 100). ERM logged 78 epochs and **stopped at the step cap** (no early
+  stop); **EPVT early-stopped at epoch 67** (patience 22; "Best Val roc_auc 0.925") **before the cap**, so the A33 fix changes
+  ERM (23 more epochs) but cannot change EPVT apart from GPU nondeterminism. A33's fix and rerun stand as registered.
+- **Second round, settings as their scripts printed them (out.txt of both pre-A33 runs) vs README and paper:** lr 5e-6,
+  lr_classifier 5e-5, weight_decay 1e-2 (paper), wd_classifier 1e-5, batch 26 × 5 domains = 130 (paper), prompt_dim 10 (EPVT
+  paper), lr_prompt 1e-3 / lr_project 1e-4 / wd_project 1e-5 (their registry defaults; not stated in the paper), class_balanced,
+  data_augmentation (their transform = paper's list), resnet_dropout 0.1 on the ViT features (their default), im21k False
+  (ImageNet-1k ViT-B/16), seed 0, hparams_seed 0, val = `val_bias_1_1` (2,059), test = `test_bias_1_1` (6,181) — **no further
+  difference found.** Bissoto's "already cropped and centered" note (`artifact-generalization-skin/data/skin_dataset.py`) does not
+  apply: EPVT's `grouping.py` copies the raw ISIC 2019 training images. Remaining unexplained: 12,343 vs 12,360 training images.
+- **Pairing (author):** P6 A33 (ERM then EPVT at bias 1, once) starts beside P8's DISC on trap set 1, measured with
+  `scripts/replication/m2_pair_p6p8.sh` (DISC alone 8 epochs first; P6 alone while DISC is paused; kept only if total > 1.0,
+  else P6 reruns after P8). P8 ERM alone was measured at 9.6 s/epoch (epochs 47–55, trap set 1). Limitation: the running P8 queue
+  starts each new job only on an otherwise empty GPU, so P8's next job waits for P6 to finish. After P6, two P8 trap sets are
+  paired the same way.
