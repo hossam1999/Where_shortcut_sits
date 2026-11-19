@@ -30,7 +30,11 @@ replace or delay anything registered (ISNet chain, P4, phase 5 keep priority).
 
 ## Candidates (at most 3)
 
-### (a) Class-conditional LEACE with an iterative stop (CC-LEACE)
+### (a) Class-conditional LEACE with an iterative stop (CC-LEACE) — NEGATIVE on validation (accepted, 2026-11-19)
+Validation-only development (P1 location, tube inside; `results/newmethod/dev_ccleace_*`): CC-LEACE ≈ mask_cmc (their
+network 0.851 vs 0.855, DINOv2 0.877 vs 0.878, EfficientNet-B0 0.732 vs 0.741 reversed-validation AUROC); further
+iterative rounds lower validation AUROC (to 0.645 / 0.683) without lowering a within-class tube probe (0.59–0.73). Linear
+erasure saturates on trained encoders; (a) is not proposed for registration.
 - **Definition.** Features X (n × d), label y ∈ {1..K}, artifact label A (one or more binary flags; training images only).
   For each class y with ≥ 2 images in both artifact groups, compute the within-class covariance Σ_y and cross-covariance
   Σ_{XA|y}; pool them over classes, weighted by class size: Σ_w = Σ_y π_y Σ_y, C_w = Σ_y π_y Σ_{XA|y}. Apply the LEACE
@@ -45,14 +49,24 @@ replace or delay anything registered (ISNet chain, P4, phase 5 keep priority).
 - **Why it might help.** In the whitened metric the eraser removes the artifact signal that is spread over many
   correlated directions (failure 1), which a Euclidean mean-difference projection leaves.
 
-### (b) Class-conditional mean-and-covariance penalty during training (design only; GPU needs approval)
-- **Definition.** Encoder f trained with L = CE(h(f(x)), y) + λ Σ_y [ ‖μ(f | A=1, y) − μ(f | A=0, y)‖² +
-  ‖Σ(f | A=1, y) − Σ(f | A=0, y)‖_F² ] on each minibatch (groups with < 2 images in a batch skipped), features
-  L2-normalised; a class-balanced batch sampler that guarantees both artifact groups per class. After training, CC-LEACE
-  (candidate a) on the final features.
-- **Selection.** λ ∈ {0.1, 1, 10} and early stopping on the registered validation metric; everything else as arm d.
-- **Closest work.** CIRCE (conditional independence penalty), conditional MMD / CIDDG, Müller et al. 2024; ours differs
-  only in being a first- and second-moment class-conditional penalty matched to the post-hoc eraser.
+### (b) Class-conditional adversarial head with gradient reversal (author's definition, 2026-11-19; GPU ≤ ~6 h, approved
+after the P3 items)
+- **Definition.** Encoder f (the same architecture and recipe as arm d: EfficientNet-B0, ImageNet weights, ROI-masked
+  inputs) with two heads on the pooled features z = f(x): the disease head h(z) (unchanged, cross-entropy on y) and an
+  artifact head g(z, y) that predicts artifact presence A **within each class** (class-conditional: one logit per class,
+  g reads z and uses the logit of the true class y). The encoder is trained through a gradient-reversal layer so that g
+  fails: L = CE(h(z), y) + BCE(g(GRL_α(z), y), A), with GRL_α the identity forward and −α × gradient backward.
+  After training, mask_cmc on the final features as for arm d (so (b) tests whether training-time class-conditional
+  invariance adds to the post-hoc constraint).
+- **Selection (validation only).** α ∈ {0.1, 1, 10} and early stopping on the setting's registered validation metric;
+  head C in the A21 grid. Compared with mask_cmc on the same encoder trained without the adversary (= arm d).
+- **Development settings.** P1 location, tube inside (validation reverses the tube–label link); P3 90/10 inside,
+  validation images with the marks swapped (counterfactual validation view).
+- **Closest work.** Domain-adversarial training (Ganin & Lempitsky, DANN, 2015); conditional adversarial invariance for
+  domain generalisation (Li et al., CIDDG, 2018); CIRCE (Pogodin et al. 2023) for the non-adversarial conditional version;
+  Müller et al. (MLMI 2024) benchmark adversarial dependence penalties for medical shortcuts. Not claimed as new; what is
+  tested is whether class-conditional invariance during training removes an in-ROI shortcut that post-hoc linear erasure
+  cannot.
 
 ### (c) U-MtE inside the ROI: multi-family in-ROI overlays with held-out-family selection
 - **Definition.** As U-MtE (label-free; no artifact labels or examples), but the difference subspace is estimated from
@@ -63,6 +77,17 @@ replace or delay anything registered (ISNet chain, P4, phase 5 keep priority).
 - **Selection.** k as above (label-free); head C on the registered validation metric.
 - **Why it might help.** U-MtE's single generic overlay family may not span the real in-ROI artifact's shift (failure 2);
   requiring the subspace to generalise to an unseen family is a label-free proxy for generalising to the real artifact.
+
+## What no candidate can do: the all-marked P3 design
+In P3's own design (every training and validation image carries its class's mark), mark and class never disagree, so no
+method — post hoc or during training, label-aware or label-free — can tell from the training data whether the decision
+uses the mark or the disease. That design is **not identifiable**; no candidate is expected to help there, and none is
+evaluated on it. The 90/10 variant (10% of images without the mark) is where a class-conditional method can act.
+
+## Planned check (CPU, after the A24 feature passes exist)
+One-vs-rest heads on the P3 90/10 inside features (arms b and d): one binary head per class, each with its own mask_cmc
+(the class's mark present vs absent within that class), compared with the registered softmax head on the swapped-mark
+validation images.
 
 ## Development protocol (until the author approves test scoring)
 - **Data allowed:** validation splits only (P1–P4 validation; phase-5 thyroid `val_clean` is NOT used — phase 5 is the
