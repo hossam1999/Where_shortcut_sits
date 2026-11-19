@@ -780,3 +780,15 @@ Results seen: P6 bias 1 split 1 with the wrong step count: ERM 0.690, EPVT 0.654
 - **Rerun:** ERM and EPVT at bias 1, split 1, seed 0, **once**, after P8's gate; same scorer (5 domains, as their test script).
   Gate unchanged (within 0.03 of the digitised 65.3 / 74.6). If EPVT still fails, P6 is final "not reproduced" (no further
   reruns; the 5-seed run applies only if no port error had been found) and an email to the authors is drafted.
+
+**A34 (2026-11-19 by machine 2's clock; P6 follow-up, following their stated protocol, not tuning; author's decision; recorded
+before the A33 rerun result and before any multi-seed run).** Results seen: pre-A33 P6 bias 1 (ERM 0.690, EPVT 0.654).
+- **Gate unchanged:** within 0.03 of the digitised bias-1 values (ERM 0.653, EPVT 0.746); no change after seeing results.
+- **If the A33 rerun (seed 0) misses the gate:** run **their stated protocol — five random seeds** (EPVT p. 6 / PLDG p. 6:
+  "report the ROC-AUC with five random seeds"; trap-set results are means): ERM and EPVT at bias 1, split 1, **seeds 0–4**
+  (`--seed s`, `hparams_seed` 0; seed 0 = the A33 run, seeds 1–4 new), A33 step count, everything else as A33. **Gate on the
+  5-seed means** (same 0.03). Each test scored once per run.
+- **Queue:** after P8's gate and our P8 arms (A32), before P7.
+- **If the 5-seed means still miss:** P6 is final **"not reproduced"**; an email to the authors is drafted
+  (`docs/EMAIL_DRAFT_YAN_EPVT.md`, not sent). If they pass, the P6 registration (our arms vs EPVT; PLDG vs arm c) is written as
+  a new amendment before any of our arms is scored.
