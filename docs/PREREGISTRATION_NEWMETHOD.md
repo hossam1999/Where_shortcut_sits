@@ -60,8 +60,8 @@ after the P3 items)
   invariance adds to the post-hoc constraint).
 - **Selection (validation only).** α ∈ {0.1, 1, 10} and early stopping on the setting's registered validation metric;
   head C in the A21 grid. Compared with mask_cmc on the same encoder trained without the adversary (= arm d).
-- **Development settings.** P1 location, tube inside (validation reverses the tube–label link); P3 90/10 inside,
-  validation images with the marks swapped (counterfactual validation view).
+- **Development setting.** P1 location, tube inside, validation only (validation reverses the tube–label link). P3 is not
+  used (author, 2026-11-19: P3 scope reduced).
 - **Closest work.** Domain-adversarial training (Ganin & Lempitsky, DANN, 2015); conditional adversarial invariance for
   domain generalisation (Li et al., CIDDG, 2018); CIRCE (Pogodin et al. 2023) for the non-adversarial conditional version;
   Müller et al. (MLMI 2024) benchmark adversarial dependence penalties for medical shortcuts. Not claimed as new; what is
@@ -83,11 +83,6 @@ In P3's own design (every training and validation image carries its class's mark
 method — post hoc or during training, label-aware or label-free — can tell from the training data whether the decision
 uses the mark or the disease. That design is **not identifiable**; no candidate is expected to help there, and none is
 evaluated on it. The 90/10 variant (10% of images without the mark) is where a class-conditional method can act.
-
-## Planned check (CPU, after the A24 feature passes exist)
-One-vs-rest heads on the P3 90/10 inside features (arms b and d): one binary head per class, each with its own mask_cmc
-(the class's mark present vs absent within that class), compared with the registered softmax head on the swapped-mark
-validation images.
 
 ## Development protocol (until the author approves test scoring)
 - **Data allowed:** validation splits only (P1–P4 validation; phase-5 thyroid `val_clean` is NOT used — phase 5 is the

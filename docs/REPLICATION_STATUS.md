@@ -924,3 +924,17 @@ Author's request: "another direction in the same problem that more papers tackle
 - Descriptive only (nothing registered): our P4 arms on splits 1–3 of the same trap sets — arm b (DINOv2 + mask_cmc)
   0.658 ± 0.003, arm c (U-MtE) 0.605 ± 0.006, arm d (split 1) 0.666 — are above DISC's 55.1 and CBDebug's 58.0, but on 3 of
   their 5 splits and not yet with their protocol; any claim needs a registered comparison (P8) first.
+
+### 2026-11-19 18:30 UTC — machine 1: P3 scope reduced (author)
+Reason: P3 is not reproduced (A9 check 0.223 / 0.260; even P3's released model fails on our pipeline), and on P3 our arms
+cannot change any verdict. P3's role in the paper is now only to show, descriptively, that ISNet fails inside the ROI;
+our arms on P3 are reported as a limitation. Only registered runs that are nearly done are finished:
+- **Kept:** ISNet run 3 (90/10 inside): finish, score once on the rebuilt test, A24 evaluation. Run 2's A24 evaluation
+  (done, committed 0f11749). Arm c (U-MtE) on the corner benchmark (registered under A12): one feature pass + CPU head,
+  scored once. The final P3 table (ISNet corner vs inside vs 90/10 inside beside our registered arms b, c, d where they
+  apply; rebuilt test primary, A24 secondary; descriptive, A9 caveat).
+- **Stopped / not started:** the lung-masked DINOv2 reference row on the corner benchmark; any further P3 diagnosis,
+  re-scoring, extra variants or arms; P3-specific exploratory checks (the one-vs-rest check). **The A24 feature passes
+  for our arms b, c, d were not run** (not on the kept list); the arms are reported on the rebuilt test only, marked so.
+- Then machine 1's GPU moves to the exploratory track: candidate (b), up to ~6 GPU-h, developed on the P1 location-inside
+  validation only.
