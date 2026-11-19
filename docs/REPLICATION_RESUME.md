@@ -52,6 +52,11 @@ Re-run `armd_train.py --setting p4_split1 --stage heads` (CPU): `heads_p4` adds 
 split 1 automatically once `saab/runs/seg_split1/preds_test.csv` exists (arm d 0.666 vs Binary-ERM 0.355 so far).
 Descriptive until the P4 gate (A13).
 
+## P4 arm a (author, 2026-11-19)
+As soon as each Seg-ERM split k exists: arm a = mask_cmc on THEIR Seg-ERM encoder's features of lesion-masked images
+(A13 item 8a; flags with >= 3 images per group), head as registered; report vs Seg-ERM alone (paired, same 772 test images)
+together with the P4 gate (paper or notebook, A13 addendum).
+
 ## Chains (how they hand over)
 - `p2_chain.sh` starts `p3_chain.sh` (ISNet alone; flag `$WTSS_DATA/replication/ISNET_CHAIN_ACTIVE`) **only** when all 6
   RR-ClArC score files exist. ISNet run 1 `isnet_corner_all_seed0` resumes after epoch 2.
