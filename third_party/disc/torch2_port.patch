@@ -28,8 +28,21 @@ index cf18bd6..ccf5cb9 100644
      for y in range(args.n_classes):
          names, prob = concept_relevance[y]
          # We use smaller ratio on FMoW to avoid CPU momory exceed
+diff --git a/disc/concept_utils/get_cts.py b/disc/concept_utils/get_cts.py
+index ae51eea..fd025ee 100644
+--- a/disc/concept_utils/get_cts.py
++++ b/disc/concept_utils/get_cts.py
+@@ -29,7 +29,7 @@ def run_one_step_and_get_cts(
+     
+     loader_iter = iter(loader)
+     with torch.set_grad_enabled(is_training):
+-        batch = loader_iter.next()
++        batch = next(loader_iter)
+         batch = tuple(t.cuda() for t in batch)
+         x, y, g = batch[0], batch[1], batch[2]
+         y_onehot = None
 diff --git a/disc/run_epoch_baselines.py b/disc/run_epoch_baselines.py
-index d26a6d7..5339d25 100644
+index d26a6d7..e9eeda3 100644
 --- a/disc/run_epoch_baselines.py
 +++ b/disc/run_epoch_baselines.py
 @@ -25,7 +25,7 @@ def run_epoch(
@@ -41,6 +54,32 @@ index d26a6d7..5339d25 100644
      
      with torch.set_grad_enabled(is_training):
          for batch_idx, batch in enumerate(prog_bar_loader):
+@@ -250,10 +250,10 @@ def run_epoch_mix_every_batch(
+             selected_data_iter_idxes = np.random.choice(np.arange(len_loader), 4, replace=False)
+         for i in selected_data_iter_idxes:
+             try:
+-                tmp_x, tmp_y, tmp_g, tmp_y_onehot, _ = data_iter[i].next()
++                tmp_x, tmp_y, tmp_g, tmp_y_onehot, _ = next(data_iter[i])
+             except:
+                 data_iter[i] = iter(loader[list(loader.keys())[i]])
+-                tmp_x, tmp_y, tmp_g, tmp_y_onehot, _ = data_iter[i].next()
++                tmp_x, tmp_y, tmp_g, tmp_y_onehot, _ = next(data_iter[i])
+ 
+             x.append(tmp_x)
+             y.append(tmp_y)
+diff --git a/disc/run_epoch_disc.py b/disc/run_epoch_disc.py
+index 0d133d9..dbdd447 100644
+--- a/disc/run_epoch_disc.py
++++ b/disc/run_epoch_disc.py
+@@ -102,7 +102,7 @@ def run_epoch_disc(
+             
+             for c in class_enum:
+                 bool_c = ~(y == c)
+-                tmp_x = concept_data_iter[c].next()
++                tmp_x = next(concept_data_iter[c])
+                 tmp_x = tmp_x.cuda()
+                 if bool_c.float().sum() < 2: 
+                     continue # avoid shape error
 diff --git a/disc/train.py b/disc/train.py
 index bcde7d4..2327b30 100644
 --- a/disc/train.py
@@ -67,6 +106,21 @@ index 1ac71b7..5d99891 100644
  
  
  class UMAPReducer:
+diff --git a/disc/utils/mixup.py b/disc/utils/mixup.py
+index 36eb57f..3333d1d 100644
+--- a/disc/utils/mixup.py
++++ b/disc/utils/mixup.py
+@@ -6,8 +6,8 @@ def rand_bbox(size, lam):
+     W = size[2]
+     H = size[3]
+     cut_rat = np.sqrt(1. - lam)
+-    cut_w = np.int(W * cut_rat)
+-    cut_h = np.int(H * cut_rat)
++    cut_w = int(W * cut_rat)
++    cut_h = int(H * cut_rat)
+     cx = np.random.randint(W)
+     cy = np.random.randint(H)
+     bbx1 = np.clip(cx - cut_w // 2, 0, W)
 diff --git a/disc/utils/tools.py b/disc/utils/tools.py
 index 20d4f34..07f3076 100644
 --- a/disc/utils/tools.py

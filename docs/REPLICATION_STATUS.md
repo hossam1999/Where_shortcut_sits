@@ -1043,3 +1043,21 @@ c. **Backbone / preprocessing / data — no port error.** torchvision `vit_b_16(
   20 % of each trap set's test CSV (154 images), test = the other 80 % (618), train = the full train CSV (1,822); A32's
   "val 259 / test 772" was wrong for P8. Gate unchanged (the published numbers come from this code); our arms use the same
   train / val / test images.
+
+### 2026-11-19 ~10:50 UTC (machine 2's clock) — machine 2: third DISC port, DISC trains; P6 A33 paired; A35 addendum; watchdog
+- **10:26 third torch-2 failure** (first DISC epoch): `loader_iter.next()` was removed in torch 2 → `next(loader_iter)` at all four
+  sites (plus `np.int` → `int` in the unused cut-mix code), after a scan of the whole DISC tree for torch-1.11-era calls (only
+  `pretrained=True` remains: deprecated but still loads the same ImageNet V1 weights; checked). Restarted ~10:27; trains.
+  Folder of the failed start kept as `failed_iternext_1026_…_x`.
+- **DISC speed:** 96.6 s/epoch alone (trap set 1, measured by `m2_pair_p6p8.sh`), ~10× ERM: each epoch retrains the concept
+  bank (58 CAVs) and computes concept scores on 3 clusters, mostly on CPU (GPU utilisation 0–40 %). ≈ 2.7 h per DISC trap
+  set alone. The P6 A33 rerun (ERM then EPVT, bias 1) started beside it at 10:46; the pairing measurement follows.
+- **A35 addendum (author):** our P8 arms under both selection rules — primary DISC's 154 / 618 split, secondary the registered
+  259-image Bissoto validation (inside the 1,822 training images in all five trap sets — checked, as A13 noted), both scored
+  once on the 618; the write-up states that DISC's protocol selects on test-distribution images.
+- **Watchdog (author):** `scripts/replication/m2_watchdog.sh` (running since 10:48): a queued job exiting non-zero is logged here
+  and, for P8, retried once (incomplete folder moved aside); GPU idle > 10 min while jobs are queued is logged and either the P8
+  lane is restarted (none alive) or a possible hang is alerted. Tested in dry mode on fake logs (retry once, second failure
+  alert-only, P6 failure alert-only, idle-with-live-process alert). Its lines go under "Watchdog log" below.
+
+### Watchdog log (machine 2, automatic; `scripts/replication/m2_watchdog.sh`)

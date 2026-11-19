@@ -812,3 +812,17 @@ Seen before this amendment: ERM trap set 1 finished (100 epochs); its log was op
   start, 09:25); (2) the concept-image preprocessing (`concept_bank.py`) built a fork `Pool` after CUDA initialisation and
   deadlocked under torch 2.11 (10:10, 0 % CPU); replaced by the same `process_func` mapped sequentially over the same chunks
   in the same order (deterministic eval transform, identical tensors; the parent's random state is untouched either way).
+- **Addendum (author, 2026-11-19 ~10:45, A35 accepted; before any P8 scoring): our arms are evaluated under BOTH selection
+  rules, registered now.** Gate unchanged.
+  - **Primary — DISC's protocol:** the same 154 / 618 split per trap set; our arms fit on the 1,822 training images, select
+    (mode, C; arm d: early stopping and the A21 grid) on the 154 validation images, and are scored once on the 618 (equal
+    information with DISC and ERM). This is the head-to-head of A32 (bootstrap, Holm family of 4).
+  - **Secondary (robustness) — our registered rule (A13):** selection on Bissoto's 259 validation images only (no
+    test-distribution data), scored once on the same 618. As registered for P4, the arms fit on the 1,822 training images;
+    the 259 validation images are **inside** those 1,822 in all five trap sets (checked: 259 / 259 overlap, none with the
+    test), as A13 noted, so validation-based choices are weak under this rule. Reported beside the primary, paired against
+    the same DISC runs, outside the Holm family; no "beaten" claim rests on it.
+  - The write-up states that **DISC's protocol selects on test-distribution images** (its validation split is drawn from the
+    trap-set test CSV, artifact–label correlation reversed like the test), for DISC, ERM and the primary arm results alike.
+- **Third environment port (10:26):** `iterator.next()` (removed in torch 2) → `next(iterator)` at four sites; `np.int` →
+  `int` in `mixup.py` (cut-mix only, not used here). Same patch file. DISC trap set 1 restarted ~10:27 and trains.
