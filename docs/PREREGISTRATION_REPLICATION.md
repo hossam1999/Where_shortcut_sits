@@ -769,3 +769,14 @@ variant, arm c on the corner benchmark. **Not affected:** every ISNet run (P3's 
 evaluations, all non-P3 results. **Fix:** pass the split's subset arrays (`gray[idx]`, `roi[idx]`), with an alignment
 assertion. **Re-scoring:** arm c on the corner benchmark is re-extracted and re-scored once (authorised); the other affected
 results are marked invalid and wait for the author's decision. The invalid results files are kept, labelled.
+**A33 (2026-11-19 by machine 2's clock; P6 port-error fix, not tuning; author's diagnosis rule; recorded before any rerun; A30 is now machine 1's P3 entry, so a P6 registration, if ever made, takes the next free number).**
+Results seen: P6 bias 1 split 1 with the wrong step count: ERM 0.690, EPVT 0.654 (targets 0.653 / 0.746); P8 not yet gated.
+- **Error:** our P6 step count assumed DomainBed's 20 % per-domain holdout; their trainer trains on each whole domain and
+  defines an epoch as `int(min domain size / 26)` steps (`train_epvt.py:129–163, 310`). Evidence that this is their meaning:
+  their README's 1,501 steps at bias 0 = 60 epochs × 25 + 1 (the paper's 60 epochs). Domains, backbone, preprocessing and data:
+  no port error (STATUS 09:10, items a and c).
+- **Fix:** 100 epochs = 100 × int(min |domain| / 26) + 1 steps (bias 1, split 1: 1,301), early stopping patience 22 in the same
+  unit, everything else unchanged (A29 decisions; activation checkpointing; README hyper-parameters).
+- **Rerun:** ERM and EPVT at bias 1, split 1, seed 0, **once**, after P8's gate; same scorer (5 domains, as their test script).
+  Gate unchanged (within 0.03 of the digitised 65.3 / 74.6). If EPVT still fails, P6 is final "not reproduced" (no further
+  reruns; the 5-seed run applies only if no port error had been found) and an email to the authors is drafted.

@@ -981,3 +981,23 @@ CBDebug.
   does not match the 5 trained domain prompts; the scorer now builds the model with 5 domains as their `test_epvt.py` does
   (the first scoring attempt failed at loading, before any prediction). Per the author's rule P6 stops here and is reported.
 - **P8 (DISC, A32) started 08:47** (ERM trap set 1); queue: ERM + DISC on trap sets 1–5.
+
+### 2026-11-19 ~09:10 UTC (machine 2's clock) — P6 bounded diagnosis, step 1 (CPU; their code, configs, paper; no test scored)
+a. **Domains — no error.** `train_epvt.py:283–286` builds the algorithm with `len(dataset)` = 5 domains and trains on all five
+   environments (`train_loaders` over every `in_split`, lines 158–163); `--test_env 0` only fills `domain_mapping` (lines 303–306,
+   never used afterwards) and the saved field `model_num_domains = len(dataset) − len(test_envs)` = 4 (line 321) — the source of
+   the scorer mismatch (fixed in the scorer, no prediction affected). Environments are the sorted folder names C, D, G, H, R
+   (`datasets.py:185–186`); our mapping clean/dark corner/gel bubble/hair/ruler → C/D/G/H/R; the order only permutes domain
+   indices.
+b. **Epoch unit — PORT ERROR (ours).** Their trainer uses each whole domain folder: `in_splits.append((env, in_weights))`
+   (lines 129–143) with **no DomainBed 20 % holdout**, and `steps_per_epoch = min(len(env)/batch_size)` over those full domains
+   (line 310). Our step count assumed an 80 % in-split: bias 1 → int(280/26) = 10 steps/epoch (1,001 steps), but their code gives
+   **int(350/26) = 13 → 100 epochs = 1,301 steps**, and patience 22 counts 13-step epochs. Confirmation from their own README:
+   bias 0 → int(672/26) = 25 steps/epoch and their `--steps 1501` = 60 × 25 + 1, i.e. **exactly the paper's 60 epochs for the
+   OOD experiment**. Reading A (their code's unit) stands; the holdout was our mistake. → A33.
+c. **Backbone / preprocessing / data — no port error.** torchvision `vit_b_16(pretrained=True)` = ImageNet-1k V1 weights
+   (`vit_b_16-c867db91.pth`, unchanged since torchvision 0.13, 2022); `im21k` False, `attention_dropout` 0, feature dropout 0.1,
+   `class_balanced` True — their defaults, used as is. Train/val/test transforms are their code. Images: ISIC 2019 (manifest
+   match), plain-id symlink mirror. **12,343 vs 12,360 training images:** the released `train_bias_0_1.csv` has 12,343 rows
+   (all annotated; val 2,057 and test 6,199 match the paper exactly); the paper's 12,360 matches no released file (17 images,
+   0.14 %); recorded, unexplained.
