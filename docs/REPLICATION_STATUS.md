@@ -1160,4 +1160,21 @@ c. **Backbone / preprocessing / data — no port error.** torchvision `vit_b_16(
   b and c restarted on ERM 2 / ERM 3 with their own roots (`isic_set2`, `isic_set3`; each builds its own ~1.6 GB cache first).
 - Cost: ≈ 2 h of three-lane GPU time; new P8 estimate below once the reruns' speed is known.
 
+### 2026-11-19 ~15:00 UTC (machine 2's clock) — machine 2: why ERM 2 / ERM 3 are rerun; author's rule recorded; decision pending (no rerun result read)
+- **Reason (A37; not a mistake, not a watchdog retry, not a lane restart):** the original ERM 2 and ERM 3 runs did not see their
+  own trap sets' images. DISC's `ISICDataset` loads `<root_dir>/features/feature_mat.npy` (built once, by ERM trap set 1, in
+  set 1's row order) for every later trap set and pairs its rows with the later set's CSV names and labels. Checked row by row:
+  only 3.4 % (set 2) and 5.7 % (set 3) of the 2,594 rows show the image the CSV row describes; training labels disagree with
+  the shown image's own label in 20 % (set 2) / 18 % (set 3) of rows; the "test" rows are mostly set-1 images. So 0.222 and
+  0.350 measure set-1 images against set-2/3 labels, not ERM on trap sets 2/3. The reruns (started 14:35 by me, deliberately)
+  use one data root per trap set. The original checkpoints still exist (`ERM/invalid_sharedcache_…trapset_id={2,3}_x/
+  best_model.pth`).
+- **Author's rule (2026-11-19 ~15:00), recorded as given:** the ORIGINAL ERM 2/3 results are the registered ones and count
+  for the gate; a rerun only regenerates missing files (e.g. the checkpoint DISC starts from), and its scores are reported
+  separately, labelled, never substituted.
+- **Conflict (machine 2), for the author's decision:** under this rule the gate would average two runs trained and tested on
+  mismatched images and labels, and DISC 2/3 would start from those checkpoints; A37 (recorded 14:40, before any rerun result)
+  treats them as invalid, like the earlier port-error reruns (A31, A33). The reruns keep running (DISC 2/3 need an ERM
+  checkpoint under either reading). **No rerun result is read and the P8 gate is not computed until the author decides.**
+
 ### Watchdog log (machine 2, automatic; `scripts/replication/m2_watchdog.sh`)
