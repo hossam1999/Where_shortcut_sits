@@ -817,11 +817,14 @@ Seen before this amendment: ERM trap set 1 finished (100 epochs); its log was op
   - **Primary — DISC's protocol:** the same 154 / 618 split per trap set; our arms fit on the 1,822 training images, select
     (mode, C; arm d: early stopping and the A21 grid) on the 154 validation images, and are scored once on the 618 (equal
     information with DISC and ERM). This is the head-to-head of A32 (bootstrap, Holm family of 4).
-  - **Secondary (robustness) — our registered rule (A13):** selection on Bissoto's 259 validation images only (no
-    test-distribution data), scored once on the same 618. As registered for P4, the arms fit on the 1,822 training images;
-    the 259 validation images are **inside** those 1,822 in all five trap sets (checked: 259 / 259 overlap, none with the
-    test), as A13 noted, so validation-based choices are weak under this rule. Reported beside the primary, paired against
-    the same DISC runs, outside the Holm family; no "beaten" claim rests on it.
+  - **Secondary (robustness) — held-out Bissoto validation (author, 2026-11-19 ~11:00, replaces the A13 fit-on-1,822 rule
+    for P8 before any P8 arm is run):** our arms fit on the **1,563 training images that are not in Bissoto's 259
+    validation set**, select (mode, C; arm d: early stopping and the A21 grid) on those **259** (now truly held out; no
+    test-distribution data), and are scored once on the same 618. Reason: the 259 are inside the 1,822 in all five trap sets
+    (checked: 259 / 259 overlap, none with the test), so selection on them after fitting on all 1,822 is uninformative. (This
+    is the train-minus-validation split of DISC's own `id_val=False` branch.) The mask_cmc flag rule (≥ 3 training images per
+    artifact × diagnosis group) is applied on the 1,563 under this rule. Reported beside the primary, paired against the same
+    DISC runs, outside the Holm family; no "beaten" claim rests on it. Primary unchanged.
   - The write-up states that **DISC's protocol selects on test-distribution images** (its validation split is drawn from the
     trap-set test CSV, artifact–label correlation reversed like the test), for DISC, ERM and the primary arm results alike.
 - **Third environment port (10:26):** `iterator.next()` (removed in torch 2) → `next(iterator)` at four sites; `np.int` →

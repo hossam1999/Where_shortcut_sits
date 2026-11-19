@@ -1060,4 +1060,22 @@ c. **Backbone / preprocessing / data — no port error.** torchvision `vit_b_16(
   lane is restarted (none alive) or a possible hang is alerted. Tested in dry mode on fake logs (retry once, second failure
   alert-only, P6 failure alert-only, idle-with-live-process alert). Its lines go under "Watchdog log" below.
 
+### 2026-11-19 ~11:00 UTC (machine 2's clock) — machine 2: A35 secondary rule changed (author); third P8 lane set up; lane-script fixes
+- **A35 (author):** the secondary P8 rule now fits our arms on the **1,563** training images not in Bissoto's 259 validation set,
+  selects on the 259 (truly held out), scores once on the same 618. Replaces the A13 fit-on-1,822 rule for P8; recorded before
+  any P8 arm is run. Primary unchanged. The flag rule (≥ 3 images per artifact × diagnosis group) is applied on the 1,563.
+- **Third P8 lane (author):** `m2_pair_p8x3.sh` starts lane c after the two-lane pairing is kept; kept only if total > 1.0,
+  whole-machine CPU busy < 85 % (28 cores) **and** total > the two-lane total (my addition: without it a third lane that lowers
+  throughput could pass "> 1.0"); otherwise lane c and its job are stopped and P8 stays at two lanes. Result `pair_p8x3.json`.
+- **Bugs found in my lane scripts while building it (no result affected):** (1) the DISC output folder ends in
+  `-trapset_id=k`, but the lane, two-lane and watchdog scripts looked for `*trapset_id=k-*`: lanes could never see DISC as
+  complete (no exit at the end), the two-lane measurement could not find DISC's log, the watchdog would treat P8 as never
+  done — fixed; (2) GPU concurrency was hard-coded at 2 jobs, so a third lane could never run — now read before each job from
+  `$WTSS_DATA/disc/max_other_jobs` (set by the pairing scripts); (3) the two-lane "not kept" branch killed both lane shells,
+  orphaning lane a's job, and restarted lane a, which would start a second job beside the orphan — now it stops only lane b's
+  process tree and sets one job at a time. Shared helpers `p8_lane_lib.sh`, measurement `p8_measure.py` (common window, main
+  processes only, CPU from /proc/stat; tested on DISC 1: ~150 s/epoch beside P6 ERM, one epoch, indicative). Running scripts
+  were replaced by rename, never edited in place; lane a's shell was replaced by one that adopts the running DISC 1 job
+  (`WAIT_PID`; logs FAILED if its output ends incomplete, so the watchdog retries it).
+
 ### Watchdog log (machine 2, automatic; `scripts/replication/m2_watchdog.sh`)

@@ -18,7 +18,7 @@ JOB_PROCS='run_expt\.py|train_(erm|epvt)|p5_run\.py|p4_train\.py'
 IDLE_MIN=${IDLE_MIN:-10}
 
 erm_dir(){ echo "$L/ISIC/ERM/reweight_groups=0-augment=0-lr=0.001-batch_size=16-n_epochs=100-trapset_id=$1"; }
-disc_dir(){ ls -d $L/ISIC/DISC/*trapset_id=$1-* 2>/dev/null | head -1; }
+disc_dir(){ ls -d $L/ISIC/DISC/*-trapset_id=$1 2>/dev/null | head -1; }
 complete(){ local d=$1; [ -n "$d" ] && [ -s "$d/test.csv" ] && [ $(wc -l < "$d/test.csv") -ge 101 ]; }
 p8_incomplete(){ for k in 1 2 3 4 5; do complete "$(disc_dir $k)" || return 0; done; return 1; }
 alive(){ ps -eo args | awk -v p="$1" '$0 ~ p && !/awk/ && !/m2_watchdog/' | grep -q .; }
