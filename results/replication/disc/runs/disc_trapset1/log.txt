@@ -4789,3 +4789,12 @@ Average acc: 0.6877
   hair=0  [n = 369]:	loss = 1.8905  exp loss = 8.6273  adjusted loss = 8.6273  adv prob = 0.500000   acc = 0.7696
   hair=1  [n = 249]:	loss = 6.3517  exp loss = 14.0233  adjusted loss = 14.0233  adv prob = 0.500000   acc = 0.5663
 roc auc = 0.268983
+Current lr: 0.000500
+Time Cost: 0:03:18.399226
+Current validation ROCAUC: 0.32258064516129026
+
+roc_auc             0.451392
+mean_differences    0.270742
+group_avg_acc       0.669507
+avg_acc             0.695793
+Name: 22, dtype: float64
