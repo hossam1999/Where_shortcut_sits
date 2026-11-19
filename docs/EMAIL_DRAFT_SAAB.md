@@ -1,5 +1,7 @@
 # Draft email to Saab et al. (not sent; the author sends it)
 
+**Sent 2026-11-19 by the author to ksaab@stanford.edu, Cc dlrubin@stanford.edu, chrismre@stanford.edu (signed "Hossam Elkady"). Answer, when it arrives, is recorded in docs/REPLICATION_STATUS.md.**
+
 **To:** Khaled Saab <ksaab@stanford.edu> (first author)
 **Cc (suggested):** Daniel Rubin <dlrubin@stanford.edu>, Christopher Ré <chrismre@stanford.edu> (senior authors)
 *Addresses exactly as printed on p. 1 of the MLHC 2022 paper (PMLR 182:1–25). The paper does not mark a corresponding author;
