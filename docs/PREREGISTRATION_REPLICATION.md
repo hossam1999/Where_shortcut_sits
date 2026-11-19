@@ -618,3 +618,14 @@ smallest competitor by parameters). Penultimate features = the 1,280-d global-av
 Everything else in A20 (with its correction) and A21 is unchanged. Disclosure: a ResNet-18 P2 job had been launched at
 13:46 UTC; it was stopped by PID while still waiting in the GPU launcher (empty log, no training step, no output) and its
 directory was removed.
+
+**A24 (2026-11-19, before any P3 inside-run result exists; author's decision; numbers A22–A23 are unused: A22 was proposed
+and declined on 2026-11-18, not recorded).** Results seen when this was recorded: the A9 check (0.223 / 0.260), the corner
+ISNet on the rebuilt test (0.427 / 0.385 / 0.387 primary), arms b, c, d on the P3 90/10 inside variant (rebuilt test). No
+ISNet inside run has been scored.
+- **Secondary, in-distribution evaluation** for every P3 location / 90-10 comparison (ISNet inside, ISNet 90/10 inside,
+  arms b, c, d): the P3 **cohort-validation images** rendered in the biased / standard / deceiving conditions of each run's
+  design (the run's mark position and presence rule; standard = no mark; deceiving = P3's swapped shapes), macro-F1, with
+  the same image-only bootstrap as the primary results.
+- **Labelled secondary everywhere:** these images were used for epoch and model selection (P3's validation split).
+- The **rebuilt external test stays the registered primary test** and is reported unchanged.
