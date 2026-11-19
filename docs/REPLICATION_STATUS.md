@@ -1207,4 +1207,17 @@ c. **Backbone / preprocessing / data — no port error.** torchvision `vit_b_16(
 - Not committed (rebuildable intermediates): features (`*.npz`), `pahde/scores_a18/aprime_unmasked_scores.csv.gz` (arm a′'s
   network re-scored on all splits; its test rows are already in git as `a18_…_identity_2`).
 
+### 2026-11-19 ~18:50 UTC (machine 2's clock) — machine 2: P8 gate + arms code ready; post-P8 chain armed (author: three lanes, no fourth job)
+- Author: no fourth GPU job (OOM risk to hours-long DISC runs; CPU is the bottleneck); three lanes; ERM 5 on the first lane
+  that frees, DISC 5 immediately after (the lanes' job order does this: DISC k waits only for ERM k to complete).
+- P8 progress 18:30: ERM 1–4 and DISC 1 done; DISC 2 / 3 / 4 at epoch 50 / 46 / 41 (≈ 250–285 s/epoch each; GPU ≈ 15 % on
+  average, DISC's concept step is CPU-bound). Estimate: all P8 runs ≈ 02:00 UTC.
+- `scripts/replication/p8_gate.py` (5-set means, A37 pre-specified reading) and `scripts/replication/p8_arms.py` (arms a–d,
+  both A35 rules; DISC/ERM per-image test scores from their verified cache rows, asserted to reproduce the logged test AUROC;
+  A32 bootstrap with one Poisson weight per image shared across trap sets, sets fixed; Holm over the 4 primary comparisons).
+  Tested on synthetic features only (no real result read); splits checked: primary 1,822 / 154 / 618, secondary 1,563 / 259 /
+  618 on every trap set; flags used: dark_corner, hair, gel_border, gel_bubble, ruler, ink, vasc (patches fails the ≥ 3 rule).
+- `scripts/replication/m2_p8_post.sh` (running, waiting): after the P8 runs → gate → arm features (DISC env, then DINOv2 /
+  U-MtE) → 10 arm-d encoders → heads → comparison → P6 A34 (checks the A36 patch). Watched by the watchdog.
+
 ### Watchdog log (machine 2, automatic; `scripts/replication/m2_watchdog.sh`)
