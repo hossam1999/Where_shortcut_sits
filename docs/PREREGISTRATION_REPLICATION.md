@@ -845,3 +845,22 @@ EPVT 0.655 (released code), and the P6 fidelity audit (`docs/P6_EPVT_AUDIT.md`, 
   seeds as planned (ERM has no mixup): seed 0 = the A33 ERM run, seeds 1–4 new. **Gate unchanged:** 5-seed means within 0.03
   of ERM 0.653 / EPVT 0.746. Queue unchanged: after the P8 gate and our P8 arms, before P7. If the means still miss, P6 is
   final "not reproduced" and `docs/EMAIL_DRAFT_YAN_EPVT.md` (not sent) cites the audit table and this mixup line.
+
+**A37 (2026-11-19 ~14:40 UTC by machine 2's clock; P8 port/usage error fix, not tuning; recorded before any further P8
+result; the P8 gate has not been computed).** Results seen: ERM trap sets 1–3 (0.531 / 0.222 / 0.350, reported 13:40) and
+DISC trap set 1's per-epoch log.
+- **Error:** DISC's `ISICDataset` (`disc/dataset/isic_dataset.py:94–119`) caches the transformed images once at
+  `<root_dir>/features/feature_mat.npy` — the path does not contain the trap-set id — and later runs load the cache in its
+  row order while taking image names, labels and hair flags from their own trap set's CSVs. Their `scripts/isic.sh` uses one
+  `--root_dir` for every GROUP. The cache was built by our first run (ERM trap set 1, 08:54), so every later trap set
+  trained and was tested on trap-set-1 images in trap-set-1 order with its own labels: only 3–21 % of rows show the right
+  image (sets 2–5; checked). **ERM 2 and ERM 3 (finished) and DISC 2 and DISC 3 (running) are invalid**; ERM 1 and DISC 1 are
+  valid (the cache is in set 1's order). The cache also makes `--augment_data` a no-op once built without it (not used here).
+- **Fix:** one data root per trap set (`$WTSS_DATA/disc/isic_set<k>/`: symlinks to the same images and trap-set CSVs; each
+  builds its own cache; set 1 reuses the existing set-1 cache), so each set trains and is tested on its own split, as the
+  paper describes. Nothing else changes (their code, commands, transforms — including the hue jitter their eval transform
+  bakes into the cache once). DISC's concept caches for sets 2–3 (computed from the invalid ERM models) are set aside.
+- **Reruns:** ERM 2, ERM 3 (from scratch), then DISC 2, DISC 3; ERM/DISC 4–5 as planned. Invalid folders kept, renamed
+  `invalid_sharedcache_…_x`; their pushed results moved to `results/replication/disc/runs/invalid_sharedcache/`. Gate unchanged.
+- **Reporting:** a user following their README with one data root gets the same mix-up for every trap set after the first;
+  whether their published numbers were affected cannot be known. Stated in the write-up and in any email to the authors.

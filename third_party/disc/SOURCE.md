@@ -22,3 +22,5 @@ sets) until an amendment registers the comparison.
 - Ports (A35, `torch2_port.patch`): `torch.load(…, weights_only=False)` at five sites; concept-image preprocessing `Pool`
   (fork after CUDA init, deadlocks under torch 2.11) replaced by the same function mapped sequentially. Their ISIC loader
   hard-codes `id_val=True`: val = 20 % of the trap-set test CSV (154), test = 80 % (618), train = full train CSV (1,822).
+- **A37 (usage):** one `--root_dir` per trap set (`$WTSS_DATA/disc/isic_set<k>/`), because `ISICDataset` caches transformed
+  images at `<root_dir>/features/feature_mat.npy` without the trap-set id (their `scripts/isic.sh` shares one root).

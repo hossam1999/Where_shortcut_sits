@@ -1150,4 +1150,14 @@ c. **Backbone / preprocessing / data — no port error.** torchvision `vit_b_16(
   fresh render of that row's own id (the cache and the check share one `_render` method). All four pass on the existing
   caches. Negative control: with the validation rows reversed, the check fails on row 0. No result changes.
 
+### 2026-11-19 ~14:40 UTC (machine 2's clock) — machine 2: P8 ERM 2–3 and DISC 2–3 INVALID (DISC's shared image cache); A37 fix; reruns started
+- Found while preparing our P8 arms: DISC caches the transformed images at `<root_dir>/features/feature_mat.npy` without the
+  trap-set id; our single data root (as their `scripts/isic.sh`) made every trap set after the first load set 1's images in
+  set 1's order with its own labels (3–21 % of rows correct). **Retracted: ERM 2 = 0.222 and ERM 3 = 0.350 (reported 13:40),
+  and the "ERM 1–3 mean 0.368".** ERM 1 (0.531) and DISC 1 are valid.
+- **A37**: one data root per trap set. Actions 14:35: lanes b and c stopped with DISC 2 / DISC 3 (folders set aside), ERM 2 / ERM 3
+  set aside, the stale set-2/3 concept caches set aside, lane a replaced by the new script (adopting DISC 1, epoch ~96), lanes
+  b and c restarted on ERM 2 / ERM 3 with their own roots (`isic_set2`, `isic_set3`; each builds its own ~1.6 GB cache first).
+- Cost: ≈ 2 h of three-lane GPU time; new P8 estimate below once the reruns' speed is known.
+
 ### Watchdog log (machine 2, automatic; `scripts/replication/m2_watchdog.sh`)

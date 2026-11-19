@@ -10,6 +10,10 @@ R=$D/disc; L=$D/disc/output; K=$D/disc/locks; mkdir -p $K
 erm_dir(){ echo "$L/ISIC/ERM/reweight_groups=0-augment=0-lr=0.001-batch_size=16-n_epochs=100-trapset_id=$1"; }
 disc_dir(){ ls -d $L/ISIC/DISC/*-trapset_id=$1 2>/dev/null | head -1; }
 complete(){ local d=$1; [ -n "$d" ] && [ -s "$d/test.csv" ] && [ $(wc -l < "$d/test.csv") -ge 101 ]; }
+# A37: one data root per trap set. DISC's ISICDataset caches the transformed images at <root_dir>/features/feature_mat.npy
+# without the trap-set id, so a shared root makes sets 2-5 reuse set 1's image order with their own labels.
+rootk(){ local r=$R/isic_set$1; if [ ! -d $r ]; then mkdir -p $r; ln -s $R/isic/ISIC2018_Task1-2_Training_Input $r/ISIC2018_Task1-2_Training_Input
+  ln -s $R/isic/trap-sets $r/trap-sets; [ $1 = 1 ] && [ -s $R/isic/features/feature_mat.npy ] && ln -s $R/isic/features $r/features; fi; echo $r/; }
 maxo(){ local n; n=$(cat $D/disc/max_other_jobs 2>/dev/null); echo ${n:-1}; }
 if [ -n "$WAIT_PID" ]; then
   set -- $WAIT_JOB; echo "$(date -u +%F_%T) lane ${LANE:-a}: adopting running $1 trap set $2 (pid $WAIT_PID)"
@@ -31,11 +35,11 @@ while :; do
   set -- $job; m=$1; k=$2; echo "$(date -u +%F_%T) lane ${LANE:-a}: $m trap set $k"
   if [ $m = erm ]; then
     (cd $E && MAX_OTHER_JOBS=$(maxo) $Q/gpu_wait.sh 4000 $PY run_expt.py -s confounder -d ISIC -t label -c hair --lr 0.001 --batch_size 16 \
-      --weight_decay 1e-5 --model resnet50 --n_epochs 100 --root_dir $R/isic/ --log_dir $L/ --save_best --save_last --seed $k \
+      --weight_decay 1e-5 --model resnet50 --n_epochs 100 --root_dir $(rootk $k) --log_dir $L/ --save_best --save_last --seed $k \
       > $D/disc/erm_$k.log 2>&1) || { echo "FAILED ERM $k"; rmdir $K/erm_$k; exit 1; }
   else
     (cd $E && MAX_OTHER_JOBS=$(maxo) $Q/gpu_wait.sh 4000 $PY run_expt.py -s confounder -d ISIC -t label -c hair --lr 5e-4 --batch_size 16 \
-      --weight_decay 1e-5 --model resnet50 --n_epochs 100 --root_dir $R/isic/ --log_dir $L/ --erm_path $(erm_dir $k)/best_model.pth \
+      --weight_decay 1e-5 --model resnet50 --n_epochs 100 --root_dir $(rootk $k) --log_dir $L/ --erm_path $(erm_dir $k)/best_model.pth \
       --concept_img_folder $R/synthetic_concepts --concept_categories color-texture --n_clusters 3 --save_best --save_last --seed $k --disc \
       > $D/disc/disc_$k.log 2>&1) || { echo "FAILED DISC $k"; rmdir $K/disc_$k; exit 1; }
   fi
