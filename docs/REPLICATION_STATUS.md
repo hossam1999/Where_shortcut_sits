@@ -1118,4 +1118,10 @@ c. **Backbone / preprocessing / data — no port error.** torchvision `vit_b_16(
   (ERM is barely slowed, ratio 1.03). Two DISC jobs together are being measured now (DISC 1 + DISC 2, 15 min,
   `pair_p8_disc2.json`); if their total is below 1.35, lane c is restarted.
 
+### 2026-11-19 13:45 UTC (machine 2's clock) — machine 2: third P8 lane restarted (like-for-like comparison)
+- Two DISC jobs together (DISC 1 + DISC 2, 910-s window, `pair_p8_disc2.json`): 151.7 and 227.5 s/epoch (alone 96.6) → total
+  **1.06**, CPU 30 %. Three DISC jobs (13:28): total **1.35**, CPU 42 %. Three lanes beat two on the like-for-like comparison and
+  pass the author's conditions (> 1.0, CPU < 85 %) → concurrency file set to 2, **lane c restarted 13:44** (DISC 3 from scratch;
+  the 13:28 partial run stays set aside). Windows were short (4–9 DISC epochs per job), so the totals are approximate.
+
 ### Watchdog log (machine 2, automatic; `scripts/replication/m2_watchdog.sh`)
