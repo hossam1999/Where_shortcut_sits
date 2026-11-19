@@ -1078,4 +1078,13 @@ c. **Backbone / preprocessing / data — no port error.** torchvision `vit_b_16(
   were replaced by rename, never edited in place; lane a's shell was replaced by one that adopts the running DISC 1 job
   (`WAIT_PID`; logs FAILED if its output ends incomplete, so the watchdog retries it).
 
+### 2026-11-19 11:10 UTC (machine 2's clock) — machine 2: P6 A33 + P8 DISC pairing measured: KEPT (total ≈ 1.4)
+- Script result (`/workspace/logs/pair_p6p8.json`): DISC 96.6 s/epoch alone vs 122.0 paired (ratio 0.79); P6 ERM 4.0 vs 5.0
+  "Training time" per epoch (ratio 0.80); total 1.59 → kept.
+- **Correction (mine):** P6's logged "Training time" excludes each epoch's validation pass (2,059 images), which dominates
+  its wall time, and has 1-s resolution. Wall-clock: P6 alone 5 epochs in 70 s while DISC was paused (≈ 14 s/epoch), paired
+  46 epochs in ≈ 18 min (≈ 23.5 s/epoch, includes start-up) → ratio ≈ 0.6; **total ≈ 0.79 + 0.6 ≈ 1.4 > 1.0, pairing kept**
+  (the decision does not change). Later pairing measurements use wall-clock epochs (`p8_measure.py`).
+- During the 70-s pause only DISC's main process was stopped (no DataLoader workers alive at that moment); it resumed.
+
 ### Watchdog log (machine 2, automatic; `scripts/replication/m2_watchdog.sh`)
