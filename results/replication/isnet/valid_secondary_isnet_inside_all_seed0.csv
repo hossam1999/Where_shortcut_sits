@@ -1,0 +1,4 @@
+run,condition,n,macro_f1,ci95_lo,ci95_hi
+isnet_inside_all_seed0,biased,3483,0.9982773404582375,0.9968074273466182,0.9994360906227155
+isnet_inside_all_seed0,standard,3483,0.1667025629980616,0.16091460840945093,0.17278740933310685
+isnet_inside_all_seed0,deceiving,3483,0.0,0.0,0.0
