@@ -1,0 +1,7 @@
+split,arm,mode,C,val_auroc,robust_auroc,flags,vs_Binary-ERM,Binary-ERM_auroc
+1,b_dino518_mask_cmc,pooled,1.0,1.0,0.659364098684487,"dark_corner,hair,gel_border,gel_bubble,ruler,ink,vasc","+0.305 [+0.246, +0.365]",0.35478922372126254
+1,c_umte,k = 64,1.0,1.0,0.6111356281259195,"dark_corner,hair,gel_border,gel_bubble,ruler,ink,vasc","+0.256 [+0.195, +0.319]",0.35478922372126254
+2,b_dino518_mask_cmc,pooled,10.0,1.0,0.6596688101542469,"dark_corner,hair,gel_border,gel_bubble,ruler,ink,vasc","+0.298 [+0.237, +0.358]",0.36141932501155805
+2,c_umte,k = 64,10.0,1.0,0.6063127810700626,"dark_corner,hair,gel_border,gel_bubble,ruler,ink,vasc","+0.245 [+0.183, +0.307]",0.36141932501155805
+3,b_dino518_mask_cmc,pooled,1.0,1.0,0.6540894380700206,"dark_corner,hair,gel_border,gel_bubble,ruler,ink,vasc","+0.281 [+0.222, +0.340]",0.373492203589291
+3,c_umte,k = 64,1.0,1.0,0.5989261547513974,"dark_corner,hair,gel_border,gel_bubble,ruler,ink,vasc","+0.225 [+0.167, +0.286]",0.373492203589291

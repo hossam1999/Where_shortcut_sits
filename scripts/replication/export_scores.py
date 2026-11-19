@@ -88,10 +88,16 @@ def p4():
                                          "score": d.score}))
 
 
+def p4_arms():
+    f = Path(f"{D}/replication/saab/arms_bc/preds_test.csv.gz")   # P4 arms b, c, splits 1-3 (trap test only)
+    if f.exists():
+        write("saab", "p4_arms_bc", pd.read_csv(f))
+
+
 def armd():
     for f in sorted(glob.glob(f"{D}/replication/armd/*/preds_test.csv.gz")):   # arm d (A20/A21), test rows only
         write("armd", Path(f).parent.name, pd.read_csv(f))
 
 
 if __name__ == "__main__":
-    p1(); p1_location(); p2(); p3(); p3_arms(); p4(); armd()
+    p1(); p1_location(); p2(); p3(); p3_arms(); p4(); p4_arms(); armd()
