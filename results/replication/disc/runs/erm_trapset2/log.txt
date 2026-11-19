@@ -1,0 +1,3892 @@
+Dataset: ISIC
+Shift type: confounder
+Target name: label
+Confounder names: ['hair']
+Resume: False
+Minority fraction: None
+Imbalance ratio: None
+Root dir: /workspace/data/disc/isic_set2/
+Fraction: 1.0
+Augment data: False
+Val fraction: 0.1
+Robust: False
+Alpha: 0.2
+Generalization adjustment: 0.0
+Automatic adjustment: False
+Robust step size: 0.01
+Use normalized loss: False
+Btl: False
+Model: resnet50
+Train from scratch: False
+Model kwargs: {}
+N epochs: 100
+Batch size: 16
+Lr: 0.001
+Optimizer: SGD
+Scheduler: None
+Weight decay: 1e-05
+Gamma: 0.1
+Minimum variational weight: 0
+Lisa mix up: False
+Mix ratio: 0.5
+Mix alpha: 2
+Cut mix: False
+Num warmup steps: 0
+Reweight groups: False
+Coral: False
+Mix up: False
+Rex: False
+Irm: False
+Fish: False
+Ibirm: False
+Jtt: False
+Jtt upweight: 10
+Irm penalty: 1.0
+Rex penalty: 10
+Ibirm penalty: 10
+Meta lr: 0.0001
+Disc: False
+Erm path: None
+Concept img folder: synthetic_concepts
+Concept categories: None
+N clusters: 3
+N concept imgs: 200
+Topk: 10
+Cluster: gmm
+C svm: 0.1
+Seed: 2
+Show progress: False
+Log dir: /workspace/data/disc/output/ISIC/ERM/reweight_groups=0-augment=0-lr=0.001-batch_size=16-n_epochs=100-trapset_id=2
+Log every: 50
+Save step: 50
+Save best: True
+Save last: True
+Fold: None
+Num folds per sweep: 5
+Num sweeps: 4
+Is featurizer: True
+Step gamma: 0.96
+Group by label: False
+Mode: w
+N groups: 2
+N classes: 2
+Input size: torch.Size([3, 224, 224])
+
+Training Data...
+    hair=0: n = 629
+    hair=1: n = 1193
+Validation Data...
+    hair=0: n = 84
+    hair=1: n = 70
+Test Data...
+    hair=0: n = 363
+    hair=1: n = 255
+Average incurred loss: 0.4747  
+Average sample loss: 0.4747  
+Average acc: 0.7950  
+  hair=0  [n = 281]:	loss = 0.6439  exp loss = 0.3047  adjusted loss = 0.3047  adv prob = 0.500000   acc = 0.6619
+  hair=1  [n = 519]:	loss = 0.3831  exp loss = 0.3146  adjusted loss = 0.3146  adv prob = 0.500000   acc = 0.8671
+roc auc = 0.659795
+Average incurred loss: 0.4470  
+Average sample loss: 0.4470  
+Average acc: 0.8012  
+  hair=0  [n = 278]:	loss = 0.6138  exp loss = 1.3723  adjusted loss = 1.3723  adv prob = 0.500000   acc = 0.7194
+  hair=1  [n = 522]:	loss = 0.3581  exp loss = 0.6800  adjusted loss = 0.6800  adv prob = 0.500000   acc = 0.8448
+roc auc = 0.752905
+Average incurred loss: 0.4478  
+Average sample loss: 0.4474  
+Average acc: 0.8198  
+  hair=0  [n = 70]:	loss = 0.5791  exp loss = 1.0337  adjusted loss = 1.0337  adv prob = 0.500000   acc = 0.7286
+  hair=1  [n = 152]:	loss = 0.3874  exp loss = 0.1404  adjusted loss = 0.1404  adv prob = 0.500000   acc = 0.8618
+roc auc = 0.737363
+
+ Epoch 0, Validation:
+Average incurred loss: 0.8653  
+Average sample loss: 0.8676  
+Average acc: 0.7597  
+  hair=0  [n = 84]:	loss = 0.4588  exp loss = 0.8959  adjusted loss = 0.8959  adv prob = 0.500000   acc = 0.8571
+  hair=1  [n = 70]:	loss = 1.3530  exp loss = 0.9594  adjusted loss = 0.9594  adv prob = 0.500000   acc = 0.6429
+roc auc = 0.241422
+
+Epoch 0, Testing:
+Average incurred loss: 0.7302  
+Average sample loss: 0.7378  
+Average acc: 0.7783  
+  hair=0  [n = 363]:	loss = 0.4206  exp loss = 0.5243  adjusted loss = 0.5243  adv prob = 0.500000   acc = 0.8843
+  hair=1  [n = 255]:	loss = 1.1709  exp loss = 2.1912  adjusted loss = 2.1912  adv prob = 0.500000   acc = 0.6275
+roc auc = 0.305723
+Current lr: 0.001000
+Time Cost: 0:00:09.787402
+Current validation ROCAUC: 0.24142156862745098
+Best model saved at epoch 0
+
+Average incurred loss: 0.3208  
+Average sample loss: 0.3208  
+Average acc: 0.8563  
+  hair=0  [n = 288]:	loss = 0.4456  exp loss = 0.8082  adjusted loss = 0.8082  adv prob = 0.500000   acc = 0.7847
+  hair=1  [n = 512]:	loss = 0.2506  exp loss = 0.2376  adjusted loss = 0.2376  adv prob = 0.500000   acc = 0.8965
+roc auc = 0.891429
+Average incurred loss: 0.3484  
+Average sample loss: 0.3484  
+Average acc: 0.8588  
+  hair=0  [n = 268]:	loss = 0.4924  exp loss = 0.7205  adjusted loss = 0.7205  adv prob = 0.500000   acc = 0.7873
+  hair=1  [n = 532]:	loss = 0.2758  exp loss = 0.2408  adjusted loss = 0.2408  adv prob = 0.500000   acc = 0.8947
+roc auc = 0.872579
+Average incurred loss: 0.2910  
+Average sample loss: 0.2894  
+Average acc: 0.8604  
+  hair=0  [n = 73]:	loss = 0.4180  exp loss = 0.1153  adjusted loss = 0.1153  adv prob = 0.500000   acc = 0.7945
+  hair=1  [n = 149]:	loss = 0.2289  exp loss = 0.0996  adjusted loss = 0.0996  adv prob = 0.500000   acc = 0.8926
+roc auc = 0.906824
+
+ Epoch 1, Validation:
+Average incurred loss: 0.8524  
+Average sample loss: 0.8420  
+Average acc: 0.5714  
+  hair=0  [n = 84]:	loss = 0.7108  exp loss = 0.6741  adjusted loss = 0.6741  adv prob = 0.500000   acc = 0.5952
+  hair=1  [n = 70]:	loss = 1.0223  exp loss = 0.4746  adjusted loss = 0.4746  adv prob = 0.500000   acc = 0.5429
+roc auc = 0.383333
+
+Epoch 1, Testing:
+Average incurred loss: 0.8934  
+Average sample loss: 0.9001  
+Average acc: 0.6084  
+  hair=0  [n = 363]:	loss = 0.7701  exp loss = 0.6869  adjusted loss = 0.6869  adv prob = 0.500000   acc = 0.6309
+  hair=1  [n = 255]:	loss = 1.0689  exp loss = 2.1932  adjusted loss = 2.1932  adv prob = 0.500000   acc = 0.5765
+roc auc = 0.404451
+Current lr: 0.001000
+Time Cost: 0:00:09.470646
+Current validation ROCAUC: 0.38333333333333336
+Best model saved at epoch 1
+
+Average incurred loss: 0.2036  
+Average sample loss: 0.2036  
+Average acc: 0.9150  
+  hair=0  [n = 264]:	loss = 0.3003  exp loss = 0.5344  adjusted loss = 0.5344  adv prob = 0.500000   acc = 0.8561
+  hair=1  [n = 536]:	loss = 0.1560  exp loss = 0.1249  adjusted loss = 0.1249  adv prob = 0.500000   acc = 0.9440
+roc auc = 0.960785
+Average incurred loss: 0.2444  
+Average sample loss: 0.2444  
+Average acc: 0.8937  
+  hair=0  [n = 290]:	loss = 0.2945  exp loss = 0.8120  adjusted loss = 0.8120  adv prob = 0.500000   acc = 0.8862
+  hair=1  [n = 510]:	loss = 0.2159  exp loss = 0.3328  adjusted loss = 0.3328  adv prob = 0.500000   acc = 0.8980
+roc auc = 0.939804
+Average incurred loss: 0.2281  
+Average sample loss: 0.2283  
+Average acc: 0.9054  
+  hair=0  [n = 75]:	loss = 0.2723  exp loss = 0.2338  adjusted loss = 0.2338  adv prob = 0.500000   acc = 0.8667
+  hair=1  [n = 147]:	loss = 0.2055  exp loss = 0.2507  adjusted loss = 0.2507  adv prob = 0.500000   acc = 0.9252
+roc auc = 0.955409
+
+ Epoch 2, Validation:
+Average incurred loss: 1.3776  
+Average sample loss: 1.3752  
+Average acc: 0.5455  
+  hair=0  [n = 84]:	loss = 0.9509  exp loss = 1.1389  adjusted loss = 1.1389  adv prob = 0.500000   acc = 0.5952
+  hair=1  [n = 70]:	loss = 1.8896  exp loss = 1.4870  adjusted loss = 1.4870  adv prob = 0.500000   acc = 0.4857
+roc auc = 0.257353
+
+Epoch 2, Testing:
+Average incurred loss: 1.1129  
+Average sample loss: 1.1252  
+Average acc: 0.6133  
+  hair=0  [n = 363]:	loss = 0.8359  exp loss = 0.9026  adjusted loss = 0.9026  adv prob = 0.500000   acc = 0.6474
+  hair=1  [n = 255]:	loss = 1.5072  exp loss = 3.3909  adjusted loss = 3.3909  adv prob = 0.500000   acc = 0.5647
+roc auc = 0.356727
+Current lr: 0.001000
+Time Cost: 0:00:08.605863
+Current validation ROCAUC: 0.2573529411764706
+
+Average incurred loss: 0.1414  
+Average sample loss: 0.1414  
+Average acc: 0.9488  
+  hair=0  [n = 260]:	loss = 0.1635  exp loss = 0.5450  adjusted loss = 0.5450  adv prob = 0.500000   acc = 0.9423
+  hair=1  [n = 540]:	loss = 0.1308  exp loss = 0.0530  adjusted loss = 0.0530  adv prob = 0.500000   acc = 0.9519
+roc auc = 0.980342
+Average incurred loss: 0.1740  
+Average sample loss: 0.1740  
+Average acc: 0.9263  
+  hair=0  [n = 295]:	loss = 0.2561  exp loss = 0.2823  adjusted loss = 0.2823  adv prob = 0.500000   acc = 0.8847
+  hair=1  [n = 505]:	loss = 0.1261  exp loss = 0.0217  adjusted loss = 0.0217  adv prob = 0.500000   acc = 0.9505
+roc auc = 0.970510
+Average incurred loss: 0.2728  
+Average sample loss: 0.2716  
+Average acc: 0.8964  
+  hair=0  [n = 74]:	loss = 0.2967  exp loss = 0.2708  adjusted loss = 0.2708  adv prob = 0.500000   acc = 0.8649
+  hair=1  [n = 148]:	loss = 0.2608  exp loss = 0.0111  adjusted loss = 0.0111  adv prob = 0.500000   acc = 0.9122
+roc auc = 0.937326
+
+ Epoch 3, Validation:
+Average incurred loss: 1.3720  
+Average sample loss: 1.3560  
+Average acc: 0.5000  
+  hair=0  [n = 84]:	loss = 1.3302  exp loss = 1.2321  adjusted loss = 1.2321  adv prob = 0.500000   acc = 0.5357
+  hair=1  [n = 70]:	loss = 1.4221  exp loss = 0.6566  adjusted loss = 0.6566  adv prob = 0.500000   acc = 0.4571
+roc auc = 0.378186
+
+Epoch 3, Testing:
+Average incurred loss: 1.1790  
+Average sample loss: 1.1910  
+Average acc: 0.5744  
+  hair=0  [n = 363]:	loss = 1.0923  exp loss = 1.2236  adjusted loss = 1.2236  adv prob = 0.500000   acc = 0.5785
+  hair=1  [n = 255]:	loss = 1.3025  exp loss = 3.2244  adjusted loss = 3.2244  adv prob = 0.500000   acc = 0.5686
+roc auc = 0.477460
+Current lr: 0.001000
+Time Cost: 0:00:08.714050
+Current validation ROCAUC: 0.3781862745098039
+
+Average incurred loss: 0.1222  
+Average sample loss: 0.1222  
+Average acc: 0.9525  
+  hair=0  [n = 283]:	loss = 0.1810  exp loss = 0.0213  adjusted loss = 0.0213  adv prob = 0.500000   acc = 0.9258
+  hair=1  [n = 517]:	loss = 0.0901  exp loss = 0.0102  adjusted loss = 0.0102  adv prob = 0.500000   acc = 0.9671
+roc auc = 0.985864
+Average incurred loss: 0.0613  
+Average sample loss: 0.0613  
+Average acc: 0.9775  
+  hair=0  [n = 282]:	loss = 0.0954  exp loss = 0.1018  adjusted loss = 0.1018  adv prob = 0.500000   acc = 0.9610
+  hair=1  [n = 518]:	loss = 0.0427  exp loss = 0.0130  adjusted loss = 0.0130  adv prob = 0.500000   acc = 0.9865
+roc auc = 0.997855
+Average incurred loss: 0.0945  
+Average sample loss: 0.0943  
+Average acc: 0.9550  
+  hair=0  [n = 64]:	loss = 0.0854  exp loss = 0.2058  adjusted loss = 0.2058  adv prob = 0.500000   acc = 0.9531
+  hair=1  [n = 158]:	loss = 0.0982  exp loss = 0.0279  adjusted loss = 0.0279  adv prob = 0.500000   acc = 0.9557
+roc auc = 0.993921
+
+ Epoch 4, Validation:
+Average incurred loss: 1.4315  
+Average sample loss: 1.4203  
+Average acc: 0.5065  
+  hair=0  [n = 84]:	loss = 1.1907  exp loss = 0.7810  adjusted loss = 0.7810  adv prob = 0.500000   acc = 0.5595
+  hair=1  [n = 70]:	loss = 1.7204  exp loss = 1.4863  adjusted loss = 1.4863  adv prob = 0.500000   acc = 0.4429
+roc auc = 0.365196
+
+Epoch 4, Testing:
+Average incurred loss: 1.4463  
+Average sample loss: 1.4610  
+Average acc: 0.5793  
+  hair=0  [n = 363]:	loss = 1.3723  exp loss = 1.4505  adjusted loss = 1.4505  adv prob = 0.500000   acc = 0.5895
+  hair=1  [n = 255]:	loss = 1.5515  exp loss = 3.9919  adjusted loss = 3.9919  adv prob = 0.500000   acc = 0.5647
+roc auc = 0.443240
+Current lr: 0.001000
+Time Cost: 0:00:09.819938
+Current validation ROCAUC: 0.3651960784313726
+
+Average incurred loss: 0.0457  
+Average sample loss: 0.0457  
+Average acc: 0.9888  
+  hair=0  [n = 251]:	loss = 0.0572  exp loss = 0.0760  adjusted loss = 0.0760  adv prob = 0.500000   acc = 0.9880
+  hair=1  [n = 549]:	loss = 0.0405  exp loss = 0.0155  adjusted loss = 0.0155  adv prob = 0.500000   acc = 0.9891
+roc auc = 0.998327
+Average incurred loss: 0.0562  
+Average sample loss: 0.0562  
+Average acc: 0.9775  
+  hair=0  [n = 293]:	loss = 0.0815  exp loss = 0.0037  adjusted loss = 0.0037  adv prob = 0.500000   acc = 0.9625
+  hair=1  [n = 507]:	loss = 0.0415  exp loss = 0.0171  adjusted loss = 0.0171  adv prob = 0.500000   acc = 0.9862
+roc auc = 0.997652
+Average incurred loss: 0.0938  
+Average sample loss: 0.0930  
+Average acc: 0.9640  
+  hair=0  [n = 85]:	loss = 0.1265  exp loss = 0.0067  adjusted loss = 0.0067  adv prob = 0.500000   acc = 0.9529
+  hair=1  [n = 137]:	loss = 0.0735  exp loss = 0.0040  adjusted loss = 0.0040  adv prob = 0.500000   acc = 0.9708
+roc auc = 0.993438
+
+ Epoch 5, Validation:
+Average incurred loss: 1.7652  
+Average sample loss: 1.7581  
+Average acc: 0.5130  
+  hair=0  [n = 84]:	loss = 1.3587  exp loss = 1.0089  adjusted loss = 1.0089  adv prob = 0.500000   acc = 0.5714
+  hair=1  [n = 70]:	loss = 2.2530  exp loss = 2.1426  adjusted loss = 2.1426  adv prob = 0.500000   acc = 0.4429
+roc auc = 0.283824
+
+Epoch 5, Testing:
+Average incurred loss: 1.6295  
+Average sample loss: 1.6504  
+Average acc: 0.5761  
+  hair=0  [n = 363]:	loss = 1.3042  exp loss = 1.5188  adjusted loss = 1.5188  adv prob = 0.500000   acc = 0.5978
+  hair=1  [n = 255]:	loss = 2.0925  exp loss = 5.3364  adjusted loss = 5.3364  adv prob = 0.500000   acc = 0.5451
+roc auc = 0.384622
+Current lr: 0.001000
+Time Cost: 0:00:08.338577
+Current validation ROCAUC: 0.28382352941176475
+
+Average incurred loss: 0.0557  
+Average sample loss: 0.0557  
+Average acc: 0.9787  
+  hair=0  [n = 277]:	loss = 0.0708  exp loss = 0.0295  adjusted loss = 0.0295  adv prob = 0.500000   acc = 0.9747
+  hair=1  [n = 523]:	loss = 0.0477  exp loss = 0.0071  adjusted loss = 0.0071  adv prob = 0.500000   acc = 0.9809
+roc auc = 0.997152
+Average incurred loss: 0.0384  
+Average sample loss: 0.0384  
+Average acc: 0.9900  
+  hair=0  [n = 272]:	loss = 0.0506  exp loss = 0.0849  adjusted loss = 0.0849  adv prob = 0.500000   acc = 0.9853
+  hair=1  [n = 528]:	loss = 0.0321  exp loss = 0.0355  adjusted loss = 0.0355  adv prob = 0.500000   acc = 0.9924
+roc auc = 0.998760
+Average incurred loss: 0.0561  
+Average sample loss: 0.0559  
+Average acc: 0.9820  
+  hair=0  [n = 80]:	loss = 0.1427  exp loss = 0.1478  adjusted loss = 0.1478  adv prob = 0.500000   acc = 0.9500
+  hair=1  [n = 142]:	loss = 0.0072  exp loss = 0.0020  adjusted loss = 0.0020  adv prob = 0.500000   acc = 1.0000
+roc auc = 0.995742
+
+ Epoch 6, Validation:
+Average incurred loss: 1.9211  
+Average sample loss: 1.9223  
+Average acc: 0.5844  
+  hair=0  [n = 84]:	loss = 1.1016  exp loss = 1.3890  adjusted loss = 1.3890  adv prob = 0.500000   acc = 0.6905
+  hair=1  [n = 70]:	loss = 2.9045  exp loss = 2.5160  adjusted loss = 2.5160  adv prob = 0.500000   acc = 0.4571
+roc auc = 0.313235
+
+Epoch 6, Testing:
+Average incurred loss: 1.7285  
+Average sample loss: 1.7564  
+Average acc: 0.6602  
+  hair=0  [n = 363]:	loss = 1.0544  exp loss = 0.6334  adjusted loss = 0.6334  adv prob = 0.500000   acc = 0.7163
+  hair=1  [n = 255]:	loss = 2.6881  exp loss = 7.2996  adjusted loss = 7.2996  adv prob = 0.500000   acc = 0.5804
+roc auc = 0.380723
+Current lr: 0.001000
+Time Cost: 0:00:09.030163
+Current validation ROCAUC: 0.31323529411764706
+
+Average incurred loss: 0.0524  
+Average sample loss: 0.0524  
+Average acc: 0.9837  
+  hair=0  [n = 277]:	loss = 0.0770  exp loss = 0.0019  adjusted loss = 0.0019  adv prob = 0.500000   acc = 0.9747
+  hair=1  [n = 523]:	loss = 0.0394  exp loss = 0.3628  adjusted loss = 0.3628  adv prob = 0.500000   acc = 0.9885
+roc auc = 0.997018
+Average incurred loss: 0.0545  
+Average sample loss: 0.0545  
+Average acc: 0.9812  
+  hair=0  [n = 282]:	loss = 0.0769  exp loss = 0.0723  adjusted loss = 0.0723  adv prob = 0.500000   acc = 0.9787
+  hair=1  [n = 518]:	loss = 0.0423  exp loss = 0.3017  adjusted loss = 0.3017  adv prob = 0.500000   acc = 0.9826
+roc auc = 0.997089
+Average incurred loss: 0.0444  
+Average sample loss: 0.0451  
+Average acc: 0.9910  
+  hair=0  [n = 70]:	loss = 0.0627  exp loss = 0.1319  adjusted loss = 0.1319  adv prob = 0.500000   acc = 0.9714
+  hair=1  [n = 152]:	loss = 0.0359  exp loss = 0.1254  adjusted loss = 0.1254  adv prob = 0.500000   acc = 1.0000
+roc auc = 0.999091
+
+ Epoch 7, Validation:
+Average incurred loss: 1.7336  
+Average sample loss: 1.7453  
+Average acc: 0.6104  
+  hair=0  [n = 84]:	loss = 1.2805  exp loss = 2.4053  adjusted loss = 2.4053  adv prob = 0.500000   acc = 0.6786
+  hair=1  [n = 70]:	loss = 2.2774  exp loss = 1.6823  adjusted loss = 1.6823  adv prob = 0.500000   acc = 0.5286
+roc auc = 0.313971
+
+Epoch 7, Testing:
+Average incurred loss: 1.4276  
+Average sample loss: 1.4485  
+Average acc: 0.6667  
+  hair=0  [n = 363]:	loss = 0.8924  exp loss = 1.4601  adjusted loss = 1.4601  adv prob = 0.500000   acc = 0.7410
+  hair=1  [n = 255]:	loss = 2.1895  exp loss = 5.0346  adjusted loss = 5.0346  adv prob = 0.500000   acc = 0.5608
+roc auc = 0.445013
+Current lr: 0.001000
+Time Cost: 0:00:09.974710
+Current validation ROCAUC: 0.3139705882352941
+
+Average incurred loss: 0.0532  
+Average sample loss: 0.0532  
+Average acc: 0.9787  
+  hair=0  [n = 282]:	loss = 0.0770  exp loss = 0.0699  adjusted loss = 0.0699  adv prob = 0.500000   acc = 0.9681
+  hair=1  [n = 518]:	loss = 0.0402  exp loss = 0.0012  adjusted loss = 0.0012  adv prob = 0.500000   acc = 0.9846
+roc auc = 0.997209
+Average incurred loss: 0.0369  
+Average sample loss: 0.0369  
+Average acc: 0.9887  
+  hair=0  [n = 274]:	loss = 0.0456  exp loss = 0.0056  adjusted loss = 0.0056  adv prob = 0.500000   acc = 0.9854
+  hair=1  [n = 526]:	loss = 0.0324  exp loss = 0.0025  adjusted loss = 0.0025  adv prob = 0.500000   acc = 0.9905
+roc auc = 0.999088
+Average incurred loss: 0.0691  
+Average sample loss: 0.0687  
+Average acc: 0.9775  
+  hair=0  [n = 73]:	loss = 0.1000  exp loss = 0.0570  adjusted loss = 0.0570  adv prob = 0.500000   acc = 0.9589
+  hair=1  [n = 149]:	loss = 0.0539  exp loss = 0.0023  adjusted loss = 0.0023  adv prob = 0.500000   acc = 0.9866
+roc auc = 0.995148
+
+ Epoch 8, Validation:
+Average incurred loss: 1.8758  
+Average sample loss: 1.8807  
+Average acc: 0.5844  
+  hair=0  [n = 84]:	loss = 1.2699  exp loss = 1.8958  adjusted loss = 1.8958  adv prob = 0.500000   acc = 0.6667
+  hair=1  [n = 70]:	loss = 2.6029  exp loss = 2.1179  adjusted loss = 2.1179  adv prob = 0.500000   acc = 0.4857
+roc auc = 0.385294
+
+Epoch 8, Testing:
+Average incurred loss: 1.7162  
+Average sample loss: 1.7375  
+Average acc: 0.6505  
+  hair=0  [n = 363]:	loss = 1.1909  exp loss = 0.4734  adjusted loss = 0.4734  adv prob = 0.500000   acc = 0.6860
+  hair=1  [n = 255]:	loss = 2.4641  exp loss = 6.2241  adjusted loss = 6.2241  adv prob = 0.500000   acc = 0.6000
+roc auc = 0.460057
+Current lr: 0.001000
+Time Cost: 0:00:08.940477
+Current validation ROCAUC: 0.3852941176470588
+Best model saved at epoch 8
+
+Average incurred loss: 0.0332  
+Average sample loss: 0.0332  
+Average acc: 0.9937  
+  hair=0  [n = 284]:	loss = 0.0423  exp loss = 0.0077  adjusted loss = 0.0077  adv prob = 0.500000   acc = 0.9930
+  hair=1  [n = 516]:	loss = 0.0282  exp loss = 0.0011  adjusted loss = 0.0011  adv prob = 0.500000   acc = 0.9942
+roc auc = 0.998413
+Average incurred loss: 0.0368  
+Average sample loss: 0.0368  
+Average acc: 0.9887  
+  hair=0  [n = 271]:	loss = 0.0536  exp loss = 0.0094  adjusted loss = 0.0094  adv prob = 0.500000   acc = 0.9779
+  hair=1  [n = 529]:	loss = 0.0282  exp loss = 0.0046  adjusted loss = 0.0046  adv prob = 0.500000   acc = 0.9943
+roc auc = 0.998807
+Average incurred loss: 0.0192  
+Average sample loss: 0.0202  
+Average acc: 0.9955  
+  hair=0  [n = 74]:	loss = 0.0146  exp loss = 0.0636  adjusted loss = 0.0636  adv prob = 0.500000   acc = 1.0000
+  hair=1  [n = 148]:	loss = 0.0215  exp loss = 0.1749  adjusted loss = 0.1749  adv prob = 0.500000   acc = 0.9932
+roc auc = 0.999868
+
+ Epoch 9, Validation:
+Average incurred loss: 2.1427  
+Average sample loss: 2.1681  
+Average acc: 0.6169  
+  hair=0  [n = 84]:	loss = 1.4389  exp loss = 2.9167  adjusted loss = 2.9167  adv prob = 0.500000   acc = 0.6667
+  hair=1  [n = 70]:	loss = 2.9871  exp loss = 2.7245  adjusted loss = 2.7245  adv prob = 0.500000   acc = 0.5571
+roc auc = 0.310784
+
+Epoch 9, Testing:
+Average incurred loss: 1.9524  
+Average sample loss: 1.9863  
+Average acc: 0.6456  
+  hair=0  [n = 363]:	loss = 1.1777  exp loss = 1.2024  adjusted loss = 1.2024  adv prob = 0.500000   acc = 0.6860
+  hair=1  [n = 255]:	loss = 3.0552  exp loss = 8.3248  adjusted loss = 8.3248  adv prob = 0.500000   acc = 0.5882
+roc auc = 0.373276
+Current lr: 0.001000
+Time Cost: 0:00:08.473515
+Current validation ROCAUC: 0.3107843137254902
+
+Average incurred loss: 0.0101  
+Average sample loss: 0.0101  
+Average acc: 0.9987  
+  hair=0  [n = 275]:	loss = 0.0147  exp loss = 0.0032  adjusted loss = 0.0032  adv prob = 0.500000   acc = 0.9964
+  hair=1  [n = 525]:	loss = 0.0078  exp loss = 0.0294  adjusted loss = 0.0294  adv prob = 0.500000   acc = 1.0000
+roc auc = 1.000000
+Average incurred loss: 0.0277  
+Average sample loss: 0.0277  
+Average acc: 0.9912  
+  hair=0  [n = 280]:	loss = 0.0266  exp loss = 0.0145  adjusted loss = 0.0145  adv prob = 0.500000   acc = 0.9929
+  hair=1  [n = 520]:	loss = 0.0282  exp loss = 0.0003  adjusted loss = 0.0003  adv prob = 0.500000   acc = 0.9904
+roc auc = 0.999009
+Average incurred loss: 0.0271  
+Average sample loss: 0.0273  
+Average acc: 0.9910  
+  hair=0  [n = 74]:	loss = 0.0382  exp loss = 0.0048  adjusted loss = 0.0048  adv prob = 0.500000   acc = 0.9730
+  hair=1  [n = 148]:	loss = 0.0215  exp loss = 0.0781  adjusted loss = 0.0781  adv prob = 0.500000   acc = 1.0000
+roc auc = 0.999623
+
+ Epoch 10, Validation:
+Average incurred loss: 1.9277  
+Average sample loss: 1.9517  
+Average acc: 0.6039  
+  hair=0  [n = 84]:	loss = 1.2972  exp loss = 2.7255  adjusted loss = 2.7255  adv prob = 0.500000   acc = 0.6786
+  hair=1  [n = 70]:	loss = 2.6844  exp loss = 2.4076  adjusted loss = 2.4076  adv prob = 0.500000   acc = 0.5143
+roc auc = 0.375735
+
+Epoch 10, Testing:
+Average incurred loss: 1.8215  
+Average sample loss: 1.8561  
+Average acc: 0.6586  
+  hair=0  [n = 363]:	loss = 1.2406  exp loss = 1.7295  adjusted loss = 1.7295  adv prob = 0.500000   acc = 0.7025
+  hair=1  [n = 255]:	loss = 2.6483  exp loss = 7.8842  adjusted loss = 7.8842  adv prob = 0.500000   acc = 0.5961
+roc auc = 0.432848
+Current lr: 0.001000
+Time Cost: 0:00:08.380566
+Current validation ROCAUC: 0.37573529411764706
+
+Average incurred loss: 0.0186  
+Average sample loss: 0.0186  
+Average acc: 0.9925  
+  hair=0  [n = 269]:	loss = 0.0221  exp loss = 0.0039  adjusted loss = 0.0039  adv prob = 0.500000   acc = 0.9963
+  hair=1  [n = 531]:	loss = 0.0168  exp loss = 0.0004  adjusted loss = 0.0004  adv prob = 0.500000   acc = 0.9906
+roc auc = 0.999724
+Average incurred loss: 0.0132  
+Average sample loss: 0.0132  
+Average acc: 0.9963  
+  hair=0  [n = 271]:	loss = 0.0142  exp loss = 0.0042  adjusted loss = 0.0042  adv prob = 0.500000   acc = 0.9963
+  hair=1  [n = 529]:	loss = 0.0127  exp loss = 0.0013  adjusted loss = 0.0013  adv prob = 0.500000   acc = 0.9962
+roc auc = 0.999949
+Average incurred loss: 0.0175  
+Average sample loss: 0.0175  
+Average acc: 0.9955  
+  hair=0  [n = 89]:	loss = 0.0345  exp loss = 0.0039  adjusted loss = 0.0039  adv prob = 0.500000   acc = 0.9888
+  hair=1  [n = 133]:	loss = 0.0062  exp loss = 0.0135  adjusted loss = 0.0135  adv prob = 0.500000   acc = 1.0000
+roc auc = 0.999780
+
+ Epoch 11, Validation:
+Average incurred loss: 2.3716  
+Average sample loss: 2.4029  
+Average acc: 0.5974  
+  hair=0  [n = 84]:	loss = 1.7485  exp loss = 3.7871  adjusted loss = 3.7871  adv prob = 0.500000   acc = 0.6548
+  hair=1  [n = 70]:	loss = 3.1194  exp loss = 2.6254  adjusted loss = 2.6254  adv prob = 0.500000   acc = 0.5286
+roc auc = 0.314951
+
+Epoch 11, Testing:
+Average incurred loss: 2.2097  
+Average sample loss: 2.2464  
+Average acc: 0.6440  
+  hair=0  [n = 363]:	loss = 1.5000  exp loss = 2.1902  adjusted loss = 2.1902  adv prob = 0.500000   acc = 0.6804
+  hair=1  [n = 255]:	loss = 3.2199  exp loss = 8.5866  adjusted loss = 8.5866  adv prob = 0.500000   acc = 0.5922
+roc auc = 0.364575
+Current lr: 0.001000
+Time Cost: 0:00:08.171855
+Current validation ROCAUC: 0.31495098039215685
+
+Average incurred loss: 0.0636  
+Average sample loss: 0.0636  
+Average acc: 0.9788  
+  hair=0  [n = 270]:	loss = 0.0696  exp loss = 0.0354  adjusted loss = 0.0354  adv prob = 0.500000   acc = 0.9815
+  hair=1  [n = 530]:	loss = 0.0606  exp loss = 0.0004  adjusted loss = 0.0004  adv prob = 0.500000   acc = 0.9774
+roc auc = 0.995758
+Average incurred loss: 0.0422  
+Average sample loss: 0.0422  
+Average acc: 0.9900  
+  hair=0  [n = 277]:	loss = 0.0789  exp loss = 0.0031  adjusted loss = 0.0031  adv prob = 0.500000   acc = 0.9783
+  hair=1  [n = 523]:	loss = 0.0227  exp loss = 0.0005  adjusted loss = 0.0005  adv prob = 0.500000   acc = 0.9962
+roc auc = 0.998036
+Average incurred loss: 0.0266  
+Average sample loss: 0.0264  
+Average acc: 0.9910  
+  hair=0  [n = 82]:	loss = 0.0564  exp loss = 0.0088  adjusted loss = 0.0088  adv prob = 0.500000   acc = 0.9756
+  hair=1  [n = 140]:	loss = 0.0092  exp loss = 0.0009  adjusted loss = 0.0009  adv prob = 0.500000   acc = 1.0000
+roc auc = 0.999714
+
+ Epoch 12, Validation:
+Average incurred loss: 2.5503  
+Average sample loss: 2.5643  
+Average acc: 0.5714  
+  hair=0  [n = 84]:	loss = 1.6679  exp loss = 3.0105  adjusted loss = 3.0105  adv prob = 0.500000   acc = 0.6310
+  hair=1  [n = 70]:	loss = 3.6092  exp loss = 2.8383  adjusted loss = 2.8383  adv prob = 0.500000   acc = 0.5000
+roc auc = 0.271078
+
+Epoch 12, Testing:
+Average incurred loss: 2.1876  
+Average sample loss: 2.2273  
+Average acc: 0.6084  
+  hair=0  [n = 363]:	loss = 1.4857  exp loss = 0.8991  adjusted loss = 0.8991  adv prob = 0.500000   acc = 0.6391
+  hair=1  [n = 255]:	loss = 3.1867  exp loss = 9.9444  adjusted loss = 9.9444  adv prob = 0.500000   acc = 0.5647
+roc auc = 0.329752
+Current lr: 0.001000
+Time Cost: 0:00:09.754203
+Current validation ROCAUC: 0.27107843137254906
+
+Average incurred loss: 0.0428  
+Average sample loss: 0.0428  
+Average acc: 0.9925  
+  hair=0  [n = 285]:	loss = 0.0577  exp loss = 0.0003  adjusted loss = 0.0003  adv prob = 0.500000   acc = 0.9860
+  hair=1  [n = 515]:	loss = 0.0346  exp loss = 0.0009  adjusted loss = 0.0009  adv prob = 0.500000   acc = 0.9961
+roc auc = 0.996840
+Average incurred loss: 0.0335  
+Average sample loss: 0.0335  
+Average acc: 0.9913  
+  hair=0  [n = 265]:	loss = 0.0443  exp loss = 0.0231  adjusted loss = 0.0231  adv prob = 0.500000   acc = 0.9887
+  hair=1  [n = 535]:	loss = 0.0282  exp loss = 0.0057  adjusted loss = 0.0057  adv prob = 0.500000   acc = 0.9925
+roc auc = 0.998707
+Average incurred loss: 0.0393  
+Average sample loss: 0.0411  
+Average acc: 0.9865  
+  hair=0  [n = 79]:	loss = 0.0556  exp loss = 0.5128  adjusted loss = 0.5128  adv prob = 0.500000   acc = 0.9873
+  hair=1  [n = 143]:	loss = 0.0303  exp loss = 0.1333  adjusted loss = 0.1333  adv prob = 0.500000   acc = 0.9860
+roc auc = 0.999610
+
+ Epoch 13, Validation:
+Average incurred loss: 2.3563  
+Average sample loss: 2.3416  
+Average acc: 0.5584  
+  hair=0  [n = 84]:	loss = 1.6046  exp loss = 1.4832  adjusted loss = 1.4832  adv prob = 0.500000   acc = 0.6190
+  hair=1  [n = 70]:	loss = 3.2582  exp loss = 2.4468  adjusted loss = 2.4468  adv prob = 0.500000   acc = 0.4857
+roc auc = 0.324020
+
+Epoch 13, Testing:
+Average incurred loss: 2.1268  
+Average sample loss: 2.1497  
+Average acc: 0.6084  
+  hair=0  [n = 363]:	loss = 1.5588  exp loss = 1.0714  adjusted loss = 1.0714  adv prob = 0.500000   acc = 0.6198
+  hair=1  [n = 255]:	loss = 2.9353  exp loss = 6.8035  adjusted loss = 6.8035  adv prob = 0.500000   acc = 0.5922
+roc auc = 0.398728
+Current lr: 0.001000
+Time Cost: 0:00:09.342501
+Current validation ROCAUC: 0.3240196078431372
+
+Average incurred loss: 0.0182  
+Average sample loss: 0.0182  
+Average acc: 0.9963  
+  hair=0  [n = 277]:	loss = 0.0177  exp loss = 0.0214  adjusted loss = 0.0214  adv prob = 0.500000   acc = 0.9964
+  hair=1  [n = 523]:	loss = 0.0185  exp loss = 0.0061  adjusted loss = 0.0061  adv prob = 0.500000   acc = 0.9962
+roc auc = 0.999798
+Average incurred loss: 0.0280  
+Average sample loss: 0.0280  
+Average acc: 0.9913  
+  hair=0  [n = 281]:	loss = 0.0334  exp loss = 0.0001  adjusted loss = 0.0001  adv prob = 0.500000   acc = 0.9893
+  hair=1  [n = 519]:	loss = 0.0251  exp loss = 0.1530  adjusted loss = 0.1530  adv prob = 0.500000   acc = 0.9923
+roc auc = 0.999361
+Average incurred loss: 0.0298  
+Average sample loss: 0.0296  
+Average acc: 0.9865  
+  hair=0  [n = 71]:	loss = 0.0153  exp loss = 0.0044  adjusted loss = 0.0044  adv prob = 0.500000   acc = 1.0000
+  hair=1  [n = 151]:	loss = 0.0367  exp loss = 0.0041  adjusted loss = 0.0041  adv prob = 0.500000   acc = 0.9801
+roc auc = 0.999416
+
+ Epoch 14, Validation:
+Average incurred loss: 1.9344  
+Average sample loss: 1.9349  
+Average acc: 0.6364  
+  hair=0  [n = 84]:	loss = 1.0746  exp loss = 1.4294  adjusted loss = 1.4294  adv prob = 0.500000   acc = 0.7262
+  hair=1  [n = 70]:	loss = 2.9662  exp loss = 2.4647  adjusted loss = 2.4647  adv prob = 0.500000   acc = 0.5286
+roc auc = 0.447059
+
+Epoch 14, Testing:
+Average incurred loss: 1.6266  
+Average sample loss: 1.6542  
+Average acc: 0.6926  
+  hair=0  [n = 363]:	loss = 0.9635  exp loss = 1.8661  adjusted loss = 1.8661  adv prob = 0.500000   acc = 0.7548
+  hair=1  [n = 255]:	loss = 2.5706  exp loss = 6.2431  adjusted loss = 6.2431  adv prob = 0.500000   acc = 0.6039
+roc auc = 0.505639
+Current lr: 0.001000
+Time Cost: 0:00:09.295477
+Current validation ROCAUC: 0.44705882352941173
+Best model saved at epoch 14
+
+Average incurred loss: 0.0192  
+Average sample loss: 0.0192  
+Average acc: 0.9938  
+  hair=0  [n = 264]:	loss = 0.0445  exp loss = 0.0001  adjusted loss = 0.0001  adv prob = 0.500000   acc = 0.9811
+  hair=1  [n = 536]:	loss = 0.0067  exp loss = 0.0011  adjusted loss = 0.0011  adv prob = 0.500000   acc = 1.0000
+roc auc = 0.999790
+Average incurred loss: 0.0116  
+Average sample loss: 0.0116  
+Average acc: 0.9975  
+  hair=0  [n = 270]:	loss = 0.0113  exp loss = 0.0150  adjusted loss = 0.0150  adv prob = 0.500000   acc = 1.0000
+  hair=1  [n = 530]:	loss = 0.0118  exp loss = 0.0014  adjusted loss = 0.0014  adv prob = 0.500000   acc = 0.9962
+roc auc = 0.999901
+Average incurred loss: 0.0183  
+Average sample loss: 0.0197  
+Average acc: 0.9910  
+  hair=0  [n = 95]:	loss = 0.0385  exp loss = 0.3933  adjusted loss = 0.3933  adv prob = 0.500000   acc = 0.9789
+  hair=1  [n = 127]:	loss = 0.0032  exp loss = 0.0123  adjusted loss = 0.0123  adv prob = 0.500000   acc = 1.0000
+roc auc = 0.999774
+
+ Epoch 15, Validation:
+Average incurred loss: 2.2758  
+Average sample loss: 2.2717  
+Average acc: 0.6429  
+  hair=0  [n = 84]:	loss = 1.2402  exp loss = 2.0114  adjusted loss = 2.0114  adv prob = 0.500000   acc = 0.7143
+  hair=1  [n = 70]:	loss = 3.5184  exp loss = 2.3245  adjusted loss = 2.3245  adv prob = 0.500000   acc = 0.5571
+roc auc = 0.370833
+
+Epoch 15, Testing:
+Average incurred loss: 2.0018  
+Average sample loss: 2.0333  
+Average acc: 0.6828  
+  hair=0  [n = 363]:	loss = 1.0702  exp loss = 1.7541  adjusted loss = 1.7541  adv prob = 0.500000   acc = 0.7466
+  hair=1  [n = 255]:	loss = 3.3281  exp loss = 7.6223  adjusted loss = 7.6223  adv prob = 0.500000   acc = 0.5922
+roc auc = 0.416416
+Current lr: 0.001000
+Time Cost: 0:00:10.232406
+Current validation ROCAUC: 0.37083333333333335
+
+Average incurred loss: 0.0123  
+Average sample loss: 0.0123  
+Average acc: 0.9963  
+  hair=0  [n = 284]:	loss = 0.0167  exp loss = 0.0006  adjusted loss = 0.0006  adv prob = 0.500000   acc = 0.9930
+  hair=1  [n = 516]:	loss = 0.0099  exp loss = 0.0002  adjusted loss = 0.0002  adv prob = 0.500000   acc = 0.9981
+roc auc = 0.999934
+Average incurred loss: 0.0209  
+Average sample loss: 0.0209  
+Average acc: 0.9950  
+  hair=0  [n = 266]:	loss = 0.0488  exp loss = 0.0033  adjusted loss = 0.0033  adv prob = 0.500000   acc = 0.9850
+  hair=1  [n = 534]:	loss = 0.0070  exp loss = 0.0031  adjusted loss = 0.0031  adv prob = 0.500000   acc = 1.0000
+roc auc = 0.999614
+Average incurred loss: 0.0173  
+Average sample loss: 0.0172  
+Average acc: 0.9910  
+  hair=0  [n = 79]:	loss = 0.0424  exp loss = 0.0004  adjusted loss = 0.0004  adv prob = 0.500000   acc = 0.9747
+  hair=1  [n = 143]:	loss = 0.0034  exp loss = 0.0101  adjusted loss = 0.0101  adv prob = 0.500000   acc = 1.0000
+roc auc = 0.999753
+
+ Epoch 16, Validation:
+Average incurred loss: 2.5628  
+Average sample loss: 2.5759  
+Average acc: 0.5390  
+  hair=0  [n = 84]:	loss = 1.6856  exp loss = 2.7579  adjusted loss = 2.7579  adv prob = 0.500000   acc = 0.6190
+  hair=1  [n = 70]:	loss = 3.6155  exp loss = 3.0646  adjusted loss = 3.0646  adv prob = 0.500000   acc = 0.4429
+roc auc = 0.303922
+
+Epoch 16, Testing:
+Average incurred loss: 2.1016  
+Average sample loss: 2.1327  
+Average acc: 0.6036  
+  hair=0  [n = 363]:	loss = 1.4597  exp loss = 3.9225  adjusted loss = 3.9225  adv prob = 0.500000   acc = 0.6419
+  hair=1  [n = 255]:	loss = 3.0153  exp loss = 6.2774  adjusted loss = 6.2774  adv prob = 0.500000   acc = 0.5490
+roc auc = 0.384454
+Current lr: 0.001000
+Time Cost: 0:00:09.509522
+Current validation ROCAUC: 0.303921568627451
+
+Average incurred loss: 0.0134  
+Average sample loss: 0.0134  
+Average acc: 0.9963  
+  hair=0  [n = 273]:	loss = 0.0245  exp loss = 0.0000  adjusted loss = 0.0000  adv prob = 0.500000   acc = 0.9927
+  hair=1  [n = 527]:	loss = 0.0077  exp loss = 0.0084  adjusted loss = 0.0084  adv prob = 0.500000   acc = 0.9981
+roc auc = 0.999880
+Average incurred loss: 0.0128  
+Average sample loss: 0.0128  
+Average acc: 0.9963  
+  hair=0  [n = 274]:	loss = 0.0109  exp loss = 0.0007  adjusted loss = 0.0007  adv prob = 0.500000   acc = 1.0000
+  hair=1  [n = 526]:	loss = 0.0138  exp loss = 0.0113  adjusted loss = 0.0113  adv prob = 0.500000   acc = 0.9943
+roc auc = 0.999949
+Average incurred loss: 0.0364  
+Average sample loss: 0.0376  
+Average acc: 0.9865  
+  hair=0  [n = 82]:	loss = 0.0815  exp loss = 0.3355  adjusted loss = 0.3355  adv prob = 0.500000   acc = 0.9756
+  hair=1  [n = 140]:	loss = 0.0100  exp loss = 0.0000  adjusted loss = 0.0000  adv prob = 0.500000   acc = 0.9929
+roc auc = 0.999191
+
+ Epoch 17, Validation:
+Average incurred loss: 2.3911  
+Average sample loss: 2.4200  
+Average acc: 0.6429  
+  hair=0  [n = 84]:	loss = 1.2624  exp loss = 2.3163  adjusted loss = 2.3163  adv prob = 0.500000   acc = 0.6786
+  hair=1  [n = 70]:	loss = 3.7455  exp loss = 4.0094  adjusted loss = 4.0094  adv prob = 0.500000   acc = 0.6000
+roc auc = 0.373775
+
+Epoch 17, Testing:
+Average incurred loss: 2.0757  
+Average sample loss: 2.1197  
+Average acc: 0.6796  
+  hair=0  [n = 363]:	loss = 1.2623  exp loss = 3.5279  adjusted loss = 3.5279  adv prob = 0.500000   acc = 0.7300
+  hair=1  [n = 255]:	loss = 3.2336  exp loss = 8.7398  adjusted loss = 8.7398  adv prob = 0.500000   acc = 0.6078
+roc auc = 0.430087
+Current lr: 0.001000
+Time Cost: 0:00:10.309640
+Current validation ROCAUC: 0.3737745098039216
+
+Average incurred loss: 0.0106  
+Average sample loss: 0.0106  
+Average acc: 0.9962  
+  hair=0  [n = 276]:	loss = 0.0201  exp loss = 0.4682  adjusted loss = 0.4682  adv prob = 0.500000   acc = 0.9928
+  hair=1  [n = 524]:	loss = 0.0056  exp loss = 0.0172  adjusted loss = 0.0172  adv prob = 0.500000   acc = 0.9981
+roc auc = 0.999917
+Average incurred loss: 0.0156  
+Average sample loss: 0.0156  
+Average acc: 0.9950  
+  hair=0  [n = 283]:	loss = 0.0164  exp loss = 0.0011  adjusted loss = 0.0011  adv prob = 0.500000   acc = 0.9965
+  hair=1  [n = 517]:	loss = 0.0151  exp loss = 0.0005  adjusted loss = 0.0005  adv prob = 0.500000   acc = 0.9942
+roc auc = 0.999810
+Average incurred loss: 0.0276  
+Average sample loss: 0.0274  
+Average acc: 0.9910  
+  hair=0  [n = 70]:	loss = 0.0502  exp loss = 0.0026  adjusted loss = 0.0026  adv prob = 0.500000   acc = 0.9857
+  hair=1  [n = 152]:	loss = 0.0172  exp loss = 0.0001  adjusted loss = 0.0001  adv prob = 0.500000   acc = 0.9934
+roc auc = 0.999271
+
+ Epoch 18, Validation:
+Average incurred loss: 2.5352  
+Average sample loss: 2.5528  
+Average acc: 0.5649  
+  hair=0  [n = 84]:	loss = 1.4816  exp loss = 3.0986  adjusted loss = 3.0986  adv prob = 0.500000   acc = 0.6310
+  hair=1  [n = 70]:	loss = 3.7994  exp loss = 2.9113  adjusted loss = 2.9113  adv prob = 0.500000   acc = 0.4857
+roc auc = 0.293382
+
+Epoch 18, Testing:
+Average incurred loss: 2.3196  
+Average sample loss: 2.3588  
+Average acc: 0.6117  
+  hair=0  [n = 363]:	loss = 1.5833  exp loss = 2.5900  adjusted loss = 2.5900  adv prob = 0.500000   acc = 0.6391
+  hair=1  [n = 255]:	loss = 3.3677  exp loss = 8.9398  adjusted loss = 8.9398  adv prob = 0.500000   acc = 0.5725
+roc auc = 0.333635
+Current lr: 0.001000
+Time Cost: 0:00:08.452828
+Current validation ROCAUC: 0.2933823529411765
+
+Average incurred loss: 0.0072  
+Average sample loss: 0.0072  
+Average acc: 0.9988  
+  hair=0  [n = 268]:	loss = 0.0123  exp loss = 0.0002  adjusted loss = 0.0002  adv prob = 0.500000   acc = 0.9963
+  hair=1  [n = 532]:	loss = 0.0047  exp loss = 0.0020  adjusted loss = 0.0020  adv prob = 0.500000   acc = 1.0000
+roc auc = 1.000000
+Average incurred loss: 0.0033  
+Average sample loss: 0.0033  
+Average acc: 1.0000  
+  hair=0  [n = 290]:	loss = 0.0048  exp loss = 0.0003  adjusted loss = 0.0003  adv prob = 0.500000   acc = 1.0000
+  hair=1  [n = 510]:	loss = 0.0025  exp loss = 0.0054  adjusted loss = 0.0054  adv prob = 0.500000   acc = 1.0000
+roc auc = 1.000000
+Average incurred loss: 0.0055  
+Average sample loss: 0.0054  
+Average acc: 1.0000  
+  hair=0  [n = 71]:	loss = 0.0085  exp loss = 0.0002  adjusted loss = 0.0002  adv prob = 0.500000   acc = 1.0000
+  hair=1  [n = 151]:	loss = 0.0041  exp loss = 0.0009  adjusted loss = 0.0009  adv prob = 0.500000   acc = 1.0000
+roc auc = 1.000000
+
+ Epoch 19, Validation:
+Average incurred loss: 2.4200  
+Average sample loss: 2.4173  
+Average acc: 0.5455  
+  hair=0  [n = 84]:	loss = 1.6269  exp loss = 2.2399  adjusted loss = 2.2399  adv prob = 0.500000   acc = 0.6071
+  hair=1  [n = 70]:	loss = 3.3717  exp loss = 2.4550  adjusted loss = 2.4550  adv prob = 0.500000   acc = 0.4714
+roc auc = 0.316422
+
+Epoch 19, Testing:
+Average incurred loss: 2.2281  
+Average sample loss: 2.2573  
+Average acc: 0.5890  
+  hair=0  [n = 363]:	loss = 1.7097  exp loss = 1.9074  adjusted loss = 1.9074  adv prob = 0.500000   acc = 0.6061
+  hair=1  [n = 255]:	loss = 2.9661  exp loss = 7.5045  adjusted loss = 7.5045  adv prob = 0.500000   acc = 0.5647
+roc auc = 0.373778
+Current lr: 0.001000
+Time Cost: 0:00:09.058904
+Current validation ROCAUC: 0.31642156862745097
+
+Average incurred loss: 0.0040  
+Average sample loss: 0.0040  
+Average acc: 1.0000  
+  hair=0  [n = 269]:	loss = 0.0082  exp loss = 0.0150  adjusted loss = 0.0150  adv prob = 0.500000   acc = 1.0000
+  hair=1  [n = 531]:	loss = 0.0018  exp loss = 0.0038  adjusted loss = 0.0038  adv prob = 0.500000   acc = 1.0000
+roc auc = 1.000000
+Average incurred loss: 0.0067  
+Average sample loss: 0.0067  
+Average acc: 0.9987  
+  hair=0  [n = 281]:	loss = 0.0133  exp loss = 0.0011  adjusted loss = 0.0011  adv prob = 0.500000   acc = 0.9964
+  hair=1  [n = 519]:	loss = 0.0031  exp loss = 0.0001  adjusted loss = 0.0001  adv prob = 0.500000   acc = 1.0000
+roc auc = 0.999971
+Average incurred loss: 0.0017  
+Average sample loss: 0.0017  
+Average acc: 1.0000  
+  hair=0  [n = 79]:	loss = 0.0029  exp loss = 0.0051  adjusted loss = 0.0051  adv prob = 0.500000   acc = 1.0000
+  hair=1  [n = 143]:	loss = 0.0010  exp loss = 0.0027  adjusted loss = 0.0027  adv prob = 0.500000   acc = 1.0000
+roc auc = 1.000000
+
+ Epoch 20, Validation:
+Average incurred loss: 2.3400  
+Average sample loss: 2.3701  
+Average acc: 0.6299  
+  hair=0  [n = 84]:	loss = 1.2463  exp loss = 3.2262  adjusted loss = 3.2262  adv prob = 0.500000   acc = 0.6905
+  hair=1  [n = 70]:	loss = 3.6525  exp loss = 3.0597  adjusted loss = 3.0597  adv prob = 0.500000   acc = 0.5571
+roc auc = 0.364461
+
+Epoch 20, Testing:
+Average incurred loss: 2.0167  
+Average sample loss: 2.0492  
+Average acc: 0.6715  
+  hair=0  [n = 363]:	loss = 1.1773  exp loss = 1.9503  adjusted loss = 1.9503  adv prob = 0.500000   acc = 0.7273
+  hair=1  [n = 255]:	loss = 3.2117  exp loss = 7.6917  adjusted loss = 7.6917  adv prob = 0.500000   acc = 0.5922
+roc auc = 0.427209
+Current lr: 0.001000
+Time Cost: 0:00:10.010449
+Current validation ROCAUC: 0.36446078431372547
+
+Average incurred loss: 0.0102  
+Average sample loss: 0.0102  
+Average acc: 0.9975  
+  hair=0  [n = 275]:	loss = 0.0231  exp loss = 0.0063  adjusted loss = 0.0063  adv prob = 0.500000   acc = 0.9927
+  hair=1  [n = 525]:	loss = 0.0035  exp loss = 0.0001  adjusted loss = 0.0001  adv prob = 0.500000   acc = 1.0000
+roc auc = 0.999896
+Average incurred loss: 0.0079  
+Average sample loss: 0.0079  
+Average acc: 0.9975  
+  hair=0  [n = 281]:	loss = 0.0108  exp loss = 0.0004  adjusted loss = 0.0004  adv prob = 0.500000   acc = 0.9964
+  hair=1  [n = 519]:	loss = 0.0063  exp loss = 0.0009  adjusted loss = 0.0009  adv prob = 0.500000   acc = 0.9981
+roc auc = 0.999960
+Average incurred loss: 0.0037  
+Average sample loss: 0.0037  
+Average acc: 1.0000  
+  hair=0  [n = 73]:	loss = 0.0042  exp loss = 0.0001  adjusted loss = 0.0001  adv prob = 0.500000   acc = 1.0000
+  hair=1  [n = 149]:	loss = 0.0035  exp loss = 0.0001  adjusted loss = 0.0001  adv prob = 0.500000   acc = 1.0000
+roc auc = 1.000000
+
+ Epoch 21, Validation:
+Average incurred loss: 2.3563  
+Average sample loss: 2.3685  
+Average acc: 0.6234  
+  hair=0  [n = 84]:	loss = 1.3861  exp loss = 2.7987  adjusted loss = 2.7987  adv prob = 0.500000   acc = 0.6905
+  hair=1  [n = 70]:	loss = 3.5205  exp loss = 2.5669  adjusted loss = 2.5669  adv prob = 0.500000   acc = 0.5429
+roc auc = 0.352941
+
+Epoch 21, Testing:
+Average incurred loss: 2.1847  
+Average sample loss: 2.2166  
+Average acc: 0.6424  
+  hair=0  [n = 363]:	loss = 1.3601  exp loss = 1.6134  adjusted loss = 1.6134  adv prob = 0.500000   acc = 0.6860
+  hair=1  [n = 255]:	loss = 3.3584  exp loss = 8.0971  adjusted loss = 8.0971  adv prob = 0.500000   acc = 0.5804
+roc auc = 0.375720
+Current lr: 0.001000
+Time Cost: 0:00:10.223876
+Current validation ROCAUC: 0.35294117647058826
+
+Average incurred loss: 0.0046  
+Average sample loss: 0.0046  
+Average acc: 0.9987  
+  hair=0  [n = 264]:	loss = 0.0045  exp loss = 0.0003  adjusted loss = 0.0003  adv prob = 0.500000   acc = 1.0000
+  hair=1  [n = 536]:	loss = 0.0046  exp loss = 0.0010  adjusted loss = 0.0010  adv prob = 0.500000   acc = 0.9981
+roc auc = 1.000000
+Average incurred loss: 0.0114  
+Average sample loss: 0.0114  
+Average acc: 0.9963  
+  hair=0  [n = 289]:	loss = 0.0182  exp loss = 0.0015  adjusted loss = 0.0015  adv prob = 0.500000   acc = 0.9931
+  hair=1  [n = 511]:	loss = 0.0075  exp loss = 0.0003  adjusted loss = 0.0003  adv prob = 0.500000   acc = 0.9980
+roc auc = 0.999961
+Average incurred loss: 0.0029  
+Average sample loss: 0.0029  
+Average acc: 1.0000  
+  hair=0  [n = 76]:	loss = 0.0047  exp loss = 0.0009  adjusted loss = 0.0009  adv prob = 0.500000   acc = 1.0000
+  hair=1  [n = 146]:	loss = 0.0020  exp loss = 0.0000  adjusted loss = 0.0000  adv prob = 0.500000   acc = 1.0000
+roc auc = 1.000000
+
+ Epoch 22, Validation:
+Average incurred loss: 2.2789  
+Average sample loss: 2.2910  
+Average acc: 0.5909  
+  hair=0  [n = 84]:	loss = 1.4988  exp loss = 2.3412  adjusted loss = 2.3412  adv prob = 0.500000   acc = 0.6310
+  hair=1  [n = 70]:	loss = 3.2151  exp loss = 2.8639  adjusted loss = 2.8639  adv prob = 0.500000   acc = 0.5429
+roc auc = 0.398775
+
+Epoch 22, Testing:
+Average incurred loss: 1.9834  
+Average sample loss: 2.0105  
+Average acc: 0.6505  
+  hair=0  [n = 363]:	loss = 1.3093  exp loss = 1.1537  adjusted loss = 1.1537  adv prob = 0.500000   acc = 0.6749
+  hair=1  [n = 255]:	loss = 2.9430  exp loss = 7.2335  adjusted loss = 7.2335  adv prob = 0.500000   acc = 0.6157
+roc auc = 0.458333
+Current lr: 0.001000
+Time Cost: 0:00:10.155083
+Current validation ROCAUC: 0.3987745098039216
+
+Average incurred loss: 0.0049  
+Average sample loss: 0.0049  
+Average acc: 0.9988  
+  hair=0  [n = 268]:	loss = 0.0046  exp loss = 0.0001  adjusted loss = 0.0001  adv prob = 0.500000   acc = 1.0000
+  hair=1  [n = 532]:	loss = 0.0050  exp loss = 0.0003  adjusted loss = 0.0003  adv prob = 0.500000   acc = 0.9981
+roc auc = 1.000000
+Average incurred loss: 0.0036  
+Average sample loss: 0.0036  
+Average acc: 1.0000  
+  hair=0  [n = 280]:	loss = 0.0066  exp loss = 0.0011  adjusted loss = 0.0011  adv prob = 0.500000   acc = 1.0000
+  hair=1  [n = 520]:	loss = 0.0020  exp loss = 0.0058  adjusted loss = 0.0058  adv prob = 0.500000   acc = 1.0000
+roc auc = 1.000000
+Average incurred loss: 0.0072  
+Average sample loss: 0.0073  
+Average acc: 1.0000  
+  hair=0  [n = 81]:	loss = 0.0034  exp loss = 0.0001  adjusted loss = 0.0001  adv prob = 0.500000   acc = 1.0000
+  hair=1  [n = 141]:	loss = 0.0094  exp loss = 0.0291  adjusted loss = 0.0291  adv prob = 0.500000   acc = 1.0000
+roc auc = 1.000000
+
+ Epoch 23, Validation:
+Average incurred loss: 2.5710  
+Average sample loss: 2.5974  
+Average acc: 0.5584  
+  hair=0  [n = 84]:	loss = 1.6171  exp loss = 3.5073  adjusted loss = 3.5073  adv prob = 0.500000   acc = 0.6310
+  hair=1  [n = 70]:	loss = 3.7157  exp loss = 3.0444  adjusted loss = 3.0444  adv prob = 0.500000   acc = 0.4714
+roc auc = 0.353922
+
+Epoch 23, Testing:
+Average incurred loss: 2.2243  
+Average sample loss: 2.2560  
+Average acc: 0.6327  
+  hair=0  [n = 363]:	loss = 1.3941  exp loss = 1.5495  adjusted loss = 1.5495  adv prob = 0.500000   acc = 0.6722
+  hair=1  [n = 255]:	loss = 3.4060  exp loss = 8.1722  adjusted loss = 8.1722  adv prob = 0.500000   acc = 0.5765
+roc auc = 0.393072
+Current lr: 0.001000
+Time Cost: 0:00:11.186826
+Current validation ROCAUC: 0.353921568627451
+
+Average incurred loss: 0.0053  
+Average sample loss: 0.0053  
+Average acc: 1.0000  
+  hair=0  [n = 266]:	loss = 0.0042  exp loss = 0.0015  adjusted loss = 0.0015  adv prob = 0.500000   acc = 1.0000
+  hair=1  [n = 534]:	loss = 0.0059  exp loss = 0.0002  adjusted loss = 0.0002  adv prob = 0.500000   acc = 1.0000
+roc auc = 1.000000
+Average incurred loss: 0.0090  
+Average sample loss: 0.0090  
+Average acc: 0.9962  
+  hair=0  [n = 280]:	loss = 0.0089  exp loss = 0.0002  adjusted loss = 0.0002  adv prob = 0.500000   acc = 0.9964
+  hair=1  [n = 520]:	loss = 0.0091  exp loss = 0.0002  adjusted loss = 0.0002  adv prob = 0.500000   acc = 0.9962
+roc auc = 0.999964
+Average incurred loss: 0.0088  
+Average sample loss: 0.0088  
+Average acc: 0.9955  
+  hair=0  [n = 83]:	loss = 0.0158  exp loss = 0.0045  adjusted loss = 0.0045  adv prob = 0.500000   acc = 0.9880
+  hair=1  [n = 139]:	loss = 0.0047  exp loss = 0.0001  adjusted loss = 0.0001  adv prob = 0.500000   acc = 1.0000
+roc auc = 1.000000
+
+ Epoch 24, Validation:
+Average incurred loss: 2.2237  
+Average sample loss: 2.2393  
+Average acc: 0.6039  
+  hair=0  [n = 84]:	loss = 1.3037  exp loss = 1.6589  adjusted loss = 1.6589  adv prob = 0.500000   acc = 0.6786
+  hair=1  [n = 70]:	loss = 3.3278  exp loss = 3.6186  adjusted loss = 3.6186  adv prob = 0.500000   acc = 0.5143
+roc auc = 0.437990
+
+Epoch 24, Testing:
+Average incurred loss: 2.0660  
+Average sample loss: 2.0987  
+Average acc: 0.6602  
+  hair=0  [n = 363]:	loss = 1.3959  exp loss = 1.8687  adjusted loss = 1.8687  adv prob = 0.500000   acc = 0.7052
+  hair=1  [n = 255]:	loss = 3.0199  exp loss = 7.8767  adjusted loss = 7.8767  adv prob = 0.500000   acc = 0.5961
+roc auc = 0.492236
+Current lr: 0.001000
+Time Cost: 0:00:09.845430
+Current validation ROCAUC: 0.43799019607843137
+
+Average incurred loss: 0.0067  
+Average sample loss: 0.0067  
+Average acc: 0.9987  
+  hair=0  [n = 282]:	loss = 0.0158  exp loss = 0.0003  adjusted loss = 0.0003  adv prob = 0.500000   acc = 0.9965
+  hair=1  [n = 518]:	loss = 0.0017  exp loss = 0.0000  adjusted loss = 0.0000  adv prob = 0.500000   acc = 1.0000
+roc auc = 0.999954
+Average incurred loss: 0.0055  
+Average sample loss: 0.0055  
+Average acc: 0.9975  
+  hair=0  [n = 261]:	loss = 0.0089  exp loss = 0.0022  adjusted loss = 0.0022  adv prob = 0.500000   acc = 0.9962
+  hair=1  [n = 539]:	loss = 0.0039  exp loss = 0.0016  adjusted loss = 0.0016  adv prob = 0.500000   acc = 0.9981
+roc auc = 0.999990
+Average incurred loss: 0.0019  
+Average sample loss: 0.0019  
+Average acc: 1.0000  
+  hair=0  [n = 86]:	loss = 0.0025  exp loss = 0.0002  adjusted loss = 0.0002  adv prob = 0.500000   acc = 1.0000
+  hair=1  [n = 136]:	loss = 0.0015  exp loss = 0.0001  adjusted loss = 0.0001  adv prob = 0.500000   acc = 1.0000
+roc auc = 1.000000
+
+ Epoch 25, Validation:
+Average incurred loss: 2.5220  
+Average sample loss: 2.5442  
+Average acc: 0.6299  
+  hair=0  [n = 84]:	loss = 1.4744  exp loss = 3.3879  adjusted loss = 3.3879  adv prob = 0.500000   acc = 0.7024
+  hair=1  [n = 70]:	loss = 3.7792  exp loss = 2.8365  adjusted loss = 2.8365  adv prob = 0.500000   acc = 0.5429
+roc auc = 0.346569
+
+Epoch 25, Testing:
+Average incurred loss: 2.2476  
+Average sample loss: 2.2813  
+Average acc: 0.6553  
+  hair=0  [n = 363]:	loss = 1.3721  exp loss = 1.5842  adjusted loss = 1.5842  adv prob = 0.500000   acc = 0.7025
+  hair=1  [n = 255]:	loss = 3.4938  exp loss = 8.5445  adjusted loss = 8.5445  adv prob = 0.500000   acc = 0.5882
+roc auc = 0.391817
+Current lr: 0.001000
+Time Cost: 0:00:10.250017
+Current validation ROCAUC: 0.3465686274509804
+
+Average incurred loss: 0.0016  
+Average sample loss: 0.0016  
+Average acc: 1.0000  
+  hair=0  [n = 269]:	loss = 0.0027  exp loss = 0.0003  adjusted loss = 0.0003  adv prob = 0.500000   acc = 1.0000
+  hair=1  [n = 531]:	loss = 0.0011  exp loss = 0.0022  adjusted loss = 0.0022  adv prob = 0.500000   acc = 1.0000
+roc auc = 1.000000
+Average incurred loss: 0.0043  
+Average sample loss: 0.0043  
+Average acc: 1.0000  
+  hair=0  [n = 289]:	loss = 0.0069  exp loss = 0.0050  adjusted loss = 0.0050  adv prob = 0.500000   acc = 1.0000
+  hair=1  [n = 511]:	loss = 0.0029  exp loss = 0.0000  adjusted loss = 0.0000  adv prob = 0.500000   acc = 1.0000
+roc auc = 1.000000
+Average incurred loss: 0.0054  
+Average sample loss: 0.0054  
+Average acc: 0.9955  
+  hair=0  [n = 71]:	loss = 0.0011  exp loss = 0.0012  adjusted loss = 0.0012  adv prob = 0.500000   acc = 1.0000
+  hair=1  [n = 151]:	loss = 0.0075  exp loss = 0.0045  adjusted loss = 0.0045  adv prob = 0.500000   acc = 0.9934
+roc auc = 1.000000
+
+ Epoch 26, Validation:
+Average incurred loss: 2.5295  
+Average sample loss: 2.5469  
+Average acc: 0.5844  
+  hair=0  [n = 84]:	loss = 1.8190  exp loss = 3.5718  adjusted loss = 3.5718  adv prob = 0.500000   acc = 0.6429
+  hair=1  [n = 70]:	loss = 3.3821  exp loss = 2.4132  adjusted loss = 2.4132  adv prob = 0.500000   acc = 0.5143
+roc auc = 0.345588
+
+Epoch 26, Testing:
+Average incurred loss: 2.2353  
+Average sample loss: 2.2621  
+Average acc: 0.6618  
+  hair=0  [n = 363]:	loss = 1.4330  exp loss = 1.3404  adjusted loss = 1.3404  adv prob = 0.500000   acc = 0.7107
+  hair=1  [n = 255]:	loss = 3.3773  exp loss = 7.4836  adjusted loss = 7.4836  adv prob = 0.500000   acc = 0.5922
+roc auc = 0.400686
+Current lr: 0.001000
+Time Cost: 0:00:09.626741
+Current validation ROCAUC: 0.34558823529411764
+
+Average incurred loss: 0.0029  
+Average sample loss: 0.0029  
+Average acc: 0.9988  
+  hair=0  [n = 274]:	loss = 0.0015  exp loss = 0.0001  adjusted loss = 0.0001  adv prob = 0.500000   acc = 1.0000
+  hair=1  [n = 526]:	loss = 0.0036  exp loss = 0.0001  adjusted loss = 0.0001  adv prob = 0.500000   acc = 0.9981
+roc auc = 1.000000
+Average incurred loss: 0.0039  
+Average sample loss: 0.0039  
+Average acc: 0.9987  
+  hair=0  [n = 277]:	loss = 0.0030  exp loss = 0.0011  adjusted loss = 0.0011  adv prob = 0.500000   acc = 1.0000
+  hair=1  [n = 523]:	loss = 0.0044  exp loss = 0.0042  adjusted loss = 0.0042  adv prob = 0.500000   acc = 0.9981
+roc auc = 1.000000
+Average incurred loss: 0.0026  
+Average sample loss: 0.0025  
+Average acc: 1.0000  
+  hair=0  [n = 78]:	loss = 0.0039  exp loss = 0.0012  adjusted loss = 0.0012  adv prob = 0.500000   acc = 1.0000
+  hair=1  [n = 144]:	loss = 0.0018  exp loss = 0.0004  adjusted loss = 0.0004  adv prob = 0.500000   acc = 1.0000
+roc auc = 1.000000
+
+ Epoch 27, Validation:
+Average incurred loss: 2.4969  
+Average sample loss: 2.5206  
+Average acc: 0.5584  
+  hair=0  [n = 84]:	loss = 1.9437  exp loss = 2.8731  adjusted loss = 2.8731  adv prob = 0.500000   acc = 0.6310
+  hair=1  [n = 70]:	loss = 3.1608  exp loss = 3.3815  adjusted loss = 3.3815  adv prob = 0.500000   acc = 0.4714
+roc auc = 0.362255
+
+Epoch 27, Testing:
+Average incurred loss: 2.2422  
+Average sample loss: 2.2647  
+Average acc: 0.6181  
+  hair=0  [n = 363]:	loss = 1.5555  exp loss = 1.0858  adjusted loss = 1.0858  adv prob = 0.500000   acc = 0.6556
+  hair=1  [n = 255]:	loss = 3.2197  exp loss = 6.9212  adjusted loss = 6.9212  adv prob = 0.500000   acc = 0.5647
+roc auc = 0.413203
+Current lr: 0.001000
+Time Cost: 0:00:11.229569
+Current validation ROCAUC: 0.3622549019607843
+
+Average incurred loss: 0.0018  
+Average sample loss: 0.0018  
+Average acc: 1.0000  
+  hair=0  [n = 275]:	loss = 0.0027  exp loss = 0.0157  adjusted loss = 0.0157  adv prob = 0.500000   acc = 1.0000
+  hair=1  [n = 525]:	loss = 0.0013  exp loss = 0.0013  adjusted loss = 0.0013  adv prob = 0.500000   acc = 1.0000
+roc auc = 1.000000
+Average incurred loss: 0.0054  
+Average sample loss: 0.0054  
+Average acc: 0.9975  
+  hair=0  [n = 279]:	loss = 0.0024  exp loss = 0.0006  adjusted loss = 0.0006  adv prob = 0.500000   acc = 1.0000
+  hair=1  [n = 521]:	loss = 0.0070  exp loss = 0.0009  adjusted loss = 0.0009  adv prob = 0.500000   acc = 0.9962
+roc auc = 0.999982
+Average incurred loss: 0.0007  
+Average sample loss: 0.0007  
+Average acc: 1.0000  
+  hair=0  [n = 75]:	loss = 0.0009  exp loss = 0.0016  adjusted loss = 0.0016  adv prob = 0.500000   acc = 1.0000
+  hair=1  [n = 147]:	loss = 0.0006  exp loss = 0.0002  adjusted loss = 0.0002  adv prob = 0.500000   acc = 1.0000
+roc auc = 1.000000
+
+ Epoch 28, Validation:
+Average incurred loss: 2.6793  
+Average sample loss: 2.7205  
+Average acc: 0.5779  
+  hair=0  [n = 84]:	loss = 1.6435  exp loss = 3.8713  adjusted loss = 3.8713  adv prob = 0.500000   acc = 0.6429
+  hair=1  [n = 70]:	loss = 3.9224  exp loss = 3.6848  adjusted loss = 3.6848  adv prob = 0.500000   acc = 0.5000
+roc auc = 0.323284
+
+Epoch 28, Testing:
+Average incurred loss: 2.3700  
+Average sample loss: 2.4130  
+Average acc: 0.6408  
+  hair=0  [n = 363]:	loss = 1.6344  exp loss = 3.4066  adjusted loss = 3.4066  adv prob = 0.500000   acc = 0.6970
+  hair=1  [n = 255]:	loss = 3.4172  exp loss = 9.1233  adjusted loss = 9.1233  adv prob = 0.500000   acc = 0.5608
+roc auc = 0.380422
+Current lr: 0.001000
+Time Cost: 0:00:10.288109
+Current validation ROCAUC: 0.3232843137254902
+
+Average incurred loss: 0.0054  
+Average sample loss: 0.0054  
+Average acc: 0.9987  
+  hair=0  [n = 273]:	loss = 0.0097  exp loss = 0.0005  adjusted loss = 0.0005  adv prob = 0.500000   acc = 0.9963
+  hair=1  [n = 527]:	loss = 0.0032  exp loss = 0.0000  adjusted loss = 0.0000  adv prob = 0.500000   acc = 1.0000
+roc auc = 0.999990
+Average incurred loss: 0.0065  
+Average sample loss: 0.0065  
+Average acc: 0.9975  
+  hair=0  [n = 271]:	loss = 0.0033  exp loss = 0.0028  adjusted loss = 0.0028  adv prob = 0.500000   acc = 1.0000
+  hair=1  [n = 529]:	loss = 0.0082  exp loss = 0.0032  adjusted loss = 0.0032  adv prob = 0.500000   acc = 0.9962
+roc auc = 0.999933
+Average incurred loss: 0.0024  
+Average sample loss: 0.0024  
+Average acc: 1.0000  
+  hair=0  [n = 85]:	loss = 0.0051  exp loss = 0.0001  adjusted loss = 0.0001  adv prob = 0.500000   acc = 1.0000
+  hair=1  [n = 137]:	loss = 0.0007  exp loss = 0.0001  adjusted loss = 0.0001  adv prob = 0.500000   acc = 1.0000
+roc auc = 1.000000
+
+ Epoch 29, Validation:
+Average incurred loss: 2.5901  
+Average sample loss: 2.6133  
+Average acc: 0.5714  
+  hair=0  [n = 84]:	loss = 1.8779  exp loss = 2.6957  adjusted loss = 2.6957  adv prob = 0.500000   acc = 0.6190
+  hair=1  [n = 70]:	loss = 3.4447  exp loss = 3.7237  adjusted loss = 3.7237  adv prob = 0.500000   acc = 0.5143
+roc auc = 0.363725
+
+Epoch 29, Testing:
+Average incurred loss: 2.2542  
+Average sample loss: 2.2837  
+Average acc: 0.6294  
+  hair=0  [n = 363]:	loss = 1.6011  exp loss = 2.8466  adjusted loss = 2.8466  adv prob = 0.500000   acc = 0.6667
+  hair=1  [n = 255]:	loss = 3.1841  exp loss = 6.9571  adjusted loss = 6.9571  adv prob = 0.500000   acc = 0.5765
+roc auc = 0.410124
+Current lr: 0.001000
+Time Cost: 0:00:10.198320
+Current validation ROCAUC: 0.36372549019607847
+
+Average incurred loss: 0.0022  
+Average sample loss: 0.0022  
+Average acc: 1.0000  
+  hair=0  [n = 276]:	loss = 0.0036  exp loss = 0.0040  adjusted loss = 0.0040  adv prob = 0.500000   acc = 1.0000
+  hair=1  [n = 524]:	loss = 0.0015  exp loss = 0.0040  adjusted loss = 0.0040  adv prob = 0.500000   acc = 1.0000
+roc auc = 1.000000
+Average incurred loss: 0.0063  
+Average sample loss: 0.0063  
+Average acc: 0.9975  
+  hair=0  [n = 273]:	loss = 0.0023  exp loss = 0.0001  adjusted loss = 0.0001  adv prob = 0.500000   acc = 1.0000
+  hair=1  [n = 527]:	loss = 0.0084  exp loss = 0.0001  adjusted loss = 0.0001  adv prob = 0.500000   acc = 0.9962
+roc auc = 0.999980
+Average incurred loss: 0.0074  
+Average sample loss: 0.0073  
+Average acc: 0.9955  
+  hair=0  [n = 80]:	loss = 0.0136  exp loss = 0.0006  adjusted loss = 0.0006  adv prob = 0.500000   acc = 0.9875
+  hair=1  [n = 142]:	loss = 0.0038  exp loss = 0.0001  adjusted loss = 0.0001  adv prob = 0.500000   acc = 1.0000
+roc auc = 1.000000
+
+ Epoch 30, Validation:
+Average incurred loss: 2.4865  
+Average sample loss: 2.4896  
+Average acc: 0.5974  
+  hair=0  [n = 84]:	loss = 1.6409  exp loss = 2.1517  adjusted loss = 2.1517  adv prob = 0.500000   acc = 0.6429
+  hair=1  [n = 70]:	loss = 3.5011  exp loss = 2.9905  adjusted loss = 2.9905  adv prob = 0.500000   acc = 0.5429
+roc auc = 0.385049
+
+Epoch 30, Testing:
+Average incurred loss: 2.4222  
+Average sample loss: 2.4562  
+Average acc: 0.6392  
+  hair=0  [n = 363]:	loss = 1.6694  exp loss = 2.8858  adjusted loss = 2.8858  adv prob = 0.500000   acc = 0.6667
+  hair=1  [n = 255]:	loss = 3.4938  exp loss = 8.0095  adjusted loss = 8.0095  adv prob = 0.500000   acc = 0.6000
+roc auc = 0.406191
+Current lr: 0.001000
+Time Cost: 0:00:10.351491
+Current validation ROCAUC: 0.3850490196078431
+
+Average incurred loss: 0.0019  
+Average sample loss: 0.0019  
+Average acc: 1.0000  
+  hair=0  [n = 279]:	loss = 0.0016  exp loss = 0.0001  adjusted loss = 0.0001  adv prob = 0.500000   acc = 1.0000
+  hair=1  [n = 521]:	loss = 0.0021  exp loss = 0.0001  adjusted loss = 0.0001  adv prob = 0.500000   acc = 1.0000
+roc auc = 1.000000
+Average incurred loss: 0.0010  
+Average sample loss: 0.0010  
+Average acc: 1.0000  
+  hair=0  [n = 286]:	loss = 0.0015  exp loss = 0.0001  adjusted loss = 0.0001  adv prob = 0.500000   acc = 1.0000
+  hair=1  [n = 514]:	loss = 0.0007  exp loss = 0.0000  adjusted loss = 0.0000  adv prob = 0.500000   acc = 1.0000
+roc auc = 1.000000
+Average incurred loss: 0.0012  
+Average sample loss: 0.0012  
+Average acc: 1.0000  
+  hair=0  [n = 64]:	loss = 0.0018  exp loss = 0.0001  adjusted loss = 0.0001  adv prob = 0.500000   acc = 1.0000
+  hair=1  [n = 158]:	loss = 0.0010  exp loss = 0.0003  adjusted loss = 0.0003  adv prob = 0.500000   acc = 1.0000
+roc auc = 1.000000
+
+ Epoch 31, Validation:
+Average incurred loss: 2.4841  
+Average sample loss: 2.4798  
+Average acc: 0.5584  
+  hair=0  [n = 84]:	loss = 1.7350  exp loss = 2.0965  adjusted loss = 2.0965  adv prob = 0.500000   acc = 0.6310
+  hair=1  [n = 70]:	loss = 3.3830  exp loss = 2.6436  adjusted loss = 2.6436  adv prob = 0.500000   acc = 0.4714
+roc auc = 0.402451
+
+Epoch 31, Testing:
+Average incurred loss: 2.2963  
+Average sample loss: 2.3308  
+Average acc: 0.6327  
+  hair=0  [n = 363]:	loss = 1.6129  exp loss = 2.9791  adjusted loss = 2.9791  adv prob = 0.500000   acc = 0.6667
+  hair=1  [n = 255]:	loss = 3.2691  exp loss = 7.8264  adjusted loss = 7.8264  adv prob = 0.500000   acc = 0.5843
+roc auc = 0.423193
+Current lr: 0.001000
+Time Cost: 0:00:09.740849
+Current validation ROCAUC: 0.4024509803921569
+
+Average incurred loss: 0.0018  
+Average sample loss: 0.0018  
+Average acc: 0.9987  
+  hair=0  [n = 272]:	loss = 0.0041  exp loss = 0.0001  adjusted loss = 0.0001  adv prob = 0.500000   acc = 0.9963
+  hair=1  [n = 528]:	loss = 0.0006  exp loss = 0.0001  adjusted loss = 0.0001  adv prob = 0.500000   acc = 1.0000
+roc auc = 1.000000
+Average incurred loss: 0.0025  
+Average sample loss: 0.0025  
+Average acc: 1.0000  
+  hair=0  [n = 280]:	loss = 0.0038  exp loss = 0.0478  adjusted loss = 0.0478  adv prob = 0.500000   acc = 1.0000
+  hair=1  [n = 520]:	loss = 0.0019  exp loss = 0.0043  adjusted loss = 0.0043  adv prob = 0.500000   acc = 1.0000
+roc auc = 1.000000
+Average incurred loss: 0.0051  
+Average sample loss: 0.0051  
+Average acc: 1.0000  
+  hair=0  [n = 77]:	loss = 0.0072  exp loss = 0.0007  adjusted loss = 0.0007  adv prob = 0.500000   acc = 1.0000
+  hair=1  [n = 145]:	loss = 0.0040  exp loss = 0.0002  adjusted loss = 0.0002  adv prob = 0.500000   acc = 1.0000
+roc auc = 1.000000
+
+ Epoch 32, Validation:
+Average incurred loss: 3.0005  
+Average sample loss: 3.0064  
+Average acc: 0.5390  
+  hair=0  [n = 84]:	loss = 2.0215  exp loss = 2.9788  adjusted loss = 2.9788  adv prob = 0.500000   acc = 0.5952
+  hair=1  [n = 70]:	loss = 4.1753  exp loss = 3.3378  adjusted loss = 3.3378  adv prob = 0.500000   acc = 0.4714
+roc auc = 0.295588
+
+Epoch 32, Testing:
+Average incurred loss: 2.6495  
+Average sample loss: 2.6827  
+Average acc: 0.5971  
+  hair=0  [n = 363]:	loss = 1.8680  exp loss = 2.7751  adjusted loss = 2.7751  adv prob = 0.500000   acc = 0.6364
+  hair=1  [n = 255]:	loss = 3.7619  exp loss = 8.3244  adjusted loss = 8.3244  adv prob = 0.500000   acc = 0.5412
+roc auc = 0.333233
+Current lr: 0.001000
+Time Cost: 0:00:09.945836
+Current validation ROCAUC: 0.29558823529411765
+
+Average incurred loss: 0.0034  
+Average sample loss: 0.0034  
+Average acc: 0.9988  
+  hair=0  [n = 291]:	loss = 0.0048  exp loss = 0.0001  adjusted loss = 0.0001  adv prob = 0.500000   acc = 1.0000
+  hair=1  [n = 509]:	loss = 0.0026  exp loss = 0.0002  adjusted loss = 0.0002  adv prob = 0.500000   acc = 0.9980
+roc auc = 1.000000
+Average incurred loss: 0.0030  
+Average sample loss: 0.0030  
+Average acc: 0.9987  
+  hair=0  [n = 267]:	loss = 0.0058  exp loss = 0.0012  adjusted loss = 0.0012  adv prob = 0.500000   acc = 0.9963
+  hair=1  [n = 533]:	loss = 0.0016  exp loss = 0.0001  adjusted loss = 0.0001  adv prob = 0.500000   acc = 1.0000
+roc auc = 0.999990
+Average incurred loss: 0.0005  
+Average sample loss: 0.0005  
+Average acc: 1.0000  
+  hair=0  [n = 71]:	loss = 0.0004  exp loss = 0.0001  adjusted loss = 0.0001  adv prob = 0.500000   acc = 1.0000
+  hair=1  [n = 151]:	loss = 0.0006  exp loss = 0.0000  adjusted loss = 0.0000  adv prob = 0.500000   acc = 1.0000
+roc auc = 1.000000
+
+ Epoch 33, Validation:
+Average incurred loss: 2.6584  
+Average sample loss: 2.6628  
+Average acc: 0.5455  
+  hair=0  [n = 84]:	loss = 1.9105  exp loss = 2.2905  adjusted loss = 2.2905  adv prob = 0.500000   acc = 0.5952
+  hair=1  [n = 70]:	loss = 3.5559  exp loss = 3.2594  adjusted loss = 3.2594  adv prob = 0.500000   acc = 0.4857
+roc auc = 0.377696
+
+Epoch 33, Testing:
+Average incurred loss: 2.4123  
+Average sample loss: 2.4421  
+Average acc: 0.6084  
+  hair=0  [n = 363]:	loss = 1.7627  exp loss = 3.1915  adjusted loss = 3.1915  adv prob = 0.500000   acc = 0.6281
+  hair=1  [n = 255]:	loss = 3.3371  exp loss = 7.0638  adjusted loss = 7.0638  adv prob = 0.500000   acc = 0.5804
+roc auc = 0.414374
+Current lr: 0.001000
+Time Cost: 0:00:10.278587
+Current validation ROCAUC: 0.37769607843137254
+
+Average incurred loss: 0.0022  
+Average sample loss: 0.0022  
+Average acc: 1.0000  
+  hair=0  [n = 289]:	loss = 0.0050  exp loss = 0.0007  adjusted loss = 0.0007  adv prob = 0.500000   acc = 1.0000
+  hair=1  [n = 511]:	loss = 0.0006  exp loss = 0.0002  adjusted loss = 0.0002  adv prob = 0.500000   acc = 1.0000
+roc auc = 1.000000
+Average incurred loss: 0.0014  
+Average sample loss: 0.0014  
+Average acc: 1.0000  
+  hair=0  [n = 275]:	loss = 0.0028  exp loss = 0.0002  adjusted loss = 0.0002  adv prob = 0.500000   acc = 1.0000
+  hair=1  [n = 525]:	loss = 0.0007  exp loss = 0.0018  adjusted loss = 0.0018  adv prob = 0.500000   acc = 1.0000
+roc auc = 1.000000
+Average incurred loss: 0.0006  
+Average sample loss: 0.0006  
+Average acc: 1.0000  
+  hair=0  [n = 65]:	loss = 0.0009  exp loss = 0.0006  adjusted loss = 0.0006  adv prob = 0.500000   acc = 1.0000
+  hair=1  [n = 157]:	loss = 0.0005  exp loss = 0.0004  adjusted loss = 0.0004  adv prob = 0.500000   acc = 1.0000
+roc auc = 1.000000
+
+ Epoch 34, Validation:
+Average incurred loss: 2.5121  
+Average sample loss: 2.5028  
+Average acc: 0.5974  
+  hair=0  [n = 84]:	loss = 1.8617  exp loss = 2.5924  adjusted loss = 2.5924  adv prob = 0.500000   acc = 0.6548
+  hair=1  [n = 70]:	loss = 3.2925  exp loss = 1.9354  adjusted loss = 1.9354  adv prob = 0.500000   acc = 0.5286
+roc auc = 0.408088
+
+Epoch 34, Testing:
+Average incurred loss: 2.2796  
+Average sample loss: 2.3146  
+Average acc: 0.6294  
+  hair=0  [n = 363]:	loss = 1.6570  exp loss = 3.3299  adjusted loss = 3.3299  adv prob = 0.500000   acc = 0.6556
+  hair=1  [n = 255]:	loss = 3.1658  exp loss = 7.6565  adjusted loss = 7.6565  adv prob = 0.500000   acc = 0.5922
+roc auc = 0.429803
+Current lr: 0.001000
+Time Cost: 0:00:10.344587
+Current validation ROCAUC: 0.40808823529411764
+
+Average incurred loss: 0.0016  
+Average sample loss: 0.0016  
+Average acc: 1.0000  
+  hair=0  [n = 262]:	loss = 0.0035  exp loss = 0.0014  adjusted loss = 0.0014  adv prob = 0.500000   acc = 1.0000
+  hair=1  [n = 538]:	loss = 0.0006  exp loss = 0.0003  adjusted loss = 0.0003  adv prob = 0.500000   acc = 1.0000
+roc auc = 1.000000
+Average incurred loss: 0.0020  
+Average sample loss: 0.0020  
+Average acc: 0.9987  
+  hair=0  [n = 277]:	loss = 0.0007  exp loss = 0.0000  adjusted loss = 0.0000  adv prob = 0.500000   acc = 1.0000
+  hair=1  [n = 523]:	loss = 0.0027  exp loss = 0.0000  adjusted loss = 0.0000  adv prob = 0.500000   acc = 0.9981
+roc auc = 1.000000
+Average incurred loss: 0.0003  
+Average sample loss: 0.0003  
+Average acc: 1.0000  
+  hair=0  [n = 90]:	loss = 0.0003  exp loss = 0.0001  adjusted loss = 0.0001  adv prob = 0.500000   acc = 1.0000
+  hair=1  [n = 132]:	loss = 0.0003  exp loss = 0.0000  adjusted loss = 0.0000  adv prob = 0.500000   acc = 1.0000
+roc auc = 1.000000
+
+ Epoch 35, Validation:
+Average incurred loss: 2.6972  
+Average sample loss: 2.6888  
+Average acc: 0.5779  
+  hair=0  [n = 84]:	loss = 2.0566  exp loss = 3.2024  adjusted loss = 3.2024  adv prob = 0.500000   acc = 0.6190
+  hair=1  [n = 70]:	loss = 3.4658  exp loss = 1.7458  adjusted loss = 1.7458  adv prob = 0.500000   acc = 0.5286
+roc auc = 0.380392
+
+Epoch 35, Testing:
+Average incurred loss: 2.4690  
+Average sample loss: 2.5074  
+Average acc: 0.6133  
+  hair=0  [n = 363]:	loss = 1.7694  exp loss = 3.3100  adjusted loss = 3.3100  adv prob = 0.500000   acc = 0.6391
+  hair=1  [n = 255]:	loss = 3.4649  exp loss = 8.5630  adjusted loss = 8.5630  adv prob = 0.500000   acc = 0.5765
+roc auc = 0.402359
+Current lr: 0.001000
+Time Cost: 0:00:09.978477
+Current validation ROCAUC: 0.38039215686274513
+
+Average incurred loss: 0.0011  
+Average sample loss: 0.0011  
+Average acc: 1.0000  
+  hair=0  [n = 278]:	loss = 0.0021  exp loss = 0.0024  adjusted loss = 0.0024  adv prob = 0.500000   acc = 1.0000
+  hair=1  [n = 522]:	loss = 0.0006  exp loss = 0.0087  adjusted loss = 0.0087  adv prob = 0.500000   acc = 1.0000
+roc auc = 1.000000
+Average incurred loss: 0.0012  
+Average sample loss: 0.0012  
+Average acc: 1.0000  
+  hair=0  [n = 275]:	loss = 0.0009  exp loss = 0.0011  adjusted loss = 0.0011  adv prob = 0.500000   acc = 1.0000
+  hair=1  [n = 525]:	loss = 0.0014  exp loss = 0.0000  adjusted loss = 0.0000  adv prob = 0.500000   acc = 1.0000
+roc auc = 1.000000
+Average incurred loss: 0.0014  
+Average sample loss: 0.0014  
+Average acc: 1.0000  
+  hair=0  [n = 76]:	loss = 0.0007  exp loss = 0.0003  adjusted loss = 0.0003  adv prob = 0.500000   acc = 1.0000
+  hair=1  [n = 146]:	loss = 0.0017  exp loss = 0.0001  adjusted loss = 0.0001  adv prob = 0.500000   acc = 1.0000
+roc auc = 1.000000
+
+ Epoch 36, Validation:
+Average incurred loss: 2.6403  
+Average sample loss: 2.6298  
+Average acc: 0.5455  
+  hair=0  [n = 84]:	loss = 2.1711  exp loss = 2.6658  adjusted loss = 2.6658  adv prob = 0.500000   acc = 0.5952
+  hair=1  [n = 70]:	loss = 3.2035  exp loss = 2.0548  adjusted loss = 2.0548  adv prob = 0.500000   acc = 0.4857
+roc auc = 0.385049
+
+Epoch 36, Testing:
+Average incurred loss: 2.4647  
+Average sample loss: 2.4989  
+Average acc: 0.5971  
+  hair=0  [n = 363]:	loss = 1.9611  exp loss = 3.2514  adjusted loss = 3.2514  adv prob = 0.500000   acc = 0.6198
+  hair=1  [n = 255]:	loss = 3.1817  exp loss = 7.8576  adjusted loss = 7.8576  adv prob = 0.500000   acc = 0.5647
+roc auc = 0.406643
+Current lr: 0.001000
+Time Cost: 0:00:10.127944
+Current validation ROCAUC: 0.3850490196078431
+
+Average incurred loss: 0.0009  
+Average sample loss: 0.0009  
+Average acc: 1.0000  
+  hair=0  [n = 291]:	loss = 0.0017  exp loss = 0.0000  adjusted loss = 0.0000  adv prob = 0.500000   acc = 1.0000
+  hair=1  [n = 509]:	loss = 0.0004  exp loss = 0.0001  adjusted loss = 0.0001  adv prob = 0.500000   acc = 1.0000
+roc auc = 1.000000
+Average incurred loss: 0.0016  
+Average sample loss: 0.0016  
+Average acc: 1.0000  
+  hair=0  [n = 271]:	loss = 0.0013  exp loss = 0.0000  adjusted loss = 0.0000  adv prob = 0.500000   acc = 1.0000
+  hair=1  [n = 529]:	loss = 0.0017  exp loss = 0.0000  adjusted loss = 0.0000  adv prob = 0.500000   acc = 1.0000
+roc auc = 1.000000
+Average incurred loss: 0.0017  
+Average sample loss: 0.0017  
+Average acc: 1.0000  
+  hair=0  [n = 67]:	loss = 0.0005  exp loss = 0.0001  adjusted loss = 0.0001  adv prob = 0.500000   acc = 1.0000
+  hair=1  [n = 155]:	loss = 0.0022  exp loss = 0.0000  adjusted loss = 0.0000  adv prob = 0.500000   acc = 1.0000
+roc auc = 1.000000
+
+ Epoch 37, Validation:
+Average incurred loss: 2.7512  
+Average sample loss: 2.7439  
+Average acc: 0.5649  
+  hair=0  [n = 84]:	loss = 2.0645  exp loss = 3.0402  adjusted loss = 3.0402  adv prob = 0.500000   acc = 0.5952
+  hair=1  [n = 70]:	loss = 3.5752  exp loss = 2.0742  adjusted loss = 2.0742  adv prob = 0.500000   acc = 0.5286
+roc auc = 0.337010
+
+Epoch 37, Testing:
+Average incurred loss: 2.5744  
+Average sample loss: 2.6110  
+Average acc: 0.6036  
+  hair=0  [n = 363]:	loss = 1.8849  exp loss = 2.9175  adjusted loss = 2.9175  adv prob = 0.500000   acc = 0.6171
+  hair=1  [n = 255]:	loss = 3.5560  exp loss = 8.6819  adjusted loss = 8.6819  adv prob = 0.500000   acc = 0.5843
+roc auc = 0.370884
+Current lr: 0.001000
+Time Cost: 0:00:09.674480
+Current validation ROCAUC: 0.33700980392156865
+
+Average incurred loss: 0.0007  
+Average sample loss: 0.0007  
+Average acc: 1.0000  
+  hair=0  [n = 250]:	loss = 0.0011  exp loss = 0.0013  adjusted loss = 0.0013  adv prob = 0.500000   acc = 1.0000
+  hair=1  [n = 550]:	loss = 0.0005  exp loss = 0.0000  adjusted loss = 0.0000  adv prob = 0.500000   acc = 1.0000
+roc auc = 1.000000
+Average incurred loss: 0.0007  
+Average sample loss: 0.0007  
+Average acc: 1.0000  
+  hair=0  [n = 294]:	loss = 0.0010  exp loss = 0.0001  adjusted loss = 0.0001  adv prob = 0.500000   acc = 1.0000
+  hair=1  [n = 506]:	loss = 0.0005  exp loss = 0.0000  adjusted loss = 0.0000  adv prob = 0.500000   acc = 1.0000
+roc auc = 1.000000
+Average incurred loss: 0.0003  
+Average sample loss: 0.0003  
+Average acc: 1.0000  
+  hair=0  [n = 85]:	loss = 0.0005  exp loss = 0.0001  adjusted loss = 0.0001  adv prob = 0.500000   acc = 1.0000
+  hair=1  [n = 137]:	loss = 0.0002  exp loss = 0.0001  adjusted loss = 0.0001  adv prob = 0.500000   acc = 1.0000
+roc auc = 1.000000
+
+ Epoch 38, Validation:
+Average incurred loss: 2.8694  
+Average sample loss: 2.8659  
+Average acc: 0.5519  
+  hair=0  [n = 84]:	loss = 2.1149  exp loss = 3.2881  adjusted loss = 3.2881  adv prob = 0.500000   acc = 0.5952
+  hair=1  [n = 70]:	loss = 3.7748  exp loss = 2.2632  adjusted loss = 2.2632  adv prob = 0.500000   acc = 0.5000
+roc auc = 0.324265
+
+Epoch 38, Testing:
+Average incurred loss: 2.6076  
+Average sample loss: 2.6484  
+Average acc: 0.6165  
+  hair=0  [n = 363]:	loss = 1.8517  exp loss = 3.5140  adjusted loss = 3.5140  adv prob = 0.500000   acc = 0.6419
+  hair=1  [n = 255]:	loss = 3.6835  exp loss = 9.0855  adjusted loss = 9.0855  adv prob = 0.500000   acc = 0.5804
+roc auc = 0.365830
+Current lr: 0.001000
+Time Cost: 0:00:10.166889
+Current validation ROCAUC: 0.3242647058823529
+
+Average incurred loss: 0.0004  
+Average sample loss: 0.0004  
+Average acc: 1.0000  
+  hair=0  [n = 293]:	loss = 0.0005  exp loss = 0.0005  adjusted loss = 0.0005  adv prob = 0.500000   acc = 1.0000
+  hair=1  [n = 507]:	loss = 0.0004  exp loss = 0.0042  adjusted loss = 0.0042  adv prob = 0.500000   acc = 1.0000
+roc auc = 1.000000
+Average incurred loss: 0.0012  
+Average sample loss: 0.0012  
+Average acc: 1.0000  
+  hair=0  [n = 260]:	loss = 0.0022  exp loss = 0.0002  adjusted loss = 0.0002  adv prob = 0.500000   acc = 1.0000
+  hair=1  [n = 540]:	loss = 0.0007  exp loss = 0.0000  adjusted loss = 0.0000  adv prob = 0.500000   acc = 1.0000
+roc auc = 1.000000
+Average incurred loss: 0.0006  
+Average sample loss: 0.0006  
+Average acc: 1.0000  
+  hair=0  [n = 76]:	loss = 0.0016  exp loss = 0.0000  adjusted loss = 0.0000  adv prob = 0.500000   acc = 1.0000
+  hair=1  [n = 146]:	loss = 0.0001  exp loss = 0.0000  adjusted loss = 0.0000  adv prob = 0.500000   acc = 1.0000
+roc auc = 1.000000
+
+ Epoch 39, Validation:
+Average incurred loss: 2.9525  
+Average sample loss: 2.9498  
+Average acc: 0.5065  
+  hair=0  [n = 84]:	loss = 2.3810  exp loss = 2.7743  adjusted loss = 2.7743  adv prob = 0.500000   acc = 0.5476
+  hair=1  [n = 70]:	loss = 3.6384  exp loss = 2.9863  adjusted loss = 2.9863  adv prob = 0.500000   acc = 0.4571
+roc auc = 0.322304
+
+Epoch 39, Testing:
+Average incurred loss: 2.6945  
+Average sample loss: 2.7325  
+Average acc: 0.5663  
+  hair=0  [n = 363]:	loss = 2.1245  exp loss = 3.6253  adjusted loss = 3.6253  adv prob = 0.500000   acc = 0.5785
+  hair=1  [n = 255]:	loss = 3.5058  exp loss = 8.6610  adjusted loss = 8.6610  adv prob = 0.500000   acc = 0.5490
+roc auc = 0.361613
+Current lr: 0.001000
+Time Cost: 0:00:09.780965
+Current validation ROCAUC: 0.32230392156862747
+
+Average incurred loss: 0.0042  
+Average sample loss: 0.0042  
+Average acc: 0.9988  
+  hair=0  [n = 274]:	loss = 0.0089  exp loss = 0.0592  adjusted loss = 0.0592  adv prob = 0.500000   acc = 0.9964
+  hair=1  [n = 526]:	loss = 0.0017  exp loss = 0.0022  adjusted loss = 0.0022  adv prob = 0.500000   acc = 1.0000
+roc auc = 1.000000
+Average incurred loss: 0.0026  
+Average sample loss: 0.0026  
+Average acc: 1.0000  
+  hair=0  [n = 263]:	loss = 0.0035  exp loss = 0.0009  adjusted loss = 0.0009  adv prob = 0.500000   acc = 1.0000
+  hair=1  [n = 537]:	loss = 0.0021  exp loss = 0.0000  adjusted loss = 0.0000  adv prob = 0.500000   acc = 1.0000
+roc auc = 1.000000
+Average incurred loss: 0.0015  
+Average sample loss: 0.0015  
+Average acc: 1.0000  
+  hair=0  [n = 92]:	loss = 0.0032  exp loss = 0.0001  adjusted loss = 0.0001  adv prob = 0.500000   acc = 1.0000
+  hair=1  [n = 130]:	loss = 0.0003  exp loss = 0.0007  adjusted loss = 0.0007  adv prob = 0.500000   acc = 1.0000
+roc auc = 1.000000
+
+ Epoch 40, Validation:
+Average incurred loss: 3.1150  
+Average sample loss: 3.1316  
+Average acc: 0.5519  
+  hair=0  [n = 84]:	loss = 2.0360  exp loss = 3.3343  adjusted loss = 3.3343  adv prob = 0.500000   acc = 0.5952
+  hair=1  [n = 70]:	loss = 4.4099  exp loss = 3.7795  adjusted loss = 3.7795  adv prob = 0.500000   acc = 0.5000
+roc auc = 0.299020
+
+Epoch 40, Testing:
+Average incurred loss: 2.9343  
+Average sample loss: 2.9778  
+Average acc: 0.6003  
+  hair=0  [n = 363]:	loss = 2.1340  exp loss = 2.1300  adjusted loss = 2.1300  adv prob = 0.500000   acc = 0.6033
+  hair=1  [n = 255]:	loss = 4.0737  exp loss = 10.9974  adjusted loss = 10.9974  adv prob = 0.500000   acc = 0.5961
+roc auc = 0.327108
+Current lr: 0.001000
+Time Cost: 0:00:10.752247
+Current validation ROCAUC: 0.29901960784313725
+
+Average incurred loss: 0.0018  
+Average sample loss: 0.0018  
+Average acc: 0.9987  
+  hair=0  [n = 263]:	loss = 0.0049  exp loss = 0.0001  adjusted loss = 0.0001  adv prob = 0.500000   acc = 0.9962
+  hair=1  [n = 537]:	loss = 0.0003  exp loss = 0.0001  adjusted loss = 0.0001  adv prob = 0.500000   acc = 1.0000
+roc auc = 1.000000
+Average incurred loss: 0.0018  
+Average sample loss: 0.0018  
+Average acc: 1.0000  
+  hair=0  [n = 287]:	loss = 0.0019  exp loss = 0.0001  adjusted loss = 0.0001  adv prob = 0.500000   acc = 1.0000
+  hair=1  [n = 513]:	loss = 0.0017  exp loss = 0.0001  adjusted loss = 0.0001  adv prob = 0.500000   acc = 1.0000
+roc auc = 1.000000
+Average incurred loss: 0.0009  
+Average sample loss: 0.0008  
+Average acc: 1.0000  
+  hair=0  [n = 79]:	loss = 0.0020  exp loss = 0.0001  adjusted loss = 0.0001  adv prob = 0.500000   acc = 1.0000
+  hair=1  [n = 143]:	loss = 0.0002  exp loss = 0.0001  adjusted loss = 0.0001  adv prob = 0.500000   acc = 1.0000
+roc auc = 1.000000
+
+ Epoch 41, Validation:
+Average incurred loss: 2.7188  
+Average sample loss: 2.7234  
+Average acc: 0.5909  
+  hair=0  [n = 84]:	loss = 1.8511  exp loss = 2.8909  adjusted loss = 2.8909  adv prob = 0.500000   acc = 0.6310
+  hair=1  [n = 70]:	loss = 3.7601  exp loss = 2.7918  adjusted loss = 2.7918  adv prob = 0.500000   acc = 0.5429
+roc auc = 0.401471
+
+Epoch 41, Testing:
+Average incurred loss: 2.5661  
+Average sample loss: 2.6102  
+Average acc: 0.6327  
+  hair=0  [n = 363]:	loss = 1.8147  exp loss = 1.9573  adjusted loss = 1.9573  adv prob = 0.500000   acc = 0.6529
+  hair=1  [n = 255]:	loss = 3.6358  exp loss = 10.6228  adjusted loss = 10.6228  adv prob = 0.500000   acc = 0.6039
+roc auc = 0.413956
+Current lr: 0.001000
+Time Cost: 0:00:10.086655
+Current validation ROCAUC: 0.4014705882352941
+
+Average incurred loss: 0.0005  
+Average sample loss: 0.0005  
+Average acc: 1.0000  
+  hair=0  [n = 266]:	loss = 0.0007  exp loss = 0.0000  adjusted loss = 0.0000  adv prob = 0.500000   acc = 1.0000
+  hair=1  [n = 534]:	loss = 0.0003  exp loss = 0.0001  adjusted loss = 0.0001  adv prob = 0.500000   acc = 1.0000
+roc auc = 1.000000
+Average incurred loss: 0.0006  
+Average sample loss: 0.0006  
+Average acc: 1.0000  
+  hair=0  [n = 282]:	loss = 0.0007  exp loss = 0.0004  adjusted loss = 0.0004  adv prob = 0.500000   acc = 1.0000
+  hair=1  [n = 518]:	loss = 0.0006  exp loss = 0.0114  adjusted loss = 0.0114  adv prob = 0.500000   acc = 1.0000
+roc auc = 1.000000
+Average incurred loss: 0.0002  
+Average sample loss: 0.0002  
+Average acc: 1.0000  
+  hair=0  [n = 81]:	loss = 0.0003  exp loss = 0.0000  adjusted loss = 0.0000  adv prob = 0.500000   acc = 1.0000
+  hair=1  [n = 141]:	loss = 0.0001  exp loss = 0.0000  adjusted loss = 0.0000  adv prob = 0.500000   acc = 1.0000
+roc auc = 1.000000
+
+ Epoch 42, Validation:
+Average incurred loss: 2.6829  
+Average sample loss: 2.6869  
+Average acc: 0.5909  
+  hair=0  [n = 84]:	loss = 1.8210  exp loss = 2.5922  adjusted loss = 2.5922  adv prob = 0.500000   acc = 0.6190
+  hair=1  [n = 70]:	loss = 3.7173  exp loss = 2.9850  adjusted loss = 2.9850  adv prob = 0.500000   acc = 0.5571
+roc auc = 0.384069
+
+Epoch 42, Testing:
+Average incurred loss: 2.5414  
+Average sample loss: 2.5841  
+Average acc: 0.6311  
+  hair=0  [n = 363]:	loss = 1.8169  exp loss = 2.2407  adjusted loss = 2.2407  adv prob = 0.500000   acc = 0.6419
+  hair=1  [n = 255]:	loss = 3.5727  exp loss = 10.1353  adjusted loss = 10.1353  adv prob = 0.500000   acc = 0.6157
+roc auc = 0.402477
+Current lr: 0.001000
+Time Cost: 0:00:09.868041
+Current validation ROCAUC: 0.38406862745098036
+
+Average incurred loss: 0.0008  
+Average sample loss: 0.0008  
+Average acc: 1.0000  
+  hair=0  [n = 291]:	loss = 0.0006  exp loss = 0.0009  adjusted loss = 0.0009  adv prob = 0.500000   acc = 1.0000
+  hair=1  [n = 509]:	loss = 0.0009  exp loss = 0.0000  adjusted loss = 0.0000  adv prob = 0.500000   acc = 1.0000
+roc auc = 1.000000
+Average incurred loss: 0.0018  
+Average sample loss: 0.0018  
+Average acc: 1.0000  
+  hair=0  [n = 267]:	loss = 0.0047  exp loss = 0.0000  adjusted loss = 0.0000  adv prob = 0.500000   acc = 1.0000
+  hair=1  [n = 533]:	loss = 0.0004  exp loss = 0.0002  adjusted loss = 0.0002  adv prob = 0.500000   acc = 1.0000
+roc auc = 1.000000
+Average incurred loss: 0.0015  
+Average sample loss: 0.0015  
+Average acc: 1.0000  
+  hair=0  [n = 71]:	loss = 0.0035  exp loss = 0.0003  adjusted loss = 0.0003  adv prob = 0.500000   acc = 1.0000
+  hair=1  [n = 151]:	loss = 0.0006  exp loss = 0.0000  adjusted loss = 0.0000  adv prob = 0.500000   acc = 1.0000
+roc auc = 1.000000
+
+ Epoch 43, Validation:
+Average incurred loss: 2.9016  
+Average sample loss: 2.9018  
+Average acc: 0.4935  
+  hair=0  [n = 84]:	loss = 2.4157  exp loss = 2.1961  adjusted loss = 2.1961  adv prob = 0.500000   acc = 0.5357
+  hair=1  [n = 70]:	loss = 3.4848  exp loss = 3.6145  adjusted loss = 3.6145  adv prob = 0.500000   acc = 0.4429
+roc auc = 0.360294
+
+Epoch 43, Testing:
+Average incurred loss: 2.8618  
+Average sample loss: 2.8999  
+Average acc: 0.5210  
+  hair=0  [n = 363]:	loss = 2.4787  exp loss = 3.3171  adjusted loss = 3.3171  adv prob = 0.500000   acc = 0.4959
+  hair=1  [n = 255]:	loss = 3.4073  exp loss = 9.1559  adjusted loss = 9.1559  adv prob = 0.500000   acc = 0.5569
+roc auc = 0.377092
+Current lr: 0.001000
+Time Cost: 0:00:10.336879
+Current validation ROCAUC: 0.3602941176470588
+
+Average incurred loss: 0.0010  
+Average sample loss: 0.0010  
+Average acc: 1.0000  
+  hair=0  [n = 284]:	loss = 0.0014  exp loss = 0.0001  adjusted loss = 0.0001  adv prob = 0.500000   acc = 1.0000
+  hair=1  [n = 516]:	loss = 0.0008  exp loss = 0.0000  adjusted loss = 0.0000  adv prob = 0.500000   acc = 1.0000
+roc auc = 1.000000
+Average incurred loss: 0.0008  
+Average sample loss: 0.0008  
+Average acc: 1.0000  
+  hair=0  [n = 269]:	loss = 0.0010  exp loss = 0.0000  adjusted loss = 0.0000  adv prob = 0.500000   acc = 1.0000
+  hair=1  [n = 531]:	loss = 0.0007  exp loss = 0.0000  adjusted loss = 0.0000  adv prob = 0.500000   acc = 1.0000
+roc auc = 1.000000
+Average incurred loss: 0.0021  
+Average sample loss: 0.0021  
+Average acc: 1.0000  
+  hair=0  [n = 76]:	loss = 0.0005  exp loss = 0.0001  adjusted loss = 0.0001  adv prob = 0.500000   acc = 1.0000
+  hair=1  [n = 146]:	loss = 0.0029  exp loss = 0.0000  adjusted loss = 0.0000  adv prob = 0.500000   acc = 1.0000
+roc auc = 1.000000
+
+ Epoch 44, Validation:
+Average incurred loss: 2.8933  
+Average sample loss: 2.8928  
+Average acc: 0.5260  
+  hair=0  [n = 84]:	loss = 2.1227  exp loss = 2.7399  adjusted loss = 2.7399  adv prob = 0.500000   acc = 0.5595
+  hair=1  [n = 70]:	loss = 3.8181  exp loss = 3.0175  adjusted loss = 3.0175  adv prob = 0.500000   acc = 0.4857
+roc auc = 0.346078
+
+Epoch 44, Testing:
+Average incurred loss: 2.7888  
+Average sample loss: 2.8332  
+Average acc: 0.5599  
+  hair=0  [n = 363]:	loss = 2.2108  exp loss = 3.3425  adjusted loss = 3.3425  adv prob = 0.500000   acc = 0.5455
+  hair=1  [n = 255]:	loss = 3.6117  exp loss = 10.1108  adjusted loss = 10.1108  adv prob = 0.500000   acc = 0.5804
+roc auc = 0.373778
+Current lr: 0.001000
+Time Cost: 0:00:10.966240
+Current validation ROCAUC: 0.346078431372549
+
+Average incurred loss: 0.0016  
+Average sample loss: 0.0016  
+Average acc: 1.0000  
+  hair=0  [n = 264]:	loss = 0.0039  exp loss = 0.0010  adjusted loss = 0.0010  adv prob = 0.500000   acc = 1.0000
+  hair=1  [n = 536]:	loss = 0.0005  exp loss = 0.0004  adjusted loss = 0.0004  adv prob = 0.500000   acc = 1.0000
+roc auc = 1.000000
+Average incurred loss: 0.0004  
+Average sample loss: 0.0004  
+Average acc: 1.0000  
+  hair=0  [n = 286]:	loss = 0.0006  exp loss = 0.0001  adjusted loss = 0.0001  adv prob = 0.500000   acc = 1.0000
+  hair=1  [n = 514]:	loss = 0.0003  exp loss = 0.0001  adjusted loss = 0.0001  adv prob = 0.500000   acc = 1.0000
+roc auc = 1.000000
+Average incurred loss: 0.0006  
+Average sample loss: 0.0006  
+Average acc: 1.0000  
+  hair=0  [n = 79]:	loss = 0.0003  exp loss = 0.0001  adjusted loss = 0.0001  adv prob = 0.500000   acc = 1.0000
+  hair=1  [n = 143]:	loss = 0.0007  exp loss = 0.0001  adjusted loss = 0.0001  adv prob = 0.500000   acc = 1.0000
+roc auc = 1.000000
+
+ Epoch 45, Validation:
+Average incurred loss: 2.9197  
+Average sample loss: 2.9284  
+Average acc: 0.5000  
+  hair=0  [n = 84]:	loss = 2.2536  exp loss = 2.6418  adjusted loss = 2.6418  adv prob = 0.500000   acc = 0.5476
+  hair=1  [n = 70]:	loss = 3.7189  exp loss = 3.6604  adjusted loss = 3.6604  adv prob = 0.500000   acc = 0.4429
+roc auc = 0.338235
+
+Epoch 45, Testing:
+Average incurred loss: 2.8191  
+Average sample loss: 2.8563  
+Average acc: 0.5518  
+  hair=0  [n = 363]:	loss = 2.2661  exp loss = 2.4639  adjusted loss = 2.4639  adv prob = 0.500000   acc = 0.5399
+  hair=1  [n = 255]:	loss = 3.6063  exp loss = 9.5059  adjusted loss = 9.5059  adv prob = 0.500000   acc = 0.5686
+roc auc = 0.370582
+Current lr: 0.001000
+Time Cost: 0:00:10.847185
+Current validation ROCAUC: 0.3382352941176471
+
+Average incurred loss: 0.0005  
+Average sample loss: 0.0005  
+Average acc: 1.0000  
+  hair=0  [n = 287]:	loss = 0.0007  exp loss = 0.0001  adjusted loss = 0.0001  adv prob = 0.500000   acc = 1.0000
+  hair=1  [n = 513]:	loss = 0.0004  exp loss = 0.0000  adjusted loss = 0.0000  adv prob = 0.500000   acc = 1.0000
+roc auc = 1.000000
+Average incurred loss: 0.0016  
+Average sample loss: 0.0016  
+Average acc: 1.0000  
+  hair=0  [n = 260]:	loss = 0.0023  exp loss = 0.0122  adjusted loss = 0.0122  adv prob = 0.500000   acc = 1.0000
+  hair=1  [n = 540]:	loss = 0.0012  exp loss = 0.0004  adjusted loss = 0.0004  adv prob = 0.500000   acc = 1.0000
+roc auc = 1.000000
+Average incurred loss: 0.0004  
+Average sample loss: 0.0004  
+Average acc: 1.0000  
+  hair=0  [n = 82]:	loss = 0.0006  exp loss = 0.0004  adjusted loss = 0.0004  adv prob = 0.500000   acc = 1.0000
+  hair=1  [n = 140]:	loss = 0.0003  exp loss = 0.0001  adjusted loss = 0.0001  adv prob = 0.500000   acc = 1.0000
+roc auc = 1.000000
+
+ Epoch 46, Validation:
+Average incurred loss: 3.0661  
+Average sample loss: 3.0776  
+Average acc: 0.5000  
+  hair=0  [n = 84]:	loss = 2.2021  exp loss = 2.8630  adjusted loss = 2.8630  adv prob = 0.500000   acc = 0.5595
+  hair=1  [n = 70]:	loss = 4.1028  exp loss = 3.8841  adjusted loss = 3.8841  adv prob = 0.500000   acc = 0.4286
+roc auc = 0.313725
+
+Epoch 46, Testing:
+Average incurred loss: 2.8612  
+Average sample loss: 2.9032  
+Average acc: 0.5615  
+  hair=0  [n = 363]:	loss = 2.2339  exp loss = 2.7126  adjusted loss = 2.7126  adv prob = 0.500000   acc = 0.5647
+  hair=1  [n = 255]:	loss = 3.7542  exp loss = 10.2451  adjusted loss = 10.2451  adv prob = 0.500000   acc = 0.5569
+roc auc = 0.355957
+Current lr: 0.001000
+Time Cost: 0:00:10.663140
+Current validation ROCAUC: 0.3137254901960784
+
+Average incurred loss: 0.0035  
+Average sample loss: 0.0035  
+Average acc: 0.9987  
+  hair=0  [n = 284]:	loss = 0.0009  exp loss = 0.0001  adjusted loss = 0.0001  adv prob = 0.500000   acc = 1.0000
+  hair=1  [n = 516]:	loss = 0.0049  exp loss = 0.0000  adjusted loss = 0.0000  adv prob = 0.500000   acc = 0.9981
+roc auc = 1.000000
+Average incurred loss: 0.0021  
+Average sample loss: 0.0021  
+Average acc: 0.9988  
+  hair=0  [n = 274]:	loss = 0.0016  exp loss = 0.0000  adjusted loss = 0.0000  adv prob = 0.500000   acc = 1.0000
+  hair=1  [n = 526]:	loss = 0.0023  exp loss = 0.0000  adjusted loss = 0.0000  adv prob = 0.500000   acc = 0.9981
+roc auc = 1.000000
+Average incurred loss: 0.0140  
+Average sample loss: 0.0139  
+Average acc: 0.9865  
+  hair=0  [n = 71]:	loss = 0.0174  exp loss = 0.0000  adjusted loss = 0.0000  adv prob = 0.500000   acc = 0.9859
+  hair=1  [n = 151]:	loss = 0.0124  exp loss = 0.0010  adjusted loss = 0.0010  adv prob = 0.500000   acc = 0.9868
+roc auc = 1.000000
+
+ Epoch 47, Validation:
+Average incurred loss: 3.1886  
+Average sample loss: 3.1918  
+Average acc: 0.5195  
+  hair=0  [n = 84]:	loss = 2.4506  exp loss = 2.0481  adjusted loss = 2.0481  adv prob = 0.500000   acc = 0.5714
+  hair=1  [n = 70]:	loss = 4.0741  exp loss = 4.5018  adjusted loss = 4.5018  adv prob = 0.500000   acc = 0.4571
+roc auc = 0.328676
+
+Epoch 47, Testing:
+Average incurred loss: 3.0057  
+Average sample loss: 3.0371  
+Average acc: 0.5421  
+  hair=0  [n = 363]:	loss = 2.3794  exp loss = 2.2497  adjusted loss = 2.2497  adv prob = 0.500000   acc = 0.5537
+  hair=1  [n = 255]:	loss = 3.8971  exp loss = 8.9536  adjusted loss = 8.9536  adv prob = 0.500000   acc = 0.5255
+roc auc = 0.361345
+Current lr: 0.001000
+Time Cost: 0:00:09.347003
+Current validation ROCAUC: 0.32867647058823535
+
+Average incurred loss: 0.0045  
+Average sample loss: 0.0045  
+Average acc: 0.9975  
+  hair=0  [n = 284]:	loss = 0.0014  exp loss = 0.0000  adjusted loss = 0.0000  adv prob = 0.500000   acc = 1.0000
+  hair=1  [n = 516]:	loss = 0.0062  exp loss = 0.0009  adjusted loss = 0.0009  adv prob = 0.500000   acc = 0.9961
+roc auc = 0.999981
+Average incurred loss: 0.0028  
+Average sample loss: 0.0028  
+Average acc: 1.0000  
+  hair=0  [n = 278]:	loss = 0.0025  exp loss = 0.0069  adjusted loss = 0.0069  adv prob = 0.500000   acc = 1.0000
+  hair=1  [n = 522]:	loss = 0.0030  exp loss = 0.0007  adjusted loss = 0.0007  adv prob = 0.500000   acc = 1.0000
+roc auc = 1.000000
+Average incurred loss: 0.0013  
+Average sample loss: 0.0013  
+Average acc: 1.0000  
+  hair=0  [n = 67]:	loss = 0.0004  exp loss = 0.0001  adjusted loss = 0.0001  adv prob = 0.500000   acc = 1.0000
+  hair=1  [n = 155]:	loss = 0.0017  exp loss = 0.0003  adjusted loss = 0.0003  adv prob = 0.500000   acc = 1.0000
+roc auc = 1.000000
+
+ Epoch 48, Validation:
+Average incurred loss: 2.8976  
+Average sample loss: 2.9194  
+Average acc: 0.5714  
+  hair=0  [n = 84]:	loss = 1.9496  exp loss = 3.4860  adjusted loss = 3.4860  adv prob = 0.500000   acc = 0.6548
+  hair=1  [n = 70]:	loss = 4.0352  exp loss = 3.4703  adjusted loss = 3.4703  adv prob = 0.500000   acc = 0.4714
+roc auc = 0.330637
+
+Epoch 48, Testing:
+Average incurred loss: 2.6398  
+Average sample loss: 2.6834  
+Average acc: 0.6149  
+  hair=0  [n = 363]:	loss = 1.7767  exp loss = 2.9929  adjusted loss = 2.9929  adv prob = 0.500000   acc = 0.6501
+  hair=1  [n = 255]:	loss = 3.8683  exp loss = 9.9746  adjusted loss = 9.9746  adv prob = 0.500000   acc = 0.5647
+roc auc = 0.376933
+Current lr: 0.001000
+Time Cost: 0:00:10.850658
+Current validation ROCAUC: 0.33063725490196083
+
+Average incurred loss: 0.0007  
+Average sample loss: 0.0007  
+Average acc: 1.0000  
+  hair=0  [n = 284]:	loss = 0.0005  exp loss = 0.0003  adjusted loss = 0.0003  adv prob = 0.500000   acc = 1.0000
+  hair=1  [n = 516]:	loss = 0.0008  exp loss = 0.0002  adjusted loss = 0.0002  adv prob = 0.500000   acc = 1.0000
+roc auc = 1.000000
+Average incurred loss: 0.0010  
+Average sample loss: 0.0010  
+Average acc: 1.0000  
+  hair=0  [n = 268]:	loss = 0.0020  exp loss = 0.0000  adjusted loss = 0.0000  adv prob = 0.500000   acc = 1.0000
+  hair=1  [n = 532]:	loss = 0.0004  exp loss = 0.0000  adjusted loss = 0.0000  adv prob = 0.500000   acc = 1.0000
+roc auc = 1.000000
+Average incurred loss: 0.0003  
+Average sample loss: 0.0003  
+Average acc: 1.0000  
+  hair=0  [n = 77]:	loss = 0.0005  exp loss = 0.0000  adjusted loss = 0.0000  adv prob = 0.500000   acc = 1.0000
+  hair=1  [n = 145]:	loss = 0.0002  exp loss = 0.0001  adjusted loss = 0.0001  adv prob = 0.500000   acc = 1.0000
+roc auc = 1.000000
+
+ Epoch 49, Validation:
+Average incurred loss: 3.0243  
+Average sample loss: 3.0428  
+Average acc: 0.5649  
+  hair=0  [n = 84]:	loss = 2.0387  exp loss = 3.2694  adjusted loss = 3.2694  adv prob = 0.500000   acc = 0.6190
+  hair=1  [n = 70]:	loss = 4.2071  exp loss = 3.7629  adjusted loss = 3.7629  adv prob = 0.500000   acc = 0.5000
+roc auc = 0.302941
+
+Epoch 49, Testing:
+Average incurred loss: 2.8081  
+Average sample loss: 2.8511  
+Average acc: 0.6133  
+  hair=0  [n = 363]:	loss = 1.8305  exp loss = 3.6765  adjusted loss = 3.6765  adv prob = 0.500000   acc = 0.6556
+  hair=1  [n = 255]:	loss = 4.1997  exp loss = 9.6897  adjusted loss = 9.6897  adv prob = 0.500000   acc = 0.5529
+roc auc = 0.343524
+Current lr: 0.001000
+Time Cost: 0:00:10.863795
+Current validation ROCAUC: 0.30294117647058827
+
+Average incurred loss: 0.0019  
+Average sample loss: 0.0019  
+Average acc: 1.0000  
+  hair=0  [n = 269]:	loss = 0.0032  exp loss = 0.0011  adjusted loss = 0.0011  adv prob = 0.500000   acc = 1.0000
+  hair=1  [n = 531]:	loss = 0.0013  exp loss = 0.0000  adjusted loss = 0.0000  adv prob = 0.500000   acc = 1.0000
+roc auc = 1.000000
+Average incurred loss: 0.0009  
+Average sample loss: 0.0009  
+Average acc: 1.0000  
+  hair=0  [n = 284]:	loss = 0.0013  exp loss = 0.0076  adjusted loss = 0.0076  adv prob = 0.500000   acc = 1.0000
+  hair=1  [n = 516]:	loss = 0.0006  exp loss = 0.0004  adjusted loss = 0.0004  adv prob = 0.500000   acc = 1.0000
+roc auc = 1.000000
+Average incurred loss: 0.0022  
+Average sample loss: 0.0021  
+Average acc: 1.0000  
+  hair=0  [n = 76]:	loss = 0.0053  exp loss = 0.0010  adjusted loss = 0.0010  adv prob = 0.500000   acc = 1.0000
+  hair=1  [n = 146]:	loss = 0.0005  exp loss = 0.0000  adjusted loss = 0.0000  adv prob = 0.500000   acc = 1.0000
+roc auc = 1.000000
+
+ Epoch 50, Validation:
+Average incurred loss: 3.0830  
+Average sample loss: 3.1039  
+Average acc: 0.5519  
+  hair=0  [n = 84]:	loss = 2.0517  exp loss = 3.7701  adjusted loss = 3.7701  adv prob = 0.500000   acc = 0.6190
+  hair=1  [n = 70]:	loss = 4.3207  exp loss = 3.5072  adjusted loss = 3.5072  adv prob = 0.500000   acc = 0.4714
+roc auc = 0.293873
+
+Epoch 50, Testing:
+Average incurred loss: 2.9618  
+Average sample loss: 3.0112  
+Average acc: 0.6052  
+  hair=0  [n = 363]:	loss = 1.9301  exp loss = 3.7181  adjusted loss = 3.7181  adv prob = 0.500000   acc = 0.6336
+  hair=1  [n = 255]:	loss = 4.4304  exp loss = 11.0173  adjusted loss = 11.0173  adv prob = 0.500000   acc = 0.5647
+roc auc = 0.315479
+Current lr: 0.001000
+Time Cost: 0:00:11.165987
+Current validation ROCAUC: 0.2938725490196078
+
+Average incurred loss: 0.0012  
+Average sample loss: 0.0012  
+Average acc: 1.0000  
+  hair=0  [n = 263]:	loss = 0.0021  exp loss = 0.0004  adjusted loss = 0.0004  adv prob = 0.500000   acc = 1.0000
+  hair=1  [n = 537]:	loss = 0.0007  exp loss = 0.0000  adjusted loss = 0.0000  adv prob = 0.500000   acc = 1.0000
+roc auc = 1.000000
+Average incurred loss: 0.0024  
+Average sample loss: 0.0024  
+Average acc: 0.9987  
+  hair=0  [n = 297]:	loss = 0.0056  exp loss = 0.0013  adjusted loss = 0.0013  adv prob = 0.500000   acc = 0.9966
+  hair=1  [n = 503]:	loss = 0.0005  exp loss = 0.0001  adjusted loss = 0.0001  adv prob = 0.500000   acc = 1.0000
+roc auc = 1.000000
+Average incurred loss: 0.0199  
+Average sample loss: 0.0197  
+Average acc: 0.9820  
+  hair=0  [n = 69]:	loss = 0.0330  exp loss = 0.0019  adjusted loss = 0.0019  adv prob = 0.500000   acc = 0.9710
+  hair=1  [n = 153]:	loss = 0.0140  exp loss = 0.0003  adjusted loss = 0.0003  adv prob = 0.500000   acc = 0.9869
+roc auc = 0.999480
+
+ Epoch 51, Validation:
+Average incurred loss: 3.0299  
+Average sample loss: 3.0376  
+Average acc: 0.5260  
+  hair=0  [n = 84]:	loss = 2.0814  exp loss = 2.7088  adjusted loss = 2.7088  adv prob = 0.500000   acc = 0.5833
+  hair=1  [n = 70]:	loss = 4.1681  exp loss = 3.7617  adjusted loss = 3.7617  adv prob = 0.500000   acc = 0.4571
+roc auc = 0.297059
+
+Epoch 51, Testing:
+Average incurred loss: 3.0194  
+Average sample loss: 3.0547  
+Average acc: 0.5874  
+  hair=0  [n = 363]:	loss = 2.0664  exp loss = 2.4550  adjusted loss = 2.4550  adv prob = 0.500000   acc = 0.5950
+  hair=1  [n = 255]:	loss = 4.3761  exp loss = 9.5096  adjusted loss = 9.5096  adv prob = 0.500000   acc = 0.5765
+roc auc = 0.312199
+Current lr: 0.001000
+Time Cost: 0:00:10.506035
+Current validation ROCAUC: 0.29705882352941176
+
+Average incurred loss: 0.0027  
+Average sample loss: 0.0027  
+Average acc: 1.0000  
+  hair=0  [n = 269]:	loss = 0.0033  exp loss = 0.0000  adjusted loss = 0.0000  adv prob = 0.500000   acc = 1.0000
+  hair=1  [n = 531]:	loss = 0.0025  exp loss = 0.0060  adjusted loss = 0.0060  adv prob = 0.500000   acc = 1.0000
+roc auc = 1.000000
+Average incurred loss: 0.0043  
+Average sample loss: 0.0043  
+Average acc: 0.9987  
+  hair=0  [n = 277]:	loss = 0.0022  exp loss = 0.0002  adjusted loss = 0.0002  adv prob = 0.500000   acc = 1.0000
+  hair=1  [n = 523]:	loss = 0.0054  exp loss = 0.0001  adjusted loss = 0.0001  adv prob = 0.500000   acc = 0.9981
+roc auc = 0.999991
+Average incurred loss: 0.0018  
+Average sample loss: 0.0018  
+Average acc: 1.0000  
+  hair=0  [n = 83]:	loss = 0.0008  exp loss = 0.0000  adjusted loss = 0.0000  adv prob = 0.500000   acc = 1.0000
+  hair=1  [n = 139]:	loss = 0.0024  exp loss = 0.0000  adjusted loss = 0.0000  adv prob = 0.500000   acc = 1.0000
+roc auc = 1.000000
+
+ Epoch 52, Validation:
+Average incurred loss: 2.7890  
+Average sample loss: 2.8071  
+Average acc: 0.5909  
+  hair=0  [n = 84]:	loss = 1.6367  exp loss = 2.9337  adjusted loss = 2.9337  adv prob = 0.500000   acc = 0.6548
+  hair=1  [n = 70]:	loss = 4.1719  exp loss = 3.6084  adjusted loss = 3.6084  adv prob = 0.500000   acc = 0.5143
+roc auc = 0.336765
+
+Epoch 52, Testing:
+Average incurred loss: 2.8309  
+Average sample loss: 2.8665  
+Average acc: 0.6165  
+  hair=0  [n = 363]:	loss = 1.7577  exp loss = 3.9217  adjusted loss = 3.9217  adv prob = 0.500000   acc = 0.6474
+  hair=1  [n = 255]:	loss = 4.3586  exp loss = 8.2664  adjusted loss = 8.2664  adv prob = 0.500000   acc = 0.5725
+roc auc = 0.361212
+Current lr: 0.001000
+Time Cost: 0:00:10.912257
+Current validation ROCAUC: 0.33676470588235297
+
+Average incurred loss: 0.0091  
+Average sample loss: 0.0091  
+Average acc: 0.9975  
+  hair=0  [n = 261]:	loss = 0.0137  exp loss = 0.0502  adjusted loss = 0.0502  adv prob = 0.500000   acc = 0.9962
+  hair=1  [n = 539]:	loss = 0.0069  exp loss = 0.0019  adjusted loss = 0.0019  adv prob = 0.500000   acc = 0.9981
+roc auc = 0.999920
+Average incurred loss: 0.0131  
+Average sample loss: 0.0131  
+Average acc: 0.9950  
+  hair=0  [n = 285]:	loss = 0.0125  exp loss = 0.0003  adjusted loss = 0.0003  adv prob = 0.500000   acc = 0.9965
+  hair=1  [n = 515]:	loss = 0.0134  exp loss = 0.0000  adjusted loss = 0.0000  adv prob = 0.500000   acc = 0.9942
+roc auc = 0.999882
+Average incurred loss: 0.0053  
+Average sample loss: 0.0052  
+Average acc: 1.0000  
+  hair=0  [n = 83]:	loss = 0.0086  exp loss = 0.0004  adjusted loss = 0.0004  adv prob = 0.500000   acc = 1.0000
+  hair=1  [n = 139]:	loss = 0.0033  exp loss = 0.0003  adjusted loss = 0.0003  adv prob = 0.500000   acc = 1.0000
+roc auc = 1.000000
+
+ Epoch 53, Validation:
+Average incurred loss: 2.9461  
+Average sample loss: 2.9422  
+Average acc: 0.5974  
+  hair=0  [n = 84]:	loss = 1.9351  exp loss = 1.6827  adjusted loss = 1.6827  adv prob = 0.500000   acc = 0.6667
+  hair=1  [n = 70]:	loss = 4.1593  exp loss = 4.0020  adjusted loss = 4.0020  adv prob = 0.500000   acc = 0.5143
+roc auc = 0.375980
+
+Epoch 53, Testing:
+Average incurred loss: 2.6877  
+Average sample loss: 2.7186  
+Average acc: 0.6230  
+  hair=0  [n = 363]:	loss = 1.7365  exp loss = 2.2052  adjusted loss = 2.2052  adv prob = 0.500000   acc = 0.6584
+  hair=1  [n = 255]:	loss = 4.0418  exp loss = 8.3619  adjusted loss = 8.3619  adv prob = 0.500000   acc = 0.5725
+roc auc = 0.416349
+Current lr: 0.001000
+Time Cost: 0:00:10.030431
+Current validation ROCAUC: 0.37598039215686274
+
+Average incurred loss: 0.0054  
+Average sample loss: 0.0054  
+Average acc: 0.9987  
+  hair=0  [n = 269]:	loss = 0.0036  exp loss = 0.0235  adjusted loss = 0.0235  adv prob = 0.500000   acc = 1.0000
+  hair=1  [n = 531]:	loss = 0.0063  exp loss = 0.0032  adjusted loss = 0.0032  adv prob = 0.500000   acc = 0.9981
+roc auc = 1.000000
+Average incurred loss: 0.0015  
+Average sample loss: 0.0015  
+Average acc: 1.0000  
+  hair=0  [n = 280]:	loss = 0.0015  exp loss = 0.0019  adjusted loss = 0.0019  adv prob = 0.500000   acc = 1.0000
+  hair=1  [n = 520]:	loss = 0.0015  exp loss = 0.0000  adjusted loss = 0.0000  adv prob = 0.500000   acc = 1.0000
+roc auc = 1.000000
+Average incurred loss: 0.0016  
+Average sample loss: 0.0016  
+Average acc: 1.0000  
+  hair=0  [n = 80]:	loss = 0.0035  exp loss = 0.0056  adjusted loss = 0.0056  adv prob = 0.500000   acc = 1.0000
+  hair=1  [n = 142]:	loss = 0.0005  exp loss = 0.0005  adjusted loss = 0.0005  adv prob = 0.500000   acc = 1.0000
+roc auc = 1.000000
+
+ Epoch 54, Validation:
+Average incurred loss: 3.5061  
+Average sample loss: 3.5036  
+Average acc: 0.6039  
+  hair=0  [n = 84]:	loss = 1.9731  exp loss = 3.5291  adjusted loss = 3.5291  adv prob = 0.500000   acc = 0.6786
+  hair=1  [n = 70]:	loss = 5.3457  exp loss = 3.3479  adjusted loss = 3.3479  adv prob = 0.500000   acc = 0.5143
+roc auc = 0.264216
+
+Epoch 54, Testing:
+Average incurred loss: 3.1611  
+Average sample loss: 3.2087  
+Average acc: 0.6375  
+  hair=0  [n = 363]:	loss = 1.8144  exp loss = 2.0434  adjusted loss = 2.0434  adv prob = 0.500000   acc = 0.6777
+  hair=1  [n = 255]:	loss = 5.0782  exp loss = 12.1432  adjusted loss = 12.1432  adv prob = 0.500000   acc = 0.5804
+roc auc = 0.294997
+Current lr: 0.001000
+Time Cost: 0:00:10.833343
+Current validation ROCAUC: 0.26421568627450975
+
+Average incurred loss: 0.0027  
+Average sample loss: 0.0027  
+Average acc: 1.0000  
+  hair=0  [n = 284]:	loss = 0.0026  exp loss = 0.0053  adjusted loss = 0.0053  adv prob = 0.500000   acc = 1.0000
+  hair=1  [n = 516]:	loss = 0.0028  exp loss = 0.0005  adjusted loss = 0.0005  adv prob = 0.500000   acc = 1.0000
+roc auc = 1.000000
+Average incurred loss: 0.0019  
+Average sample loss: 0.0019  
+Average acc: 1.0000  
+  hair=0  [n = 282]:	loss = 0.0024  exp loss = 0.0003  adjusted loss = 0.0003  adv prob = 0.500000   acc = 1.0000
+  hair=1  [n = 518]:	loss = 0.0017  exp loss = 0.0001  adjusted loss = 0.0001  adv prob = 0.500000   acc = 1.0000
+roc auc = 1.000000
+Average incurred loss: 0.0184  
+Average sample loss: 0.0190  
+Average acc: 0.9910  
+  hair=0  [n = 63]:	loss = 0.0606  exp loss = 0.2346  adjusted loss = 0.2346  adv prob = 0.500000   acc = 0.9683
+  hair=1  [n = 159]:	loss = 0.0017  exp loss = 0.0163  adjusted loss = 0.0163  adv prob = 0.500000   acc = 1.0000
+roc auc = 1.000000
+
+ Epoch 55, Validation:
+Average incurred loss: 2.8426  
+Average sample loss: 2.8350  
+Average acc: 0.5909  
+  hair=0  [n = 84]:	loss = 1.9142  exp loss = 3.2412  adjusted loss = 3.2412  adv prob = 0.500000   acc = 0.6786
+  hair=1  [n = 70]:	loss = 3.9566  exp loss = 2.0371  adjusted loss = 2.0371  adv prob = 0.500000   acc = 0.4857
+roc auc = 0.351716
+
+Epoch 55, Testing:
+Average incurred loss: 2.6810  
+Average sample loss: 2.7268  
+Average acc: 0.6165  
+  hair=0  [n = 363]:	loss = 1.7824  exp loss = 1.6848  adjusted loss = 1.6848  adv prob = 0.500000   acc = 0.6419
+  hair=1  [n = 255]:	loss = 3.9601  exp loss = 11.2925  adjusted loss = 11.2925  adv prob = 0.500000   acc = 0.5804
+roc auc = 0.363521
+Current lr: 0.001000
+Time Cost: 0:00:09.709838
+Current validation ROCAUC: 0.3517156862745098
+
+Average incurred loss: 0.0022  
+Average sample loss: 0.0022  
+Average acc: 1.0000  
+  hair=0  [n = 261]:	loss = 0.0029  exp loss = 0.0002  adjusted loss = 0.0002  adv prob = 0.500000   acc = 1.0000
+  hair=1  [n = 539]:	loss = 0.0019  exp loss = 0.0006  adjusted loss = 0.0006  adv prob = 0.500000   acc = 1.0000
+roc auc = 1.000000
+Average incurred loss: 0.0180  
+Average sample loss: 0.0180  
+Average acc: 0.9925  
+  hair=0  [n = 289]:	loss = 0.0251  exp loss = 0.0126  adjusted loss = 0.0126  adv prob = 0.500000   acc = 0.9896
+  hair=1  [n = 511]:	loss = 0.0140  exp loss = 0.0877  adjusted loss = 0.0877  adv prob = 0.500000   acc = 0.9941
+roc auc = 0.999767
+Average incurred loss: 0.0020  
+Average sample loss: 0.0020  
+Average acc: 1.0000  
+  hair=0  [n = 79]:	loss = 0.0022  exp loss = 0.0000  adjusted loss = 0.0000  adv prob = 0.500000   acc = 1.0000
+  hair=1  [n = 143]:	loss = 0.0019  exp loss = 0.0002  adjusted loss = 0.0002  adv prob = 0.500000   acc = 1.0000
+roc auc = 1.000000
+
+ Epoch 56, Validation:
+Average incurred loss: 2.7902  
+Average sample loss: 2.8103  
+Average acc: 0.6364  
+  hair=0  [n = 84]:	loss = 1.6705  exp loss = 2.3077  adjusted loss = 2.3077  adv prob = 0.500000   acc = 0.7024
+  hair=1  [n = 70]:	loss = 4.1338  exp loss = 4.3430  adjusted loss = 4.3430  adv prob = 0.500000   acc = 0.5571
+roc auc = 0.416912
+
+Epoch 56, Testing:
+Average incurred loss: 2.2830  
+Average sample loss: 2.3155  
+Average acc: 0.6699  
+  hair=0  [n = 363]:	loss = 1.3975  exp loss = 1.1106  adjusted loss = 1.1106  adv prob = 0.500000   acc = 0.6942
+  hair=1  [n = 255]:	loss = 3.5434  exp loss = 8.7073  adjusted loss = 8.7073  adv prob = 0.500000   acc = 0.6353
+roc auc = 0.461329
+Current lr: 0.001000
+Time Cost: 0:00:09.774885
+Current validation ROCAUC: 0.4169117647058823
+
+Average incurred loss: 0.0045  
+Average sample loss: 0.0045  
+Average acc: 0.9988  
+  hair=0  [n = 267]:	loss = 0.0097  exp loss = 0.0009  adjusted loss = 0.0009  adv prob = 0.500000   acc = 0.9963
+  hair=1  [n = 533]:	loss = 0.0018  exp loss = 0.0000  adjusted loss = 0.0000  adv prob = 0.500000   acc = 1.0000
+roc auc = 1.000000
+Average incurred loss: 0.0039  
+Average sample loss: 0.0039  
+Average acc: 1.0000  
+  hair=0  [n = 288]:	loss = 0.0054  exp loss = 0.0009  adjusted loss = 0.0009  adv prob = 0.500000   acc = 1.0000
+  hair=1  [n = 512]:	loss = 0.0030  exp loss = 0.0049  adjusted loss = 0.0049  adv prob = 0.500000   acc = 1.0000
+roc auc = 1.000000
+Average incurred loss: 0.0072  
+Average sample loss: 0.0071  
+Average acc: 0.9955  
+  hair=0  [n = 74]:	loss = 0.0016  exp loss = 0.0005  adjusted loss = 0.0005  adv prob = 0.500000   acc = 1.0000
+  hair=1  [n = 148]:	loss = 0.0100  exp loss = 0.0001  adjusted loss = 0.0001  adv prob = 0.500000   acc = 0.9932
+roc auc = 1.000000
+
+ Epoch 57, Validation:
+Average incurred loss: 3.2518  
+Average sample loss: 3.3023  
+Average acc: 0.5974  
+  hair=0  [n = 84]:	loss = 1.8562  exp loss = 5.0188  adjusted loss = 5.0188  adv prob = 0.500000   acc = 0.7024
+  hair=1  [n = 70]:	loss = 4.9265  exp loss = 4.1776  adjusted loss = 4.1776  adv prob = 0.500000   acc = 0.4714
+roc auc = 0.332598
+
+Epoch 57, Testing:
+Average incurred loss: 2.7454  
+Average sample loss: 2.7917  
+Average acc: 0.6553  
+  hair=0  [n = 363]:	loss = 1.5993  exp loss = 1.7998  adjusted loss = 1.7998  adv prob = 0.500000   acc = 0.7163
+  hair=1  [n = 255]:	loss = 4.3768  exp loss = 11.4111  adjusted loss = 11.4111  adv prob = 0.500000   acc = 0.5686
+roc auc = 0.357446
+Current lr: 0.001000
+Time Cost: 0:00:09.997900
+Current validation ROCAUC: 0.33259803921568626
+
+Average incurred loss: 0.0079  
+Average sample loss: 0.0079  
+Average acc: 0.9950  
+  hair=0  [n = 286]:	loss = 0.0100  exp loss = 0.0000  adjusted loss = 0.0000  adv prob = 0.500000   acc = 0.9930
+  hair=1  [n = 514]:	loss = 0.0068  exp loss = 0.0002  adjusted loss = 0.0002  adv prob = 0.500000   acc = 0.9961
+roc auc = 0.999971
+Average incurred loss: 0.0038  
+Average sample loss: 0.0038  
+Average acc: 0.9975  
+  hair=0  [n = 265]:	loss = 0.0023  exp loss = 0.0001  adjusted loss = 0.0001  adv prob = 0.500000   acc = 1.0000
+  hair=1  [n = 535]:	loss = 0.0046  exp loss = 0.0009  adjusted loss = 0.0009  adv prob = 0.500000   acc = 0.9963
+roc auc = 1.000000
+Average incurred loss: 0.0016  
+Average sample loss: 0.0016  
+Average acc: 1.0000  
+  hair=0  [n = 78]:	loss = 0.0039  exp loss = 0.0022  adjusted loss = 0.0022  adv prob = 0.500000   acc = 1.0000
+  hair=1  [n = 144]:	loss = 0.0004  exp loss = 0.0000  adjusted loss = 0.0000  adv prob = 0.500000   acc = 1.0000
+roc auc = 1.000000
+
+ Epoch 58, Validation:
+Average incurred loss: 3.1349  
+Average sample loss: 3.1858  
+Average acc: 0.6429  
+  hair=0  [n = 84]:	loss = 1.7579  exp loss = 4.2384  adjusted loss = 4.2384  adv prob = 0.500000   acc = 0.6905
+  hair=1  [n = 70]:	loss = 4.7872  exp loss = 4.7466  adjusted loss = 4.7466  adv prob = 0.500000   acc = 0.5857
+roc auc = 0.345098
+
+Epoch 58, Testing:
+Average incurred loss: 2.6088  
+Average sample loss: 2.6484  
+Average acc: 0.6748  
+  hair=0  [n = 363]:	loss = 1.2913  exp loss = 1.9667  adjusted loss = 1.9667  adv prob = 0.500000   acc = 0.7163
+  hair=1  [n = 255]:	loss = 4.4845  exp loss = 9.8925  adjusted loss = 9.8925  adv prob = 0.500000   acc = 0.6157
+roc auc = 0.389642
+Current lr: 0.001000
+Time Cost: 0:00:10.650229
+Current validation ROCAUC: 0.34509803921568627
+
+Average incurred loss: 0.0048  
+Average sample loss: 0.0048  
+Average acc: 0.9988  
+  hair=0  [n = 262]:	loss = 0.0017  exp loss = 0.0001  adjusted loss = 0.0001  adv prob = 0.500000   acc = 1.0000
+  hair=1  [n = 538]:	loss = 0.0063  exp loss = 0.0001  adjusted loss = 0.0001  adv prob = 0.500000   acc = 0.9981
+roc auc = 1.000000
+Average incurred loss: 0.0018  
+Average sample loss: 0.0018  
+Average acc: 1.0000  
+  hair=0  [n = 286]:	loss = 0.0016  exp loss = 0.0000  adjusted loss = 0.0000  adv prob = 0.500000   acc = 1.0000
+  hair=1  [n = 514]:	loss = 0.0019  exp loss = 0.0005  adjusted loss = 0.0005  adv prob = 0.500000   acc = 1.0000
+roc auc = 1.000000
+Average incurred loss: 0.0059  
+Average sample loss: 0.0059  
+Average acc: 0.9955  
+  hair=0  [n = 81]:	loss = 0.0029  exp loss = 0.0005  adjusted loss = 0.0005  adv prob = 0.500000   acc = 1.0000
+  hair=1  [n = 141]:	loss = 0.0076  exp loss = 0.0008  adjusted loss = 0.0008  adv prob = 0.500000   acc = 0.9929
+roc auc = 1.000000
+
+ Epoch 59, Validation:
+Average incurred loss: 2.7666  
+Average sample loss: 2.7891  
+Average acc: 0.6169  
+  hair=0  [n = 84]:	loss = 1.8592  exp loss = 3.4831  adjusted loss = 3.4831  adv prob = 0.500000   acc = 0.6667
+  hair=1  [n = 70]:	loss = 3.8554  exp loss = 3.2531  adjusted loss = 3.2531  adv prob = 0.500000   acc = 0.5571
+roc auc = 0.362990
+
+Epoch 59, Testing:
+Average incurred loss: 2.5572  
+Average sample loss: 2.5915  
+Average acc: 0.6100  
+  hair=0  [n = 363]:	loss = 1.6688  exp loss = 1.8902  adjusted loss = 1.8902  adv prob = 0.500000   acc = 0.6336
+  hair=1  [n = 255]:	loss = 3.8218  exp loss = 8.9447  adjusted loss = 8.9447  adv prob = 0.500000   acc = 0.5765
+roc auc = 0.380438
+Current lr: 0.001000
+Time Cost: 0:00:10.838855
+Current validation ROCAUC: 0.36299019607843136
+
+Average incurred loss: 0.0018  
+Average sample loss: 0.0018  
+Average acc: 0.9987  
+  hair=0  [n = 278]:	loss = 0.0011  exp loss = 0.0013  adjusted loss = 0.0013  adv prob = 0.500000   acc = 1.0000
+  hair=1  [n = 522]:	loss = 0.0022  exp loss = 0.0883  adjusted loss = 0.0883  adv prob = 0.500000   acc = 0.9981
+roc auc = 1.000000
+Average incurred loss: 0.0021  
+Average sample loss: 0.0021  
+Average acc: 0.9987  
+  hair=0  [n = 280]:	loss = 0.0039  exp loss = 0.0005  adjusted loss = 0.0005  adv prob = 0.500000   acc = 0.9964
+  hair=1  [n = 520]:	loss = 0.0012  exp loss = 0.0007  adjusted loss = 0.0007  adv prob = 0.500000   acc = 1.0000
+roc auc = 1.000000
+Average incurred loss: 0.0090  
+Average sample loss: 0.0090  
+Average acc: 0.9955  
+  hair=0  [n = 71]:	loss = 0.0016  exp loss = 0.0000  adjusted loss = 0.0000  adv prob = 0.500000   acc = 1.0000
+  hair=1  [n = 151]:	loss = 0.0125  exp loss = 0.0003  adjusted loss = 0.0003  adv prob = 0.500000   acc = 0.9934
+roc auc = 0.999851
+
+ Epoch 60, Validation:
+Average incurred loss: 2.9653  
+Average sample loss: 2.9735  
+Average acc: 0.5519  
+  hair=0  [n = 84]:	loss = 2.2935  exp loss = 2.5297  adjusted loss = 2.5297  adv prob = 0.500000   acc = 0.5952
+  hair=1  [n = 70]:	loss = 3.7715  exp loss = 3.8367  adjusted loss = 3.8367  adv prob = 0.500000   acc = 0.5000
+roc auc = 0.381618
+
+Epoch 60, Testing:
+Average incurred loss: 2.6584  
+Average sample loss: 2.6947  
+Average acc: 0.5550  
+  hair=0  [n = 363]:	loss = 2.0312  exp loss = 3.0449  adjusted loss = 3.0449  adv prob = 0.500000   acc = 0.5620
+  hair=1  [n = 255]:	loss = 3.5513  exp loss = 8.6896  adjusted loss = 8.6896  adv prob = 0.500000   acc = 0.5451
+roc auc = 0.403514
+Current lr: 0.001000
+Time Cost: 0:00:10.959849
+Current validation ROCAUC: 0.3816176470588235
+
+Average incurred loss: 0.0058  
+Average sample loss: 0.0058  
+Average acc: 0.9963  
+  hair=0  [n = 288]:	loss = 0.0074  exp loss = 0.0135  adjusted loss = 0.0135  adv prob = 0.500000   acc = 0.9965
+  hair=1  [n = 512]:	loss = 0.0049  exp loss = 0.0001  adjusted loss = 0.0001  adv prob = 0.500000   acc = 0.9961
+roc auc = 0.999971
+Average incurred loss: 0.0029  
+Average sample loss: 0.0029  
+Average acc: 1.0000  
+  hair=0  [n = 269]:	loss = 0.0068  exp loss = 0.0000  adjusted loss = 0.0000  adv prob = 0.500000   acc = 1.0000
+  hair=1  [n = 531]:	loss = 0.0010  exp loss = 0.0013  adjusted loss = 0.0013  adv prob = 0.500000   acc = 1.0000
+roc auc = 1.000000
+Average incurred loss: 0.0057  
+Average sample loss: 0.0056  
+Average acc: 0.9955  
+  hair=0  [n = 72]:	loss = 0.0021  exp loss = 0.0004  adjusted loss = 0.0004  adv prob = 0.500000   acc = 1.0000
+  hair=1  [n = 150]:	loss = 0.0074  exp loss = 0.0000  adjusted loss = 0.0000  adv prob = 0.500000   acc = 0.9933
+roc auc = 1.000000
+
+ Epoch 61, Validation:
+Average incurred loss: 2.7356  
+Average sample loss: 2.7661  
+Average acc: 0.6234  
+  hair=0  [n = 84]:	loss = 1.8394  exp loss = 3.6761  adjusted loss = 3.6761  adv prob = 0.500000   acc = 0.6429
+  hair=1  [n = 70]:	loss = 3.8110  exp loss = 3.4219  adjusted loss = 3.4219  adv prob = 0.500000   acc = 0.6000
+roc auc = 0.362990
+
+Epoch 61, Testing:
+Average incurred loss: 2.5525  
+Average sample loss: 2.5873  
+Average acc: 0.6133  
+  hair=0  [n = 363]:	loss = 1.6639  exp loss = 1.8741  adjusted loss = 1.8741  adv prob = 0.500000   acc = 0.6281
+  hair=1  [n = 255]:	loss = 3.8174  exp loss = 9.0379  adjusted loss = 9.0379  adv prob = 0.500000   acc = 0.5922
+roc auc = 0.392570
+Current lr: 0.001000
+Time Cost: 0:00:10.846170
+Current validation ROCAUC: 0.36299019607843136
+
+Average incurred loss: 0.0016  
+Average sample loss: 0.0016  
+Average acc: 1.0000  
+  hair=0  [n = 289]:	loss = 0.0020  exp loss = 0.0035  adjusted loss = 0.0035  adv prob = 0.500000   acc = 1.0000
+  hair=1  [n = 511]:	loss = 0.0013  exp loss = 0.0001  adjusted loss = 0.0001  adv prob = 0.500000   acc = 1.0000
+roc auc = 1.000000
+Average incurred loss: 0.0022  
+Average sample loss: 0.0022  
+Average acc: 1.0000  
+  hair=0  [n = 274]:	loss = 0.0026  exp loss = 0.0001  adjusted loss = 0.0001  adv prob = 0.500000   acc = 1.0000
+  hair=1  [n = 526]:	loss = 0.0019  exp loss = 0.0000  adjusted loss = 0.0000  adv prob = 0.500000   acc = 1.0000
+roc auc = 1.000000
+Average incurred loss: 0.0082  
+Average sample loss: 0.0081  
+Average acc: 0.9955  
+  hair=0  [n = 66]:	loss = 0.0234  exp loss = 0.0001  adjusted loss = 0.0001  adv prob = 0.500000   acc = 0.9848
+  hair=1  [n = 156]:	loss = 0.0017  exp loss = 0.0001  adjusted loss = 0.0001  adv prob = 0.500000   acc = 1.0000
+roc auc = 1.000000
+
+ Epoch 62, Validation:
+Average incurred loss: 2.8625  
+Average sample loss: 2.8855  
+Average acc: 0.5779  
+  hair=0  [n = 84]:	loss = 2.3109  exp loss = 3.8007  adjusted loss = 3.8007  adv prob = 0.500000   acc = 0.6071
+  hair=1  [n = 70]:	loss = 3.5244  exp loss = 3.1482  adjusted loss = 3.1482  adv prob = 0.500000   acc = 0.5429
+roc auc = 0.380882
+
+Epoch 62, Testing:
+Average incurred loss: 2.5529  
+Average sample loss: 2.5833  
+Average acc: 0.5825  
+  hair=0  [n = 363]:	loss = 1.7600  exp loss = 1.6070  adjusted loss = 1.6070  adv prob = 0.500000   acc = 0.6088
+  hair=1  [n = 255]:	loss = 3.6816  exp loss = 8.4502  adjusted loss = 8.4502  adv prob = 0.500000   acc = 0.5451
+roc auc = 0.406526
+Current lr: 0.001000
+Time Cost: 0:00:10.468011
+Current validation ROCAUC: 0.3808823529411765
+
+Average incurred loss: 0.0015  
+Average sample loss: 0.0015  
+Average acc: 1.0000  
+  hair=0  [n = 275]:	loss = 0.0014  exp loss = 0.0001  adjusted loss = 0.0001  adv prob = 0.500000   acc = 1.0000
+  hair=1  [n = 525]:	loss = 0.0016  exp loss = 0.0000  adjusted loss = 0.0000  adv prob = 0.500000   acc = 1.0000
+roc auc = 1.000000
+Average incurred loss: 0.0008  
+Average sample loss: 0.0008  
+Average acc: 1.0000  
+  hair=0  [n = 272]:	loss = 0.0005  exp loss = 0.0000  adjusted loss = 0.0000  adv prob = 0.500000   acc = 1.0000
+  hair=1  [n = 528]:	loss = 0.0010  exp loss = 0.0004  adjusted loss = 0.0004  adv prob = 0.500000   acc = 1.0000
+roc auc = 1.000000
+Average incurred loss: 0.0015  
+Average sample loss: 0.0015  
+Average acc: 1.0000  
+  hair=0  [n = 82]:	loss = 0.0017  exp loss = 0.0003  adjusted loss = 0.0003  adv prob = 0.500000   acc = 1.0000
+  hair=1  [n = 140]:	loss = 0.0014  exp loss = 0.0000  adjusted loss = 0.0000  adv prob = 0.500000   acc = 1.0000
+roc auc = 1.000000
+
+ Epoch 63, Validation:
+Average incurred loss: 2.8985  
+Average sample loss: 2.9186  
+Average acc: 0.6299  
+  hair=0  [n = 84]:	loss = 1.9380  exp loss = 4.0462  adjusted loss = 4.0462  adv prob = 0.500000   acc = 0.6786
+  hair=1  [n = 70]:	loss = 4.0512  exp loss = 2.8228  adjusted loss = 2.8228  adv prob = 0.500000   acc = 0.5714
+roc auc = 0.402451
+
+Epoch 63, Testing:
+Average incurred loss: 2.5695  
+Average sample loss: 2.6063  
+Average acc: 0.6602  
+  hair=0  [n = 363]:	loss = 1.4846  exp loss = 1.2866  adjusted loss = 1.2866  adv prob = 0.500000   acc = 0.7135
+  hair=1  [n = 255]:	loss = 4.1137  exp loss = 9.8115  adjusted loss = 9.8115  adv prob = 0.500000   acc = 0.5843
+roc auc = 0.419829
+Current lr: 0.001000
+Time Cost: 0:00:11.652990
+Current validation ROCAUC: 0.4024509803921569
+
+Average incurred loss: 0.0016  
+Average sample loss: 0.0016  
+Average acc: 1.0000  
+  hair=0  [n = 294]:	loss = 0.0011  exp loss = 0.0002  adjusted loss = 0.0002  adv prob = 0.500000   acc = 1.0000
+  hair=1  [n = 506]:	loss = 0.0018  exp loss = 0.0000  adjusted loss = 0.0000  adv prob = 0.500000   acc = 1.0000
+roc auc = 1.000000
+Average incurred loss: 0.0014  
+Average sample loss: 0.0014  
+Average acc: 1.0000  
+  hair=0  [n = 253]:	loss = 0.0026  exp loss = 0.0007  adjusted loss = 0.0007  adv prob = 0.500000   acc = 1.0000
+  hair=1  [n = 547]:	loss = 0.0008  exp loss = 0.0001  adjusted loss = 0.0001  adv prob = 0.500000   acc = 1.0000
+roc auc = 1.000000
+Average incurred loss: 0.0006  
+Average sample loss: 0.0006  
+Average acc: 1.0000  
+  hair=0  [n = 82]:	loss = 0.0002  exp loss = 0.0002  adjusted loss = 0.0002  adv prob = 0.500000   acc = 1.0000
+  hair=1  [n = 140]:	loss = 0.0009  exp loss = 0.0000  adjusted loss = 0.0000  adv prob = 0.500000   acc = 1.0000
+roc auc = 1.000000
+
+ Epoch 64, Validation:
+Average incurred loss: 2.8587  
+Average sample loss: 2.8668  
+Average acc: 0.6169  
+  hair=0  [n = 84]:	loss = 1.9840  exp loss = 3.3552  adjusted loss = 3.3552  adv prob = 0.500000   acc = 0.6548
+  hair=1  [n = 70]:	loss = 3.9083  exp loss = 2.7970  adjusted loss = 2.7970  adv prob = 0.500000   acc = 0.5714
+roc auc = 0.395098
+
+Epoch 64, Testing:
+Average incurred loss: 2.5490  
+Average sample loss: 2.5839  
+Average acc: 0.6408  
+  hair=0  [n = 363]:	loss = 1.5819  exp loss = 0.7272  adjusted loss = 0.7272  adv prob = 0.500000   acc = 0.6804
+  hair=1  [n = 255]:	loss = 3.9257  exp loss = 9.8073  adjusted loss = 9.8073  adv prob = 0.500000   acc = 0.5843
+roc auc = 0.415529
+Current lr: 0.001000
+Time Cost: 0:00:10.460587
+Current validation ROCAUC: 0.39509803921568626
+
+Average incurred loss: 0.0008  
+Average sample loss: 0.0008  
+Average acc: 1.0000  
+  hair=0  [n = 277]:	loss = 0.0012  exp loss = 0.0004  adjusted loss = 0.0004  adv prob = 0.500000   acc = 1.0000
+  hair=1  [n = 523]:	loss = 0.0006  exp loss = 0.0000  adjusted loss = 0.0000  adv prob = 0.500000   acc = 1.0000
+roc auc = 1.000000
+Average incurred loss: 0.0005  
+Average sample loss: 0.0005  
+Average acc: 1.0000  
+  hair=0  [n = 284]:	loss = 0.0012  exp loss = 0.0015  adjusted loss = 0.0015  adv prob = 0.500000   acc = 1.0000
+  hair=1  [n = 516]:	loss = 0.0002  exp loss = 0.0000  adjusted loss = 0.0000  adv prob = 0.500000   acc = 1.0000
+roc auc = 1.000000
+Average incurred loss: 0.0006  
+Average sample loss: 0.0006  
+Average acc: 1.0000  
+  hair=0  [n = 68]:	loss = 0.0002  exp loss = 0.0000  adjusted loss = 0.0000  adv prob = 0.500000   acc = 1.0000
+  hair=1  [n = 154]:	loss = 0.0008  exp loss = 0.0000  adjusted loss = 0.0000  adv prob = 0.500000   acc = 1.0000
+roc auc = 1.000000
+
+ Epoch 65, Validation:
+Average incurred loss: 3.1249  
+Average sample loss: 3.1383  
+Average acc: 0.5909  
+  hair=0  [n = 84]:	loss = 2.1329  exp loss = 3.7177  adjusted loss = 3.7177  adv prob = 0.500000   acc = 0.6310
+  hair=1  [n = 70]:	loss = 4.3153  exp loss = 3.2506  adjusted loss = 3.2506  adv prob = 0.500000   acc = 0.5429
+roc auc = 0.339216
+
+Epoch 65, Testing:
+Average incurred loss: 2.7075  
+Average sample loss: 2.7421  
+Average acc: 0.6181  
+  hair=0  [n = 363]:	loss = 1.7015  exp loss = 1.4021  adjusted loss = 1.4021  adv prob = 0.500000   acc = 0.6529
+  hair=1  [n = 255]:	loss = 4.1396  exp loss = 9.5731  adjusted loss = 9.5731  adv prob = 0.500000   acc = 0.5686
+roc auc = 0.382145
+Current lr: 0.001000
+Time Cost: 0:00:10.167610
+Current validation ROCAUC: 0.33921568627450976
+
+Average incurred loss: 0.0006  
+Average sample loss: 0.0006  
+Average acc: 1.0000  
+  hair=0  [n = 273]:	loss = 0.0009  exp loss = 0.0002  adjusted loss = 0.0002  adv prob = 0.500000   acc = 1.0000
+  hair=1  [n = 527]:	loss = 0.0004  exp loss = 0.0001  adjusted loss = 0.0001  adv prob = 0.500000   acc = 1.0000
+roc auc = 1.000000
+Average incurred loss: 0.0007  
+Average sample loss: 0.0007  
+Average acc: 1.0000  
+  hair=0  [n = 279]:	loss = 0.0008  exp loss = 0.0008  adjusted loss = 0.0008  adv prob = 0.500000   acc = 1.0000
+  hair=1  [n = 521]:	loss = 0.0007  exp loss = 0.0035  adjusted loss = 0.0035  adv prob = 0.500000   acc = 1.0000
+roc auc = 1.000000
+Average incurred loss: 0.0007  
+Average sample loss: 0.0007  
+Average acc: 1.0000  
+  hair=0  [n = 77]:	loss = 0.0004  exp loss = 0.0002  adjusted loss = 0.0002  adv prob = 0.500000   acc = 1.0000
+  hair=1  [n = 145]:	loss = 0.0009  exp loss = 0.0002  adjusted loss = 0.0002  adv prob = 0.500000   acc = 1.0000
+roc auc = 1.000000
+
+ Epoch 66, Validation:
+Average incurred loss: 3.0532  
+Average sample loss: 3.0666  
+Average acc: 0.6169  
+  hair=0  [n = 84]:	loss = 1.9305  exp loss = 3.8912  adjusted loss = 3.8912  adv prob = 0.500000   acc = 0.6667
+  hair=1  [n = 70]:	loss = 4.4005  exp loss = 2.9321  adjusted loss = 2.9321  adv prob = 0.500000   acc = 0.5571
+roc auc = 0.353431
+
+Epoch 66, Testing:
+Average incurred loss: 2.6214  
+Average sample loss: 2.6591  
+Average acc: 0.6602  
+  hair=0  [n = 363]:	loss = 1.5013  exp loss = 1.2492  adjusted loss = 1.2492  adv prob = 0.500000   acc = 0.7080
+  hair=1  [n = 255]:	loss = 4.2159  exp loss = 10.0707  adjusted loss = 10.0707  adv prob = 0.500000   acc = 0.5922
+roc auc = 0.397139
+Current lr: 0.001000
+Time Cost: 0:00:10.527150
+Current validation ROCAUC: 0.35343137254901963
+
+Average incurred loss: 0.0008  
+Average sample loss: 0.0008  
+Average acc: 1.0000  
+  hair=0  [n = 279]:	loss = 0.0009  exp loss = 0.0002  adjusted loss = 0.0002  adv prob = 0.500000   acc = 1.0000
+  hair=1  [n = 521]:	loss = 0.0007  exp loss = 0.0000  adjusted loss = 0.0000  adv prob = 0.500000   acc = 1.0000
+roc auc = 1.000000
+Average incurred loss: 0.0005  
+Average sample loss: 0.0005  
+Average acc: 1.0000  
+  hair=0  [n = 263]:	loss = 0.0012  exp loss = 0.0000  adjusted loss = 0.0000  adv prob = 0.500000   acc = 1.0000
+  hair=1  [n = 537]:	loss = 0.0001  exp loss = 0.0000  adjusted loss = 0.0000  adv prob = 0.500000   acc = 1.0000
+roc auc = 1.000000
+Average incurred loss: 0.0002  
+Average sample loss: 0.0002  
+Average acc: 1.0000  
+  hair=0  [n = 87]:	loss = 0.0002  exp loss = 0.0002  adjusted loss = 0.0002  adv prob = 0.500000   acc = 1.0000
+  hair=1  [n = 135]:	loss = 0.0002  exp loss = 0.0001  adjusted loss = 0.0001  adv prob = 0.500000   acc = 1.0000
+roc auc = 1.000000
+
+ Epoch 67, Validation:
+Average incurred loss: 3.1500  
+Average sample loss: 3.1550  
+Average acc: 0.5844  
+  hair=0  [n = 84]:	loss = 2.2507  exp loss = 3.3849  adjusted loss = 3.3849  adv prob = 0.500000   acc = 0.6310
+  hair=1  [n = 70]:	loss = 4.2292  exp loss = 3.1810  adjusted loss = 3.1810  adv prob = 0.500000   acc = 0.5286
+roc auc = 0.353922
+
+Epoch 67, Testing:
+Average incurred loss: 2.7657  
+Average sample loss: 2.7983  
+Average acc: 0.6149  
+  hair=0  [n = 363]:	loss = 1.7931  exp loss = 1.2271  adjusted loss = 1.2271  adv prob = 0.500000   acc = 0.6474
+  hair=1  [n = 255]:	loss = 4.1503  exp loss = 9.4282  adjusted loss = 9.4282  adv prob = 0.500000   acc = 0.5686
+roc auc = 0.391215
+Current lr: 0.001000
+Time Cost: 0:00:10.662044
+Current validation ROCAUC: 0.35392156862745094
+
+Average incurred loss: 0.0009  
+Average sample loss: 0.0009  
+Average acc: 1.0000  
+  hair=0  [n = 284]:	loss = 0.0004  exp loss = 0.0001  adjusted loss = 0.0001  adv prob = 0.500000   acc = 1.0000
+  hair=1  [n = 516]:	loss = 0.0011  exp loss = 0.0000  adjusted loss = 0.0000  adv prob = 0.500000   acc = 1.0000
+roc auc = 1.000000
+Average incurred loss: 0.0024  
+Average sample loss: 0.0024  
+Average acc: 0.9987  
+  hair=0  [n = 271]:	loss = 0.0028  exp loss = 0.0000  adjusted loss = 0.0000  adv prob = 0.500000   acc = 1.0000
+  hair=1  [n = 529]:	loss = 0.0022  exp loss = 0.0000  adjusted loss = 0.0000  adv prob = 0.500000   acc = 0.9981
+roc auc = 1.000000
+Average incurred loss: 0.0014  
+Average sample loss: 0.0014  
+Average acc: 1.0000  
+  hair=0  [n = 74]:	loss = 0.0037  exp loss = 0.0004  adjusted loss = 0.0004  adv prob = 0.500000   acc = 1.0000
+  hair=1  [n = 148]:	loss = 0.0003  exp loss = 0.0001  adjusted loss = 0.0001  adv prob = 0.500000   acc = 1.0000
+roc auc = 1.000000
+
+ Epoch 68, Validation:
+Average incurred loss: 3.4117  
+Average sample loss: 3.4132  
+Average acc: 0.5649  
+  hair=0  [n = 84]:	loss = 2.4389  exp loss = 4.0043  adjusted loss = 4.0043  adv prob = 0.500000   acc = 0.6190
+  hair=1  [n = 70]:	loss = 4.5791  exp loss = 2.8993  adjusted loss = 2.8993  adv prob = 0.500000   acc = 0.5000
+roc auc = 0.317157
+
+Epoch 68, Testing:
+Average incurred loss: 3.0493  
+Average sample loss: 3.0821  
+Average acc: 0.5890  
+  hair=0  [n = 363]:	loss = 1.9809  exp loss = 0.6896  adjusted loss = 0.6896  adv prob = 0.500000   acc = 0.6253
+  hair=1  [n = 255]:	loss = 4.5702  exp loss = 10.3081  adjusted loss = 10.3081  adv prob = 0.500000   acc = 0.5373
+roc auc = 0.353497
+Current lr: 0.001000
+Time Cost: 0:00:10.848617
+Current validation ROCAUC: 0.3171568627450981
+
+Average incurred loss: 0.0003  
+Average sample loss: 0.0003  
+Average acc: 1.0000  
+  hair=0  [n = 285]:	loss = 0.0004  exp loss = 0.0001  adjusted loss = 0.0001  adv prob = 0.500000   acc = 1.0000
+  hair=1  [n = 515]:	loss = 0.0002  exp loss = 0.0033  adjusted loss = 0.0033  adv prob = 0.500000   acc = 1.0000
+roc auc = 1.000000
+Average incurred loss: 0.0009  
+Average sample loss: 0.0009  
+Average acc: 1.0000  
+  hair=0  [n = 276]:	loss = 0.0008  exp loss = 0.0001  adjusted loss = 0.0001  adv prob = 0.500000   acc = 1.0000
+  hair=1  [n = 524]:	loss = 0.0009  exp loss = 0.0000  adjusted loss = 0.0000  adv prob = 0.500000   acc = 1.0000
+roc auc = 1.000000
+Average incurred loss: 0.0005  
+Average sample loss: 0.0005  
+Average acc: 1.0000  
+  hair=0  [n = 68]:	loss = 0.0011  exp loss = 0.0004  adjusted loss = 0.0004  adv prob = 0.500000   acc = 1.0000
+  hair=1  [n = 154]:	loss = 0.0003  exp loss = 0.0000  adjusted loss = 0.0000  adv prob = 0.500000   acc = 1.0000
+roc auc = 1.000000
+
+ Epoch 69, Validation:
+Average incurred loss: 3.2041  
+Average sample loss: 3.2034  
+Average acc: 0.5714  
+  hair=0  [n = 84]:	loss = 2.4663  exp loss = 3.5448  adjusted loss = 3.5448  adv prob = 0.500000   acc = 0.6310
+  hair=1  [n = 70]:	loss = 4.0895  exp loss = 2.8254  adjusted loss = 2.8254  adv prob = 0.500000   acc = 0.5000
+roc auc = 0.346569
+
+Epoch 69, Testing:
+Average incurred loss: 2.8357  
+Average sample loss: 2.8662  
+Average acc: 0.5922  
+  hair=0  [n = 363]:	loss = 1.9423  exp loss = 1.3581  adjusted loss = 1.3581  adv prob = 0.500000   acc = 0.6226
+  hair=1  [n = 255]:	loss = 4.1074  exp loss = 9.1083  adjusted loss = 9.1083  adv prob = 0.500000   acc = 0.5490
+roc auc = 0.385157
+Current lr: 0.001000
+Time Cost: 0:00:09.882091
+Current validation ROCAUC: 0.3465686274509804
+
+Average incurred loss: 0.0012  
+Average sample loss: 0.0012  
+Average acc: 1.0000  
+  hair=0  [n = 282]:	loss = 0.0024  exp loss = 0.0000  adjusted loss = 0.0000  adv prob = 0.500000   acc = 1.0000
+  hair=1  [n = 518]:	loss = 0.0005  exp loss = 0.0000  adjusted loss = 0.0000  adv prob = 0.500000   acc = 1.0000
+roc auc = 1.000000
+Average incurred loss: 0.0006  
+Average sample loss: 0.0006  
+Average acc: 1.0000  
+  hair=0  [n = 268]:	loss = 0.0004  exp loss = 0.0000  adjusted loss = 0.0000  adv prob = 0.500000   acc = 1.0000
+  hair=1  [n = 532]:	loss = 0.0007  exp loss = 0.0000  adjusted loss = 0.0000  adv prob = 0.500000   acc = 1.0000
+roc auc = 1.000000
+Average incurred loss: 0.0004  
+Average sample loss: 0.0004  
+Average acc: 1.0000  
+  hair=0  [n = 79]:	loss = 0.0008  exp loss = 0.0000  adjusted loss = 0.0000  adv prob = 0.500000   acc = 1.0000
+  hair=1  [n = 143]:	loss = 0.0001  exp loss = 0.0000  adjusted loss = 0.0000  adv prob = 0.500000   acc = 1.0000
+roc auc = 1.000000
+
+ Epoch 70, Validation:
+Average incurred loss: 2.9247  
+Average sample loss: 2.9270  
+Average acc: 0.5974  
+  hair=0  [n = 84]:	loss = 2.2675  exp loss = 2.9954  adjusted loss = 2.9954  adv prob = 0.500000   acc = 0.6429
+  hair=1  [n = 70]:	loss = 3.7134  exp loss = 2.9729  adjusted loss = 2.9729  adv prob = 0.500000   acc = 0.5429
+roc auc = 0.399020
+
+Epoch 70, Testing:
+Average incurred loss: 2.7034  
+Average sample loss: 2.7326  
+Average acc: 0.6036  
+  hair=0  [n = 363]:	loss = 1.8545  exp loss = 1.1619  adjusted loss = 1.1619  adv prob = 0.500000   acc = 0.6226
+  hair=1  [n = 255]:	loss = 3.9118  exp loss = 8.8038  adjusted loss = 8.8038  adv prob = 0.500000   acc = 0.5765
+roc auc = 0.415964
+Current lr: 0.001000
+Time Cost: 0:00:10.563756
+Current validation ROCAUC: 0.3990196078431373
+
+Average incurred loss: 0.0002  
+Average sample loss: 0.0002  
+Average acc: 1.0000  
+  hair=0  [n = 283]:	loss = 0.0002  exp loss = 0.0001  adjusted loss = 0.0001  adv prob = 0.500000   acc = 1.0000
+  hair=1  [n = 517]:	loss = 0.0001  exp loss = 0.0000  adjusted loss = 0.0000  adv prob = 0.500000   acc = 1.0000
+roc auc = 1.000000
+Average incurred loss: 0.0004  
+Average sample loss: 0.0004  
+Average acc: 1.0000  
+  hair=0  [n = 265]:	loss = 0.0008  exp loss = 0.0000  adjusted loss = 0.0000  adv prob = 0.500000   acc = 1.0000
+  hair=1  [n = 535]:	loss = 0.0002  exp loss = 0.0000  adjusted loss = 0.0000  adv prob = 0.500000   acc = 1.0000
+roc auc = 1.000000
+Average incurred loss: 0.0003  
+Average sample loss: 0.0003  
+Average acc: 1.0000  
+  hair=0  [n = 81]:	loss = 0.0005  exp loss = 0.0001  adjusted loss = 0.0001  adv prob = 0.500000   acc = 1.0000
+  hair=1  [n = 141]:	loss = 0.0002  exp loss = 0.0000  adjusted loss = 0.0000  adv prob = 0.500000   acc = 1.0000
+roc auc = 1.000000
+
+ Epoch 71, Validation:
+Average incurred loss: 3.0238  
+Average sample loss: 3.0247  
+Average acc: 0.5714  
+  hair=0  [n = 84]:	loss = 2.2886  exp loss = 3.0716  adjusted loss = 3.0716  adv prob = 0.500000   acc = 0.6190
+  hair=1  [n = 70]:	loss = 3.9059  exp loss = 3.0243  adjusted loss = 3.0243  adv prob = 0.500000   acc = 0.5143
+roc auc = 0.363725
+
+Epoch 71, Testing:
+Average incurred loss: 2.7754  
+Average sample loss: 2.8058  
+Average acc: 0.5906  
+  hair=0  [n = 363]:	loss = 1.9688  exp loss = 1.4814  adjusted loss = 1.4814  adv prob = 0.500000   acc = 0.6116
+  hair=1  [n = 255]:	loss = 3.9237  exp loss = 8.9089  adjusted loss = 8.9089  adv prob = 0.500000   acc = 0.5608
+roc auc = 0.391365
+Current lr: 0.001000
+Time Cost: 0:00:11.138392
+Current validation ROCAUC: 0.36372549019607847
+
+Average incurred loss: 0.0009  
+Average sample loss: 0.0009  
+Average acc: 1.0000  
+  hair=0  [n = 274]:	loss = 0.0008  exp loss = 0.0006  adjusted loss = 0.0006  adv prob = 0.500000   acc = 1.0000
+  hair=1  [n = 526]:	loss = 0.0010  exp loss = 0.0003  adjusted loss = 0.0003  adv prob = 0.500000   acc = 1.0000
+roc auc = 1.000000
+Average incurred loss: 0.0003  
+Average sample loss: 0.0003  
+Average acc: 1.0000  
+  hair=0  [n = 278]:	loss = 0.0003  exp loss = 0.0001  adjusted loss = 0.0001  adv prob = 0.500000   acc = 1.0000
+  hair=1  [n = 522]:	loss = 0.0003  exp loss = 0.0000  adjusted loss = 0.0000  adv prob = 0.500000   acc = 1.0000
+roc auc = 1.000000
+Average incurred loss: 0.0001  
+Average sample loss: 0.0001  
+Average acc: 1.0000  
+  hair=0  [n = 77]:	loss = 0.0001  exp loss = 0.0001  adjusted loss = 0.0001  adv prob = 0.500000   acc = 1.0000
+  hair=1  [n = 145]:	loss = 0.0001  exp loss = 0.0000  adjusted loss = 0.0000  adv prob = 0.500000   acc = 1.0000
+roc auc = 1.000000
+
+ Epoch 72, Validation:
+Average incurred loss: 3.1063  
+Average sample loss: 3.1100  
+Average acc: 0.5649  
+  hair=0  [n = 84]:	loss = 2.3629  exp loss = 3.2874  adjusted loss = 3.2874  adv prob = 0.500000   acc = 0.6071
+  hair=1  [n = 70]:	loss = 3.9983  exp loss = 3.1252  adjusted loss = 3.1252  adv prob = 0.500000   acc = 0.5143
+roc auc = 0.362745
+
+Epoch 72, Testing:
+Average incurred loss: 2.8226  
+Average sample loss: 2.8510  
+Average acc: 0.5890  
+  hair=0  [n = 363]:	loss = 1.9463  exp loss = 1.2474  adjusted loss = 1.2474  adv prob = 0.500000   acc = 0.6061
+  hair=1  [n = 255]:	loss = 4.0701  exp loss = 8.7844  adjusted loss = 8.7844  adv prob = 0.500000   acc = 0.5647
+roc auc = 0.388504
+Current lr: 0.001000
+Time Cost: 0:00:10.364696
+Current validation ROCAUC: 0.36274509803921573
+
+Average incurred loss: 0.0009  
+Average sample loss: 0.0009  
+Average acc: 1.0000  
+  hair=0  [n = 278]:	loss = 0.0011  exp loss = 0.0001  adjusted loss = 0.0001  adv prob = 0.500000   acc = 1.0000
+  hair=1  [n = 522]:	loss = 0.0008  exp loss = 0.0002  adjusted loss = 0.0002  adv prob = 0.500000   acc = 1.0000
+roc auc = 1.000000
+Average incurred loss: 0.0011  
+Average sample loss: 0.0011  
+Average acc: 1.0000  
+  hair=0  [n = 266]:	loss = 0.0023  exp loss = 0.0000  adjusted loss = 0.0000  adv prob = 0.500000   acc = 1.0000
+  hair=1  [n = 534]:	loss = 0.0005  exp loss = 0.0000  adjusted loss = 0.0000  adv prob = 0.500000   acc = 1.0000
+roc auc = 1.000000
+Average incurred loss: 0.0031  
+Average sample loss: 0.0031  
+Average acc: 1.0000  
+  hair=0  [n = 85]:	loss = 0.0076  exp loss = 0.0000  adjusted loss = 0.0000  adv prob = 0.500000   acc = 1.0000
+  hair=1  [n = 137]:	loss = 0.0003  exp loss = 0.0003  adjusted loss = 0.0003  adv prob = 0.500000   acc = 1.0000
+roc auc = 1.000000
+
+ Epoch 73, Validation:
+Average incurred loss: 3.3906  
+Average sample loss: 3.3900  
+Average acc: 0.5455  
+  hair=0  [n = 84]:	loss = 2.5589  exp loss = 3.3533  adjusted loss = 3.3533  adv prob = 0.500000   acc = 0.5952
+  hair=1  [n = 70]:	loss = 4.3888  exp loss = 3.3930  adjusted loss = 3.3930  adv prob = 0.500000   acc = 0.4857
+roc auc = 0.316667
+
+Epoch 73, Testing:
+Average incurred loss: 2.9928  
+Average sample loss: 3.0261  
+Average acc: 0.5534  
+  hair=0  [n = 363]:	loss = 2.1194  exp loss = 2.5691  adjusted loss = 2.5691  adv prob = 0.500000   acc = 0.5758
+  hair=1  [n = 255]:	loss = 4.2362  exp loss = 9.0413  adjusted loss = 9.0413  adv prob = 0.500000   acc = 0.5216
+roc auc = 0.357513
+Current lr: 0.001000
+Time Cost: 0:00:10.411017
+Current validation ROCAUC: 0.31666666666666665
+
+Average incurred loss: 0.0006  
+Average sample loss: 0.0006  
+Average acc: 1.0000  
+  hair=0  [n = 278]:	loss = 0.0002  exp loss = 0.0003  adjusted loss = 0.0003  adv prob = 0.500000   acc = 1.0000
+  hair=1  [n = 522]:	loss = 0.0008  exp loss = 0.0000  adjusted loss = 0.0000  adv prob = 0.500000   acc = 1.0000
+roc auc = 1.000000
+Average incurred loss: 0.0206  
+Average sample loss: 0.0206  
+Average acc: 0.9938  
+  hair=0  [n = 284]:	loss = 0.0446  exp loss = 0.0006  adjusted loss = 0.0006  adv prob = 0.500000   acc = 0.9894
+  hair=1  [n = 516]:	loss = 0.0073  exp loss = 0.0002  adjusted loss = 0.0002  adv prob = 0.500000   acc = 0.9961
+roc auc = 0.999627
+Average incurred loss: 0.0304  
+Average sample loss: 0.0302  
+Average acc: 0.9955  
+  hair=0  [n = 67]:	loss = 0.0050  exp loss = 0.0024  adjusted loss = 0.0024  adv prob = 0.500000   acc = 1.0000
+  hair=1  [n = 155]:	loss = 0.0414  exp loss = 0.0002  adjusted loss = 0.0002  adv prob = 0.500000   acc = 0.9935
+roc auc = 0.999057
+
+ Epoch 74, Validation:
+Average incurred loss: 2.8565  
+Average sample loss: 2.8647  
+Average acc: 0.5649  
+  hair=0  [n = 84]:	loss = 2.3216  exp loss = 3.1225  adjusted loss = 3.1225  adv prob = 0.500000   acc = 0.6429
+  hair=1  [n = 70]:	loss = 3.4983  exp loss = 3.0318  adjusted loss = 3.0318  adv prob = 0.500000   acc = 0.4714
+roc auc = 0.361520
+
+Epoch 74, Testing:
+Average incurred loss: 2.5374  
+Average sample loss: 2.5634  
+Average acc: 0.5744  
+  hair=0  [n = 363]:	loss = 1.7373  exp loss = 1.7311  adjusted loss = 1.7311  adv prob = 0.500000   acc = 0.6006
+  hair=1  [n = 255]:	loss = 3.6763  exp loss = 7.5938  adjusted loss = 7.5938  adv prob = 0.500000   acc = 0.5373
+roc auc = 0.410291
+Current lr: 0.001000
+Time Cost: 0:00:11.138850
+Current validation ROCAUC: 0.36151960784313725
+
+Average incurred loss: 0.0071  
+Average sample loss: 0.0071  
+Average acc: 0.9975  
+  hair=0  [n = 277]:	loss = 0.0041  exp loss = 0.0007  adjusted loss = 0.0007  adv prob = 0.500000   acc = 1.0000
+  hair=1  [n = 523]:	loss = 0.0087  exp loss = 0.0790  adjusted loss = 0.0790  adv prob = 0.500000   acc = 0.9962
+roc auc = 0.999971
+Average incurred loss: 0.0036  
+Average sample loss: 0.0036  
+Average acc: 0.9988  
+  hair=0  [n = 274]:	loss = 0.0031  exp loss = 0.0000  adjusted loss = 0.0000  adv prob = 0.500000   acc = 1.0000
+  hair=1  [n = 526]:	loss = 0.0038  exp loss = 0.0055  adjusted loss = 0.0055  adv prob = 0.500000   acc = 0.9981
+roc auc = 1.000000
+Average incurred loss: 0.0011  
+Average sample loss: 0.0011  
+Average acc: 1.0000  
+  hair=0  [n = 78]:	loss = 0.0012  exp loss = 0.0002  adjusted loss = 0.0002  adv prob = 0.500000   acc = 1.0000
+  hair=1  [n = 144]:	loss = 0.0011  exp loss = 0.0000  adjusted loss = 0.0000  adv prob = 0.500000   acc = 1.0000
+roc auc = 1.000000
+
+ Epoch 75, Validation:
+Average incurred loss: 2.8644  
+Average sample loss: 2.8772  
+Average acc: 0.6104  
+  hair=0  [n = 84]:	loss = 1.8926  exp loss = 2.6413  adjusted loss = 2.6413  adv prob = 0.500000   acc = 0.6667
+  hair=1  [n = 70]:	loss = 4.0306  exp loss = 3.7672  adjusted loss = 3.7672  adv prob = 0.500000   acc = 0.5429
+roc auc = 0.383333
+
+Epoch 75, Testing:
+Average incurred loss: 2.4766  
+Average sample loss: 2.5107  
+Average acc: 0.6472  
+  hair=0  [n = 363]:	loss = 1.5131  exp loss = 1.8249  adjusted loss = 1.8249  adv prob = 0.500000   acc = 0.6942
+  hair=1  [n = 255]:	loss = 3.8481  exp loss = 8.8222  adjusted loss = 8.8222  adv prob = 0.500000   acc = 0.5804
+roc auc = 0.431727
+Current lr: 0.001000
+Time Cost: 0:00:10.424138
+Current validation ROCAUC: 0.38333333333333336
+
+Average incurred loss: 0.0034  
+Average sample loss: 0.0034  
+Average acc: 0.9987  
+  hair=0  [n = 272]:	loss = 0.0066  exp loss = 0.0000  adjusted loss = 0.0000  adv prob = 0.500000   acc = 0.9963
+  hair=1  [n = 528]:	loss = 0.0018  exp loss = 0.0022  adjusted loss = 0.0022  adv prob = 0.500000   acc = 1.0000
+roc auc = 1.000000
+Average incurred loss: 0.0014  
+Average sample loss: 0.0014  
+Average acc: 1.0000  
+  hair=0  [n = 273]:	loss = 0.0020  exp loss = 0.0004  adjusted loss = 0.0004  adv prob = 0.500000   acc = 1.0000
+  hair=1  [n = 527]:	loss = 0.0010  exp loss = 0.0000  adjusted loss = 0.0000  adv prob = 0.500000   acc = 1.0000
+roc auc = 1.000000
+Average incurred loss: 0.0012  
+Average sample loss: 0.0012  
+Average acc: 1.0000  
+  hair=0  [n = 84]:	loss = 0.0013  exp loss = 0.0005  adjusted loss = 0.0005  adv prob = 0.500000   acc = 1.0000
+  hair=1  [n = 138]:	loss = 0.0012  exp loss = 0.0000  adjusted loss = 0.0000  adv prob = 0.500000   acc = 1.0000
+roc auc = 1.000000
+
+ Epoch 76, Validation:
+Average incurred loss: 2.9754  
+Average sample loss: 2.9799  
+Average acc: 0.6234  
+  hair=0  [n = 84]:	loss = 1.9065  exp loss = 2.9631  adjusted loss = 2.9631  adv prob = 0.500000   acc = 0.6905
+  hair=1  [n = 70]:	loss = 4.2582  exp loss = 3.2251  adjusted loss = 3.2251  adv prob = 0.500000   acc = 0.5429
+roc auc = 0.384314
+
+Epoch 76, Testing:
+Average incurred loss: 2.7443  
+Average sample loss: 2.7887  
+Average acc: 0.6618  
+  hair=0  [n = 363]:	loss = 1.5372  exp loss = 2.2303  adjusted loss = 2.2303  adv prob = 0.500000   acc = 0.7163
+  hair=1  [n = 255]:	loss = 4.4626  exp loss = 10.7944  adjusted loss = 10.7944  adv prob = 0.500000   acc = 0.5843
+roc auc = 0.399950
+Current lr: 0.001000
+Time Cost: 0:00:10.557333
+Current validation ROCAUC: 0.38431372549019605
+
+Average incurred loss: 0.0059  
+Average sample loss: 0.0059  
+Average acc: 0.9975  
+  hair=0  [n = 287]:	loss = 0.0077  exp loss = 0.0066  adjusted loss = 0.0066  adv prob = 0.500000   acc = 0.9965
+  hair=1  [n = 513]:	loss = 0.0049  exp loss = 0.0633  adjusted loss = 0.0633  adv prob = 0.500000   acc = 0.9981
+roc auc = 0.999972
+Average incurred loss: 0.0045  
+Average sample loss: 0.0045  
+Average acc: 0.9987  
+  hair=0  [n = 265]:	loss = 0.0074  exp loss = 0.0001  adjusted loss = 0.0001  adv prob = 0.500000   acc = 0.9962
+  hair=1  [n = 535]:	loss = 0.0031  exp loss = 0.0000  adjusted loss = 0.0000  adv prob = 0.500000   acc = 1.0000
+roc auc = 0.999990
+Average incurred loss: 0.0007  
+Average sample loss: 0.0006  
+Average acc: 1.0000  
+  hair=0  [n = 77]:	loss = 0.0015  exp loss = 0.0002  adjusted loss = 0.0002  adv prob = 0.500000   acc = 1.0000
+  hair=1  [n = 145]:	loss = 0.0002  exp loss = 0.0000  adjusted loss = 0.0000  adv prob = 0.500000   acc = 1.0000
+roc auc = 1.000000
+
+ Epoch 77, Validation:
+Average incurred loss: 3.0378  
+Average sample loss: 3.0617  
+Average acc: 0.6494  
+  hair=0  [n = 84]:	loss = 1.8215  exp loss = 3.4116  adjusted loss = 3.4116  adv prob = 0.500000   acc = 0.7262
+  hair=1  [n = 70]:	loss = 4.4974  exp loss = 3.9376  adjusted loss = 3.9376  adv prob = 0.500000   acc = 0.5571
+roc auc = 0.341912
+
+Epoch 77, Testing:
+Average incurred loss: 2.9193  
+Average sample loss: 2.9691  
+Average acc: 0.6456  
+  hair=0  [n = 363]:	loss = 1.6280  exp loss = 2.7902  adjusted loss = 2.7902  adv prob = 0.500000   acc = 0.6887
+  hair=1  [n = 255]:	loss = 4.7576  exp loss = 11.6350  adjusted loss = 11.6350  adv prob = 0.500000   acc = 0.5843
+roc auc = 0.347674
+Current lr: 0.001000
+Time Cost: 0:00:11.682951
+Current validation ROCAUC: 0.34191176470588236
+
+Average incurred loss: 0.0057  
+Average sample loss: 0.0057  
+Average acc: 0.9988  
+  hair=0  [n = 268]:	loss = 0.0017  exp loss = 0.0003  adjusted loss = 0.0003  adv prob = 0.500000   acc = 1.0000
+  hair=1  [n = 532]:	loss = 0.0077  exp loss = 0.0040  adjusted loss = 0.0040  adv prob = 0.500000   acc = 0.9981
+roc auc = 0.999950
+Average incurred loss: 0.0031  
+Average sample loss: 0.0031  
+Average acc: 1.0000  
+  hair=0  [n = 272]:	loss = 0.0041  exp loss = 0.0000  adjusted loss = 0.0000  adv prob = 0.500000   acc = 1.0000
+  hair=1  [n = 528]:	loss = 0.0025  exp loss = 0.0502  adjusted loss = 0.0502  adv prob = 0.500000   acc = 1.0000
+roc auc = 1.000000
+Average incurred loss: 0.0006  
+Average sample loss: 0.0006  
+Average acc: 1.0000  
+  hair=0  [n = 89]:	loss = 0.0013  exp loss = 0.0001  adjusted loss = 0.0001  adv prob = 0.500000   acc = 1.0000
+  hair=1  [n = 133]:	loss = 0.0002  exp loss = 0.0000  adjusted loss = 0.0000  adv prob = 0.500000   acc = 1.0000
+roc auc = 1.000000
+
+ Epoch 78, Validation:
+Average incurred loss: 2.9559  
+Average sample loss: 2.9835  
+Average acc: 0.5649  
+  hair=0  [n = 84]:	loss = 2.1745  exp loss = 3.6796  adjusted loss = 3.6796  adv prob = 0.500000   acc = 0.6071
+  hair=1  [n = 70]:	loss = 3.8935  exp loss = 3.7079  adjusted loss = 3.7079  adv prob = 0.500000   acc = 0.5143
+roc auc = 0.370833
+
+Epoch 78, Testing:
+Average incurred loss: 2.8994  
+Average sample loss: 2.9439  
+Average acc: 0.6084  
+  hair=0  [n = 363]:	loss = 1.8943  exp loss = 3.6296  adjusted loss = 3.6296  adv prob = 0.500000   acc = 0.6336
+  hair=1  [n = 255]:	loss = 4.3303  exp loss = 10.1294  adjusted loss = 10.1294  adv prob = 0.500000   acc = 0.5725
+roc auc = 0.362768
+Current lr: 0.001000
+Time Cost: 0:00:11.653998
+Current validation ROCAUC: 0.37083333333333335
+
+Average incurred loss: 0.0007  
+Average sample loss: 0.0007  
+Average acc: 1.0000  
+  hair=0  [n = 283]:	loss = 0.0007  exp loss = 0.0000  adjusted loss = 0.0000  adv prob = 0.500000   acc = 1.0000
+  hair=1  [n = 517]:	loss = 0.0006  exp loss = 0.0000  adjusted loss = 0.0000  adv prob = 0.500000   acc = 1.0000
+roc auc = 1.000000
+Average incurred loss: 0.0016  
+Average sample loss: 0.0016  
+Average acc: 1.0000  
+  hair=0  [n = 268]:	loss = 0.0021  exp loss = 0.0288  adjusted loss = 0.0288  adv prob = 0.500000   acc = 1.0000
+  hair=1  [n = 532]:	loss = 0.0014  exp loss = 0.0019  adjusted loss = 0.0019  adv prob = 0.500000   acc = 1.0000
+roc auc = 1.000000
+Average incurred loss: 0.0002  
+Average sample loss: 0.0002  
+Average acc: 1.0000  
+  hair=0  [n = 78]:	loss = 0.0003  exp loss = 0.0004  adjusted loss = 0.0004  adv prob = 0.500000   acc = 1.0000
+  hair=1  [n = 144]:	loss = 0.0001  exp loss = 0.0000  adjusted loss = 0.0000  adv prob = 0.500000   acc = 1.0000
+roc auc = 1.000000
+
+ Epoch 79, Validation:
+Average incurred loss: 2.8434  
+Average sample loss: 2.8737  
+Average acc: 0.6234  
+  hair=0  [n = 84]:	loss = 2.0372  exp loss = 3.7848  adjusted loss = 3.7848  adv prob = 0.500000   acc = 0.6548
+  hair=1  [n = 70]:	loss = 3.8107  exp loss = 3.5182  adjusted loss = 3.5182  adv prob = 0.500000   acc = 0.5857
+roc auc = 0.384804
+
+Epoch 79, Testing:
+Average incurred loss: 2.8014  
+Average sample loss: 2.8387  
+Average acc: 0.6375  
+  hair=0  [n = 363]:	loss = 1.7248  exp loss = 2.7897  adjusted loss = 2.7897  adv prob = 0.500000   acc = 0.6722
+  hair=1  [n = 255]:	loss = 4.3339  exp loss = 9.2901  adjusted loss = 9.2901  adv prob = 0.500000   acc = 0.5882
+roc auc = 0.386312
+Current lr: 0.001000
+Time Cost: 0:00:12.150836
+Current validation ROCAUC: 0.38480392156862747
+
+Average incurred loss: 0.0015  
+Average sample loss: 0.0015  
+Average acc: 1.0000  
+  hair=0  [n = 285]:	loss = 0.0016  exp loss = 0.0000  adjusted loss = 0.0000  adv prob = 0.500000   acc = 1.0000
+  hair=1  [n = 515]:	loss = 0.0014  exp loss = 0.0004  adjusted loss = 0.0004  adv prob = 0.500000   acc = 1.0000
+roc auc = 1.000000
+Average incurred loss: 0.0015  
+Average sample loss: 0.0015  
+Average acc: 1.0000  
+  hair=0  [n = 265]:	loss = 0.0025  exp loss = 0.0000  adjusted loss = 0.0000  adv prob = 0.500000   acc = 1.0000
+  hair=1  [n = 535]:	loss = 0.0010  exp loss = 0.0000  adjusted loss = 0.0000  adv prob = 0.500000   acc = 1.0000
+roc auc = 1.000000
+Average incurred loss: 0.0008  
+Average sample loss: 0.0008  
+Average acc: 1.0000  
+  hair=0  [n = 79]:	loss = 0.0020  exp loss = 0.0002  adjusted loss = 0.0002  adv prob = 0.500000   acc = 1.0000
+  hair=1  [n = 143]:	loss = 0.0002  exp loss = 0.0000  adjusted loss = 0.0000  adv prob = 0.500000   acc = 1.0000
+roc auc = 1.000000
+
+ Epoch 80, Validation:
+Average incurred loss: 2.8512  
+Average sample loss: 2.8770  
+Average acc: 0.5974  
+  hair=0  [n = 84]:	loss = 2.1322  exp loss = 3.4378  adjusted loss = 3.4378  adv prob = 0.500000   acc = 0.6429
+  hair=1  [n = 70]:	loss = 3.7139  exp loss = 3.6440  adjusted loss = 3.6440  adv prob = 0.500000   acc = 0.5429
+roc auc = 0.361275
+
+Epoch 80, Testing:
+Average incurred loss: 2.8433  
+Average sample loss: 2.8828  
+Average acc: 0.5955  
+  hair=0  [n = 363]:	loss = 1.9938  exp loss = 2.6433  adjusted loss = 2.6433  adv prob = 0.500000   acc = 0.6061
+  hair=1  [n = 255]:	loss = 4.0527  exp loss = 9.8120  adjusted loss = 9.8120  adv prob = 0.500000   acc = 0.5804
+roc auc = 0.366399
+Current lr: 0.001000
+Time Cost: 0:00:11.912589
+Current validation ROCAUC: 0.36127450980392156
+
+Average incurred loss: 0.0003  
+Average sample loss: 0.0003  
+Average acc: 1.0000  
+  hair=0  [n = 276]:	loss = 0.0006  exp loss = 0.0001  adjusted loss = 0.0001  adv prob = 0.500000   acc = 1.0000
+  hair=1  [n = 524]:	loss = 0.0002  exp loss = 0.0001  adjusted loss = 0.0001  adv prob = 0.500000   acc = 1.0000
+roc auc = 1.000000
+Average incurred loss: 0.0004  
+Average sample loss: 0.0004  
+Average acc: 1.0000  
+  hair=0  [n = 273]:	loss = 0.0008  exp loss = 0.0002  adjusted loss = 0.0002  adv prob = 0.500000   acc = 1.0000
+  hair=1  [n = 527]:	loss = 0.0002  exp loss = 0.0001  adjusted loss = 0.0001  adv prob = 0.500000   acc = 1.0000
+roc auc = 1.000000
+Average incurred loss: 0.0002  
+Average sample loss: 0.0002  
+Average acc: 1.0000  
+  hair=0  [n = 80]:	loss = 0.0002  exp loss = 0.0005  adjusted loss = 0.0005  adv prob = 0.500000   acc = 1.0000
+  hair=1  [n = 142]:	loss = 0.0002  exp loss = 0.0002  adjusted loss = 0.0002  adv prob = 0.500000   acc = 1.0000
+roc auc = 1.000000
+
+ Epoch 81, Validation:
+Average incurred loss: 2.9868  
+Average sample loss: 3.0108  
+Average acc: 0.6169  
+  hair=0  [n = 84]:	loss = 2.0509  exp loss = 3.9581  adjusted loss = 3.9581  adv prob = 0.500000   acc = 0.6548
+  hair=1  [n = 70]:	loss = 4.1099  exp loss = 3.2927  adjusted loss = 3.2927  adv prob = 0.500000   acc = 0.5714
+roc auc = 0.367892
+
+Epoch 81, Testing:
+Average incurred loss: 2.8915  
+Average sample loss: 2.9384  
+Average acc: 0.6311  
+  hair=0  [n = 363]:	loss = 1.8161  exp loss = 3.0644  adjusted loss = 3.0644  adv prob = 0.500000   acc = 0.6722
+  hair=1  [n = 255]:	loss = 4.4224  exp loss = 10.9130  adjusted loss = 10.9130  adv prob = 0.500000   acc = 0.5725
+roc auc = 0.375770
+Current lr: 0.001000
+Time Cost: 0:00:12.433308
+Current validation ROCAUC: 0.3678921568627451
+
+Average incurred loss: 0.0012  
+Average sample loss: 0.0012  
+Average acc: 1.0000  
+  hair=0  [n = 285]:	loss = 0.0005  exp loss = 0.0001  adjusted loss = 0.0001  adv prob = 0.500000   acc = 1.0000
+  hair=1  [n = 515]:	loss = 0.0015  exp loss = 0.0001  adjusted loss = 0.0001  adv prob = 0.500000   acc = 1.0000
+roc auc = 1.000000
+Average incurred loss: 0.0003  
+Average sample loss: 0.0003  
+Average acc: 1.0000  
+  hair=0  [n = 264]:	loss = 0.0006  exp loss = 0.0016  adjusted loss = 0.0016  adv prob = 0.500000   acc = 1.0000
+  hair=1  [n = 536]:	loss = 0.0002  exp loss = 0.0001  adjusted loss = 0.0001  adv prob = 0.500000   acc = 1.0000
+roc auc = 1.000000
+Average incurred loss: 0.0001  
+Average sample loss: 0.0001  
+Average acc: 1.0000  
+  hair=0  [n = 80]:	loss = 0.0002  exp loss = 0.0001  adjusted loss = 0.0001  adv prob = 0.500000   acc = 1.0000
+  hair=1  [n = 142]:	loss = 0.0001  exp loss = 0.0002  adjusted loss = 0.0002  adv prob = 0.500000   acc = 1.0000
+roc auc = 1.000000
+
+ Epoch 82, Validation:
+Average incurred loss: 2.8626  
+Average sample loss: 2.8869  
+Average acc: 0.6299  
+  hair=0  [n = 84]:	loss = 1.9801  exp loss = 4.1470  adjusted loss = 4.1470  adv prob = 0.500000   acc = 0.6667
+  hair=1  [n = 70]:	loss = 3.9216  exp loss = 2.8746  adjusted loss = 2.8746  adv prob = 0.500000   acc = 0.5857
+roc auc = 0.372304
+
+Epoch 82, Testing:
+Average incurred loss: 2.7248  
+Average sample loss: 2.7654  
+Average acc: 0.6424  
+  hair=0  [n = 363]:	loss = 1.6804  exp loss = 2.5182  adjusted loss = 2.5182  adv prob = 0.500000   acc = 0.6887
+  hair=1  [n = 255]:	loss = 4.2115  exp loss = 9.9028  adjusted loss = 9.9028  adv prob = 0.500000   acc = 0.5765
+roc auc = 0.391365
+Current lr: 0.001000
+Time Cost: 0:00:11.935436
+Current validation ROCAUC: 0.37230392156862746
+
+Average incurred loss: 0.0010  
+Average sample loss: 0.0010  
+Average acc: 1.0000  
+  hair=0  [n = 274]:	loss = 0.0007  exp loss = 0.0000  adjusted loss = 0.0000  adv prob = 0.500000   acc = 1.0000
+  hair=1  [n = 526]:	loss = 0.0012  exp loss = 0.0000  adjusted loss = 0.0000  adv prob = 0.500000   acc = 1.0000
+roc auc = 1.000000
+Average incurred loss: 0.0009  
+Average sample loss: 0.0009  
+Average acc: 1.0000  
+  hair=0  [n = 279]:	loss = 0.0009  exp loss = 0.0000  adjusted loss = 0.0000  adv prob = 0.500000   acc = 1.0000
+  hair=1  [n = 521]:	loss = 0.0009  exp loss = 0.0000  adjusted loss = 0.0000  adv prob = 0.500000   acc = 1.0000
+roc auc = 1.000000
+Average incurred loss: 0.0038  
+Average sample loss: 0.0038  
+Average acc: 0.9955  
+  hair=0  [n = 76]:	loss = 0.0006  exp loss = 0.0000  adjusted loss = 0.0000  adv prob = 0.500000   acc = 1.0000
+  hair=1  [n = 146]:	loss = 0.0055  exp loss = 0.0000  adjusted loss = 0.0000  adv prob = 0.500000   acc = 0.9932
+roc auc = 1.000000
+
+ Epoch 83, Validation:
+Average incurred loss: 3.1465  
+Average sample loss: 3.1839  
+Average acc: 0.6039  
+  hair=0  [n = 84]:	loss = 2.2145  exp loss = 5.0071  adjusted loss = 5.0071  adv prob = 0.500000   acc = 0.6429
+  hair=1  [n = 70]:	loss = 4.2648  exp loss = 3.2797  adjusted loss = 3.2797  adv prob = 0.500000   acc = 0.5571
+roc auc = 0.316667
+
+Epoch 83, Testing:
+Average incurred loss: 2.9100  
+Average sample loss: 2.9567  
+Average acc: 0.6230  
+  hair=0  [n = 363]:	loss = 1.8036  exp loss = 3.6181  adjusted loss = 3.6181  adv prob = 0.500000   acc = 0.6584
+  hair=1  [n = 255]:	loss = 4.4850  exp loss = 10.5320  adjusted loss = 10.5320  adv prob = 0.500000   acc = 0.5725
+roc auc = 0.342453
+Current lr: 0.001000
+Time Cost: 0:00:12.386664
+Current validation ROCAUC: 0.31666666666666665
+
+Average incurred loss: 0.0007  
+Average sample loss: 0.0007  
+Average acc: 1.0000  
+  hair=0  [n = 296]:	loss = 0.0014  exp loss = 0.0001  adjusted loss = 0.0001  adv prob = 0.500000   acc = 1.0000
+  hair=1  [n = 504]:	loss = 0.0003  exp loss = 0.0001  adjusted loss = 0.0001  adv prob = 0.500000   acc = 1.0000
+roc auc = 1.000000
+Average incurred loss: 0.0014  
+Average sample loss: 0.0014  
+Average acc: 0.9987  
+  hair=0  [n = 264]:	loss = 0.0004  exp loss = 0.0000  adjusted loss = 0.0000  adv prob = 0.500000   acc = 1.0000
+  hair=1  [n = 536]:	loss = 0.0018  exp loss = 0.0002  adjusted loss = 0.0002  adv prob = 0.500000   acc = 0.9981
+roc auc = 1.000000
+Average incurred loss: 0.0002  
+Average sample loss: 0.0002  
+Average acc: 1.0000  
+  hair=0  [n = 69]:	loss = 0.0005  exp loss = 0.0000  adjusted loss = 0.0000  adv prob = 0.500000   acc = 1.0000
+  hair=1  [n = 153]:	loss = 0.0001  exp loss = 0.0000  adjusted loss = 0.0000  adv prob = 0.500000   acc = 1.0000
+roc auc = 1.000000
+
+ Epoch 84, Validation:
+Average incurred loss: 3.1880  
+Average sample loss: 3.2142  
+Average acc: 0.6039  
+  hair=0  [n = 84]:	loss = 2.2662  exp loss = 4.6941  adjusted loss = 4.6941  adv prob = 0.500000   acc = 0.6429
+  hair=1  [n = 70]:	loss = 4.2940  exp loss = 3.0813  adjusted loss = 3.0813  adv prob = 0.500000   acc = 0.5571
+roc auc = 0.332598
+
+Epoch 84, Testing:
+Average incurred loss: 2.9349  
+Average sample loss: 2.9757  
+Average acc: 0.6117  
+  hair=0  [n = 363]:	loss = 1.8907  exp loss = 3.2396  adjusted loss = 3.2396  adv prob = 0.500000   acc = 0.6474
+  hair=1  [n = 255]:	loss = 4.4214  exp loss = 9.7984  adjusted loss = 9.7984  adv prob = 0.500000   acc = 0.5608
+roc auc = 0.352460
+Current lr: 0.001000
+Time Cost: 0:00:12.064790
+Current validation ROCAUC: 0.3325980392156863
+
+Average incurred loss: 0.0006  
+Average sample loss: 0.0006  
+Average acc: 1.0000  
+  hair=0  [n = 275]:	loss = 0.0009  exp loss = 0.0002  adjusted loss = 0.0002  adv prob = 0.500000   acc = 1.0000
+  hair=1  [n = 525]:	loss = 0.0005  exp loss = 0.0000  adjusted loss = 0.0000  adv prob = 0.500000   acc = 1.0000
+roc auc = 1.000000
+Average incurred loss: 0.0005  
+Average sample loss: 0.0005  
+Average acc: 1.0000  
+  hair=0  [n = 281]:	loss = 0.0011  exp loss = 0.0001  adjusted loss = 0.0001  adv prob = 0.500000   acc = 1.0000
+  hair=1  [n = 519]:	loss = 0.0001  exp loss = 0.0000  adjusted loss = 0.0000  adv prob = 0.500000   acc = 1.0000
+roc auc = 1.000000
+Average incurred loss: 0.0014  
+Average sample loss: 0.0014  
+Average acc: 1.0000  
+  hair=0  [n = 73]:	loss = 0.0031  exp loss = 0.0000  adjusted loss = 0.0000  adv prob = 0.500000   acc = 1.0000
+  hair=1  [n = 149]:	loss = 0.0006  exp loss = 0.0000  adjusted loss = 0.0000  adv prob = 0.500000   acc = 1.0000
+roc auc = 1.000000
+
+ Epoch 85, Validation:
+Average incurred loss: 3.0242  
+Average sample loss: 3.0466  
+Average acc: 0.6039  
+  hair=0  [n = 84]:	loss = 2.1889  exp loss = 4.2798  adjusted loss = 4.2798  adv prob = 0.500000   acc = 0.6667
+  hair=1  [n = 70]:	loss = 4.0265  exp loss = 2.9659  adjusted loss = 2.9659  adv prob = 0.500000   acc = 0.5286
+roc auc = 0.365931
+
+Epoch 85, Testing:
+Average incurred loss: 2.8537  
+Average sample loss: 2.8932  
+Average acc: 0.6165  
+  hair=0  [n = 363]:	loss = 1.8788  exp loss = 2.8585  adjusted loss = 2.8585  adv prob = 0.500000   acc = 0.6446
+  hair=1  [n = 255]:	loss = 4.2415  exp loss = 9.6883  adjusted loss = 9.6883  adv prob = 0.500000   acc = 0.5765
+roc auc = 0.375753
+Current lr: 0.001000
+Time Cost: 0:00:13.062183
+Current validation ROCAUC: 0.36593137254901964
+
+Average incurred loss: 0.0006  
+Average sample loss: 0.0006  
+Average acc: 1.0000  
+  hair=0  [n = 270]:	loss = 0.0006  exp loss = 0.0012  adjusted loss = 0.0012  adv prob = 0.500000   acc = 1.0000
+  hair=1  [n = 530]:	loss = 0.0006  exp loss = 0.0001  adjusted loss = 0.0001  adv prob = 0.500000   acc = 1.0000
+roc auc = 1.000000
+Average incurred loss: 0.0002  
+Average sample loss: 0.0002  
+Average acc: 1.0000  
+  hair=0  [n = 274]:	loss = 0.0002  exp loss = 0.0005  adjusted loss = 0.0005  adv prob = 0.500000   acc = 1.0000
+  hair=1  [n = 526]:	loss = 0.0001  exp loss = 0.0000  adjusted loss = 0.0000  adv prob = 0.500000   acc = 1.0000
+roc auc = 1.000000
+Average incurred loss: 0.0008  
+Average sample loss: 0.0008  
+Average acc: 1.0000  
+  hair=0  [n = 85]:	loss = 0.0020  exp loss = 0.0001  adjusted loss = 0.0001  adv prob = 0.500000   acc = 1.0000
+  hair=1  [n = 137]:	loss = 0.0001  exp loss = 0.0001  adjusted loss = 0.0001  adv prob = 0.500000   acc = 1.0000
+roc auc = 1.000000
+
+ Epoch 86, Validation:
+Average incurred loss: 3.0015  
+Average sample loss: 3.0279  
+Average acc: 0.6104  
+  hair=0  [n = 84]:	loss = 2.1385  exp loss = 5.0126  adjusted loss = 5.0126  adv prob = 0.500000   acc = 0.6548
+  hair=1  [n = 70]:	loss = 4.0371  exp loss = 2.3972  adjusted loss = 2.3972  adv prob = 0.500000   acc = 0.5571
+roc auc = 0.362255
+
+Epoch 86, Testing:
+Average incurred loss: 2.8334  
+Average sample loss: 2.8741  
+Average acc: 0.6246  
+  hair=0  [n = 363]:	loss = 1.7873  exp loss = 2.8499  adjusted loss = 2.8499  adv prob = 0.500000   acc = 0.6612
+  hair=1  [n = 255]:	loss = 4.3226  exp loss = 9.8801  adjusted loss = 9.8801  adv prob = 0.500000   acc = 0.5725
+roc auc = 0.373176
+Current lr: 0.001000
+Time Cost: 0:00:12.079955
+Current validation ROCAUC: 0.36225490196078436
+
+Average incurred loss: 0.0002  
+Average sample loss: 0.0002  
+Average acc: 1.0000  
+  hair=0  [n = 269]:	loss = 0.0003  exp loss = 0.0001  adjusted loss = 0.0001  adv prob = 0.500000   acc = 1.0000
+  hair=1  [n = 531]:	loss = 0.0001  exp loss = 0.0001  adjusted loss = 0.0001  adv prob = 0.500000   acc = 1.0000
+roc auc = 1.000000
+Average incurred loss: 0.0011  
+Average sample loss: 0.0011  
+Average acc: 1.0000  
+  hair=0  [n = 268]:	loss = 0.0019  exp loss = 0.0001  adjusted loss = 0.0001  adv prob = 0.500000   acc = 1.0000
+  hair=1  [n = 532]:	loss = 0.0007  exp loss = 0.0000  adjusted loss = 0.0000  adv prob = 0.500000   acc = 1.0000
+roc auc = 1.000000
+Average incurred loss: 0.0036  
+Average sample loss: 0.0037  
+Average acc: 1.0000  
+  hair=0  [n = 92]:	loss = 0.0003  exp loss = 0.0001  adjusted loss = 0.0001  adv prob = 0.500000   acc = 1.0000
+  hair=1  [n = 130]:	loss = 0.0060  exp loss = 0.0088  adjusted loss = 0.0088  adv prob = 0.500000   acc = 1.0000
+roc auc = 1.000000
+
+ Epoch 87, Validation:
+Average incurred loss: 2.8511  
+Average sample loss: 2.8665  
+Average acc: 0.5714  
+  hair=0  [n = 84]:	loss = 2.1024  exp loss = 3.4090  adjusted loss = 3.4090  adv prob = 0.500000   acc = 0.6310
+  hair=1  [n = 70]:	loss = 3.7495  exp loss = 3.1145  adjusted loss = 3.1145  adv prob = 0.500000   acc = 0.5000
+roc auc = 0.375245
+
+Epoch 87, Testing:
+Average incurred loss: 2.7019  
+Average sample loss: 2.7437  
+Average acc: 0.5971  
+  hair=0  [n = 363]:	loss = 1.9671  exp loss = 3.5840  adjusted loss = 3.5840  adv prob = 0.500000   acc = 0.6281
+  hair=1  [n = 255]:	loss = 3.7480  exp loss = 9.3501  adjusted loss = 9.3501  adv prob = 0.500000   acc = 0.5529
+roc auc = 0.405773
+Current lr: 0.001000
+Time Cost: 0:00:12.668731
+Current validation ROCAUC: 0.3752450980392157
+
+Average incurred loss: 0.0002  
+Average sample loss: 0.0002  
+Average acc: 1.0000  
+  hair=0  [n = 267]:	loss = 0.0003  exp loss = 0.0032  adjusted loss = 0.0032  adv prob = 0.500000   acc = 1.0000
+  hair=1  [n = 533]:	loss = 0.0002  exp loss = 0.0001  adjusted loss = 0.0001  adv prob = 0.500000   acc = 1.0000
+roc auc = 1.000000
+Average incurred loss: 0.0006  
+Average sample loss: 0.0006  
+Average acc: 1.0000  
+  hair=0  [n = 283]:	loss = 0.0007  exp loss = 0.0003  adjusted loss = 0.0003  adv prob = 0.500000   acc = 1.0000
+  hair=1  [n = 517]:	loss = 0.0005  exp loss = 0.0001  adjusted loss = 0.0001  adv prob = 0.500000   acc = 1.0000
+roc auc = 1.000000
+Average incurred loss: 0.0004  
+Average sample loss: 0.0004  
+Average acc: 1.0000  
+  hair=0  [n = 79]:	loss = 0.0006  exp loss = 0.0002  adjusted loss = 0.0002  adv prob = 0.500000   acc = 1.0000
+  hair=1  [n = 143]:	loss = 0.0003  exp loss = 0.0000  adjusted loss = 0.0000  adv prob = 0.500000   acc = 1.0000
+roc auc = 1.000000
+
+ Epoch 88, Validation:
+Average incurred loss: 2.9266  
+Average sample loss: 2.9501  
+Average acc: 0.5974  
+  hair=0  [n = 84]:	loss = 2.0739  exp loss = 4.1586  adjusted loss = 4.1586  adv prob = 0.500000   acc = 0.6310
+  hair=1  [n = 70]:	loss = 3.9498  exp loss = 2.9514  adjusted loss = 2.9514  adv prob = 0.500000   acc = 0.5571
+roc auc = 0.392892
+
+Epoch 88, Testing:
+Average incurred loss: 2.7754  
+Average sample loss: 2.8148  
+Average acc: 0.6165  
+  hair=0  [n = 363]:	loss = 1.8627  exp loss = 2.3070  adjusted loss = 2.3070  adv prob = 0.500000   acc = 0.6529
+  hair=1  [n = 255]:	loss = 4.0746  exp loss = 9.9176  adjusted loss = 9.9176  adv prob = 0.500000   acc = 0.5647
+roc auc = 0.410977
+Current lr: 0.001000
+Time Cost: 0:00:12.027893
+Current validation ROCAUC: 0.39289215686274515
+
+Average incurred loss: 0.0008  
+Average sample loss: 0.0008  
+Average acc: 1.0000  
+  hair=0  [n = 285]:	loss = 0.0012  exp loss = 0.0006  adjusted loss = 0.0006  adv prob = 0.500000   acc = 1.0000
+  hair=1  [n = 515]:	loss = 0.0005  exp loss = 0.0001  adjusted loss = 0.0001  adv prob = 0.500000   acc = 1.0000
+roc auc = 1.000000
+Average incurred loss: 0.0003  
+Average sample loss: 0.0003  
+Average acc: 1.0000  
+  hair=0  [n = 272]:	loss = 0.0003  exp loss = 0.0000  adjusted loss = 0.0000  adv prob = 0.500000   acc = 1.0000
+  hair=1  [n = 528]:	loss = 0.0003  exp loss = 0.0001  adjusted loss = 0.0001  adv prob = 0.500000   acc = 1.0000
+roc auc = 1.000000
+Average incurred loss: 0.0004  
+Average sample loss: 0.0004  
+Average acc: 1.0000  
+  hair=0  [n = 72]:	loss = 0.0003  exp loss = 0.0000  adjusted loss = 0.0000  adv prob = 0.500000   acc = 1.0000
+  hair=1  [n = 150]:	loss = 0.0005  exp loss = 0.0001  adjusted loss = 0.0001  adv prob = 0.500000   acc = 1.0000
+roc auc = 1.000000
+
+ Epoch 89, Validation:
+Average incurred loss: 2.8900  
+Average sample loss: 2.9038  
+Average acc: 0.5779  
+  hair=0  [n = 84]:	loss = 2.1351  exp loss = 3.6419  adjusted loss = 3.6419  adv prob = 0.500000   acc = 0.6190
+  hair=1  [n = 70]:	loss = 3.7959  exp loss = 2.8762  adjusted loss = 2.8762  adv prob = 0.500000   acc = 0.5286
+roc auc = 0.357843
+
+Epoch 89, Testing:
+Average incurred loss: 2.7413  
+Average sample loss: 2.7770  
+Average acc: 0.6084  
+  hair=0  [n = 363]:	loss = 1.9099  exp loss = 2.4261  adjusted loss = 2.4261  adv prob = 0.500000   acc = 0.6336
+  hair=1  [n = 255]:	loss = 3.9249  exp loss = 9.1411  adjusted loss = 9.1411  adv prob = 0.500000   acc = 0.5725
+roc auc = 0.401506
+Current lr: 0.001000
+Time Cost: 0:00:12.315398
+Current validation ROCAUC: 0.35784313725490197
+
+Average incurred loss: 0.0002  
+Average sample loss: 0.0002  
+Average acc: 1.0000  
+  hair=0  [n = 300]:	loss = 0.0002  exp loss = 0.0000  adjusted loss = 0.0000  adv prob = 0.500000   acc = 1.0000
+  hair=1  [n = 500]:	loss = 0.0002  exp loss = 0.0000  adjusted loss = 0.0000  adv prob = 0.500000   acc = 1.0000
+roc auc = 1.000000
+Average incurred loss: 0.0002  
+Average sample loss: 0.0002  
+Average acc: 1.0000  
+  hair=0  [n = 260]:	loss = 0.0002  exp loss = 0.0000  adjusted loss = 0.0000  adv prob = 0.500000   acc = 1.0000
+  hair=1  [n = 540]:	loss = 0.0001  exp loss = 0.0002  adjusted loss = 0.0002  adv prob = 0.500000   acc = 1.0000
+roc auc = 1.000000
+Average incurred loss: 0.0007  
+Average sample loss: 0.0007  
+Average acc: 1.0000  
+  hair=0  [n = 69]:	loss = 0.0020  exp loss = 0.0002  adjusted loss = 0.0002  adv prob = 0.500000   acc = 1.0000
+  hair=1  [n = 153]:	loss = 0.0001  exp loss = 0.0000  adjusted loss = 0.0000  adv prob = 0.500000   acc = 1.0000
+roc auc = 1.000000
+
+ Epoch 90, Validation:
+Average incurred loss: 2.9560  
+Average sample loss: 2.9769  
+Average acc: 0.5974  
+  hair=0  [n = 84]:	loss = 2.1459  exp loss = 4.1218  adjusted loss = 4.1218  adv prob = 0.500000   acc = 0.6429
+  hair=1  [n = 70]:	loss = 3.9282  exp loss = 2.9027  adjusted loss = 2.9027  adv prob = 0.500000   acc = 0.5429
+roc auc = 0.368873
+
+Epoch 90, Testing:
+Average incurred loss: 2.8443  
+Average sample loss: 2.8831  
+Average acc: 0.6214  
+  hair=0  [n = 363]:	loss = 1.9620  exp loss = 2.6478  adjusted loss = 2.6478  adv prob = 0.500000   acc = 0.6556
+  hair=1  [n = 255]:	loss = 4.1003  exp loss = 9.6963  adjusted loss = 9.6963  adv prob = 0.500000   acc = 0.5725
+roc auc = 0.395264
+Current lr: 0.001000
+Time Cost: 0:00:12.602374
+Current validation ROCAUC: 0.36887254901960786
+
+Average incurred loss: 0.0005  
+Average sample loss: 0.0005  
+Average acc: 1.0000  
+  hair=0  [n = 298]:	loss = 0.0004  exp loss = 0.0002  adjusted loss = 0.0002  adv prob = 0.500000   acc = 1.0000
+  hair=1  [n = 502]:	loss = 0.0006  exp loss = 0.0000  adjusted loss = 0.0000  adv prob = 0.500000   acc = 1.0000
+roc auc = 1.000000
+Average incurred loss: 0.0003  
+Average sample loss: 0.0003  
+Average acc: 1.0000  
+  hair=0  [n = 266]:	loss = 0.0003  exp loss = 0.0001  adjusted loss = 0.0001  adv prob = 0.500000   acc = 1.0000
+  hair=1  [n = 534]:	loss = 0.0003  exp loss = 0.0061  adjusted loss = 0.0061  adv prob = 0.500000   acc = 1.0000
+roc auc = 1.000000
+Average incurred loss: 0.0017  
+Average sample loss: 0.0017  
+Average acc: 1.0000  
+  hair=0  [n = 65]:	loss = 0.0005  exp loss = 0.0000  adjusted loss = 0.0000  adv prob = 0.500000   acc = 1.0000
+  hair=1  [n = 157]:	loss = 0.0022  exp loss = 0.0001  adjusted loss = 0.0001  adv prob = 0.500000   acc = 1.0000
+roc auc = 1.000000
+
+ Epoch 91, Validation:
+Average incurred loss: 3.0230  
+Average sample loss: 3.0383  
+Average acc: 0.5779  
+  hair=0  [n = 84]:	loss = 2.2161  exp loss = 4.0205  adjusted loss = 4.0205  adv prob = 0.500000   acc = 0.6310
+  hair=1  [n = 70]:	loss = 3.9914  exp loss = 2.8396  adjusted loss = 2.8396  adv prob = 0.500000   acc = 0.5143
+roc auc = 0.347549
+
+Epoch 91, Testing:
+Average incurred loss: 3.0295  
+Average sample loss: 3.0671  
+Average acc: 0.5890  
+  hair=0  [n = 363]:	loss = 2.1507  exp loss = 3.0933  adjusted loss = 3.0933  adv prob = 0.500000   acc = 0.6116
+  hair=1  [n = 255]:	loss = 4.2807  exp loss = 9.4885  adjusted loss = 9.4885  adv prob = 0.500000   acc = 0.5569
+roc auc = 0.353548
+Current lr: 0.001000
+Time Cost: 0:00:11.989160
+Current validation ROCAUC: 0.3475490196078431
+
+Average incurred loss: 0.0003  
+Average sample loss: 0.0003  
+Average acc: 1.0000  
+  hair=0  [n = 259]:	loss = 0.0008  exp loss = 0.0003  adjusted loss = 0.0003  adv prob = 0.500000   acc = 1.0000
+  hair=1  [n = 541]:	loss = 0.0001  exp loss = 0.0000  adjusted loss = 0.0000  adv prob = 0.500000   acc = 1.0000
+roc auc = 1.000000
+Average incurred loss: 0.0004  
+Average sample loss: 0.0004  
+Average acc: 1.0000  
+  hair=0  [n = 284]:	loss = 0.0002  exp loss = 0.0000  adjusted loss = 0.0000  adv prob = 0.500000   acc = 1.0000
+  hair=1  [n = 516]:	loss = 0.0005  exp loss = 0.0000  adjusted loss = 0.0000  adv prob = 0.500000   acc = 1.0000
+roc auc = 1.000000
+Average incurred loss: 0.0018  
+Average sample loss: 0.0018  
+Average acc: 1.0000  
+  hair=0  [n = 86]:	loss = 0.0029  exp loss = 0.0001  adjusted loss = 0.0001  adv prob = 0.500000   acc = 1.0000
+  hair=1  [n = 136]:	loss = 0.0012  exp loss = 0.0000  adjusted loss = 0.0000  adv prob = 0.500000   acc = 1.0000
+roc auc = 1.000000
+
+ Epoch 92, Validation:
+Average incurred loss: 2.9363  
+Average sample loss: 2.9659  
+Average acc: 0.6364  
+  hair=0  [n = 84]:	loss = 1.8392  exp loss = 4.4601  adjusted loss = 4.4601  adv prob = 0.500000   acc = 0.6667
+  hair=1  [n = 70]:	loss = 4.2528  exp loss = 2.9896  adjusted loss = 2.9896  adv prob = 0.500000   acc = 0.6000
+roc auc = 0.359314
+
+Epoch 92, Testing:
+Average incurred loss: 2.8882  
+Average sample loss: 2.9356  
+Average acc: 0.6424  
+  hair=0  [n = 363]:	loss = 1.7573  exp loss = 3.8135  adjusted loss = 3.8135  adv prob = 0.500000   acc = 0.6887
+  hair=1  [n = 255]:	loss = 4.4980  exp loss = 10.4920  adjusted loss = 10.4920  adv prob = 0.500000   acc = 0.5765
+roc auc = 0.378932
+Current lr: 0.001000
+Time Cost: 0:00:11.445476
+Current validation ROCAUC: 0.3593137254901961
+
+Average incurred loss: 0.0008  
+Average sample loss: 0.0008  
+Average acc: 1.0000  
+  hair=0  [n = 278]:	loss = 0.0015  exp loss = 0.0000  adjusted loss = 0.0000  adv prob = 0.500000   acc = 1.0000
+  hair=1  [n = 522]:	loss = 0.0004  exp loss = 0.0000  adjusted loss = 0.0000  adv prob = 0.500000   acc = 1.0000
+roc auc = 1.000000
+Average incurred loss: 0.0004  
+Average sample loss: 0.0004  
+Average acc: 1.0000  
+  hair=0  [n = 275]:	loss = 0.0009  exp loss = 0.0000  adjusted loss = 0.0000  adv prob = 0.500000   acc = 1.0000
+  hair=1  [n = 525]:	loss = 0.0002  exp loss = 0.0000  adjusted loss = 0.0000  adv prob = 0.500000   acc = 1.0000
+roc auc = 1.000000
+Average incurred loss: 0.0001  
+Average sample loss: 0.0001  
+Average acc: 1.0000  
+  hair=0  [n = 76]:	loss = 0.0002  exp loss = 0.0003  adjusted loss = 0.0003  adv prob = 0.500000   acc = 1.0000
+  hair=1  [n = 146]:	loss = 0.0000  exp loss = 0.0000  adjusted loss = 0.0000  adv prob = 0.500000   acc = 1.0000
+roc auc = 1.000000
+
+ Epoch 93, Validation:
+Average incurred loss: 2.7801  
+Average sample loss: 2.8039  
+Average acc: 0.6169  
+  hair=0  [n = 84]:	loss = 1.8890  exp loss = 3.9092  adjusted loss = 3.9092  adv prob = 0.500000   acc = 0.6429
+  hair=1  [n = 70]:	loss = 3.8494  exp loss = 2.9208  adjusted loss = 2.9208  adv prob = 0.500000   acc = 0.5857
+roc auc = 0.399755
+
+Epoch 93, Testing:
+Average incurred loss: 2.7296  
+Average sample loss: 2.7732  
+Average acc: 0.6408  
+  hair=0  [n = 363]:	loss = 1.8042  exp loss = 3.5228  adjusted loss = 3.5228  adv prob = 0.500000   acc = 0.6804
+  hair=1  [n = 255]:	loss = 4.0469  exp loss = 9.7538  adjusted loss = 9.7538  adv prob = 0.500000   acc = 0.5843
+roc auc = 0.422122
+Current lr: 0.001000
+Time Cost: 0:00:11.909920
+Current validation ROCAUC: 0.39975490196078434
+
+Average incurred loss: 0.0013  
+Average sample loss: 0.0013  
+Average acc: 0.9987  
+  hair=0  [n = 280]:	loss = 0.0002  exp loss = 0.0000  adjusted loss = 0.0000  adv prob = 0.500000   acc = 1.0000
+  hair=1  [n = 520]:	loss = 0.0019  exp loss = 0.0000  adjusted loss = 0.0000  adv prob = 0.500000   acc = 0.9981
+roc auc = 1.000000
+Average incurred loss: 0.0003  
+Average sample loss: 0.0003  
+Average acc: 1.0000  
+  hair=0  [n = 265]:	loss = 0.0005  exp loss = 0.0000  adjusted loss = 0.0000  adv prob = 0.500000   acc = 1.0000
+  hair=1  [n = 535]:	loss = 0.0002  exp loss = 0.0000  adjusted loss = 0.0000  adv prob = 0.500000   acc = 1.0000
+roc auc = 1.000000
+Average incurred loss: 0.0006  
+Average sample loss: 0.0007  
+Average acc: 1.0000  
+  hair=0  [n = 84]:	loss = 0.0014  exp loss = 0.0062  adjusted loss = 0.0062  adv prob = 0.500000   acc = 1.0000
+  hair=1  [n = 138]:	loss = 0.0002  exp loss = 0.0000  adjusted loss = 0.0000  adv prob = 0.500000   acc = 1.0000
+roc auc = 1.000000
+
+ Epoch 94, Validation:
+Average incurred loss: 2.8655  
+Average sample loss: 2.8935  
+Average acc: 0.6753  
+  hair=0  [n = 84]:	loss = 1.6856  exp loss = 4.1611  adjusted loss = 4.1611  adv prob = 0.500000   acc = 0.7024
+  hair=1  [n = 70]:	loss = 4.2813  exp loss = 3.0638  adjusted loss = 3.0638  adv prob = 0.500000   acc = 0.6429
+roc auc = 0.368137
+
+Epoch 94, Testing:
+Average incurred loss: 2.9322  
+Average sample loss: 2.9757  
+Average acc: 0.6392  
+  hair=0  [n = 363]:	loss = 1.7410  exp loss = 3.0499  adjusted loss = 3.0499  adv prob = 0.500000   acc = 0.6777
+  hair=1  [n = 255]:	loss = 4.6280  exp loss = 10.3843  adjusted loss = 10.3843  adv prob = 0.500000   acc = 0.5843
+roc auc = 0.372205
+Current lr: 0.001000
+Time Cost: 0:00:11.762777
+Current validation ROCAUC: 0.3681372549019608
+
+Average incurred loss: 0.0006  
+Average sample loss: 0.0006  
+Average acc: 1.0000  
+  hair=0  [n = 275]:	loss = 0.0007  exp loss = 0.0000  adjusted loss = 0.0000  adv prob = 0.500000   acc = 1.0000
+  hair=1  [n = 525]:	loss = 0.0005  exp loss = 0.0000  adjusted loss = 0.0000  adv prob = 0.500000   acc = 1.0000
+roc auc = 1.000000
+Average incurred loss: 0.0001  
+Average sample loss: 0.0001  
+Average acc: 1.0000  
+  hair=0  [n = 284]:	loss = 0.0002  exp loss = 0.0001  adjusted loss = 0.0001  adv prob = 0.500000   acc = 1.0000
+  hair=1  [n = 516]:	loss = 0.0001  exp loss = 0.0000  adjusted loss = 0.0000  adv prob = 0.500000   acc = 1.0000
+roc auc = 1.000000
+Average incurred loss: 0.0002  
+Average sample loss: 0.0002  
+Average acc: 1.0000  
+  hair=0  [n = 70]:	loss = 0.0003  exp loss = 0.0006  adjusted loss = 0.0006  adv prob = 0.500000   acc = 1.0000
+  hair=1  [n = 152]:	loss = 0.0001  exp loss = 0.0001  adjusted loss = 0.0001  adv prob = 0.500000   acc = 1.0000
+roc auc = 1.000000
+
+ Epoch 95, Validation:
+Average incurred loss: 2.7775  
+Average sample loss: 2.8106  
+Average acc: 0.6364  
+  hair=0  [n = 84]:	loss = 1.7440  exp loss = 3.8425  adjusted loss = 3.8425  adv prob = 0.500000   acc = 0.6548
+  hair=1  [n = 70]:	loss = 4.0176  exp loss = 3.4827  adjusted loss = 3.4827  adv prob = 0.500000   acc = 0.6143
+roc auc = 0.376961
+
+Epoch 95, Testing:
+Average incurred loss: 2.8690  
+Average sample loss: 2.9127  
+Average acc: 0.6311  
+  hair=0  [n = 363]:	loss = 1.7769  exp loss = 3.2926  adjusted loss = 3.2926  adv prob = 0.500000   acc = 0.6667
+  hair=1  [n = 255]:	loss = 4.4236  exp loss = 10.1626  adjusted loss = 10.1626  adv prob = 0.500000   acc = 0.5804
+roc auc = 0.381208
+Current lr: 0.001000
+Time Cost: 0:00:12.127557
+Current validation ROCAUC: 0.37696078431372554
+
+Average incurred loss: 0.0102  
+Average sample loss: 0.0102  
+Average acc: 0.9950  
+  hair=0  [n = 272]:	loss = 0.0291  exp loss = 0.0001  adjusted loss = 0.0001  adv prob = 0.500000   acc = 0.9853
+  hair=1  [n = 528]:	loss = 0.0006  exp loss = 0.0018  adjusted loss = 0.0018  adv prob = 0.500000   acc = 1.0000
+roc auc = 0.999909
+Average incurred loss: 0.0036  
+Average sample loss: 0.0036  
+Average acc: 0.9975  
+  hair=0  [n = 276]:	loss = 0.0013  exp loss = 0.0001  adjusted loss = 0.0001  adv prob = 0.500000   acc = 1.0000
+  hair=1  [n = 524]:	loss = 0.0048  exp loss = 0.0002  adjusted loss = 0.0002  adv prob = 0.500000   acc = 0.9962
+roc auc = 1.000000
+Average incurred loss: 0.0016  
+Average sample loss: 0.0016  
+Average acc: 1.0000  
+  hair=0  [n = 81]:	loss = 0.0002  exp loss = 0.0000  adjusted loss = 0.0000  adv prob = 0.500000   acc = 1.0000
+  hair=1  [n = 141]:	loss = 0.0024  exp loss = 0.0021  adjusted loss = 0.0021  adv prob = 0.500000   acc = 1.0000
+roc auc = 1.000000
+
+ Epoch 96, Validation:
+Average incurred loss: 3.0116  
+Average sample loss: 3.0535  
+Average acc: 0.6104  
+  hair=0  [n = 84]:	loss = 1.7460  exp loss = 5.3554  adjusted loss = 5.3554  adv prob = 0.500000   acc = 0.7024
+  hair=1  [n = 70]:	loss = 4.5304  exp loss = 2.8976  adjusted loss = 2.8976  adv prob = 0.500000   acc = 0.5000
+roc auc = 0.340196
+
+Epoch 96, Testing:
+Average incurred loss: 2.9598  
+Average sample loss: 3.0095  
+Average acc: 0.6472  
+  hair=0  [n = 363]:	loss = 1.7304  exp loss = 4.2489  adjusted loss = 4.2489  adv prob = 0.500000   acc = 0.6777
+  hair=1  [n = 255]:	loss = 4.7099  exp loss = 10.7123  adjusted loss = 10.7123  adv prob = 0.500000   acc = 0.6039
+roc auc = 0.352761
+Current lr: 0.001000
+Time Cost: 0:00:11.822428
+Current validation ROCAUC: 0.34019607843137256
+
+Average incurred loss: 0.0021  
+Average sample loss: 0.0021  
+Average acc: 1.0000  
+  hair=0  [n = 267]:	loss = 0.0018  exp loss = 0.0001  adjusted loss = 0.0001  adv prob = 0.500000   acc = 1.0000
+  hair=1  [n = 533]:	loss = 0.0023  exp loss = 0.0091  adjusted loss = 0.0091  adv prob = 0.500000   acc = 1.0000
+roc auc = 1.000000
+Average incurred loss: 0.0004  
+Average sample loss: 0.0004  
+Average acc: 1.0000  
+  hair=0  [n = 282]:	loss = 0.0005  exp loss = 0.0000  adjusted loss = 0.0000  adv prob = 0.500000   acc = 1.0000
+  hair=1  [n = 518]:	loss = 0.0004  exp loss = 0.0000  adjusted loss = 0.0000  adv prob = 0.500000   acc = 1.0000
+roc auc = 1.000000
+Average incurred loss: 0.0006  
+Average sample loss: 0.0006  
+Average acc: 1.0000  
+  hair=0  [n = 80]:	loss = 0.0010  exp loss = 0.0001  adjusted loss = 0.0001  adv prob = 0.500000   acc = 1.0000
+  hair=1  [n = 142]:	loss = 0.0005  exp loss = 0.0000  adjusted loss = 0.0000  adv prob = 0.500000   acc = 1.0000
+roc auc = 1.000000
+
+ Epoch 97, Validation:
+Average incurred loss: 2.9631  
+Average sample loss: 3.0052  
+Average acc: 0.6104  
+  hair=0  [n = 84]:	loss = 1.8066  exp loss = 5.1345  adjusted loss = 5.1345  adv prob = 0.500000   acc = 0.6905
+  hair=1  [n = 70]:	loss = 4.3508  exp loss = 3.0386  adjusted loss = 3.0386  adv prob = 0.500000   acc = 0.5143
+roc auc = 0.327451
+
+Epoch 97, Testing:
+Average incurred loss: 2.9492  
+Average sample loss: 3.0029  
+Average acc: 0.6440  
+  hair=0  [n = 363]:	loss = 1.7859  exp loss = 4.3312  adjusted loss = 4.3312  adv prob = 0.500000   acc = 0.6749
+  hair=1  [n = 255]:	loss = 4.6051  exp loss = 11.3365  adjusted loss = 11.3365  adv prob = 0.500000   acc = 0.6000
+roc auc = 0.355823
+Current lr: 0.001000
+Time Cost: 0:00:12.424347
+Current validation ROCAUC: 0.32745098039215687
+
+Average incurred loss: 0.0010  
+Average sample loss: 0.0010  
+Average acc: 1.0000  
+  hair=0  [n = 273]:	loss = 0.0022  exp loss = 0.0000  adjusted loss = 0.0000  adv prob = 0.500000   acc = 1.0000
+  hair=1  [n = 527]:	loss = 0.0004  exp loss = 0.0000  adjusted loss = 0.0000  adv prob = 0.500000   acc = 1.0000
+roc auc = 1.000000
+Average incurred loss: 0.0005  
+Average sample loss: 0.0005  
+Average acc: 1.0000  
+  hair=0  [n = 278]:	loss = 0.0008  exp loss = 0.0005  adjusted loss = 0.0005  adv prob = 0.500000   acc = 1.0000
+  hair=1  [n = 522]:	loss = 0.0004  exp loss = 0.0001  adjusted loss = 0.0001  adv prob = 0.500000   acc = 1.0000
+roc auc = 1.000000
+Average incurred loss: 0.0003  
+Average sample loss: 0.0003  
+Average acc: 1.0000  
+  hair=0  [n = 78]:	loss = 0.0001  exp loss = 0.0000  adjusted loss = 0.0000  adv prob = 0.500000   acc = 1.0000
+  hair=1  [n = 144]:	loss = 0.0004  exp loss = 0.0000  adjusted loss = 0.0000  adv prob = 0.500000   acc = 1.0000
+roc auc = 1.000000
+
+ Epoch 98, Validation:
+Average incurred loss: 2.8074  
+Average sample loss: 2.8335  
+Average acc: 0.6169  
+  hair=0  [n = 84]:	loss = 1.7622  exp loss = 4.3345  adjusted loss = 4.3345  adv prob = 0.500000   acc = 0.7024
+  hair=1  [n = 70]:	loss = 4.0617  exp loss = 2.6689  adjusted loss = 2.6689  adv prob = 0.500000   acc = 0.5143
+roc auc = 0.352696
+
+Epoch 98, Testing:
+Average incurred loss: 2.8387  
+Average sample loss: 2.8884  
+Average acc: 0.6375  
+  hair=0  [n = 363]:	loss = 1.8092  exp loss = 4.3101  adjusted loss = 4.3101  adv prob = 0.500000   acc = 0.6749
+  hair=1  [n = 255]:	loss = 4.3044  exp loss = 10.4734  adjusted loss = 10.4734  adv prob = 0.500000   acc = 0.5843
+roc auc = 0.381141
+Current lr: 0.001000
+Time Cost: 0:00:11.826564
+Current validation ROCAUC: 0.3526960784313725
+
+Average incurred loss: 0.0005  
+Average sample loss: 0.0005  
+Average acc: 1.0000  
+  hair=0  [n = 283]:	loss = 0.0012  exp loss = 0.0000  adjusted loss = 0.0000  adv prob = 0.500000   acc = 1.0000
+  hair=1  [n = 517]:	loss = 0.0001  exp loss = 0.0000  adjusted loss = 0.0000  adv prob = 0.500000   acc = 1.0000
+roc auc = 1.000000
+Average incurred loss: 0.0008  
+Average sample loss: 0.0008  
+Average acc: 1.0000  
+  hair=0  [n = 268]:	loss = 0.0016  exp loss = 0.0000  adjusted loss = 0.0000  adv prob = 0.500000   acc = 1.0000
+  hair=1  [n = 532]:	loss = 0.0004  exp loss = 0.0000  adjusted loss = 0.0000  adv prob = 0.500000   acc = 1.0000
+roc auc = 1.000000
+Average incurred loss: 0.0001  
+Average sample loss: 0.0001  
+Average acc: 1.0000  
+  hair=0  [n = 78]:	loss = 0.0001  exp loss = 0.0000  adjusted loss = 0.0000  adv prob = 0.500000   acc = 1.0000
+  hair=1  [n = 144]:	loss = 0.0001  exp loss = 0.0000  adjusted loss = 0.0000  adv prob = 0.500000   acc = 1.0000
+roc auc = 1.000000
+
+ Epoch 99, Validation:
+Average incurred loss: 3.0208  
+Average sample loss: 3.0581  
+Average acc: 0.5974  
+  hair=0  [n = 84]:	loss = 1.9384  exp loss = 4.2949  adjusted loss = 4.2949  adv prob = 0.500000   acc = 0.6786
+  hair=1  [n = 70]:	loss = 4.3198  exp loss = 3.7341  adjusted loss = 3.7341  adv prob = 0.500000   acc = 0.5000
+roc auc = 0.333333
+
+Epoch 99, Testing:
+Average incurred loss: 3.1014  
+Average sample loss: 3.1544  
+Average acc: 0.6165  
+  hair=0  [n = 363]:	loss = 1.9688  exp loss = 4.5200  adjusted loss = 4.5200  adv prob = 0.500000   acc = 0.6501
+  hair=1  [n = 255]:	loss = 4.7137  exp loss = 11.3342  adjusted loss = 11.3342  adv prob = 0.500000   acc = 0.5686
+roc auc = 0.352711
+Current lr: 0.001000
+Time Cost: 0:00:11.977540
+Current validation ROCAUC: 0.3333333333333333
+
+roc_auc             0.505639
+mean_differences    0.150899
+group_avg_acc       0.679371
+avg_acc             0.692557
+Name: 14, dtype: float64
