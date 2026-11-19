@@ -1,0 +1,82 @@
+diff --git a/disc/concept_utils/concept_bank.py b/disc/concept_utils/concept_bank.py
+index 44241bb..3fb0ddd 100644
+--- a/disc/concept_utils/concept_bank.py
++++ b/disc/concept_utils/concept_bank.py
+@@ -125,10 +125,10 @@ def learn_concept_bank(
+                     split_imgs.append(pos_imgs[n_cpu * n_imgs_per_pool:])
+                 # Process positive images by multiprocessing, which is
+                 # about 3~5x more efficient than the sequential processing
+-                pool = Pool(processes=n_cpu)
++                # port (torch 2.x): a fork Pool after CUDA init deadlocks; same chunks, same order, sequential
+                 transform = transform_dict[args.dataset]
+                 transform = transform(args.model, train=False, augment_data=False)
+-                l = pool.map(process_func, list(product([transform], split_imgs)))
++                l = list(map(process_func, list(product([transform], split_imgs))))
+                 concept_imgs[concept]['pos'] = [img for sublist in l for img in sublist]
+                 assert len(concept_imgs[concept]['pos']) == n_pos_imgs
+         else:
+diff --git a/disc/concept_utils/filter_concepts.py b/disc/concept_utils/filter_concepts.py
+index cf18bd6..ccf5cb9 100644
+--- a/disc/concept_utils/filter_concepts.py
++++ b/disc/concept_utils/filter_concepts.py
+@@ -124,7 +124,7 @@ def filter_relevant_concepts(
+                 f.write(f'{[(concepts[seq][idx], round(sorted_sim[idx].item(), 4)) for idx in range(len(concepts))]}\n')
+             torch.save(concept_relevance, relevance_path)
+ 
+-    concept_relevance = torch.load(relevance_path)
++    concept_relevance = torch.load(relevance_path, weights_only=False)
+     for y in range(args.n_classes):
+         names, prob = concept_relevance[y]
+         # We use smaller ratio on FMoW to avoid CPU momory exceed
+diff --git a/disc/run_epoch_baselines.py b/disc/run_epoch_baselines.py
+index d26a6d7..5339d25 100644
+--- a/disc/run_epoch_baselines.py
++++ b/disc/run_epoch_baselines.py
+@@ -25,7 +25,7 @@ def run_epoch(
+     else:
+         prog_bar_loader = loader
+     if args.jtt:
+-        erm_model = torch.load(args.erm_model_path).cuda()
++        erm_model = torch.load(args.erm_model_path, weights_only=False).cuda()
+     
+     with torch.set_grad_enabled(is_training):
+         for batch_idx, batch in enumerate(prog_bar_loader):
+diff --git a/disc/train.py b/disc/train.py
+index bcde7d4..2327b30 100644
+--- a/disc/train.py
++++ b/disc/train.py
+@@ -25,7 +25,7 @@ def train(
+     csv_loggers, n_classes, epoch_offset
+     ):      
+     if args.disc:
+-        erm_model = torch.load(args.erm_path)
++        erm_model = torch.load(args.erm_path, weights_only=False)
+         # Filter relevent concepts to reduce computational cost
+         relevant_concepts = filter_relevant_concepts(args, erm_model, dataset['train_data'])
+         # Construct datasets of concept images
+diff --git a/disc/utils/cluster.py b/disc/utils/cluster.py
+index 1ac71b7..5d99891 100644
+--- a/disc/utils/cluster.py
++++ b/disc/utils/cluster.py
+@@ -82,7 +82,7 @@ def cluter_assignment(args, train_data, model, logger):
+         logger.write(f'Silhouette Scores: {silhouette_score}\n  Mean: {np.mean(silhouette_score)}\n')
+         torch.save(cluster_dict, assignments_path)
+     logger.flush()
+-    return torch.load(assignments_path)
++    return torch.load(assignments_path, weights_only=False)
+ 
+ 
+ class UMAPReducer:
+diff --git a/disc/utils/tools.py b/disc/utils/tools.py
+index 20d4f34..07f3076 100644
+--- a/disc/utils/tools.py
++++ b/disc/utils/tools.py
+@@ -100,7 +100,7 @@ def get_optimizer(args, model):
+ def get_model(args, n_classes, d=None, resume=False):
+     pretrained = not args.train_from_scratch
+     if resume:
+-        model = torch.load(os.path.join(args.log_dir, 'last_model.pth'))
++        model = torch.load(os.path.join(args.log_dir, 'last_model.pth'), weights_only=False)
+     elif args.dataset == 'CIFAR10':
+         # Use another resnet50 implementation
+         # https://github.com/kuangliu/pytorch-cifar

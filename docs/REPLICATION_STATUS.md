@@ -1028,3 +1028,18 @@ c. **Backbone / preprocessing / data — no port error.** torchvision `vit_b_16(
   as `corrupted_duplicate_start_0907_trapset_id=1` and is not used. Fixes: running-job match `--seed k( |$)` (tested on strings),
   watcher waits for `preA33_epvt_bias1_1` + new result files. P8 restarted 09:08 with one lane (ERM trap set 1 from scratch);
   the P6 + P8 pairing measurement still runs on DISC trap set 1; two P8 lanes start only after the P6 A33 rerun.
+
+### 2026-11-19 ~10:20 UTC (machine 2's clock) — machine 2: P8 stalled 09:25–10:20 (two torch-2 port errors in DISC); A35
+- **09:25 DISC trap set 1 failed at start:** `torch.load` of their pickled ERM model (`WeightsUnpickler … torchvision.models.resnet.ResNet`):
+  torch ≥ 2.6 loads weights-only by default. Fix: `weights_only=False` at all five `torch.load` sites (torch 1.11 behaviour).
+  My queue did not alert; the GPU sat idle until I checked at ~10:05.
+- **10:10 restart hung** in DISC's concept-image preprocessing (0/58, all processes at 0 % CPU on a futex): their code forks a
+  `Pool` after CUDA initialisation, which deadlocks under torch 2.11. Fix: the same `process_func` over the same chunks,
+  sequentially (identical tensors, same order). ~3 min per DISC start. Both ports: `third_party/disc/torch2_port.patch`.
+- Failed output folders kept, renamed `failed_torchload_0925_…_x`, `failed_poolhang_1010_…_x`; not used. ERM trap set 1 (done)
+  unaffected. Restarted ~10:13; the P6 A33 + P8 pairing measurement (`m2_pair_p6p8.sh`, still waiting) starts on DISC trap set 1
+  as planned. ~55 GPU-min lost.
+- **Found while diagnosing — recorded as A35 before any P8 score:** DISC's ISIC loader hard-codes `id_val=True`: validation =
+  20 % of each trap set's test CSV (154 images), test = the other 80 % (618), train = the full train CSV (1,822); A32's
+  "val 259 / test 772" was wrong for P8. Gate unchanged (the published numbers come from this code); our arms use the same
+  train / val / test images.

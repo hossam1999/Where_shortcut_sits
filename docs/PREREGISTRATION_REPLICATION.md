@@ -792,3 +792,23 @@ before the A33 rerun result and before any multi-seed run).** Results seen: pre-
 - **If the 5-seed means still miss:** P6 is final **"not reproduced"**; an email to the authors is drafted
   (`docs/EMAIL_DRAFT_YAN_EPVT.md`, not sent). If they pass, the P6 registration (our arms vs EPVT; PLDG vs arm c) is written as
   a new amendment before any of our arms is scored.
+
+**A35 (2026-11-19 ~10:20 UTC by machine 2's clock; P8 correction of a factual statement in A32 plus two environment ports,
+not tuning; recorded before any DISC run has trained and before any P8 test AUROC has been computed or any of our arms run).**
+Seen before this amendment: ERM trap set 1 finished (100 epochs); its log was opened while diagnosing the DISC start failures
+(the first epoch's lines only); its selected-epoch test AUROC has not been computed.
+- **Correction (their split):** A32 said "train 1,822 / val 259 / test 772". DISC's `ISICDataset` hard-codes `id_val=True`
+  (`disc/dataset/isic_dataset.py:41–61`; no command-line flag): **validation = 20 % of each trap set's test CSV, test = the
+  other 80 %** (`train_test_split(…, test_size=0.8, random_state=0)`), **train = the full train CSV**; Bissoto's validation CSV
+  is unused. Trap set 1: train 1,822, **val 154, test 618** (logged by both runs). DISC's and ERM's published numbers come from
+  this code, so the **gate is unchanged** (0.364 / 0.551, ± 0.03, 5-set means).
+- **Our arms follow the same split (A32 "under DISC's protocol", paired on the same test images):** fit on the 1,822 training
+  images; every validation-only choice (arm b/a/c mode and C, arm d early stopping and the A21 grid) on DISC's 154-image
+  validation split of that trap set; each arm scored **once** on the same 618-image test as DISC. The A32 bootstrap is over
+  these test images (one Poisson(1) weight per image id, shared across trap sets and methods). The validation images come from
+  the test distribution for every method alike, which is DISC's protocol. Nothing else in A32 changes.
+- **Environment ports (torch 1.11 → 2.11; `third_party/disc/torch2_port.patch`):** (1) `torch.load(…, weights_only=False)` at
+  the five sites that load pickled whole models / tensors (torch ≥ 2.6 defaults to weights-only; DISC trap set 1 failed at
+  start, 09:25); (2) the concept-image preprocessing (`concept_bank.py`) built a fork `Pool` after CUDA initialisation and
+  deadlocked under torch 2.11 (10:10, 0 % CPU); replaced by the same `process_func` mapped sequentially over the same chunks
+  in the same order (deterministic eval transform, identical tensors; the parent's random state is untouched either way).

@@ -18,17 +18,24 @@ Findings and deviations: `docs/REPLICATION_STATUS.md`. Results: `docs/REPLICATIO
 - GPU rules (mandatory): all GPU work through `scripts/replication/gpu_wait.sh` (memory + at most one other job); never kill
   by pattern; stop a job by PID **and its DataLoader workers** (`pgrep -P <pid>`), else they keep GPU memory.
 
-## Machine 2 (A27; updated 2026-11-18 12:35 UTC, machine 2's clock)
-RTX 5070 Ti 16 GB, 28 cores, 62 GB RAM, 288 GB disk, **no persistent volume** (re-download data if recycled; only git
-survives). Repo `/root/Where_shortcut_sits`; `WTSS_DATA=/workspace/data`; third-party clones `/workspace/third_party/{saab,bissoto,pahde,isnet,r2r}`
-(pahde patched with `cu128_port.patch`); envs `/workspace/venv-wtss`, `/workspace/envs/{saab,pahde,r2r}` (`docs/ENVIRONMENT_MACHINE2.md`).
+## Machine 2 (A27; updated 2026-11-19 10:25 UTC, machine 2's clock)
+RTX 5070 Ti 16 GB, 28 cores, 62 GB RAM, **no persistent volume** (re-download data if recycled; only git survives). Repo
+`/root/Where_shortcut_sits`; `WTSS_DATA=/workspace/data`; clones `/workspace/third_party/{saab,bissoto,pahde,isnet,r2r,epvt,disc}`
+(port patches in `third_party/<name>/`); envs `/workspace/venv-wtss`, `/workspace/envs/{saab,pahde,r2r,epvt,disc}`
+(`docs/ENVIRONMENT_MACHINE2.md`). Logs `/workspace/logs/`. GPU order (author): P8 → P6 A33 (paired with P8 if measured > 1.0)
+→ two P8 trap sets paired (measured) → P8 gate + our P8 arms (A32/A35) → A34 P6 5 seeds if A33 misses → phase-5 timing +
+`PREREGISTRATION_PHASE5.md` (wait) → P7.
 | job | state | resume |
 |---|---|---|
-| P4 Seg-ERM splits 1–3 (`m2_p4_pair.sh`, two at a time, 1.23× measured) | splits 1 + 2 running, 1.87 min/epoch each; ETA 1+2 ≈ 17:10, 3 ≈ 20:00 UTC | `nohup scripts/replication/m2_p4_pair.sh > /workspace/logs/m2_p4_pair.log 2>&1 &` (resumes from each `checkpoint.pt`) |
-| P4 arm a | after each split: `saab` env `p4_arm_a.py --stage features --split k`, then our env `p4_arm_a.py --stage heads` | — |
-| P4 arm-d split-1 comparison | needs arm d's features from machine 1 (not in git); arm d's test scores are in git (`results/replication/armd/scores/p4_split1.csv.gz`), so the paired comparison with Seg-ERM split 1 is computed from scores | — |
-| P5 step 1 | **done, check failed** (0.838/0.552 vs 0.895/0.356); P5 dropped pending the author | — |
-| Phase 5 | thyroid cohort rebuilt; trainer + unit tests next, then timing test, `PREREGISTRATION_PHASE5.md`, wait | — |
+| P4 Saab | **final: gate failed twice (0.632; A31 0.647 vs 0.727); descriptive**; `docs/EMAIL_DRAFT_SAAB.md` (not sent) | — |
+| P5 | dropped (step-1 check failed) | — |
+| P8 DISC (A32, A35) ERM+DISC trap sets 1–5 | ERM 1 done; DISC 1 restarted 10:13 after two torch-2 ports (`third_party/disc/torch2_port.patch`) | `LANE=a WTSS_DATA=/workspace/data nohup scripts/replication/m2_p8_lanes.sh >> /workspace/logs/m2_p8_queue.log 2>&1 &` (locks `$WTSS_DATA/disc/locks/<m>_<k>`; remove a stale lock first; a folder without 101 test rows is rerun — move it aside) |
+| P6 A33 rerun (ERM+EPVT bias 1, once) | waits for DISC 1 epochs: `m2_pair_p6p8.sh` measures alone/paired, keeps pairing only if > 1.0, else reruns after P8 (`m2_p6_a33.sh`) | `nohup scripts/replication/m2_pair_p6p8.sh > /workspace/logs/m2_pair_p6p8.log 2>&1 &` |
+| P8 two-lane pairing | `m2_pair_p8p8.sh` waits for the A33 results, then measures lane b beside lane a | `nohup scripts/replication/m2_pair_p8p8.sh > /workspace/logs/m2_pair_p8p8.log 2>&1 &` |
+| P8 gate + arms a–d | after all 10 runs; arms on DISC's split (A35), bootstrap + Holm (A32) | not written yet |
+| A34 P6 5 seeds | only if A33 misses; after P8 arms | `scripts/replication/m2_p6_5seeds.sh` |
+| Phase 5 | trainer + 10 unit tests done (`scripts/phase5/p5_run.py`); timing test + prereg next, then wait | — |
+| P7 RR-ClArC | step 1 reproduced (`results/replication/rrclarc/step1.md`); fine-tunes fill GPU during approvals | — |
 
 ## Done (results in git)
 - Phase 0–1, amendments A1–A14 (pushed).

@@ -19,3 +19,6 @@ sets) until an amendment registers the comparison.
 - Concept bank: their generated Stable-Diffusion concept images (Drive `1EX0MP39xvUaYprCIReuTQWVZPj7xsops` texture,
   `1h-9uS7kDjDZSbbZc90da3lzMjPpwLj_g` other categories) → `$WTSS_DATA/disc/synthetic_concepts`.
 - Related, same test (not P8): CBDebug (ICLR 2026) — see `docs/REPLICATION_STATUS.md` 2026-11-18 ~23:30.
+- Ports (A35, `torch2_port.patch`): `torch.load(…, weights_only=False)` at five sites; concept-image preprocessing `Pool`
+  (fork after CUDA init, deadlocks under torch 2.11) replaced by the same function mapped sequentially. Their ISIC loader
+  hard-codes `id_val=True`: val = 20 % of the trap-set test CSV (154), test = 80 % (618), train = full train CSV (1,822).
