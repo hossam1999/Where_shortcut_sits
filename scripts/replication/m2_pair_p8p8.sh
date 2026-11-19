@@ -4,14 +4,13 @@
 # jobs: s/epoch paired vs alone (ERM alone 9.6 s/epoch, measured; DISC alone from pair_p6p8.json). Kept only if total > 1.0;
 # otherwise lane b and the job it overlapped are stopped by PID and P8 continues with one lane.
 D=${WTSS_DATA:-/workspace/data}; Q=/root/Where_shortcut_sits/scripts/replication; PY=/workspace/envs/disc/bin/python
-until { [ -s $D/epvt/runs/erm_bias1_1/erm__test_bias_1_1.json ] && [ -s $D/epvt/runs/epvt_bias1_1/epvt__test_bias_1_1.json ]; } \
+# the A33 rerun is done only when the pre-A33 runs have been set aside (by m2_pair_p6p8.sh) AND new result files exist
+until { [ -d $D/epvt/runs/preA33_epvt_bias1_1 ] && [ -s $D/epvt/runs/erm_bias1_1/erm__test_bias_1_1.json ] && [ -s $D/epvt/runs/epvt_bias1_1/epvt__test_bias_1_1.json ]; } \
       || grep -q "P8 step-1 runs done" /workspace/logs/m2_p8_queue.log; do sleep 120; done
 grep -q "P8 step-1 runs done" /workspace/logs/m2_p8_queue.log && { echo "P8 already done; nothing to pair"; exit 0; }
-for p in $(ps -eo pid,args | awk '$2=="/bin/bash" && $3 ~ /m2_p8_queue.sh$/ {print $1}'); do kill $p; done
-echo "$(date -u +%T) old P8 queue shells stopped; starting lanes a and b"
+echo "$(date -u +%T) P6 A33 done; starting lane b beside lane a"
 cd /root/Where_shortcut_sits
-LANE=a nohup $Q/m2_p8_lanes.sh >> /workspace/logs/m2_p8_queue.log 2>&1 &
-sleep 90; LANE=b nohup $Q/m2_p8_lanes.sh >> /workspace/logs/m2_p8_queue.log 2>&1 &
+LANE=b nohup $Q/m2_p8_lanes.sh >> /workspace/logs/m2_p8_queue.log 2>&1 &
 # measure the first two concurrent jobs
 jobs_now(){ ps -eo pid,args | awk -v py="$PY" '$2==py && /run_expt.py/ {print $1}'; }
 until [ $(jobs_now | wc -l) -ge 2 ]; do sleep 15; done

@@ -10,8 +10,9 @@ complete(){ local d=$1; [ -n "$d" ] && [ -s "$d/test.csv" ] && [ $(wc -l < "$d/t
 while :; do
   job=""; for k in ${SPLITS:-1 2 3 4 5}; do for m in erm disc; do
     if [ $m = erm ]; then complete "$(erm_dir $k)" && continue; else complete "$(disc_dir $k)" && continue; complete "$(erm_dir $k)" || continue; fi
-    [ $m = erm ] && ps -eo args | grep -v -- "--disc" | grep -q "^$PY run_expt.py .*--seed $k " && continue
-    [ $m = disc ] && ps -eo args | grep -q "^$PY run_expt.py .*--seed $k .*--disc" && continue
+    # already running (any queue)? the ERM command line ENDS with "--seed k", so match a space or end of line after k
+    [ $m = erm ] && ps -eo args | grep "^$PY run_expt.py" | grep -v -- "--disc" | grep -Eq -- "--seed $k( |$)" && continue
+    [ $m = disc ] && ps -eo args | grep "^$PY run_expt.py" | grep -- "--disc" | grep -Eq -- "--seed $k( |$)" && continue
     mkdir $K/${m}_$k 2>/dev/null || continue
     job="$m $k"; break 2
   done; done

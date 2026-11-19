@@ -1020,3 +1020,11 @@ c. **Backbone / preprocessing / data — no port error.** torchvision `vit_b_16(
   else P6 reruns after P8). P8 ERM alone was measured at 9.6 s/epoch (epochs 47–55, trap set 1). Limitation: the running P8 queue
   starts each new job only on an otherwise empty GPU, so P8's next job waits for P6 to finish. After P6, two P8 trap sets are
   paired the same way.
+- **Incident 09:06–09:08 (my scripts; no result affected, ~20 GPU-min lost):** the new P8 pairing watcher treated the pre-A33
+  P6 result files (not yet renamed) as "A33 done", stopped the old sequential P8 queue's shells and started two lanes; the lanes'
+  running-job check required a space after `--seed k`, but the ERM command line ends with `--seed 1`, so lane a started a
+  **second ERM on trap set 1 into the same output folder** while the original was at epoch ≈ 90, truncating its `test.csv` /
+  `train.csv`. Both ERM-1 processes, both lanes and the watcher were stopped by PID (with DataLoader workers); the folder is kept
+  as `corrupted_duplicate_start_0907_trapset_id=1` and is not used. Fixes: running-job match `--seed k( |$)` (tested on strings),
+  watcher waits for `preA33_epvt_bias1_1` + new result files. P8 restarted 09:08 with one lane (ERM trap set 1 from scratch);
+  the P6 + P8 pairing measurement still runs on DISC trap set 1; two P8 lanes start only after the P6 A33 rerun.
