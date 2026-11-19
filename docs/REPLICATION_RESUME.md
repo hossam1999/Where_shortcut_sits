@@ -1,5 +1,9 @@
 # How to resume the replication (read this first in a new session)
 
+> **2026-11-19 (author): two machines.** Machine 1 (this one, RTX 5060 Ti) runs only the P3 ISNet chain, its scoring, the
+> A24 in-distribution evaluations, the P3 arm feature passes, and the exploratory track. **P4, P5 and phase 5 run on
+> machine 2**; the P4, P5 and phase-5 notes below are kept for reference and are not machine 1's work.
+
 Kept current on every state change and by a heartbeat every 2 h (`scripts/replication/heartbeat.sh`; auto block at the
 end). Authoritative plan: `docs/REPLICATION_PLAN.md`. Rules and amendments A1–A14: `docs/PREREGISTRATION_REPLICATION.md`.
 Findings and deviations: `docs/REPLICATION_STATUS.md`. Results: `docs/REPLICATION_RESULTS.md`.

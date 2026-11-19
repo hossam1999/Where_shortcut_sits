@@ -706,3 +706,17 @@ normal images and never outputs COVID-19 (in-distribution macro-F1 0.27–0.28).
 pipeline and ours was found in text or code, so **nothing is changed and the test is not re-scored**; the A9 check stays
 as run (0.223 / 0.260), **P3 is descriptive only as registered**, and the ISNet chain is unaffected. Untestable from text
 or code: which CheXpert release P3 used (we use CheXpert-v1.0-small) and their exact equalization implementation.
+
+### 2026-11-19 07:15 UTC — machine 1: P4, P5 and phase 5 moved to machine 2 (author)
+A second machine (RTX 5080, "machine 2") takes over **P4** (Seg-ERM splits 1–3, arm a, the P4 gate), **P5** (Reveal to
+Revise) and **phase 5**. Removed from machine 1 at 07:14 UTC, nothing deleted:
+- `short_queue.sh` stopped by PID (it was only waiting on `P4_HOLD` to run Seg-ERM splits 1–3; no GPU job). The P4
+  `seg_split1` checkpoint (`$WTSS_DATA/replication/saab/runs/seg_split1/`, epoch-66 checkpoint) is kept on disk.
+- P5: the checkpoint / paper download loop and its waiter stopped by PID; the partial download
+  (`$WTSS_DATA/replication/r2r/checkpoints/checkpoint_resnet18_isic_last.pth.part`) and the fetched code
+  (`/workspace/third_party/r2r/`, `third_party/r2r/SOURCE.md`) are kept.
+- Phase 5: nothing was queued on machine 1 (the trainer had not been written); the rebuilt thyroid cohort stays on disk.
+Machine 1 now runs only: the P3 ISNet chain (`isnet_inside_all_seed0`, then `isnet_inside_9010_seed0`), their scoring on
+the rebuilt test, the A24 in-distribution evaluations, the P3 arm feature passes (arms b, c, d on the A24 validation
+images), and the exploratory track (CPU, validation only). Machine 1 never edits files machine 2 writes (P4, P5, phase-5
+results and their STATUS entries).
