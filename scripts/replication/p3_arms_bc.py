@@ -25,7 +25,8 @@ import pandas as pd
 ROOT = Path(__file__).resolve().parents[2]
 sys.path[:0] = [str(ROOT / "src"), str(ROOT / "scripts" / "round8"), str(ROOT / "scripts" / "replication")]
 D = os.environ.get("WTSS_DATA", "/workspace/data")
-OUT = Path(f"{D}/replication/isnet/arms_bc")
+SETTING = os.environ.get("P3_SETTING", "inside9010")   # inside9010 (arms b, c) | corner (arm c only, A12)
+OUT = Path(f"{D}/replication/isnet/arms_bc" + ("" if SETTING == "inside9010" else "_corner"))
 RES = ROOT / "results/replication/isnet"
 CS = (0.01, 0.1, 1.0, 10.0)
 
@@ -34,7 +35,7 @@ def features():
     from PIL import Image
     import armd_train as A
     from wtss.umte import UMtE
-    S = A.P3()
+    S = A.P3() if SETTING == "inside9010" else A.P3Corner()
     OUT.mkdir(parents=True, exist_ok=True)
     um = UMtE("dino518", device="cuda", seed=0, batch_size=16)
     jobs = [(k, False) for k in S.sets] + [("train", True)]
@@ -62,7 +63,7 @@ def heads():
     from sklearn.linear_model import LogisticRegression
     from sklearn.metrics import f1_score
     from wtss.methods.insertion import fit_difference_subspace
-    S = A.P3()
+    S = A.P3() if SETTING == "inside9010" else A.P3Corner()
     X = {k: np.load(OUT / f"dino518_masked_{k}.npz")["X"] for k in S.sets}
     X1 = np.load(OUT / "dino518_insert_train.npz")["X"]
     ytr, atr = S.labels("train"); yv = S.labels("valid")[0]
@@ -83,13 +84,14 @@ def heads():
 
     arms = {}
     best_b = None
-    for mode in CA.CMC_MODES:
+    for mode in (CA.CMC_MODES if SETTING == "inside9010" else ()):   # corner: arm b not registered (A12: only U-MtE)
         P = CA.Projector(CA.cmc_directions(X["train"], ytr, atr, mode))
         Z = {k: P(v) for k, v in X.items()}
         clf, v, C = fit(Z, mode)
         if best_b is None or v > best_b[1]:
             best_b = (clf, v, C, mode, Z)
-    arms["b_dino518_mask_cmc"] = best_b
+    if best_b is not None:
+        arms["b_dino518_mask_cmc"] = best_b
     er = fit_difference_subspace(X["train"], X1, energy=0.90, max_k=64, seed=0)
     Zc = {k: er(v) for k, v in X.items()}
     clf, v, C = fit(Zc, "umte")
@@ -106,11 +108,14 @@ def heads():
                 out_rows.append({"arm": name, "mode": mode, "C": C, "test": k[5:], "variant": var, "n": int(keep.sum()),
                                  "macro_f1": float(f1_score(y[keep], pr[keep].argmax(1), average="macro"))})
     pd.concat(preds).to_csv(OUT / "preds_test.csv.gz", index=False)
-    res = pd.DataFrame(out_rows); RES.mkdir(parents=True, exist_ok=True); res.to_csv(RES / "p3_9010_inside_arms_bc.csv", index=False)
+    stem = "p3_9010_inside_arms_bc" if SETTING == "inside9010" else "p3_corner_arm_c"
+    if SETTING != "inside9010":
+        md[0] = "# P3 original corner benchmark (every image marked, A12): our arm c (U-MtE), the corner ISNet run's data"
+    res = pd.DataFrame(out_rows); RES.mkdir(parents=True, exist_ok=True); res.to_csv(RES / f"{stem}.csv", index=False)
     md += ["", "| arm | test | primary | size-matched |", "|---|---|---|---|"]
     for (arm, t), g in res.groupby(["arm", "test"], sort=False):
         md.append(f"| {arm} | {t} | {g[g.variant == 'primary'].macro_f1.iloc[0]:.3f} | {g[g.variant == 'size-matched'].macro_f1.iloc[0]:.3f} |")
-    (RES / "p3_9010_inside_arms_bc.md").write_text("\n".join(md) + "\n")
+    (RES / f"{stem}.md").write_text("\n".join(md) + "\n")
     print("\n".join(md))
 
 

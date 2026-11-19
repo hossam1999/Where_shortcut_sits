@@ -279,15 +279,16 @@ class P3:
     sets = ("train", "valid", "test_biased", "test_standard", "test_deceiving")
     train_set, val_sets = "train", ("valid",)
     KEY, DATA_SEED = "p3_9010_inside", 0
+    POSITION, PRESENCE = "inside", "9010"   # P3Corner: P3's original corner benchmark (every image marked)
 
     def __init__(self):
         import p3_train as P3T
         self.T = P3T
         co = pd.read_csv(f"{D}/replication/isnet/cohort.csv").set_index("image_id")
         gray, roi, ids = P3T.load("cohort")
-        pl = P3T.placements(ids, roi, "inside")
+        pl = P3T.placements(ids, roi, self.POSITION)
         y = co.loc[ids, "y"].to_numpy(); split = co.loc[ids, "split"].to_numpy()
-        marks = [P3T.SHAPE[int(c)] if P3T.present(i, self.DATA_SEED, "9010") else None for i, c in zip(ids, y)]
+        marks = [P3T.SHAPE[int(c)] if P3T.present(i, self.DATA_SEED, self.PRESENCE) else None for i, c in zip(ids, y)]
         self.src, self.part = {}, {}
         for s_ in ("train", "valid"):
             idx = np.where(split == s_)[0]
@@ -297,7 +298,7 @@ class P3:
         if (tc / "ids.txt").exists():
             g2, r2, ids2 = P3T.load("test")
             t = pd.read_csv(f"{D}/replication/isnet/test_cohort.csv").drop_duplicates("image_id").set_index("image_id")
-            y2 = t.loc[ids2, "y"].to_numpy(); pl2 = P3T.placements(ids2, r2, "inside")
+            y2 = t.loc[ids2, "y"].to_numpy(); pl2 = P3T.placements(ids2, r2, self.POSITION)
             for test, mk in (("biased", lambda c: P3T.SHAPE[c]), ("standard", lambda c: None), ("deceiving", lambda c: P3T.DECEIVE[c])):
                 self.src[f"test_{test}"] = (g2, r2, np.arange(len(ids2)), ids2, y2, pl2, [mk(int(c)) for c in y2])
                 self.part[f"test_{test}"] = pd.DataFrame({"image_id": ids2, "y": y2, "size_matched": t.loc[ids2, "size_matched"].to_numpy()})
@@ -314,6 +315,12 @@ class P3:
     def labels(self, k):
         d = self.part[k]
         return d.y.to_numpy().astype(int), (d["mark"].to_numpy().astype(int) if "mark" in d else np.zeros(len(d), int))
+
+
+class P3Corner(P3):
+    """P3's original corner benchmark (registered for arm c only, A12): every training/validation image carries its class
+    mark in the upper-left corner (the data of the ISNet run `isnet_corner_all_seed0`)."""
+    KEY, POSITION, PRESENCE = "p3_corner", "corner", "all"
 
 
 class P3Masked:
