@@ -18,13 +18,14 @@ Findings and deviations: `docs/REPLICATION_STATUS.md`. Results: `docs/REPLICATIO
 - GPU rules (mandatory): all GPU work through `scripts/replication/gpu_wait.sh` (memory + at most one other job); never kill
   by pattern; stop a job by PID **and its DataLoader workers** (`pgrep -P <pid>`), else they keep GPU memory.
 
-## Machine 2 (A27; updated 2026-11-19 14:05 UTC, machine 2's clock)
-RTX 5070 Ti 16 GB, 28 cores, 62 GB RAM, **no persistent volume** (re-download data if recycled; only git survives). Repo
-`/root/Where_shortcut_sits`; `WTSS_DATA=/workspace/data`; clones `/workspace/third_party/{saab,bissoto,pahde,isnet,r2r,epvt,disc}`
+## Machine 2 (A27; updated 2026-11-19 14:05 UTC, machine 2's clock) — **machine 1 released 2026-11-19; machine 2 is the only machine**
+RTX 5070 Ti 16 GB, 28 cores, 62 GB RAM, **no persistent volume**: every result is pushed the moment it exists by
+`scripts/replication/m2_push_results.sh` (detached worktree `/root/wtss_push`; small result files only, never checkpoints).
+Repo `/root/Where_shortcut_sits`; `WTSS_DATA=/workspace/data`; clones `/workspace/third_party/{saab,bissoto,pahde,isnet,r2r,epvt,disc}`
 (port patches in `third_party/<name>/`); envs `/workspace/venv-wtss`, `/workspace/envs/{saab,pahde,r2r,epvt,disc}`
-(`docs/ENVIRONMENT_MACHINE2.md`). Logs `/workspace/logs/`. GPU order (author): P8 → P6 A33 (paired with P8 if measured > 1.0)
-→ two P8 trap sets paired (measured) → P8 gate + our P8 arms (A32/A35) → A34 P6 5 seeds if A33 misses → phase-5 timing +
-`PREREGISTRATION_PHASE5.md` (wait) → P7.
+(`docs/ENVIRONMENT_MACHINE2.md`). Logs `/workspace/logs/`. **Queue (author, 2026-11-19):** P8 runs → P8 gate → our P8 arms (both
+A35 selection rules) → P6 A34 (5 seeds, A36 mixup) → phase 5 (timing test → `PREREGISTRATION_PHASE5.md` → WAIT for approval →
+run) → P7.
 | job | state | resume |
 |---|---|---|
 | P4 Saab | **final: gate failed twice (0.632; A31 0.647 vs 0.727); descriptive**; `docs/EMAIL_DRAFT_SAAB.md` (not sent) | — |
@@ -33,6 +34,7 @@ RTX 5070 Ti 16 GB, 28 cores, 62 GB RAM, **no persistent volume** (re-download da
 | P6 A33 rerun (ERM+EPVT bias 1, once) | **done 12:10: ERM 0.662 (pass), EPVT 0.655 (miss)**; was: `m2_pair_p6p8.sh` measures alone/paired, keeps pairing only if > 1.0, else reruns after P8 (`m2_p6_a33.sh`) | `nohup scripts/replication/m2_pair_p6p8.sh > /workspace/logs/m2_pair_p6p8.log 2>&1 &` |
 | P8 two-lane pairing | `m2_pair_p8p8.sh` waits for the A33 results, then measures lane b beside lane a | `nohup scripts/replication/m2_pair_p8p8.sh > /workspace/logs/m2_pair_p8p8.log 2>&1 &` |
 | P8 third lane | `m2_pair_p8x3.sh` after two lanes are kept: kept if total > 1.0, CPU < 85 %, total > two-lane total | `nohup scripts/replication/m2_pair_p8x3.sh > /workspace/logs/m2_pair_p8x3.log 2>&1 &`; concurrency file `$WTSS_DATA/disc/max_other_jobs` |
+| Result pusher | every 2 min: finished P8/P6 runs, pairing JSONs, and anything under `$WTSS_DATA/results_push/<repo path>` → commit + push both branches | `WTSS_DATA=/workspace/data nohup scripts/replication/m2_push_results.sh > /workspace/logs/m2_push.log 2>&1 &` |
 | Watchdog | logs failures / idle GPU > 10 min to STATUS ("Watchdog log"), retries a P8 job once | `WTSS_DATA=/workspace/data nohup scripts/replication/m2_watchdog.sh > /workspace/logs/m2_watchdog.log 2>&1 &` |
 | P8 gate + arms a–d | after all 10 runs; primary: DISC's 154/618 split; secondary: fit 1,563, select on Bissoto's 259, score 618 (A35); bootstrap + Holm (A32) | not written yet |
 | A34 P6 5 seeds (A36 mixup) | A33 missed (EPVT 0.655): ERM seeds 1–4 + EPVT seeds 0–4 with A36 (paper Eq. 3); after P8 gate + arms, before P7; audit `docs/P6_EPVT_AUDIT.md` | `nohup scripts/replication/m2_p6_5seeds.sh > /workspace/logs/m2_p6_5seeds.log 2>&1 &` (needs `third_party/epvt/mixup_eq3.patch` applied in `/workspace/third_party/epvt`) |

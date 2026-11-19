@@ -1132,4 +1132,13 @@ c. **Backbone / preprocessing / data — no port error.** torchvision `vit_b_16(
   means vs 0.653 / 0.746 ± 0.03). Queue unchanged: after the P8 gate and our P8 arms, before P7. Audit loop closed
   (`docs/P6_EPVT_AUDIT.md` §4).
 
+### 2026-11-19 ~14:05 UTC (machine 2's clock) — machine 2: machine 1 released; queue set; automatic result pushing
+- Author: machine 1 is released; machine 2 queue = P8 runs → P8 gate → our P8 arms (both A35 rules) → P6 A34 (5 seeds, A36
+  mixup) → phase 5 (timing test → `PREREGISTRATION_PHASE5.md` → wait for approval → run) → P7.
+- No persistent disk → `scripts/replication/m2_push_results.sh` (running since 14:00) commits and pushes every finished result
+  within ~2 min from a separate worktree: P8 runs (`results/replication/disc/runs/`), P6 runs (`results/replication/epvt/runs/`),
+  pairing measurements (`results/replication/machine2/pairing/`), and anything our scripts stage under `$WTSS_DATA/results_push/`.
+  First push 14:01: 37 files (P8 ERM trap sets 1–3; P6 pre-A33 and A33 runs incl. per-image logits). The watchdog alerts on
+  "PUSH FAILED".
+
 ### Watchdog log (machine 2, automatic; `scripts/replication/m2_watchdog.sh`)
