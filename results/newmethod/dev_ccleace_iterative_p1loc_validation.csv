@@ -1,0 +1,27 @@
+encoder,round,val_auroc,probe
+a (their net),0,0.851,0.593
+a (their net),1,0.833,0.614
+a (their net),2,0.754,0.583
+a (their net),3,0.743,0.59
+a (their net),4,0.721,0.642
+a (their net),5,0.702,0.63
+a (their net),6,0.705,0.63
+a (their net),7,0.704,0.628
+a (their net),8,0.688,0.648
+a (their net),9,0.687,0.652
+a (their net),10,0.671,0.652
+a (their net),11,0.666,0.659
+a (their net),12,0.645,0.659
+d (EfficientNet-B0),0,0.732,0.664
+d (EfficientNet-B0),1,0.737,0.673
+d (EfficientNet-B0),2,0.736,0.674
+d (EfficientNet-B0),3,0.728,0.668
+d (EfficientNet-B0),4,0.701,0.696
+d (EfficientNet-B0),5,0.677,0.734
+d (EfficientNet-B0),6,0.683,0.748
+d (EfficientNet-B0),7,0.683,0.741
+d (EfficientNet-B0),8,0.685,0.736
+d (EfficientNet-B0),9,0.685,0.738
+d (EfficientNet-B0),10,0.685,0.731
+d (EfficientNet-B0),11,0.684,0.733
+d (EfficientNet-B0),12,0.683,0.73

@@ -1,0 +1,10 @@
+setting,encoder,method,val_auroc (reversed),C,within-class tube probe AUROC (val)
+"P1 location, inside",a (their net),none,0.532,10.0,0.929
+"P1 location, inside",a (their net),mask_cmc pooled,0.855,10.0,0.611
+"P1 location, inside",a (their net),CC-LEACE,0.851,10.0,0.593
+"P1 location, inside",b (DINOv2-518),none,0.385,10.0,0.984
+"P1 location, inside",b (DINOv2-518),mask_cmc pooled,0.878,10.0,0.523
+"P1 location, inside",b (DINOv2-518),CC-LEACE,0.877,10.0,0.531
+"P1 location, inside",d (EfficientNet-B0),none,0.657,0.001,0.982
+"P1 location, inside",d (EfficientNet-B0),mask_cmc pooled,0.741,0.001,0.724
+"P1 location, inside",d (EfficientNet-B0),CC-LEACE,0.732,0.001,0.664
