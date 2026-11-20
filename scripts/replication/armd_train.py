@@ -276,7 +276,7 @@ class P3:
     macro-F1 on P3's validation split with its marks. Tests (after BIMCV): biased / standard / deceiving at the same
     position rule. Artifact label (head only): mark present."""
     n_out = 3
-    sets = ("train", "valid", "test_biased", "test_standard", "test_deceiving")
+    sets = ("train", "valid", "valid_standard", "valid_deceiving", "test_biased", "test_standard", "test_deceiving")
     train_set, val_sets = "train", ("valid",)
     KEY, DATA_SEED = "p3_9010_inside", 0
     POSITION, PRESENCE = "inside", "9010"   # P3Corner: P3's original corner benchmark (every image marked)
@@ -294,6 +294,10 @@ class P3:
             idx = np.where(split == s_)[0]
             self.src[s_] = (gray, roi, idx, [ids[k] for k in idx], y[idx], pl, [marks[k] for k in idx])
             self.part[s_] = pd.DataFrame({"image_id": [ids[k] for k in idx], "y": y[idx], "mark": [marks[k] is not None for k in idx]})
+        vidx = np.where(split == "valid")[0]   # A24: the same validation images, no mark / P3's swapped marks
+        for name, mk in (("valid_standard", lambda c: None), ("valid_deceiving", lambda c: P3T.DECEIVE[int(c)])):
+            self.src[name] = (gray, roi, vidx, [ids[k] for k in vidx], y[vidx], pl, [mk(c) for c in y[vidx]])
+            self.part[name] = pd.DataFrame({"image_id": [ids[k] for k in vidx], "y": y[vidx], "mark": [mk(c) is not None for c in y[vidx]]})
         tc = Path(f"{D}/replication/isnet/cache_test")
         if (tc / "ids.txt").exists():
             g2, r2, ids2 = P3T.load("test")
@@ -631,6 +635,10 @@ def heads_binary(S, out, name, title, ref_scores):
             r[f"{rn}_auroc"] = float(roc_auc_score(y, ref.score.to_numpy()))
             r[f"delta_vs_{rn}"] = res["delta"]; r[f"ci_vs_{rn}"] = f"[{res['ci95_lo']:+.3f}, {res['ci95_hi']:+.3f}]"
         rows.append(r)
+    for k, cond in (("valid", "biased"), ("valid_standard", "standard"), ("valid_deceiving", "deceiving")):   # A24 (secondary)
+        if k in Z:
+            yy = S.labels(k)[0]; pp = clf.predict(Z[k])
+            rows.append({"test": f"A24 {cond}", "variant": "cohort validation", "n": len(yy), "macro_f1": float(f1_score(yy, pp, average="macro"))})
     pd.concat(preds).to_csv(out / "preds_test.csv.gz", index=False)
     res = pd.DataFrame(rows)
     OUTR.mkdir(parents=True, exist_ok=True)
@@ -693,6 +701,10 @@ def heads_p3(S, out):
                                    **{f"p{j}": lg[:, j] for j in range(3)}}))
         for var, keep in (("primary", np.ones(len(y), bool)), ("size-matched", d.size_matched.to_numpy().astype(bool))):
             rows.append({"test": k[5:], "variant": var, "n": int(keep.sum()), "macro_f1": float(f1_score(y[keep], lg[keep].argmax(1), average="macro"))})
+    for k, cond in (("valid", "biased"), ("valid_standard", "standard"), ("valid_deceiving", "deceiving")):   # A24 (secondary)
+        if k in Z:
+            yy = S.labels(k)[0]; pp = clf.predict(Z[k])
+            rows.append({"test": f"A24 {cond}", "variant": "cohort validation", "n": len(yy), "macro_f1": float(f1_score(yy, pp, average="macro"))})
     pd.concat(preds).to_csv(out / "preds_test.csv.gz", index=False)
     res = pd.DataFrame(rows)
     OUTR.mkdir(parents=True, exist_ok=True)

@@ -108,14 +108,22 @@ def heads():
             for var, keep in (("primary", np.ones(len(y), bool)), ("size-matched", d.size_matched.to_numpy().astype(bool))):
                 out_rows.append({"arm": name, "mode": mode, "C": C, "test": k[5:], "variant": var, "n": int(keep.sum()),
                                  "macro_f1": float(f1_score(y[keep], pr[keep].argmax(1), average="macro"))})
+    for name, (clf, v, C, mode, Z) in arms.items():   # A24 (secondary): cohort validation in the three conditions
+        for k, cond in (("valid", "biased"), ("valid_standard", "standard"), ("valid_deceiving", "deceiving")):
+            if k in Z:
+                yy = S.labels(k)[0]
+                out_rows.append({"arm": name, "mode": mode, "C": C, "test": f"A24 {cond}", "variant": "cohort validation", "n": len(yy),
+                                 "macro_f1": float(f1_score(yy, clf.predict(Z[k]), average="macro"))})
     pd.concat(preds).to_csv(OUT / "preds_test.csv.gz", index=False)
     stem = "p3_9010_inside_arms_bc" if SETTING == "inside9010" else "p3_corner_arm_c"
     if SETTING != "inside9010":
         md[0] = "# P3 original corner benchmark (every image marked, A12): our arm c (U-MtE), the corner ISNet run's data"
     res = pd.DataFrame(out_rows); RES.mkdir(parents=True, exist_ok=True); res.to_csv(RES / f"{stem}.csv", index=False)
     md += ["", "| arm | test | primary | size-matched |", "|---|---|---|---|"]
-    for (arm, t), g in res.groupby(["arm", "test"], sort=False):
+    for (arm, t), g in res[~res.test.str.startswith("A24")].groupby(["arm", "test"], sort=False):
         md.append(f"| {arm} | {t} | {g[g.variant == 'primary'].macro_f1.iloc[0]:.3f} | {g[g.variant == 'size-matched'].macro_f1.iloc[0]:.3f} |")
+    md += ["", "A24 SECONDARY (cohort validation, used for selection): | arm | condition | macro-F1 |", "|---|---|---|"]
+    md += [f"| {x.arm} | {x.test[4:]} | {x.macro_f1:.3f} |" for _, x in res[res.test.str.startswith("A24")].iterrows()]
     (RES / f"{stem}.md").write_text("\n".join(md) + "\n")
     print("\n".join(md))
 
