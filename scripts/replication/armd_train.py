@@ -27,6 +27,7 @@ from pathlib import Path
 
 import numpy as np
 import pandas as pd
+from PIL import Image
 
 ROOT = Path(__file__).resolve().parents[2]
 sys.path[:0] = [str(ROOT / "src"), str(ROOT / "scripts" / "round8"), str(ROOT / "scripts" / "replication")]
@@ -85,6 +86,7 @@ class P2:
         self.roi = dict(zip(z["ids"].astype(str), np.unpackbits(z["bits"], axis=-1)[..., :224].astype(bool)))
         self.part = {k: pd.read_csv(R / f"render224/{k}.csv") for k in self.sets}
         self.npy = {k: str(R / f"render224/{k}.npy") for k in self.sets}
+        align_check_rendered(self.npy, self.part, lambda i: f"{D}/isic2019/ISIC_2019_Training_Input/{i}.jpg", "image")   # alignment audit
 
     @staticmethod
     def augmentation():
@@ -103,6 +105,26 @@ class P2:
 
     def labels(self, k):
         return self.part[k].label.to_numpy(), self.part[k].artifact.to_numpy()
+
+
+def align_check_rendered(npy, part, src_path, id_col, size=None):
+    """Permanent alignment assertion (author, 2026-11-20, after A30): for the first and one random row of every cached
+    split, the cached image must come from the file named by that row's id (correlation >= 0.95 with a fresh resize of the
+    source file over non-black pixels, and higher than with another row's file)."""
+    r = np.random.default_rng(len(part))
+    for k, path in npy.items():
+        mm = np.load(path, mmap_mode="r"); d = part[k]
+        if len(d) != len(mm):
+            raise AssertionError(f"alignment: {k}: {len(d)} rows vs {len(mm)} cached images")
+        for j in {0, int(r.integers(len(d)))}:
+            got = np.asarray(mm[j], np.float32); g = got.mean(-1) if got.ndim == 3 else got
+            def rr(i):
+                src = np.asarray(Image.open(src_path(str(d[id_col].iloc[i]))).convert("L").resize(g.shape[::-1], Image.BILINEAR), np.float32)
+                ok = g > 8
+                return np.corrcoef(src[ok], g[ok])[0, 1]
+            own, other = rr(j), rr((j + 1) % len(d))
+            if not (own >= 0.95 and own > other):
+                raise AssertionError(f"alignment: {k} row {j} ({d[id_col].iloc[j]}): r = {own:.3f} (own) vs {other:.3f} (other row)")
 
 
 class MaskedNpy:
@@ -310,6 +332,11 @@ class P3:
     def dataset(self, k, train):
         g, r, idx, ids, y, pl, marks = self.src[k]
         gs, rs = np.asarray(g[idx]), np.asarray(r[idx])   # A30: the split's own images and masks (was the full array: misaligned)
+        data = self.T.Data(gs, rs, ids, y, pl, marks, False, SEED)
+        for j in {0, len(ids) // 2}:   # permanent alignment assertion (A30): unmarked pixels equal the id's own cache row
+            gi = (data[j][0][0].numpy() * 255).round()
+            if np.mean(np.abs(gi - np.asarray(g[idx[j]])) > 1) > 0.02:
+                raise AssertionError(f"alignment: P3 {k} row {j} ({ids[j]}) is not its own cohort image")
         return P3Masked(self.T.Data(gs, rs, ids, y, pl, marks, train, SEED), idx)
 
     def val_metric(self, preds):
