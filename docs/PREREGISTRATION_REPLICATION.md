@@ -952,3 +952,12 @@ diagnosis group") assumed binary flags, as in ISIC 2018 (P4, P8). In Bissoto's I
 0/1). **Binarisation: Bissoto's own rule, > 0.6 → 1** (`artifact-generalization-skin` `data/skin_dataset.py:41–43`). Used flags
 (≥ 3 per group) at bias 1 and 0.9: dark_corner, hair, gel_border, gel_bubble, ruler, ink, vasc (patches fails: 1 melanoma),
 as in P4 / P8. Arm d's encoder is unaffected (flags enter only the heads).
+
+**A42 (2026-11-20 ~18:30 UTC by machine 2's clock; P6 reported clean check; author's decision; recorded before any clean
+score is computed, after the interim bias-1 comparison was seen).** **A39's verdict rule is unchanged: no clean condition is
+added after the bias-1 results were seen** (A39 and section 2 register none for P6; the write-up states this).
+- **Reported (non-verdict) clean check:** AUROC on Bissoto's **`test_bias_0_1`** (bias 0: artifacts not correlated with the
+  label), for each arm and each EPVT seed **trained at bias b ∈ {1, 0.9}**, each scored once (arms: the same fitted heads /
+  encoders as A39, applied to these images; EPVT: `p6_epvt_score.py`). Reported beside the A39 verdict with the flag
+  **"within EPVT − 0.01 (the margin used for P2 / P7 / phase 5): yes / no"** (arm's clean AUROC vs EPVT's 5-seed mean at the
+  same bias; arm a seed-matched means). It does not change any verdict.
