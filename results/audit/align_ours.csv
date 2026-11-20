@@ -1,0 +1,52 @@
+setting,split,arm,rows,checked,feature_mismatch,roi_ids_order_ok,image_mismatch,label_or_id_mismatch,label_tube_or_id_mismatch,order_vs_vanilla_scores_ok,label_mismatch_vs_GT,feature_mismatch_b,feature_mismatch_d,ids_order_ok,label_mismatch
+P1 xray,train,b (DINOv2 masked; c uses the same features),5542,200,0.0,True,,,,,,,,,
+P1 xray,train,d (EfficientNet-B0),5542,200,0.0,,0.0,0.0,,,,,,,
+P1 xray,valid,b (DINOv2 masked; c uses the same features),2770,200,0.0,True,,,,,,,,,
+P1 xray,valid,d (EfficientNet-B0),2770,200,0.0,,0.0,0.0,,,,,,,
+P1 xray,test,b (DINOv2 masked; c uses the same features),2776,200,0.0,True,,,,,,,,,
+P1 xray,test,d (EfficientNet-B0),2776,200,0.0,,0.0,0.0,,,,,,,
+P1 rsna,train,b (DINOv2 masked; c uses the same features),2694,200,0.0,True,,,,,,,,,
+P1 rsna,train,d (EfficientNet-B0),2694,200,0.0,,0.0,0.0,,,,,,,
+P1 rsna,valid,b (DINOv2 masked; c uses the same features),1346,200,0.0,True,,,,,,,,,
+P1 rsna,valid,d (EfficientNet-B0),1346,200,0.0,,0.0,0.0,,,,,,,
+P1 rsna,test,b (DINOv2 masked; c uses the same features),1352,200,0.0,True,,,,,,,,,
+P1 rsna,test,d (EfficientNet-B0),1352,200,0.0,,0.0,0.0,,,,,,,
+P1 location inside,train,b (DINOv2 masked; c same features),5544,200,0.0,,,,,,,,,,
+P1 location inside,train,d (EfficientNet-B0),5544,200,0.0,,0.0,,0.0,,,,,,
+P1 location inside,valid,b (DINOv2 masked; c same features),2772,200,0.0,,,,,,,,,,
+P1 location inside,valid,d (EfficientNet-B0),2772,200,0.0,,0.0,,0.0,,,,,,
+P1 location inside,corr,b (DINOv2 masked; c same features),2772,200,0.0,,,,,,,,,,
+P1 location inside,corr,d (EfficientNet-B0),2772,200,0.0,,0.0,,0.0,,,,,,
+P1 location inside,rev,b (DINOv2 masked; c same features),2772,200,0.0,,,,,,,,,,
+P1 location inside,rev,d (EfficientNet-B0),2772,200,0.0,,0.0,,0.0,,,,,,
+P1 location inside,clean,b (DINOv2 masked; c same features),2772,200,0.0,,,,,,,,,,
+P1 location inside,clean,d (EfficientNet-B0),2772,200,0.0,,0.0,,0.0,,,,,,
+P1 location outside,train,b (DINOv2 masked; c same features),5544,200,0.0,,,,,,,,,,
+P1 location outside,train,d (EfficientNet-B0),5544,200,0.0,,0.0,,0.0,,,,,,
+P1 location outside,valid,b (DINOv2 masked; c same features),2772,200,0.0,,,,,,,,,,
+P1 location outside,valid,d (EfficientNet-B0),2772,200,0.0,,0.0,,0.0,,,,,,
+P1 location outside,corr,b (DINOv2 masked; c same features),2772,200,0.0,,,,,,,,,,
+P1 location outside,corr,d (EfficientNet-B0),2772,200,0.0,,0.0,,0.0,,,,,,
+P1 location outside,rev,b (DINOv2 masked; c same features),2772,200,0.0,,,,,,,,,,
+P1 location outside,rev,d (EfficientNet-B0),2772,200,0.0,,0.0,,0.0,,,,,,
+P1 location outside,clean,b (DINOv2 masked; c same features),2772,200,0.0,,,,,,,,,,
+P1 location outside,clean,d (EfficientNet-B0),2772,200,0.0,,0.0,,0.0,,,,,,
+P2,train_as_trained,render cache + b (DINOv2 masked; c same) + d,20265,200,,,0.0,,,True,0.0,0.0,0.0,,
+P2,val_clean,render cache + b (DINOv2 masked; c same) + d,2533,200,,,0.0,,,True,0.0,0.0,0.0,,
+P2,val_biased,render cache + b (DINOv2 masked; c same) + d,2533,200,,,0.0,,,True,0.0,0.0,0.0,,
+P2,test_clean,render cache + b (DINOv2 masked; c same) + d,2533,200,,,0.0,,,True,0.0,0.0,0.0,,
+P2,test_biased,render cache + b (DINOv2 masked; c same) + d,2533,200,,,0.0,,,True,0.0,0.0,0.0,,
+P3 90/10 inside,train,b/c (DINOv2 masked) + d,10449,200,,,0.0,,,,,0.0,0.0,True,0.0
+P3 90/10 inside,valid,b/c (DINOv2 masked) + d,3483,200,,,0.0,,,,,0.0,0.0,True,0.0
+P3 90/10 inside,valid_standard,b/c (DINOv2 masked) + d,3483,200,,,0.0,,,,,0.0,0.0,True,0.0
+P3 90/10 inside,valid_deceiving,b/c (DINOv2 masked) + d,3483,200,,,0.0,,,,,0.0,0.0,True,0.0
+P3 90/10 inside,test_biased,b/c (DINOv2 masked) + d,4190,200,,,0.0,,,,,0.0,0.0,True,0.0
+P3 90/10 inside,test_standard,b/c (DINOv2 masked) + d,4190,200,,,0.0,,,,,0.0,0.0,True,0.0
+P3 90/10 inside,test_deceiving,b/c (DINOv2 masked) + d,4190,200,,,0.0,,,,,0.0,0.0,True,0.0
+P3 corner,train,b/c (DINOv2 masked),10449,200,,,0.0,,,,,0.0,,True,0.0
+P3 corner,valid,b/c (DINOv2 masked),3483,200,,,0.0,,,,,0.0,,True,0.0
+P3 corner,valid_standard,b/c (DINOv2 masked),3483,200,,,0.0,,,,,0.0,,True,0.0
+P3 corner,valid_deceiving,b/c (DINOv2 masked),3483,200,,,0.0,,,,,0.0,,True,0.0
+P3 corner,test_biased,b/c (DINOv2 masked),4190,200,,,0.0,,,,,0.0,,True,0.0
+P3 corner,test_standard,b/c (DINOv2 masked),4190,200,,,0.0,,,,,0.0,,True,0.0
+P3 corner,test_deceiving,b/c (DINOv2 masked),4190,200,,,0.0,,,,,0.0,,True,0.0

@@ -1,0 +1,7 @@
+setting,split,arm,rows,order_matches,checked,image_mismatch,label_mismatch,site_mismatch,feature_mismatch
+P1 xray,train,their pipeline + arm a features,5542,True,200,0,0,0,0
+P1 xray,valid,their pipeline + arm a features,2770,True,200,0,0,0,0
+P1 xray,test,their pipeline + arm a features,2776,True,200,0,0,0,0
+P1 rsna,train,their pipeline + arm a features,2694,True,200,0,0,0,0
+P1 rsna,valid,their pipeline + arm a features,1346,True,200,0,0,0,0
+P1 rsna,test,their pipeline + arm a features,1352,True,200,0,0,0,0

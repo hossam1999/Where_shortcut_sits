@@ -1,0 +1,21 @@
+setting,split,arm,rows,checked,ids_order_ok,feature_mismatch
+P1 location inside,train,"a (their Standard net, circle-masked)",5544,200,True,0
+P1 location inside,valid,"a (their Standard net, circle-masked)",2772,200,True,0
+P1 location inside,corr,"a (their Standard net, circle-masked)",2772,200,True,0
+P1 location inside,rev,"a (their Standard net, circle-masked)",2772,200,True,0
+P1 location inside,clean,"a (their Standard net, circle-masked)",2772,200,True,0
+P1 location outside,train,"a (their Standard net, circle-masked)",5544,200,True,0
+P1 location outside,valid,"a (their Standard net, circle-masked)",2772,200,True,0
+P1 location outside,corr,"a (their Standard net, circle-masked)",2772,200,True,0
+P1 location outside,rev,"a (their Standard net, circle-masked)",2772,200,True,0
+P1 location outside,clean,"a (their Standard net, circle-masked)",2772,200,True,0
+P2,train_as_trained,a (our Vanilla),20265,200,True,0
+P2,val_clean,a (our Vanilla),2533,200,True,0
+P2,val_biased,a (our Vanilla),2533,200,True,0
+P2,test_clean,a (our Vanilla),2533,200,True,0
+P2,test_biased,a (our Vanilla),2533,200,True,0
+P2,train_as_trained,a' (A18 RR-ClArC),20265,200,True,0
+P2,val_clean,a' (A18 RR-ClArC),2533,200,True,0
+P2,val_biased,a' (A18 RR-ClArC),2533,200,True,0
+P2,test_clean,a' (A18 RR-ClArC),2533,200,True,0
+P2,test_biased,a' (A18 RR-ClArC),2533,200,True,0
