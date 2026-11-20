@@ -1,6 +1,6 @@
 """P7 (RR-ClArC, A28): score our RR-ClArC fine-tune of one architecture once, exactly as p6_step1.py scored the released
 Vanilla checkpoints (their dataset classes, split default_rng(0) 80/10/10, LSB variants clean / attacked (every image of every
-class = the paper's "biased" test) / ch (as the fine-tune data), utils/metrics accuracy and macro-F1), test and val.
+class = the paper's "biased" test) / ch (as the fine-tune data), experiments/evaluation/compute_metrics accuracy and macro-F1, as p6_step1.py), test and val.
 Per-image logits are kept for the paired comparisons (A28). Outputs (pushed): $WTSS_DATA/results_push/results/replication/
 rrclarc/p7/<arch>_{summary.csv, logits_<split>_<variant>.csv.gz}.
 
@@ -14,8 +14,7 @@ from torch.utils.data import DataLoader
 from datasets import get_dataset
 from models import get_fn_model_loader
 from utils.artificial_artifact import get_artifact_kwargs
-from utils.metrics import compute_metrics
-from experiments.evaluation.evaluate_by_subset_attacked import compute_model_scores
+from experiments.evaluation.compute_metrics import compute_metrics, compute_model_scores
 D = os.environ.get("WTSS_DATA", "/workspace/data")
 OUT = Path(f"{D}/results_push/results/replication/rrclarc/p7"); OUT.mkdir(parents=True, exist_ok=True)
 torch.random.manual_seed(0)

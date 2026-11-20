@@ -1277,7 +1277,15 @@ c. **Backbone / preprocessing / data — no port error.** torchvision `vit_b_16(
   empty array (NumPy ≥ 2.2 raises) → a helper that reproduces old NumPy exactly, **including its quirk that a matching
   artifact sample at position 0 is skipped**. No setting changed. ResNet-18 correction runs (≈ 47 s/epoch).
 
+### 2026-11-20 12:47 UTC (machine 2's clock) — machine 2: P7 RR-ClArC ResNet-18 REPRODUCED (biased 0.713 vs 0.712)
+- (Correction to the previous entry's time: the P7 runs started at 12:35, not ~13:20.) The first scoring attempt failed on an
+  import of mine (`compute_metrics` is in `experiments/evaluation/compute_metrics`, as `p6_step1.py` imports it); fixed, no
+  model touched. ResNet-18 RR-ClArC (10 epochs, 474 s), scored once (`results/replication/rrclarc/p7/resnet18_summary.csv`):
+  **test biased (attacked) accuracy 0.713 vs Table 1 0.712 (|Δ| 0.001 ≤ 0.03 → reproduced)**; clean 0.780 vs 0.785;
+  macro-F1 biased 0.690 / clean 0.709. EfficientNet-B0, then VGG-16, running.
+
 ### Watchdog log (machine 2, automatic; `scripts/replication/m2_watchdog.sh`)
+- 2026-11-20_12:43:58 UTC watchdog (machine 2): queue failure in m2_p7.log: 'FAILED P7 scoring resnet18' — alert only (not retried)
 - 2026-11-20_12:32:21 UTC watchdog (machine 2): queue failure in m2_p7.log: 'FAILED P7 correction resnet18' — alert only (not retried)
 - 2026-11-20_12:31:51 UTC watchdog (machine 2): queue failure in m2_p7.log: 'FAILED P7 correction resnet18' — alert only (not retried)
 - 2026-11-20_12:27:18 UTC watchdog (machine 2): queue failure in m2_p7.log: 'FAILED P7 preprocessing resnet18' — alert only (not retried)
