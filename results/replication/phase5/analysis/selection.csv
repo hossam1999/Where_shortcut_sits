@@ -1,0 +1,37 @@
+trap,fold,method,choice,val_clean_auroc,n_candidates,mode,C,C_edge
+trapA,0,RR-ClArC,rrclarc_lam5e+10_identity_2,0.6241481481481482,9.0,,,
+trapA,0,ISNet,isnet,0.6295555555555556,,,,
+trapA,0,ERM ResNet-50d (RR-ClArC base),erm_r50d,0.6311481481481481,,,,
+trapA,0,arm d (EffNet-B0 + mask_cmc),,0.793962962962963,,per_class,0.001,lowest
+trapA,0,DINOv2 + mask_cmc,,0.8032222222222222,,per_class,0.001,lowest
+trapA,0,U-MtE,,0.7310740740740741,,none,0.001,lowest
+trapA,1,RR-ClArC,rrclarc_lam5e+10_identity_2,0.6622628726287263,9.0,,,
+trapA,1,ISNet,isnet,0.638550135501355,,,,
+trapA,1,ERM ResNet-50d (RR-ClArC base),erm_r50d,0.6472730352303523,,,,
+trapA,1,arm d (EffNet-B0 + mask_cmc),,0.7319190379403794,,pooled,0.03,
+trapA,1,DINOv2 + mask_cmc,,0.7635077913279132,,pooled,0.001,lowest
+trapA,1,U-MtE,,0.7154048102981031,,none,0.03,
+trapA,2,RR-ClArC,rrclarc_lam5e+09_identity_1,0.6174562682215743,9.0,,,
+trapA,2,ISNet,isnet,0.6331268221574344,,,,
+trapA,2,ERM ResNet-50d (RR-ClArC base),erm_r50d,0.637463556851312,,,,
+trapA,2,arm d (EffNet-B0 + mask_cmc),,0.747776967930029,,per_class,0.003,
+trapA,2,DINOv2 + mask_cmc,,0.8144679300291545,,per_class,0.001,lowest
+trapA,2,U-MtE,,0.7227040816326531,,none,0.001,lowest
+trapB,0,RR-ClArC,rrclarc_lam5e+10_identity_2,0.6765765765765765,9.0,,,
+trapB,0,ISNet,isnet,0.8171171171171171,,,,
+trapB,0,ERM ResNet-50d (RR-ClArC base),erm_r50d,0.6738738738738739,,,,
+trapB,0,arm d (EffNet-B0 + mask_cmc),,0.7945945945945946,,pooled,0.03,
+trapB,0,DINOv2 + mask_cmc,,0.8297297297297298,,pooled,0.001,lowest
+trapB,0,U-MtE,,0.8117117117117116,,none,0.001,lowest
+trapB,1,RR-ClArC,rrclarc_lam5e+08_identity_2,0.4735772357723577,9.0,,,
+trapB,1,ISNet,isnet,0.7291666666666666,,,,
+trapB,1,ERM ResNet-50d (RR-ClArC base),erm_r50d,0.5797764227642277,,,,
+trapB,1,arm d (EffNet-B0 + mask_cmc),,0.8282520325203252,,per_class,0.03,
+trapB,1,DINOv2 + mask_cmc,,0.7876016260162602,,per_class,0.003,
+trapB,1,U-MtE,,0.7601626016260162,,none,0.001,lowest
+trapB,2,RR-ClArC,rrclarc_lam5e+08_identity_2,0.5525,9.0,,,
+trapB,2,ISNet,isnet,0.6779166666666666,,,,
+trapB,2,ERM ResNet-50d (RR-ClArC base),erm_r50d,0.5579166666666666,,,,
+trapB,2,arm d (EffNet-B0 + mask_cmc),,0.8225,,pooled,0.03,
+trapB,2,DINOv2 + mask_cmc,,0.8879166666666667,,per_class,0.001,lowest
+trapB,2,U-MtE,,0.8520833333333333,,none,0.003,
