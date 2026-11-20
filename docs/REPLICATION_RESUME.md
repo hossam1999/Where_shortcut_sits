@@ -116,10 +116,12 @@ together with the P4 gate (paper or notebook, A13 addendum).
 - ISIC 2018 Task 1/2 (P4): done and unzipped.
 
 <!-- HEARTBEAT START -->
-### Heartbeat 2026-11-20 02:06 UTC (auto-generated)
+### Heartbeat 2026-11-20 04:07 UTC (auto-generated)
 
 GPU jobs (PID, MiB, command):
 ```
+548152  1394 MiB       10:15 /workspace/venv-wtss/bin/python -u scripts/replication/p3_arms_bc.py --stage features
+550815  1306 MiB       01:09 /workspace/venv-wtss/bin/python -u scripts/newmethod/adv_train.py --round 2 --alpha 0.1 --stage train
 ```
 - P2 Vanilla: Epoch 300: of 300; checkpoints: checkpoint_resnet50d_100.pth checkpoint_resnet50d_200.pth checkpoint_resnet50d_300.pth checkpoint_resnet50d_last.pth 
 - P3 isnet_corner_all_seed0: last epoch 47 of 47
@@ -133,5 +135,5 @@ GPU jobs (PID, MiB, command):
 - P4 timing_seg_b4: last epoch 0 of 149
 - P4 timing_seg_b8: last epoch 0 of 149
 - BIMCV: 531 of 531 archives (0 SHA1 failures)
-- Disk: 292G used, 740G free
+- Disk: 293G used, 739G free
 <!-- HEARTBEAT END -->
