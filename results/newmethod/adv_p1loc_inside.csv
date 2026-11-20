@@ -1,0 +1,7 @@
+alpha,post_hoc,val_auroc_reversed,C,tube_probe_val,epochs
+0.1,none,0.691,0.001,0.984,16
+0.1,mask_cmc pooled,0.583,0.001,0.975,16
+1.0,none,0.649,10.0,0.997,13
+1.0,mask_cmc pooled,0.655,0.03,0.963,13
+10.0,none,0.53,10.0,0.968,6
+10.0,mask_cmc pooled,0.801,0.001,0.876,6
