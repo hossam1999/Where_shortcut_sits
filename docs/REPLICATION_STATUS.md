@@ -1433,6 +1433,14 @@ c. **Backbone / preprocessing / data — no port error.** torchvision `vit_b_16(
   lowest A21 C (DINOv2 + mask_cmc 5 / 6, U-MtE 4 / 6, arm d 1 / 6); RR-ClArC's validation choice varied by fold
   (λ 5·10¹⁰ identity_2 on Trap A folds 0–1, 5·10⁹ identity_1 on fold 2).
 
+### 2026-11-20 ~22:10 UTC (machine 2's clock) — machine 2: P4 arm d (A40) started late (my sequencing slip); needs the GPU alone
+- The author's order was phase 5 → P4 arm d → P6; after phase 5 ended (19:29) I did not start P4's arm d (P6's bias-0.9 seeds
+  used one GPU slot; P4 should have taken the other). Started 22:05: `scripts/replication/p4_compare.py` (A40).
+- The A20 encoder at 512 px, batch 64, ran out of memory beside a bias-0.9 EPVT run (5 GB) on the first try (nothing
+  trained or scored). It now waits for an empty GPU (gpu_wait holds the scheduling lock while waiting, so it takes the next
+  gap between bias-0.9 runs; the next seed then waits for memory). Then the A40 comparison (CPU).
+- Status: P6 bias-0.9 seeds ERM 0–2 and EPVT 0–1 done, EPVT seed 2 running; A42 bias-1 clean features done.
+
 ### Watchdog log (machine 2, automatic; `scripts/replication/m2_watchdog.sh`)
 - 2026-11-20_16:33:43 UTC watchdog (machine 2): queue failure in m2_p6_chain.log: '2026-11-20_16:33:41 FAILED P6CHAIN cache' — alert only (not retried)
 - 2026-11-20_16:07:57 UTC watchdog (machine 2): queue failure in m2_p6_prep.log: 'FAILED P6PREP lesion rois' — alert only (not retried)
