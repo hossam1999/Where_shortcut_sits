@@ -1,0 +1,9 @@
+{
+  "heldout_dice_mean": 0.9419453705050054,
+  "heldout_dice_median": 0.9648147236852909,
+  "heldout_n": 1253,
+  "heldout_dice_ham": 0.951838207953283,
+  "heldout_dice_isic2018": 0.9034174059115188,
+  "epochs": 25,
+  "input": 384
+}
