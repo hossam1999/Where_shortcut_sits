@@ -902,3 +902,45 @@ alike**; this is stated here and in the write-up.
   drop > 0.01 vs RR-ClArC = not beaten): both VGG-16 arms are **not beaten** (clean −0.015 / −0.078); (iii) **P4** gets a
   second-tier (descriptive) comparison (A40) vs our A31 Seg-ERM run, registered before it is run; (iv) **P8** table gains the
   descriptive row CBDebug (ICLR 2026) 0.580 ± 0.116, "not reproduced: no ISIC code released".
+
+**A39 (2026-11-20 ~15:45 UTC by machine 2's clock; P6 head-to-head registered; author's instruction under A38; before any P6
+arm is computed or scored).** Results seen: P6 ERM / EPVT at bias 1 (A33, A34), the audit; no arm of ours on P6 data.
+- **Status:** P6 is reproduced at bias 1 under A38 (EPVT gap 0.049712, within the digitisation uncertainty — caveat stated).
+  **Bias 0.9 is also primary (author):** ERM and EPVT (A36 mixup) at bias 0.9, split 1, seeds 0–4, the A33 step rule (100
+  epochs in their unit, patience 22), scored once on `test_bias_0.9_1`; gate |5-seed mean − digitised| ≤ 0.05 (ERM 0.762,
+  EPVT 0.792). If bias 0.9 fails, its comparisons are second-tier (descriptive).
+- **Data:** Bissoto's ISIC 2019 trap set, bias b ∈ {1, 0.9}, split 1: fit on the EPVT training images of that trap set (the
+  grouped `train_bias_b_1.csv`), select on `val_bias_b_1`, score once on `test_bias_b_1`; binary melanoma; metric AUROC.
+- **Lesion ROI (all arms):** as P2 (section 3, `p2_lesion_rois.py`): HAM10000 manual mask, else ISIC 2018 Task 1 mask, else
+  the lesion U-Net prediction (`scripts/data/train_lesion_unet.py`, the thesis recipe). Machine 1's masks were lost with
+  machine 1, so the U-Net is retrained on machine 2 with that script, unchanged, **before any arm is computed**; the ROI
+  source table is reported. Outside the ROI = mean colour (arm b's masking).
+- **Arms** (artifact flags = Bissoto's annotations with ≥ 3 fit images in each artifact × diagnosis group, A13 item 8; heads
+  class-balanced logistic regression, mask_cmc mode and C by validation AUROC; edges reported):
+  - **a** mask_cmc on **our EPVT run**: the 768-d input of EPVT's classifier in its own `predict()` (prompted pass) on
+    lesion-masked images through their eval transform (Resize 224, ImageNet normalisation); one head per EPVT seed (0–4);
+    C ∈ {0.01, 0.1, 1, 10};
+  - **b** DINOv2 ViT-B/14 @ 518, lesion-masked, mask_cmc, C ∈ {0.01, 0.1, 1, 10} (registered);
+  - **c** U-MtE (label-free), C ∈ {0.01, 0.1, 1, 10} (registered);
+  - **d** EfficientNet-B0 trained on lesion-masked 224-px images (A20 recipe: Adam 1e-4, batch 64, ≤ 50 epochs, early
+    stopping on validation AUROC, patience 5, seed 1234; EPVT's training augmentation), mask_cmc on the A21 grid; one encoder
+    per bias level.
+- **Comparison:** each arm vs **our EPVT** (5 seeds) on test AUROC: crossed bootstrap (`wtss.replication_stats.paired_bootstrap`:
+  seed clusters resampled, one Poisson(1) weight per image shared by seeds and methods, 10,000 replicates); arm a pairs seed
+  by seed, arms b, c, d (one run) are paired with every EPVT seed. **Holm family = 8** (arms a, b, c, d × bias 1, 0.9).
+  "Beaten" = section 2 (higher mean, 95 % CI of the difference above 0, Holm p < 0.05). ERM reported beside.
+- **Order:** after phase 5 (author's GPU order): lesion U-Net + ROIs → bias-0.9 ERM/EPVT runs → arm features / arm d →
+  heads → comparison, each pushed as it exists.
+
+**A40 (2026-11-20 ~15:45 UTC by machine 2's clock; P4 second-tier comparison registered; author's instruction under A38;
+before it is run).** P4 stays not reproduced (Seg-ERM gap 0.080227 at 0.05). **Second tier (descriptive), as P8:** our arms
+vs **our A31 Segmentation-ERM run of their official code** (`seg_pil_split1–3`), Bissoto trap sets 1–3, the same 772 test
+images; no claim against the published 0.727.
+- **Disclosure — results seen:** arm a on the A31 Seg-ERM (p4_arm_a_seg_pil.md, 2026-11-19): 0.530 / 0.570 / 0.554, mean
+  0.552 vs Seg-ERM 0.647; arms b / c (machine 1, pre-A31 cache) means 0.658 / 0.605; arm d split 1 (machine 1) 0.666.
+- **Arms (registered P4 settings, A13 item 8; on the A31 PIL cache):** a (mask_cmc on the Seg-ERM encoder, as computed),
+  b (DINOv2 @ 518 lesion-masked, mask_cmc), c (U-MtE), d (EfficientNet-B0 on lesion-masked 512-px images, A20/A21; one encoder
+  per trap set, re-run on machine 2 for sets 1–3). Fit on the 1,822 training images, selection on Bissoto's 259 validation
+  images (inside training, as A13 notes), scored once on the 772 test images.
+- **Statistics:** 3-set mean robust AUROC, arm vs Seg-ERM; image-only bootstrap with one Poisson weight per image shared
+  across the three trap sets and both methods, sets fixed (A32's estimator); Holm over the 4 arm comparisons; descriptive.
