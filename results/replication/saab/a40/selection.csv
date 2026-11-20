@@ -1,0 +1,10 @@
+split,arm,mode,C,val_auroc,C_edge
+1,b,pooled,1.0,1.0,
+1,c,none,1.0,1.0,
+1,d,pooled,0.03,1.0,
+2,b,pooled,10.0,1.0,highest
+2,c,none,10.0,1.0,highest
+2,d,pooled,1.0,1.0,
+3,b,pooled,1.0,1.0,
+3,c,none,1.0,1.0,
+3,d,pooled,0.001,1.0,lowest
