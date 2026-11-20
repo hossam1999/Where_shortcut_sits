@@ -1441,7 +1441,14 @@ c. **Backbone / preprocessing / data — no port error.** torchvision `vit_b_16(
   gap between bias-0.9 runs; the next seed then waits for memory). Then the A40 comparison (CPU).
 - Status: P6 bias-0.9 seeds ERM 0–2 and EPVT 0–1 done, EPVT seed 2 running; A42 bias-1 clean features done.
 
+### 2026-11-20 ~23:10 UTC (machine 2's clock) — machine 2: P4 arm d took the GPU; bias-0.9 ERM seed 3 OOM (nothing scored) — restarts after P4
+- P4's arm-d encoders (512 px, batch 64) started in the gap after bias-0.9 EPVT seed 2 (22:57) and grew to 15.7 GB; ERM seed 3
+  had started in the same gap (its free-memory check is a snapshot, taken while P4 was still small) and ran out of memory
+  at 23:03 (watchdog alert). Nothing was scored. Its folder is set aside (`oom_erm_bias0.9_1_seed3_x`) and the bias-0.9 script
+  restarts automatically when P4's three encoders are done and the GPU is empty (it skips the six finished runs).
+
 ### Watchdog log (machine 2, automatic; `scripts/replication/m2_watchdog.sh`)
+- 2026-11-20_23:03:04 UTC watchdog (machine 2): queue failure in m2_p6_bias09.log: 'FAILED P6B09 erm 3' — alert only (not retried)
 - 2026-11-20_16:33:43 UTC watchdog (machine 2): queue failure in m2_p6_chain.log: '2026-11-20_16:33:41 FAILED P6CHAIN cache' — alert only (not retried)
 - 2026-11-20_16:07:57 UTC watchdog (machine 2): queue failure in m2_p6_prep.log: 'FAILED P6PREP lesion rois' — alert only (not retried)
 - 2026-11-20_13:29:24 UTC watchdog (machine 2): queue failure in m2_p7.log: 'FAILED P7 arms heads' — alert only (not retried)
