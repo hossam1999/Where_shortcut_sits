@@ -1348,6 +1348,16 @@ c. **Backbone / preprocessing / data — no port error.** torchvision `vit_b_16(
   (clean drop > 0.01). P8 comparison gains the CBDebug published-number row. P6 (A39) and P4 (A40) comparisons are
   registered next, before any arm is scored.
 
+### 2026-11-20 ~15:55 UTC (machine 2's clock) — machine 2: author — new-method track (C) ON HOLD; P6 prerequisites start beside phase 5
+- **Section C on hold** (author). Order: phase 5 → P4 arm d → P6 (lesion U-Net, bias-0.9 runs, our arms vs EPVT under A39).
+  Then: **if A39's registered success rule is met for at least one primary arm** (Holm-adjusted CI above 0; the author also
+  named a clean-accuracy condition — A39 registers none, because P6's tests are trap sets only, so A39's rule applies as
+  registered), **C is cancelled** and the reason recorded here; if not, report and wait for the author's go-ahead.
+- **Priority (author):** P6's prerequisites start now beside phase 5 (phase 5 not paused): lesion U-Net → our arms'
+  features / encoders and their scoring at bias 1 (EPVT's 5 bias-1 seeds exist) → bias-0.9 ERM/EPVT seeds when the GPU
+  allows. Pairing only if measured total throughput > 1.0, never beside phase 5's ISNet runs if memory does not fit. The
+  bias-1 comparison is reported as soon as it is scored (each test once; the A39 verdict uses both levels, Holm over 8).
+
 ### Watchdog log (machine 2, automatic; `scripts/replication/m2_watchdog.sh`)
 - 2026-11-20_13:29:24 UTC watchdog (machine 2): queue failure in m2_p7.log: 'FAILED P7 arms heads' — alert only (not retried)
 - 2026-11-20_12:59:06 UTC watchdog (machine 2): queue failure in m2_p7.log: 'FAILED P7 preprocessing vgg16' — alert only (not retried)
