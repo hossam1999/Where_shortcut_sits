@@ -49,8 +49,25 @@ erasure saturates on trained encoders; (a) is not proposed for registration.
 - **Why it might help.** In the whitened metric the eraser removes the artifact signal that is spread over many
   correlated directions (failure 1), which a Euclidean mean-difference projection leaves.
 
-### (b) Class-conditional adversarial head with gradient reversal (author's definition, 2026-11-19; GPU ≤ ~6 h, approved
-after the P3 items)
+### (b) Class-conditional adversarial head with gradient reversal — NEGATIVE on validation (2 rounds, ~0.7 GPU-h)
+Round 1 (fixed α, single adversary step): unstable for α ≥ 1; tube probe 0.97–1.00 without erasure; the one high value
+(α = 10 + mask_cmc, 0.801) came from an epoch-0 encoder selected on the same validation it was reported on.
+Round 2 (author-approved stabilisation: DANN ramp-up of α, 3 adversary steps per encoder step, ≥ 10 epochs; every
+selection on validation half A, every number below on half B; P1 location test, tube inside; validation reverses the
+tube–label link; `results/newmethod/adv_p1loc_inside_round2.csv`):
+
+| α | post hoc | half A (selection) | half B (report) | within-class tube probe, half B |
+|---|---|---|---|---|
+| 0 (= arm d recipe) | none | 0.605 | 0.623 | 0.988 |
+| 0 | mask_cmc | 0.719 | **0.740** | 0.730 |
+| 0.1 | none / mask_cmc | 0.670 / 0.601 | 0.694 / 0.617 | 0.963 / 0.962 |
+| 1 | none / mask_cmc | 0.684 / 0.586 | 0.713 / 0.619 | 0.986 / 0.982 |
+| 10 | none / mask_cmc | 0.605 / 0.607 | 0.612 / 0.614 | 0.987 / 0.908 |
+
+Selection on half A picks α = 0 + mask_cmc (no adversary). The adversary does not remove the tube (probe ≥ 0.91) and
+makes the post-hoc constraint less effective. **(b) is not proposed for registration.**
+
+Definition as run (author's specification, 2026-11-19):
 - **Definition.** Encoder f (the same architecture and recipe as arm d: EfficientNet-B0, ImageNet weights, ROI-masked
   inputs) with two heads on the pooled features z = f(x): the disease head h(z) (unchanged, cross-entropy on y) and an
   artifact head g(z, y) that predicts artifact presence A **within each class** (class-conditional: one logit per class,
@@ -77,6 +94,16 @@ after the P3 items)
 - **Selection.** k as above (label-free); head C on the registered validation metric.
 - **Why it might help.** U-MtE's single generic overlay family may not span the real in-ROI artifact's shift (failure 2);
   requiring the subspace to generalise to an unseen family is a label-free proxy for generalising to the real artifact.
+
+## Recommendation (machine 1, 2026-11-20)
+**Register no new method from this track.** (a) stronger linear erasure and (b) class-conditional adversarial training
+both fail on validation where mask_cmc fails (a trained encoder that absorbed an in-ROI shortcut): the shortcut is
+encoded non-linearly / across many directions, and neither a post-hoc linear projection nor this training-time adversary
+removes it (within-class probes stay at 0.66–0.99). mask_cmc on the same encoder remains the best of the variants tried
+(P1 location inside, half-B reversed AUROC 0.740). (c) stays a paper design (no validation result). This is reported as a
+limitation: when the encoder itself is trained on data with a strong in-ROI shortcut, a class-conditional post-hoc
+constraint is not enough; the frozen-encoder arms (a on their net, b on DINOv2) are the ones that work there
+(validation 0.855 / 0.878). Phase 5 (machine 2) is run with the registered arms only.
 
 ## What no candidate can do: the all-marked P3 design
 In P3's own design (every training and validation image carries its class's mark), mark and class never disagree, so no
