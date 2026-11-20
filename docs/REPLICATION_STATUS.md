@@ -1220,6 +1220,26 @@ c. **Backbone / preprocessing / data — no port error.** torchvision `vit_b_16(
 - `scripts/replication/m2_p8_post.sh` (running, waiting): after the P8 runs → gate → arm features (DISC env, then DINOv2 /
   U-MtE) → 10 arm-d encoders → heads → comparison → P6 A34 (checks the A36 patch). Watched by the watchdog.
 
+### 2026-11-20 05:23 UTC (machine 2's clock) — machine 2: P8 arms done (descriptive, gate failed): all four arms above our run of DISC
+- `results/replication/disc/arms/comparison.md` (+ `arms_per_set.csv`, `scores_test.csv.gz`, `selection.csv`). 5-set mean test
+  ROC-AUC on DISC's own 618 test rows per trap set; paired image-only bootstrap (one Poisson weight per image shared across
+  sets and methods, sets fixed):
+
+  | rule | arm a (DISC feat.) | **arm b (DINOv2)** | arm c (U-MtE) | **arm d (EffNet-B0)** | our DISC | our ERM |
+  |---|---|---|---|---|---|---|
+  | primary (DISC's 154 val) | 0.621 (+0.132) | **0.736 (+0.247 [+0.204, +0.290])** | 0.630 (+0.141) | **0.691 (+0.201 [+0.154, +0.248])** | 0.489 | 0.507 |
+  | secondary (held-out 259) | 0.608 (+0.118) | 0.757 (+0.268) | 0.661 (+0.171) | 0.648 (+0.159) | 0.489 | 0.507 |
+
+  Primary rule: every arm's 95 % CI is above 0 and Holm-adjusted p = 0.0004 (bootstrap floor). **Because the gate failed, P8 is
+  descriptive** (A32): these are comparisons with our run of DISC's official code under identical conditions (reporting tier
+  2) — not "beaten" verdicts, and nothing is claimed against the published 0.551. (The table's last column was relabelled
+  "rule conditions met"; same numbers.) Per set (primary): arm b 0.642–0.781, arm d 0.655–0.732, DISC 0.451–0.525.
+- Notes for the write-up: arms a–c mostly chose C = 0.01, the lowest value of the registered grid (as in P2/P4); arm-d
+  encoders under the primary rule stopped after 6–7 epochs (best validation epoch 1–2 on the test-distribution validation
+  images), under the secondary rule after 12–22. DISC's and ERM's per-image scores reproduced their logged test AUROCs
+  (|Δ| ≤ 2·10⁻⁴) on all five sets.
+- P6 A34 (A36 mixup) started automatically at 05:22 (EPVT seed 0 first).
+
 ### Watchdog log (machine 2, automatic; `scripts/replication/m2_watchdog.sh`)
 - 2026-11-20_04:43:09 UTC watchdog (machine 2): queue failure in m2_p8_post.log: '2026-11-20_04:42:57 FAILED P8POST features_a' — alert only (not retried)
 - 2026-11-20_04:41:39 UTC watchdog (machine 2): queue failure in m2_p8_post.log: '2026-11-20_04:41:13 FAILED P8POST features_a' — alert only (not retried)
