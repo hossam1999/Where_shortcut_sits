@@ -48,8 +48,15 @@ def split(b):
     return {"fit": p["train"], "val": p["val"], "test": p["test"]}
 
 
+def flags01(df):
+    """A41: ISIC 2019's trap-set flags are inferred artifact probabilities; binarised with Bissoto's own rule (> 0.6 -> 1,
+    artifact-generalization-skin data/skin_dataset.py:41-43)."""
+    return (df[list(FLAGS)] > 0.6).astype(int)
+
+
 def used_flags(fit):
-    return [f for f in FLAGS if (pd.crosstab(fit[f], fit.label).reindex(index=[0, 1], columns=[0, 1], fill_value=0) >= 3).all().all()]
+    a = flags01(fit)
+    return [f for f in FLAGS if (pd.crosstab(a[f], fit.label).reindex(index=[0, 1], columns=[0, 1], fill_value=0) >= 3).all().all()]
 
 
 def mask_source():
@@ -189,7 +196,7 @@ class P6Setting:
 
     def labels(self, k):
         d = self.part[k]
-        return d.target.to_numpy().astype(int), d[self.used].to_numpy().astype(int)
+        return d.target.to_numpy().astype(int), flags01(d)[self.used].to_numpy().astype(int)
 
 
 class P6Masked:
@@ -261,7 +268,7 @@ def heads(biases):
     zb = np.load(W / "dino518_masked_all.npz"); bpos = {i: j for j, i in enumerate(zb["ids"].astype(str))}
     rows, scores, sels = [], [], []
     for b in biases:
-        sp = split(b); used = used_flags(sp["fit"]); Afl = sp["fit"][used].to_numpy().astype(int)
+        sp = split(b); used = used_flags(sp["fit"]); Afl = flags01(sp["fit"])[used].to_numpy().astype(int)
         ys = {s: sp[s].label.to_numpy() for s in sp}; B = bstr(b)
         arms = {}
         Xb = {s: zb["X"][[bpos[i] for i in sp[s].image]] for s in sp}

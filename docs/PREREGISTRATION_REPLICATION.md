@@ -944,3 +944,11 @@ images; no claim against the published 0.727.
   images (inside training, as A13 notes), scored once on the 772 test images.
 - **Statistics:** 3-set mean robust AUROC, arm vs Seg-ERM; image-only bootstrap with one Poisson weight per image shared
   across the three trap sets and both methods, sets fixed (A32's estimator); Holm over the 4 arm comparisons; descriptive.
+
+**A41 (2026-11-20 ~17:35 UTC by machine 2's clock; P6 artifact flags binarised; factual specification of A39, not tuning;
+recorded before any P6 arm head is fitted or scored).** A39's flag rule ("Bissoto's annotations, ≥ 3 fit images per artifact ×
+diagnosis group") assumed binary flags, as in ISIC 2018 (P4, P8). In Bissoto's ISIC 2019 trap sets the flag columns are
+**inferred artifact probabilities** (0–1); the first heads run failed before fitting anything (no column has values exactly
+0/1). **Binarisation: Bissoto's own rule, > 0.6 → 1** (`artifact-generalization-skin` `data/skin_dataset.py:41–43`). Used flags
+(≥ 3 per group) at bias 1 and 0.9: dark_corner, hair, gel_border, gel_bubble, ruler, ink, vasc (patches fails: 1 melanoma),
+as in P4 / P8. Arm d's encoder is unaffected (flags enter only the heads).
