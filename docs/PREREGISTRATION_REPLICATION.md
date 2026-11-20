@@ -877,3 +877,28 @@ DISC trap set 1's per-epoch log.
   row-by-row check confirms that the run's cache belongs to its own trap set (`scripts/replication/p8_cache_check.py`: each
   cached row's per-pixel max channel — invariant to the hue jitter their eval transform bakes in — against a fresh 224-px
   resize of the image its CSV row names; every row must match). A run whose cache fails is not started (or is stopped).
+- **A35 correction (found 2026-11-20 ~04:50, machine 2; factual; WRITTEN HERE LATE, at ~15:25 — the 04:50 commit meant to
+  record it was dropped by a failed command chain of mine; the P8 arms, scored at 05:22, already used the corrected rows, and
+  the gate is computed from their own logs and is unaffected).** DISC's `ISICDataset` lists the rows after train as
+  [train_test_split's 20 % part, its 80 % part] but labels them [test (618), val (154)] (`isic_dataset.py:77–89`), so
+  **their test = the 154-image 20 % part + the first 464 images of the 80 % part, and their val = the last 154 images of the
+  80 % part** — not the 20 % / 80 % parts as written in A35. Verified before any arm was scored: ERM trap set 1's best model
+  on these rows gives test 0.5315 (logged 0.5313) and val 0.5473 (logged best 0.5471); `p8_arms.py` asserts the logged test
+  AUROC of every ERM and DISC run from these rows (|Δ| ≤ 2·10⁻⁴). Our arms use exactly these rows (primary: fit 1,822 / val
+  their 154 / test their 618; secondary: fit 1,563 / val Bissoto's 259 / the same 618).
+
+**A38 (2026-11-20 ~15:20 UTC by machine 2's clock; reproduction tolerance widened; author's decision; recorded before any P6
+or P4 arm comparison is scored).** **The tolerance was changed after the first gate results were known, for every paper
+alike**; this is stated here and in the write-up.
+- **Rule:** every reproduction gate of P2–P8 uses |ours − published| ≤ **0.05** instead of 0.03 (P1 keeps its ±1 SD rule).
+  All other parts of each gate (which numbers, how they combine) are unchanged. No result changes.
+- **Re-evaluation with unrounded values:** `results/replication/GATES_TOLERANCE.{md,csv}` (`scripts/replication/gates_tolerance.py`;
+  paper / method / ours / published / gap / passes at 0.03 / passes at 0.05). At 0.05: **P6 reproduced** (ERM gap 0.014727;
+  EPVT gap **0.049712** — inside 0.05 by less than the ±≈0.005 digitisation uncertainty of the published figure, stated with
+  that caveat); **P7 reproduced on all three architectures** (VGG-16 gap 0.038614); P2, P3, P4 (Seg-ERM gap 0.080227), P5 and
+  P8 (ERM 0.143410, DISC 0.061582) remain not reproduced.
+- **Consequences:** (i) **P6:** the head-to-head of our arms vs our EPVT run is registered (A39) before any arm is scored;
+  (ii) **P7 VGG-16** is re-labelled from descriptive to verdict-bearing under the unchanged success rule (a clean-accuracy
+  drop > 0.01 vs RR-ClArC = not beaten): both VGG-16 arms are **not beaten** (clean −0.015 / −0.078); (iii) **P4** gets a
+  second-tier (descriptive) comparison (A40) vs our A31 Seg-ERM run, registered before it is run; (iv) **P8** table gains the
+  descriptive row CBDebug (ICLR 2026) 0.580 ± 0.116, "not reproduced: no ISIC code released".

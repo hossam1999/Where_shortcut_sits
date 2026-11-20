@@ -1327,6 +1327,27 @@ c. **Backbone / preprocessing / data — no port error.** torchvision `vit_b_16(
 - Fix of mine before the result: the head's 8 trained classes were mapped onto the 9-class ISIC list (UNK has no training
   images) by class index for the accuracy comparison.
 
+### 2026-11-20 ~15:25 UTC (machine 2's clock) — machine 2: LATE RECORD of the 04:41 P8 gate entry and the A35 split correction
+- **Process error (mine):** at ~04:50 a command chain stopped at a failed `git pull` before writing the STATUS entry and the
+  A35 correction; the commit pushed then carried only the scripts, under a message that named both. Found today while adding
+  A38. Facts unchanged; written now, as they stood at 04:41–04:55:
+- **P8 gate FAILED (04:41):** ERM 0.531 / 0.506 / 0.524 / 0.502 / 0.474, mean **0.5074 ± 0.022** vs 0.364 (Δ +0.143); DISC
+  0.451 / 0.493 / 0.514 / 0.525 / 0.464, mean **0.4894 ± 0.032** vs 0.551 (Δ −0.062) (`results/replication/disc/gate.md`).
+  A37 pre-specified reading: the ERM mean misses 0.364 by > 0.03 → gate failed; the published numbers may carry the
+  shared-cache bug of DISC's released code. P8 descriptive (A32).
+- **A35 correction:** DISC's own val/test rows (not the 20 % / 80 % parts) — now in the pre-registration under A37; the P8
+  arms (05:22) used the correct rows, verified by reproducing every logged test AUROC.
+- **Chain fault:** `isic_set1/` created (symlinks to the verified set-1 cache, row check PASS) before the arms ran.
+
+### 2026-11-20 ~15:20 UTC (machine 2's clock) — machine 2: phase 5 approved and RUNNING; A38 tolerance 0.05 (all gates re-evaluated)
+- **Phase 5:** `PREREGISTRATION_PHASE5.md` approved (author, five recommendations) and pushed; `scripts/replication/m2_p5.sh`
+  running since 15:09 (ERM bases → arm d → RR-ClArC grid → ISNet ImageNet init; results staged for the pusher).
+- **A38:** tolerance 0.05 for every gate P2–P8 (P1 unchanged), changed after the first gate results, for all papers alike.
+  `results/replication/GATES_TOLERANCE.md`: at 0.05 P6 is reproduced (EPVT gap 0.049712, within the digitisation
+  uncertainty), P7 on all three architectures; P2, P3, P4, P5, P8 not reproduced. P7 VGG-16 arms re-labelled: not beaten
+  (clean drop > 0.01). P8 comparison gains the CBDebug published-number row. P6 (A39) and P4 (A40) comparisons are
+  registered next, before any arm is scored.
+
 ### Watchdog log (machine 2, automatic; `scripts/replication/m2_watchdog.sh`)
 - 2026-11-20_13:29:24 UTC watchdog (machine 2): queue failure in m2_p7.log: 'FAILED P7 arms heads' — alert only (not retried)
 - 2026-11-20_12:59:06 UTC watchdog (machine 2): queue failure in m2_p7.log: 'FAILED P7 preprocessing vgg16' — alert only (not retried)
