@@ -120,6 +120,7 @@ run) → P7.
 | Post-P8 chain | waits for the P8 runs, then gate → arms → P6 A34 | `WTSS_DATA=/workspace/data nohup scripts/replication/m2_p8_post.sh > /workspace/logs/m2_p8_post.log 2>&1 &` (each `p8_arms.py` stage skips finished work) |
 | P8 DONE (2026-11-20) | gate FAILED (ERM 0.507, DISC 0.489); arms descriptive, all four above our DISC (b 0.736, d 0.691) — `results/replication/disc/` | — |
 | P8 gate + arms a–d | after all 10 runs; primary: DISC's 154/618 split; secondary: fit 1,563, select on Bissoto's 259, score 618 (A35); bootstrap + Holm (A32) | not written yet |
+| P6 FINAL (2026-11-20) | not reproduced: ERM 0.668 ± 0.017 (pass), EPVT (A36) 0.696 ± 0.006 vs 0.746 (miss); email draft `docs/EMAIL_DRAFT_YAN_EPVT.md` | — |
 | A34 P6 5 seeds (A36 mixup) | A33 missed (EPVT 0.655): ERM seeds 1–4 + EPVT seeds 0–4 with A36 (paper Eq. 3); after P8 gate + arms, before P7; audit `docs/P6_EPVT_AUDIT.md` | `nohup scripts/replication/m2_p6_5seeds.sh > /workspace/logs/m2_p6_5seeds.log 2>&1 &` (needs `third_party/epvt/mixup_eq3.patch` applied in `/workspace/third_party/epvt`) |
 | Phase 5 | trainer + 10 unit tests done (`scripts/phase5/p5_run.py`); timing test + prereg next, then wait | — |
 | P7 RR-ClArC | step 1 reproduced (`results/replication/rrclarc/step1.md`); fine-tunes fill GPU during approvals | — |

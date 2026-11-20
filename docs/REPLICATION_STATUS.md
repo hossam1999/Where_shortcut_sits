@@ -1240,6 +1240,22 @@ c. **Backbone / preprocessing / data — no port error.** torchvision `vit_b_16(
   (|Δ| ≤ 2·10⁻⁴) on all five sets.
 - P6 A34 (A36 mixup) started automatically at 05:22 (EPVT seed 0 first).
 
+### 2026-11-20 12:17 UTC (machine 2's clock) — machine 2: **P6 A34 gate MISSED (EPVT)** → P6 final "not reproduced"; email drafted
+- A34 under A36 (paper Eq. 3 mixup), bias 1 split 1, each run scored once on `test_bias_1_1` (6,181 images;
+  `results/replication/epvt/A34_gate.json`):
+
+  | | seed 0 | 1 | 2 | 3 | 4 | mean ± SD | target | Δ | within 0.03 |
+  |---|---|---|---|---|---|---|---|---|---|
+  | ERM | 0.662 (A33) | 0.641 | 0.682 | 0.678 | 0.676 | **0.668 ± 0.017** | 0.653 | +0.015 | yes |
+  | EPVT (A36) | 0.695 | 0.704 | 0.688 | 0.701 | 0.694 | **0.696 ± 0.006** | 0.746 | −0.050 | **no** |
+
+- Per A34: **P6 is final "not reproduced"** (ERM reproduces; EPVT 0.050 below the digitised figure). Descriptive: with the
+  paper's mixup EPVT is above ERM (+0.029) and above the released-code run (A33, seed 0: 0.655).
+- `docs/EMAIL_DRAFT_YAN_EPVT.md` drafted (not sent): to Siyuan Yan and Zongyuan Ge (addresses from PLDG p. 1); cites the audit
+  table (`docs/P6_EPVT_AUDIT.md`) and the mixup line (`algorithms.py:2106–2109`), asks which version produced Fig. 3a, the
+  trap-set scoring, split, epochs/patience and the 12,360 count, and for logs/checkpoints.
+- Next in the queue: phase 5 (timing test → `PREREGISTRATION_PHASE5.md` → wait for approval → run), then P7.
+
 ### Watchdog log (machine 2, automatic; `scripts/replication/m2_watchdog.sh`)
 - 2026-11-20_04:43:09 UTC watchdog (machine 2): queue failure in m2_p8_post.log: '2026-11-20_04:42:57 FAILED P8POST features_a' — alert only (not retried)
 - 2026-11-20_04:41:39 UTC watchdog (machine 2): queue failure in m2_p8_post.log: '2026-11-20_04:41:13 FAILED P8POST features_a' — alert only (not retried)
