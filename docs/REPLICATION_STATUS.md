@@ -1390,6 +1390,28 @@ c. **Backbone / preprocessing / data — no port error.** torchvision `vit_b_16(
   names; `p6_arms.py` now resolves both. All 20,599 images of bias 1 and 0.9 have a mask: HAM10000 9,083, ISIC 2018 2,593,
   U-Net 8,923. Chain restarted 16:34 (caches building). Bias-0.9 ERM seed 0 has run since 16:03; phase 5 unaffected.
 
+### 2026-11-20 ~18:15 UTC (machine 2's clock) — machine 2: P6 interim bias-1 comparison (A39) — arms b, a, d above EPVT; per-image scorer bug fixed
+- **Bug (mine) in `p6_epvt_score.py`, found by the first comparison run:** the per-image test logits were saved from their
+  `FastDataLoader`, which samples in **random order**, so every saved P6 per-image file was misaligned with its image ids
+  (EPVT seed 0: 0.517 from the file vs 0.695 registered). The **registered AUROCs and the P6 gates were correct** (their
+  `eval_indomain` collects labels from the same batches). Fix: sequential loader + an assert that the file reproduces the
+  registered AUROC; all finished runs re-extracted (`p6_relogits.py`, same checkpoints, nothing re-scored): 12 / 12 reproduce
+  exactly; the two pre-A33 runs (renamed folders; not used by A39) are being redone with the corrected checkpoint path.
+  Misaligned files kept as `*_misaligned.csv.gz`. The first (misaligned) comparison output was discarded.
+- **A41** (before any head): ISIC 2019 flags are inferred probabilities → Bissoto's own > 0.6 binarisation; flags used:
+  dark_corner, gel_border, gel_bubble, ruler, ink, vasc (hair and patches fail the ≥ 3 rule at bias 1).
+- **Interim bias-1 result** (`results/replication/epvt/arms/comparison_bias1.md`; each arm scored once; crossed seed × image
+  bootstrap vs EPVT's 5 seeds; **unadjusted — the A39 verdict waits for bias 0.9 and Holm over 8**):
+
+  | arm | AUROC | EPVT | Δ [95 % CI] | p |
+  |---|---|---|---|---|
+  | b DINOv2 @ 518 + mask_cmc | **0.782** | 0.696 | **+0.086 [+0.071, +0.101]** | 0.0001 |
+  | a mask_cmc on EPVT's features | **0.758** | 0.696 | **+0.061 [+0.044, +0.079]** | 0.0001 |
+  | d EfficientNet-B0 + mask_cmc | 0.718 | 0.696 | +0.022 [+0.006, +0.038] | 0.0096 |
+  | c U-MtE (label-free) | 0.625 | 0.696 | −0.072 [−0.088, −0.055] | 0.0001 |
+
+  ERM (5 seeds) 0.668. Head choices: b and c chose C = 0.01 (lowest edge of their grid), a C = 0.1 (seed 3: 0.01), d C = 0.1.
+
 ### Watchdog log (machine 2, automatic; `scripts/replication/m2_watchdog.sh`)
 - 2026-11-20_16:33:43 UTC watchdog (machine 2): queue failure in m2_p6_chain.log: '2026-11-20_16:33:41 FAILED P6CHAIN cache' — alert only (not retried)
 - 2026-11-20_16:07:57 UTC watchdog (machine 2): queue failure in m2_p6_prep.log: 'FAILED P6PREP lesion rois' — alert only (not retried)

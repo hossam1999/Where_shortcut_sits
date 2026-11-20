@@ -29,10 +29,14 @@ ld = FastDataLoader(dataset=ds, batch_size=128, num_workers=8)
 ACC, BACC, Prec, Rec, F1, AUC, SPEC, kappa, _ = misc.eval_indomain(alg, loader=ld, valid_df=df, batch_size=128, weights=None,
                                                                    device=dev, name=None, domain=None)
 alg.eval(); L = []
+# per-image logits in the CSV's row order: a sequential loader (their FastDataLoader samples in random order; their
+# eval_indomain stays correct because it collects labels from the same batches, but per-image files need the row order)
 with torch.no_grad():
-    for x, _ in FastDataLoader(dataset=ds, batch_size=128, num_workers=8):
+    for x, _ in torch.utils.data.DataLoader(ds, batch_size=128, shuffle=False, num_workers=8):
         L.append(alg.predict(x.to(dev), domain=None).float().cpu())
 L = torch.cat(L).numpy()
+from sklearn.metrics import roc_auc_score
+assert abs(roc_auc_score(df.label, L[:, 1] - L[:, 0]) - float(AUC)) < 1e-4, ("per-image logits do not reproduce the AUROC", AUC)
 out = os.path.splitext(a.ckpt)[0] + f"__{os.path.splitext(a.test)[0]}"
 pd.DataFrame({"image": df.image, "label": df.label, "logit0": L[:, 0], "logit1": L[:, 1]}).to_csv(out + ".csv.gz", index=False)
 res = {"ckpt": a.ckpt, "test": a.test, "n": len(df), "roc_auc": float(AUC), "acc": float(ACC), "bacc": float(BACC), "f1": float(F1)}
