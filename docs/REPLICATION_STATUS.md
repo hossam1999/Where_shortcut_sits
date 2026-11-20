@@ -1306,7 +1306,29 @@ c. **Backbone / preprocessing / data — no port error.** torchvision `vit_b_16(
   comparisons are descriptive. Next (A28): arms a (mask_cmc on their Vanilla network), a′ (on our RR-ClArC), b (DINOv2 at 224 on
   the unmasked images), heads on the A21 grid chosen on the mean of clean and biased validation accuracy.
 
+### 2026-11-20 ~13:35 UTC (machine 2's clock) — machine 2: P7 arms (A28) — no arm beats RR-ClArC on the reproduced architectures
+- `results/replication/rrclarc/p7/arms_comparison.md` (+ `arms_summary.csv`, `arms_selection.csv`, `arms_test_probs.csv.gz`).
+  Biased-test accuracy (LSB in every image), image-only paired bootstrap, Holm over 9:
+
+  | arch | arm a (= a′) | arm b (DINOv2 224) | our RR-ClArC | verdict |
+  |---|---|---|---|---|
+  | ResNet-18 | 0.709 (−0.004 [−0.019, +0.012]) | 0.614 (−0.099) | 0.713 | not beaten |
+  | EfficientNet-B0 | 0.712 (−0.017 [−0.028, −0.005]) | 0.668 (−0.060) | 0.728 | not beaten (a, b worse) |
+  | VGG-16 | 0.571 (+0.039; clean −0.015 ⚠) | 0.616 (+0.085; clean −0.078 ⚠) | 0.531 | descriptive (RR-ClArC not reproduced) |
+
+- **Arms a and a′ are identical by construction:** the paper's `Freeze` callback (A28) freezes every layer up to and including
+  the CAV layer, which is the last convolutional layer of all three networks, so RR-ClArC retrains only the classifier and
+  its pooled penultimate features equal the Vanilla network's. A28 had listed a′ as a separate arm; it adds no information
+  here (recorded, not changed).
+- Head choices: arm a C = 0.003 / 0.001 (EfficientNet: lowest edge) / 1; arm b C = 10 (highest edge) on all three — DINOv2's
+  frozen CLS barely separates the LSB-triggered images.
+- Reading (P7 is secondary, A28: a whole-image, invisible artifact): on this artifact our constraint does not beat the
+  concept-level method; P7 provides no "beaten" claim.
+- Fix of mine before the result: the head's 8 trained classes were mapped onto the 9-class ISIC list (UNK has no training
+  images) by class index for the accuracy comparison.
+
 ### Watchdog log (machine 2, automatic; `scripts/replication/m2_watchdog.sh`)
+- 2026-11-20_13:29:24 UTC watchdog (machine 2): queue failure in m2_p7.log: 'FAILED P7 arms heads' — alert only (not retried)
 - 2026-11-20_12:59:06 UTC watchdog (machine 2): queue failure in m2_p7.log: 'FAILED P7 preprocessing vgg16' — alert only (not retried)
 - 2026-11-20_12:43:58 UTC watchdog (machine 2): queue failure in m2_p7.log: 'FAILED P7 scoring resnet18' — alert only (not retried)
 - 2026-11-20_12:32:21 UTC watchdog (machine 2): queue failure in m2_p7.log: 'FAILED P7 correction resnet18' — alert only (not retried)

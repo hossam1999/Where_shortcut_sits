@@ -118,7 +118,8 @@ def heads():
             clf, sel, C = best
             r = {"arch": arch, "arm": arm, "C": C, "C_edge": "lowest" if C == C_GRID[0] else "highest" if C == C_GRID[-1] else "", "val_mean_acc": sel}
             for v in ("clean", "attacked"):
-                y = z[f"y_test_{v}"]; p = clf.predict_proba(Zs[f"test_{v}"])
+                y = z[f"y_test_{v}"]; p0 = clf.predict_proba(Zs[f"test_{v}"])
+                p = np.zeros((len(y), len(z["class_names"]))); p[:, clf.classes_] = p0   # classes absent from training (UNK) get 0
                 r[f"test_{v}_acc"] = float((p.argmax(1) == y).mean()); r[f"test_{v}_f1"] = float(f1_score(y, p.argmax(1), average="macro"))
                 preds.append(pd.DataFrame(p, columns=[f"p_{c}" for c in z["class_names"]]).assign(idx=z[f"idx_test_{v}"], y=y, arch=arch, arm=arm, variant=v))
                 R = ref[v].set_index("idx").loc[z[f"idx_test_{v}"]]
