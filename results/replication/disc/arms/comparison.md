@@ -15,4 +15,6 @@
 | secondary | c_umte | 0.661 | 0.489 | +0.171 [+0.129, +0.214] | 0.0001 | — | — |
 | secondary | d_effb0_mask_cmc | 0.648 | 0.489 | +0.159 [+0.118, +0.201] | 0.0001 | — | — |
 
+Published-number row (descriptive): **CBDebug (Enouen & Galhotra, ICLR 2026) 0.580 ± 0.116** on the same Bissoto trap sets — not reproduced: no ISIC code released (published numbers come from a protocol we could not check; A37).
+
 Per trap set: `arms_per_set.csv`; per-image test scores (arms, DISC, ERM): `scores_test.csv.gz`; selection grids: `selection.csv`. ERM 5-set mean (same images): 0.507.
