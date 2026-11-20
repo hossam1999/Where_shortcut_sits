@@ -5,9 +5,9 @@ Test AUROC on `test_bias_<b>_1`, each arm scored once; crossed seed × image boo
 
 | bias | arm | arm mean | EPVT mean | Δ [95 % CI] | p (unadj.) |
 |---|---|---|---|---|---|
-| 1 | b_dino518_mask_cmc | 0.782 | 0.497 | +0.285 [+0.265, +0.306] | 0.0001 |
-| 1 | c_umte | 0.625 | 0.497 | +0.128 [+0.105, +0.151] | 0.0001 |
-| 1 | a_epvt_mask_cmc | 0.758 | 0.497 | +0.261 [+0.236, +0.286] | 0.0001 |
-| 1 | d_effb0_mask_cmc | 0.718 | 0.497 | +0.222 [+0.199, +0.244] | 0.0001 |
+| 1 | b_dino518_mask_cmc | 0.782 | 0.696 | +0.086 [+0.071, +0.101] | 0.0001 |
+| 1 | c_umte | 0.625 | 0.696 | -0.072 [-0.088, -0.055] | 0.0001 |
+| 1 | a_epvt_mask_cmc | 0.758 | 0.696 | +0.061 [+0.044, +0.079] | 0.0001 |
+| 1 | d_effb0_mask_cmc | 0.718 | 0.696 | +0.022 [+0.006, +0.038] | 0.0096 |
 
-ERM (5 seeds, reference): bias 1 0.505
+ERM (5 seeds, reference): bias 1 0.668
