@@ -1284,7 +1284,15 @@ c. **Backbone / preprocessing / data — no port error.** torchvision `vit_b_16(
   **test biased (attacked) accuracy 0.713 vs Table 1 0.712 (|Δ| 0.001 ≤ 0.03 → reproduced)**; clean 0.780 vs 0.785;
   macro-F1 biased 0.690 / clean 0.709. EfficientNet-B0, then VGG-16, running.
 
+### 2026-11-20 13:00 UTC (machine 2's clock) — machine 2: P7 EfficientNet-B0 REPRODUCED (biased 0.728 vs 0.756, within 0.03); VGG-16 preprocessing OOM → batch 16
+- EfficientNet-B0 RR-ClArC, scored once: **test biased 0.728 vs Table 1 0.756 (|Δ| 0.028 ≤ 0.03 → reproduced, close to the
+  margin)**; clean 0.828 vs 0.787 (+0.041); macro-F1 biased 0.720 / clean 0.786.
+- VGG-16: their relevance/activation pass (LRP, inference only) at batch 64 ran out of the 16 GB GPU (their local config
+  assumes a larger GPU). Rerun at batch 16 through a copy of the config (`*_prep.yaml`; the output path depends on dataset /
+  model / layer only; per-image activations do not depend on the batch size). The correction itself keeps batch 64.
+
 ### Watchdog log (machine 2, automatic; `scripts/replication/m2_watchdog.sh`)
+- 2026-11-20_12:59:06 UTC watchdog (machine 2): queue failure in m2_p7.log: 'FAILED P7 preprocessing vgg16' — alert only (not retried)
 - 2026-11-20_12:43:58 UTC watchdog (machine 2): queue failure in m2_p7.log: 'FAILED P7 scoring resnet18' — alert only (not retried)
 - 2026-11-20_12:32:21 UTC watchdog (machine 2): queue failure in m2_p7.log: 'FAILED P7 correction resnet18' — alert only (not retried)
 - 2026-11-20_12:31:51 UTC watchdog (machine 2): queue failure in m2_p7.log: 'FAILED P7 correction resnet18' — alert only (not retried)
