@@ -1,0 +1,1 @@
+{"ckpt": "/workspace/data/epvt/runs/epvt_a36_bias1_1_seed4/epvt.pkl", "test": "test_bias_0_1.csv", "n": 6199, "roc_auc": 0.8988110901299359, "acc": 0.8135183094047427, "bacc": 0.8188645675667521, "f1": 0.746634065183732}
