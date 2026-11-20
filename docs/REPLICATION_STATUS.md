@@ -1291,6 +1291,21 @@ c. **Backbone / preprocessing / data — no port error.** torchvision `vit_b_16(
   assumes a larger GPU). Rerun at batch 16 through a copy of the config (`*_prep.yaml`; the output path depends on dataset /
   model / layer only; per-image activations do not depend on the batch size). The correction itself keeps batch 64.
 
+### 2026-11-20 13:17 UTC (machine 2's clock) — machine 2: P7 RR-ClArC replication done — ResNet-18 and EfficientNet-B0 reproduced, VGG-16 not
+- VGG-16 (preprocessing at batch 16, correction at their batch 64, 10 epochs, 13.5 min), scored once: test biased **0.531 vs
+  Table 1 0.570 (|Δ| 0.039 > 0.03 → not reproduced)**; clean 0.749 vs 0.743.
+- **P7 gate per architecture (A28, biased-test accuracy within 0.03):**
+
+  | arch | ours biased | Table 1 | Δ | reproduced | ours clean | Table 1 |
+  |---|---|---|---|---|---|---|
+  | VGG-16 | 0.531 | 0.570 | −0.039 | **no** | 0.749 | 0.743 |
+  | ResNet-18 | 0.713 | 0.712 | +0.001 | **yes** | 0.780 | 0.785 |
+  | EfficientNet-B0 | 0.728 | 0.756 | −0.028 | **yes** | 0.828 | 0.787 |
+
+  Per A28: our arms vs our RR-ClArC count on ResNet-18 and EfficientNet-B0 (Holm family over the P7 comparisons); VGG-16's
+  comparisons are descriptive. Next (A28): arms a (mask_cmc on their Vanilla network), a′ (on our RR-ClArC), b (DINOv2 at 224 on
+  the unmasked images), heads on the A21 grid chosen on the mean of clean and biased validation accuracy.
+
 ### Watchdog log (machine 2, automatic; `scripts/replication/m2_watchdog.sh`)
 - 2026-11-20_12:59:06 UTC watchdog (machine 2): queue failure in m2_p7.log: 'FAILED P7 preprocessing vgg16' — alert only (not retried)
 - 2026-11-20_12:43:58 UTC watchdog (machine 2): queue failure in m2_p7.log: 'FAILED P7 scoring resnet18' — alert only (not retried)
