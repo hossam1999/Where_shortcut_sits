@@ -1412,6 +1412,27 @@ c. **Backbone / preprocessing / data — no port error.** torchvision `vit_b_16(
 
   ERM (5 seeds) 0.668. Head choices: b and c chose C = 0.01 (lowest edge of their grid), a C = 0.1 (seed 3: 0.01), d C = 0.1.
 
+### 2026-11-20 ~20:00 UTC (machine 2's clock) — machine 2: **PHASE 5 RESULT — all four registered Trap A comparisons BEATEN**
+- 72 networks trained 15:09–19:29 (6 ERM ResNet-50d bases, 6 arm-d encoders, 54 RR-ClArC fine-tunes, 6 ISNets, ImageNet
+  init, early-stopped at 9–24 epochs); `scripts/phase5/p5_analyze.py` exactly as the approved pre-registration
+  (`results/replication/phase5/analysis/results.md`, `comparison.csv`, `selection.csv`, `scores.csv.gz`).
+- **Trap A (calipers inside the nodule ROI), test_rev AUROC (mean ± SD over folds 0–2):** DINOv2 + mask_cmc **0.716 ± 0.027**,
+  arm d **0.690 ± 0.076**, ISNet 0.561 ± 0.172, RR-ClArC 0.467 ± 0.049, U-MtE 0.504, ERM ResNet-50d 0.440.
+
+  | ours vs theirs (Trap A, Holm family of 4) | Δ [95 % CI] | p Holm | clean Δ | verdict |
+  |---|---|---|---|---|
+  | arm d vs RR-ClArC | +0.224 [+0.159, +0.292] | 0.0004 | +0.090 | **beaten** |
+  | arm d vs ISNet | +0.129 [+0.035, +0.239] | 0.0048 | +0.100 | **beaten** |
+  | DINOv2 + mask_cmc vs RR-ClArC | +0.249 [+0.192, +0.304] | 0.0004 | +0.155 | **beaten** |
+  | DINOv2 + mask_cmc vs ISNet | +0.155 [+0.019, +0.316] | 0.0182 | +0.164 | **beaten** |
+
+  Clean condition (drop ≤ 0.01) met everywhere (our clean AUROC is higher). **Trap B** (outside, descriptive): DINOv2 +
+  mask_cmc 0.789, U-MtE 0.782, arm d 0.746, ISNet 0.673, RR-ClArC 0.595 — ISNet's location-based penalty helps more outside
+  (0.673) than inside (0.561), as the thesis predicts; RR-ClArC stays close to its ERM base in both traps.
+- Notes: ISNet Trap A per fold 0.681 / 0.637 / **0.365** (fold 2 collapsed) → wide CIs vs ISNet; heads often chose the
+  lowest A21 C (DINOv2 + mask_cmc 5 / 6, U-MtE 4 / 6, arm d 1 / 6); RR-ClArC's validation choice varied by fold
+  (λ 5·10¹⁰ identity_2 on Trap A folds 0–1, 5·10⁹ identity_1 on fold 2).
+
 ### Watchdog log (machine 2, automatic; `scripts/replication/m2_watchdog.sh`)
 - 2026-11-20_16:33:43 UTC watchdog (machine 2): queue failure in m2_p6_chain.log: '2026-11-20_16:33:41 FAILED P6CHAIN cache' — alert only (not retried)
 - 2026-11-20_16:07:57 UTC watchdog (machine 2): queue failure in m2_p6_prep.log: 'FAILED P6PREP lesion rois' — alert only (not retried)
