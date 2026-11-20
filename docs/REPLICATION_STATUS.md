@@ -1256,6 +1256,14 @@ c. **Backbone / preprocessing / data — no port error.** torchvision `vit_b_16(
   trap-set scoring, split, epochs/patience and the 12,360 count, and for logs/checkpoints.
 - Next in the queue: phase 5 (timing test → `PREREGISTRATION_PHASE5.md` → wait for approval → run), then P7.
 
+### 2026-11-20 ~12:40 UTC (machine 2's clock) — machine 2: phase-5 timing test done; `PREREGISTRATION_PHASE5.md` drafted — WAITING for approval
+- Timing (Trap A fold 1, 30 batches, alone): ERM ResNet-50d and arm d 244 img/s (4.5 / 5.4 GB); ISNet 15.6 img/s from scratch,
+  18.8 ImageNet-initialised (13.8 GB, must run alone). Budget ≤ ~7 GPU-h (ISNet ≤ 4.4–5.2 h of it) + ~1 h CPU. Timing outputs
+  deleted (never scored).
+- Draft: `docs/PREREGISTRATION_PHASE5.md` — data/folds, recipes, RR-ClArC grid (λ {5·10⁸, 5·10⁹, 5·10¹⁰} × 3 layers, A18),
+  one selection criterion (val_clean AUROC), proposed outcomes / Holm family / success rule, and five open decisions (ISNet
+  init, optimisers, constant lr, comparisons, RR-ClArC grid) with recommendations. Nothing runs until the author approves.
+
 ### Watchdog log (machine 2, automatic; `scripts/replication/m2_watchdog.sh`)
 - 2026-11-20_04:43:09 UTC watchdog (machine 2): queue failure in m2_p8_post.log: '2026-11-20_04:42:57 FAILED P8POST features_a' — alert only (not retried)
 - 2026-11-20_04:41:39 UTC watchdog (machine 2): queue failure in m2_p8_post.log: '2026-11-20_04:41:13 FAILED P8POST features_a' — alert only (not retried)
