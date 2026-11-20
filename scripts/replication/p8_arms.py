@@ -1,8 +1,8 @@
 """P8 (DISC, ICML 2023): our arms a-d vs our reproduced DISC on the Bissoto ISIC 2018 trap sets 1-5 (A32, A35, A37).
 
 Splits per trap set k (A35), from the trap-set CSVs (= DISC's `isic/trap-sets`, byte-identical to Bissoto's):
-  primary   (DISC's protocol): fit = train CSV (1,822); val = 20 % of the test CSV (154); test = the other 80 % (618)
-            (train_test_split(arange(len(test CSV)), test_size=0.8, random_state=0), as DISC's ISICDataset);
+  primary   (DISC's protocol): fit = train CSV (1,822); val / test = DISC's own 154 / 618 rows of the test CSV (their
+            ISICDataset's labelling of train_test_split(..., test_size=0.8, random_state=0); see split(), A35 correction);
   secondary (A35 addendum):    fit = train CSV minus Bissoto's val CSV (1,563); val = Bissoto's val CSV (259); same test.
 Arms (registered P4 settings, re-run unchanged; lesion ROI = ISIC 2018 Task 1 masks, outside = mean colour, A31 PIL cache):
   a  mask_cmc on the reproduced DISC ResNet-50 of trap set k (penultimate 2,048-d of lesion-masked images through DISC's
@@ -57,9 +57,12 @@ def split(k, rule):
     from sklearn.model_selection import train_test_split
     tr, te = _read("train", k), _read("test", k)
     iv, it = train_test_split(np.arange(len(te)), test_size=0.8, random_state=0)
-    test = te.iloc[it].reset_index(drop=True)
+    # DISC's ISICDataset lists the rows after train as [iv, it] but labels them [test (len it), val (len iv)]
+    # (isic_dataset.py:77-89): their test = iv + it[:len(it) - len(iv)], their val = the last len(iv) rows of it (A35 correction)
+    order = np.concatenate([iv, it])
+    test = te.iloc[order[:len(it)]].reset_index(drop=True)
     if rule == "primary":
-        fit, val = tr, te.iloc[iv].reset_index(drop=True)
+        fit, val = tr, te.iloc[order[len(it):]].reset_index(drop=True)
     else:
         val = _read("val", k); fit = tr[~tr.id.isin(set(val.id))].reset_index(drop=True)
     assert not set(fit.id) & set(test.id) and not set(val.id) & set(test.id) and not set(fit.id) & set(val.id)
@@ -124,7 +127,7 @@ def features_a():
         out = W / f"disc_set{k}.npz"
         if out.exists():
             continue
-        sp = split(k, "primary"); n_tr, n_va = len(sp["fit"]), len(sp["val"])
+        sp = split(k, "primary"); n_tr, n_va, n_te = len(sp["fit"]), len(sp["val"]), len(sp["test"])
         cache = np.load(f"{D}/disc/isic_set{k}/features/feature_mat.npy", mmap_mode="r")
         assert len(cache) == n_tr + n_va + len(sp["test"])
         res = {}
@@ -134,13 +137,14 @@ def features_a():
             p, F = [], []
             h = model.fc.register_forward_hook(lambda mod, i, o: F.append(i[0].float().cpu()))
             with torch.no_grad():
-                for s0 in range(n_tr + n_va, len(cache), 128):
-                    x = torch.from_numpy(np.asarray(cache[s0:min(s0 + 128, len(cache))])).float().cuda()
+                for s0 in range(n_tr, n_tr + n_te, 128):   # their test rows follow train directly (see split())
+                    x = torch.from_numpy(np.asarray(cache[s0:min(s0 + 128, n_tr + n_te)])).float().cuda()
                     p.append(torch.softmax(model(x), 1)[:, 1].cpu())
             h.remove(); s = torch.cat(p).numpy()
             v, t = pd.read_csv(f"{d[0]}/val.csv"), pd.read_csv(f"{d[0]}/test.csv"); logged = float(t.roc_auc.iloc[int(np.argmax(v.roc_auc.values))])
             auc = roc_auc_score(sp["test"].target, s)
-            assert abs(auc - logged) < 1e-4, (m, k, auc, logged)
+            assert abs(auc - logged) < 1e-3, (m, k, auc, logged)   # their eval during training vs this pass: |diff| ~1e-4
+            print(f"set {k} {m}: test AUROC from their cache rows {auc:.5f}, logged {logged:.5f}", flush=True)
             res[f"{m}_test_score"], res[f"{m}_logged_auroc"] = s, logged
             if m == "DISC":   # arm a: lesion-masked images of every id the two rules use
                 ids = sorted(set(_read("train", k).id) | set(_read("test", k).id)); torch.manual_seed(0); X = []

@@ -1221,3 +1221,6 @@ c. **Backbone / preprocessing / data — no port error.** torchvision `vit_b_16(
   U-MtE) → 10 arm-d encoders → heads → comparison → P6 A34 (checks the A36 patch). Watched by the watchdog.
 
 ### Watchdog log (machine 2, automatic; `scripts/replication/m2_watchdog.sh`)
+- 2026-11-20_04:43:09 UTC watchdog (machine 2): queue failure in m2_p8_post.log: '2026-11-20_04:42:57 FAILED P8POST features_a' — alert only (not retried)
+- 2026-11-20_04:41:39 UTC watchdog (machine 2): queue failure in m2_p8_post.log: '2026-11-20_04:41:13 FAILED P8POST features_a' — alert only (not retried)
+- 2026-11-20_04:41:08 UTC watchdog (machine 2): queue failure in m2_p8_post.log: '**Gate: FAILED.** ERM mean misses 0.364 by > 0.03: gate FAILED; the published numbers may carry the shared-cache bug of DISC's released code (A37 hypothesis).' — alert only (not retried)

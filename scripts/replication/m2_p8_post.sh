@@ -7,7 +7,7 @@ D=${WTSS_DATA:-/workspace/data}; Q=/root/Where_shortcut_sits/scripts/replication
 until grep -q "P8 step-1 runs done" /workspace/logs/m2_p8_queue.log && ! ps -eo args | grep -q "^$PYD run_expt.py"; do sleep 120; done
 step(){ local n=$1; shift; echo "$(date -u +%F_%T) start $n"; "$@" || { echo "$(date -u +%F_%T) FAILED P8POST $n"; exit 1; }; echo "$(date -u +%F_%T) done $n"; }
 cd /root/Where_shortcut_sits
-step gate $PYW $Q/p8_gate.py
+[ -s $D/results_push/results/replication/disc/gate.json ] || step gate $PYW $Q/p8_gate.py > /workspace/logs/m2_p8_gate.out   # the gate's own text says PASSED/FAILED; kept out of this log (watchdog)
 step features_a env MAX_OTHER_JOBS=0 $Q/gpu_wait.sh 8000 $PYD $Q/p8_arms.py --stage features_a
 step features_bc env MAX_OTHER_JOBS=0 $Q/gpu_wait.sh 8000 $PYW $Q/p8_arms.py --stage features_bc
 step armd env MAX_OTHER_JOBS=0 $Q/gpu_wait.sh 8000 $PYW $Q/p8_arms.py --stage armd
