@@ -1141,4 +1141,13 @@ c. **Backbone / preprocessing / data — no port error.** torchvision `vit_b_16(
   First push 14:01: 37 files (P8 ERM trap sets 1–3; P6 pre-A33 and A33 runs incl. per-image logits). The watchdog alerts on
   "PUSH FAILED".
 
+### 2026-11-20 — machine 1: exploratory track closed; permanent alignment assertions in P1's adapters
+- **Exploratory track CLOSED (author, 2026-11-20):** `PREREGISTRATION_NEWMETHOD.md` approved as written: **no new method
+  registered**; (a) CC-LEACE and (b) the class-conditional GRL adversary are reported as **negative exploratory results**
+  (validation only, no test scored); (c) is design only.
+- **P1 alignment assertions (permanent):** `armd_train.align_check_exact` runs every time a P1 adapter (cardiomegaly, RSNA,
+  location inside/outside) is built. The first, middle and last cached row of every split must equal, **byte for byte**, a
+  fresh render of that row's own id (the cache and the check share one `_render` method). All four pass on the existing
+  caches. Negative control: with the validation rows reversed, the check fails on row 0. No result changes.
+
 ### Watchdog log (machine 2, automatic; `scripts/replication/m2_watchdog.sh`)

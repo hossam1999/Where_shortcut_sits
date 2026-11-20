@@ -1,6 +1,7 @@
-# Pre-registration (DRAFT, not approved): improving mask_cmc where it fails
+# Pre-registration (exploratory track, CLOSED): improving mask_cmc where it fails
 
-Status: **draft for the author's approval** (2026-11-18). Nothing here is scored on any test set. This track does not
+Status: **approved as written and closed by the author (2026-11-20)**: no new method is registered; (a) and (b) are
+reported as negative exploratory results, (c) is design only. (Drafted 2026-11-18.) Nothing here is scored on any test set. This track does not
 replace or delay anything registered (ISNet chain, P4, phase 5 keep priority).
 
 ## Where mask_cmc fails (the motivation, from results already seen)

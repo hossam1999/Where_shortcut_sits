@@ -127,6 +127,19 @@ def align_check_rendered(npy, part, src_path, id_col, size=None):
                 raise AssertionError(f"alignment: {k} row {j} ({d[id_col].iloc[j]}): r = {own:.3f} (own) vs {other:.3f} (other row)")
 
 
+def align_check_exact(S, sets, roi_of):
+    """Permanent alignment assertion (author, 2026-11-20, after A30), P1 adapters: the first, middle and last cached row
+    of every split must equal, byte for byte, a fresh render of that row's own id (same render code as the cache)."""
+    for k in sets:
+        mm = np.load(S.npy[k], mmap_mode="r"); n = len(S.part[k])
+        if n != len(mm):
+            raise AssertionError(f"alignment: {k}: {n} rows vs {len(mm)} cached images")
+        R = roi_of(k)
+        for j in sorted({0, n // 2, n - 1}):
+            if not np.array_equal(np.asarray(mm[j]), S._render(k, j, R)):
+                raise AssertionError(f"alignment: {k} row {j} ({S.part[k].image_id.iloc[j]}): cached image != fresh render of its id")
+
+
 class MaskedNpy:
     """uint8 N x S x S x 3 memmap + boolean ROI per image id -> masked, ImageNet-normalised tensor (+ their augmentation)."""
 
@@ -181,21 +194,29 @@ class P1:
             d = self.part[k]
             assert len(R) == len(d), (k, len(R), len(d))
             mm = np.lib.format.open_memmap(f.with_suffix(".tmp.npy"), mode="w+", dtype=np.uint8, shape=(len(d), self.SIZE, self.SIZE, 3))
-            for j, (i, site) in enumerate(zip(d.image_id, d.site)):
-                path = (f"{D}/cxr_at/kaggle-pneumonia-jpg/stage_2_train_images_jpg/{i}.jpg" if self.TASK == "rsna"
-                        else f"{D}/cxr_at/{'NIH' if int(site) == 0 else 'PC'}/images-224/{i}")
-                a = cv2.imread(path, cv2.IMREAD_UNCHANGED)
-                a = a if a.ndim == 2 else cv2.cvtColor(a, cv2.COLOR_BGR2GRAY)
-                a = cv2.normalize(a, None, 0, 255, cv2.NORM_MINMAX).astype(np.uint8) if a.dtype != np.uint8 else a
-                h, w = a.shape; c = min(h, w); a = a[(h - c) // 2:(h - c) // 2 + c, (w - c) // 2:(w - c) // 2 + c]   # center crop
-                r = np.asarray(R[j]); rh, rw = r.shape; rc = min(rh, rw)
-                r = r[(rh - rc) // 2:(rh - rc) // 2 + rc, (rw - rc) // 2:(rw - rc) // 2 + rc]
-                im = Image.fromarray(a).convert("RGB").resize((self.SIZE, self.SIZE), Image.BILINEAR)
-                roi = cv2.resize(r.astype(np.uint8), (self.SIZE, self.SIZE), interpolation=cv2.INTER_NEAREST).astype(bool)
-                mm[j] = np.asarray(apply_roi_mask(im, roi))
+            for j in range(len(d)):
+                mm[j] = self._render(k, j, R)
             mm.flush(); del mm
             f.with_suffix(".tmp.npy").replace(f)
             print("cached", k, len(d), flush=True)
+        align_check_exact(self, self.sets, lambda k: np.load(V / f"arms/{self.TASK}_1234/roi_{k}.npy", mmap_mode="r"))
+
+    def _render(self, k, j, R):
+        import cv2
+        from PIL import Image
+        from wtss.ops import apply_roi_mask
+        d = self.part[k]; i, site = d.image_id.iloc[j], d.site.iloc[j]
+        path = (f"{D}/cxr_at/kaggle-pneumonia-jpg/stage_2_train_images_jpg/{i}.jpg" if self.TASK == "rsna"
+                else f"{D}/cxr_at/{'NIH' if int(site) == 0 else 'PC'}/images-224/{i}")
+        a = cv2.imread(path, cv2.IMREAD_UNCHANGED)
+        a = a if a.ndim == 2 else cv2.cvtColor(a, cv2.COLOR_BGR2GRAY)
+        a = cv2.normalize(a, None, 0, 255, cv2.NORM_MINMAX).astype(np.uint8) if a.dtype != np.uint8 else a
+        h, w = a.shape; c = min(h, w); a = a[(h - c) // 2:(h - c) // 2 + c, (w - c) // 2:(w - c) // 2 + c]   # center crop
+        r = np.asarray(R[j]); rh, rw = r.shape; rc = min(rh, rw)
+        r = r[(rh - rc) // 2:(rh - rc) // 2 + rc, (rw - rc) // 2:(rw - rc) // 2 + rc]
+        im = Image.fromarray(a).convert("RGB").resize((self.SIZE, self.SIZE), Image.BILINEAR)
+        roi = cv2.resize(r.astype(np.uint8), (self.SIZE, self.SIZE), interpolation=cv2.INTER_NEAREST).astype(bool)
+        return np.asarray(apply_roi_mask(im, roi))
 
     def dataset(self, k, train):
         return CachedNpy(self.npy[k], self.part[k].y.to_numpy())
@@ -241,7 +262,8 @@ class P1Loc:
         sp = pd.read_csv(L / "nospc_1234.csv").sort_values(["split", "pos"])
         sp["key"] = sp.site.astype(str) + "/" + sp.image_id
         pl = pd.read_csv(L / "placements_1234.csv").set_index("key")
-        z = np.load(L / "roi224_1234.npz"); roi = dict(zip(z["ids"], z["masks"]))
+        z = np.load(L / "roi224_1234.npz"); self._roi = dict(zip(z["ids"], z["masks"]))
+        self._pl = pl
         self.part = {}
         for e in self.sets:
             d = sp[sp.split == LA.SPLIT[e]].reset_index(drop=True)
@@ -256,18 +278,28 @@ class P1Loc:
                 continue
             d = self.part[e]
             mm = np.lib.format.open_memmap(f.with_suffix(".tmp.npy"), mode="w+", dtype=np.uint8, shape=(len(d), self.SIZE, self.SIZE, 3))
-            for j, row in d.iterrows():
-                im = Image.fromarray(LA.gray(row.path)).convert("RGB")
-                if row.tube:
-                    q = pl.loc[row.key]
-                    x, yy = (int(q.in_x), int(q.in_y)) if self.POS == "inside" else (int(q.out_x), int(q.out_y))
-                    im, _ = draw_tube(im, x, yy, LA.W, LA.H, row.key)
-                im = im.resize((self.SIZE, self.SIZE), Image.BILINEAR)
-                r = cv2.resize(roi[row.key].astype(np.uint8), (self.SIZE, self.SIZE), interpolation=cv2.INTER_NEAREST).astype(bool)
-                mm[j] = np.asarray(apply_roi_mask(im, r))
+            for j in range(len(d)):
+                mm[j] = self._render(e, j)
             mm.flush(); del mm
             f.with_suffix(".tmp.npy").replace(f)
             print("cached", e, len(d), flush=True)
+        align_check_exact(self, self.sets, lambda e: None)
+
+    def _render(self, e, j, R=None):
+        import cv2
+        from PIL import Image
+        import p1_location_arms as LA
+        from wtss.ops import apply_roi_mask
+        from wtss.synthetic import draw_tube
+        row = self.part[e].iloc[j]
+        im = Image.fromarray(LA.gray(row.path)).convert("RGB")
+        if row.tube:
+            q = self._pl.loc[row.key]
+            x, yy = (int(q.in_x), int(q.in_y)) if self.POS == "inside" else (int(q.out_x), int(q.out_y))
+            im, _ = draw_tube(im, x, yy, LA.W, LA.H, row.key)
+        im = im.resize((self.SIZE, self.SIZE), Image.BILINEAR)
+        r = cv2.resize(self._roi[row.key].astype(np.uint8), (self.SIZE, self.SIZE), interpolation=cv2.INTER_NEAREST).astype(bool)
+        return np.asarray(apply_roi_mask(im, r))
 
     def dataset(self, k, train):
         return CachedNpy(self.npy[k], self.part[k].y.to_numpy())
