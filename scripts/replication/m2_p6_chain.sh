@@ -7,7 +7,8 @@ export WTSS_DATA=${WTSS_DATA:-/workspace/data}; Q=/root/Where_shortcut_sits/scri
 cd /root/Where_shortcut_sits
 gpu(){ local need=$1; shift; until ! ps -eo args | grep -q "[g]pu_wait.sh 15000 .*--net isnet"; do sleep 30; done; MAX_OTHER_JOBS=1 $Q/gpu_wait.sh $need "$@"; }
 step(){ local n=$1; shift; echo "$(date -u +%F_%T) start $n"; "$@" || { echo "$(date -u +%F_%T) FAILED P6CHAIN $n"; exit 1; }; echo "$(date -u +%F_%T) done $n"; }
-until grep -q "P6 prep done" /workspace/logs/m2_p6_prep.log; do grep -q "FAILED P6PREP" /workspace/logs/m2_p6_prep.log && exit 1; sleep 60; done
+# the lesion U-Net's report and its 25,331 predicted masks (P2's 224-px ROI table, the prep script's last step, is not needed here)
+until [ -s $WTSS_DATA/isic2019/unet/UNET_REPORT.json ] && [ $(ls $WTSS_DATA/isic2019/unet_masks 2>/dev/null | wc -l) -ge 25331 ]; do sleep 60; done
 step cache $PYW $Q/p6_arms.py --stage cache --bias 1 0.9
 step features_a_bias1 gpu 6000 $PYE $Q/p6_arms.py --stage features_a --bias 1
 step features_bc gpu 6000 $PYW $Q/p6_arms.py --stage features_bc --bias 1 0.9

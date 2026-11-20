@@ -57,7 +57,9 @@ def mask_source():
     ham = {p.name.split("_segmentation")[0]: p for p in Path(f"{D}/ham_seg").rglob("*_segmentation.png")}
     i18 = {p.name.split("_segmentation")[0]: p for p in Path(f"{D}/isic2018/ISIC2018_Task1_Training_GroundTruth").glob("*_segmentation.png")}
     un = Path(f"{D}/isic2019/unet_masks")
-    return lambda i: ("ham", ham[i]) if i in ham else ("isic2018", i18[i]) if i in i18 else ("unet", un / f"{i}_unet.png")
+    # ISIC names 2,074 originals `*_downsampled`; the U-Net writes its masks under the original file names
+    unp = lambda i: un / f"{i}_unet.png" if (un / f"{i}_unet.png").exists() else un / f"{i}_downsampled_unet.png"
+    return lambda i: ("ham", ham[i]) if i in ham else ("isic2018", i18[i]) if i in i18 else ("unet", unp(i))
 
 
 def load(i, size, src):

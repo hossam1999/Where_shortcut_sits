@@ -1379,7 +1379,20 @@ c. **Backbone / preprocessing / data — no port error.** torchvision `vit_b_16(
   `stopped_race_erm_bias0.9_1_seed0_x`, nothing scored) and its script restarted; it now waits for a free slot. Phase 5 and
   the U-Net prediction were not touched.
 
+### 2026-11-20 ~16:35 UTC (machine 2's clock) — machine 2: lesion U-Net done (held-out Dice 0.942); P6 chain idle 16:07–16:33 (my error), restarted
+- **Lesion U-Net** (thesis script, unchanged; 25 epochs, 384 px): held-out Dice mean **0.942** (median 0.965; HAM 0.952,
+  ISIC 2018 0.903; 1,253 held-out images); masks predicted for all 25,331 ISIC 2019 images
+  (`results/replication/epvt/arms/UNET_REPORT.json`).
+- **Idle 26 min (mine):** the prep script's last step (P2's 224-px ROI table, `p2_lesion_rois.py`) failed — it writes into
+  `replication/pahde/`, which existed only on machine 1 — and the P6 chain, which waited for "P6 prep done", exited. That step
+  is not needed for P6 (it would also have overwritten P2's committed ROI table); the chain now waits for the U-Net outputs
+  themselves. A second fault on restart: ISIC names 2,074 originals `*_downsampled` and the U-Net writes masks under those
+  names; `p6_arms.py` now resolves both. All 20,599 images of bias 1 and 0.9 have a mask: HAM10000 9,083, ISIC 2018 2,593,
+  U-Net 8,923. Chain restarted 16:34 (caches building). Bias-0.9 ERM seed 0 has run since 16:03; phase 5 unaffected.
+
 ### Watchdog log (machine 2, automatic; `scripts/replication/m2_watchdog.sh`)
+- 2026-11-20_16:33:43 UTC watchdog (machine 2): queue failure in m2_p6_chain.log: '2026-11-20_16:33:41 FAILED P6CHAIN cache' — alert only (not retried)
+- 2026-11-20_16:07:57 UTC watchdog (machine 2): queue failure in m2_p6_prep.log: 'FAILED P6PREP lesion rois' — alert only (not retried)
 - 2026-11-20_13:29:24 UTC watchdog (machine 2): queue failure in m2_p7.log: 'FAILED P7 arms heads' — alert only (not retried)
 - 2026-11-20_12:59:06 UTC watchdog (machine 2): queue failure in m2_p7.log: 'FAILED P7 preprocessing vgg16' — alert only (not retried)
 - 2026-11-20_12:43:58 UTC watchdog (machine 2): queue failure in m2_p7.log: 'FAILED P7 scoring resnet18' — alert only (not retried)
