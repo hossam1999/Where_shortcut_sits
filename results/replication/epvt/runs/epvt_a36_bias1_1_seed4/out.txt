@@ -1,0 +1,130 @@
+Environment:
+	Python: 3.10.22
+	PyTorch: 2.11.0+cu128
+	Torchvision: 0.26.0+cu128
+	CUDA: 12.8
+	CUDNN: 91900
+	NumPy: 1.26.4
+	PIL: 12.3.0
+Args:
+	algorithm: DoPrompt_group_decompose
+	checkpoint_freq: None
+	data_dir: /workspace/data/epvt/bias1_1/
+	dataset: SKIN
+	exp: epvt
+	holdout_fraction: 0.2
+	hparams: {"lr": 5e-6, "lr_classifier": 5e-5,"batch_size":26,"wd_classifier": 1e-5, "prompt_dim":10}
+	hparams_seed: 0
+	ood_vis: False
+	output_dir: /workspace/data/epvt/runs/epvt_a36_bias1_1_seed4
+	restore: None
+	save_model_every_checkpoint: False
+	seed: 4
+	skip_model_save: False
+	steps: 1301
+	task: domain_generalization
+	test_envs: [0]
+	trial_seed: 0
+	uda_holdout_fraction: 0
+HParams:
+	attention_dropout: 0.0
+	batch_size: 26
+	class_balanced: True
+	data_augmentation: True
+	im21k: False
+	lambda: 1.0
+	lr: 5e-06
+	lr_classifier: 5e-05
+	lr_project: 0.0001
+	lr_prompt: 0.001
+	nonlinear_classifier: False
+	prompt_dim: 10
+	resnet18: False
+	resnet_dropout: 0.1
+	vit_base_16: True
+	wd_classifier: 1e-05
+	wd_project: 1e-05
+	weight_decay: 0.01
+EEEEEEE ['C', 'D', 'G', 'H', 'R']
+num class:  2
+Val Size: 2059 ， Test Size: 6181
+/workspace/envs/epvt/lib/python3.10/site-packages/torchvision/models/_utils.py:208: UserWarning: The parameter 'pretrained' is deprecated since 0.13 and may be removed in the future, please use 'weights' instead.
+  warnings.warn(
+/workspace/envs/epvt/lib/python3.10/site-packages/torchvision/models/_utils.py:223: UserWarning: Arguments other than a weight enum or `None` for 'weights' are deprecated since 0.13 and may be removed in the future. The current behavior is equivalent to passing `weights=ViT_B_16_Weights.IMAGENET1K_V1`. You can also use `weights=ViT_B_16_Weights.DEFAULT` to get the most up-to-date weights.
+  warnings.warn(msg)
+Epoch 000:  | Loss_dp: 0.789 | Loss_a: 0.781  | Loss_w: 0.502  Val Loss: 0.951 | Val acc: 0.325 | Val bacc: 0.511 |Val roc_auc: 0.549542 | F1 : 0.324| Training time: 0:00:10
+Epoch 001:  | Loss_dp: 0.623 | Loss_a: 0.599  | Loss_w: 0.446  Val Loss: 0.520 | Val acc: 0.729 | Val bacc: 0.778 |Val roc_auc: 0.869541 | F1 : 0.670| Training time: 0:00:09
+Epoch 002:  | Loss_dp: 0.562 | Loss_a: 0.555  | Loss_w: 0.416  Val Loss: 0.466 | Val acc: 0.839 | Val bacc: 0.796 |Val roc_auc: 0.887727 | F1 : 0.758| Training time: 0:00:09
+Epoch 003:  | Loss_dp: 0.607 | Loss_a: 0.521  | Loss_w: 0.380  Val Loss: 0.394 | Val acc: 0.828 | Val bacc: 0.810 |Val roc_auc: 0.893340 | F1 : 0.754| Training time: 0:00:09
+Epoch 004:  | Loss_dp: 0.589 | Loss_a: 0.508  | Loss_w: 0.350  Val Loss: 0.334 | Val acc: 0.824 | Val bacc: 0.816 |Val roc_auc: 0.899018 | F1 : 0.753| Training time: 0:00:09
+Epoch 005:  | Loss_dp: 0.513 | Loss_a: 0.513  | Loss_w: 0.327  Val Loss: 0.506 | Val acc: 0.769 | Val bacc: 0.797 |Val roc_auc: 0.900131 | F1 : 0.704| Training time: 0:00:09
+Epoch 006:  | Loss_dp: 0.684 | Loss_a: 0.478  | Loss_w: 0.292  Val Loss: 0.246 | Val acc: 0.831 | Val bacc: 0.816 |Val roc_auc: 0.903273 | F1 : 0.759| Training time: 0:00:09
+Epoch 007:  | Loss_dp: 0.473 | Loss_a: 0.462  | Loss_w: 0.311  Val Loss: 0.537 | Val acc: 0.829 | Val bacc: 0.816 |Val roc_auc: 0.907903 | F1 : 0.757| Training time: 0:00:09
+Epoch 008:  | Loss_dp: 0.608 | Loss_a: 0.518  | Loss_w: 0.302  Val Loss: 0.450 | Val acc: 0.824 | Val bacc: 0.817 |Val roc_auc: 0.909892 | F1 : 0.753| Training time: 0:00:09
+Epoch 009:  | Loss_dp: 0.516 | Loss_a: 0.497  | Loss_w: 0.333  Val Loss: 0.385 | Val acc: 0.846 | Val bacc: 0.815 |Val roc_auc: 0.908375 | F1 : 0.771| Training time: 0:00:09
+Epoch 010:  | Loss_dp: 0.728 | Loss_a: 0.493  | Loss_w: 0.257  Val Loss: 0.250 | Val acc: 0.864 | Val bacc: 0.819 |Val roc_auc: 0.909299 | F1 : 0.789| Training time: 0:00:09
+Epoch 011:  | Loss_dp: 0.506 | Loss_a: 0.389  | Loss_w: 0.325  Val Loss: 0.341 | Val acc: 0.857 | Val bacc: 0.820 |Val roc_auc: 0.909367 | F1 : 0.783| Training time: 0:00:09
+Epoch 012:  | Loss_dp: 0.439 | Loss_a: 0.418  | Loss_w: 0.303  Val Loss: 0.304 | Val acc: 0.812 | Val bacc: 0.815 |Val roc_auc: 0.911265 | F1 : 0.743| Training time: 0:00:09
+Epoch 013:  | Loss_dp: 0.527 | Loss_a: 0.437  | Loss_w: 0.290  Val Loss: 0.241 | Val acc: 0.839 | Val bacc: 0.822 |Val roc_auc: 0.914139 | F1 : 0.768| Training time: 0:00:09
+Epoch 014:  | Loss_dp: 0.457 | Loss_a: 0.450  | Loss_w: 0.316  Val Loss: 0.420 | Val acc: 0.861 | Val bacc: 0.827 |Val roc_auc: 0.917169 | F1 : 0.789| Training time: 0:00:09
+Epoch 015:  | Loss_dp: 0.382 | Loss_a: 0.379  | Loss_w: 0.286  Val Loss: 0.323 | Val acc: 0.856 | Val bacc: 0.823 |Val roc_auc: 0.917622 | F1 : 0.783| Training time: 0:00:09
+Epoch 016:  | Loss_dp: 0.358 | Loss_a: 0.353  | Loss_w: 0.247  Val Loss: 0.305 | Val acc: 0.877 | Val bacc: 0.811 |Val roc_auc: 0.916974 | F1 : 0.798| Training time: 0:00:09
+Epoch 017:  | Loss_dp: 0.553 | Loss_a: 0.384  | Loss_w: 0.250  Val Loss: 0.291 | Val acc: 0.879 | Val bacc: 0.809 |Val roc_auc: 0.918825 | F1 : 0.800| Training time: 0:00:09
+Epoch 018:  | Loss_dp: 0.495 | Loss_a: 0.427  | Loss_w: 0.326  Val Loss: 0.431 | Val acc: 0.865 | Val bacc: 0.829 |Val roc_auc: 0.919109 | F1 : 0.793| Training time: 0:00:09
+Epoch 019:  | Loss_dp: 0.331 | Loss_a: 0.335  | Loss_w: 0.268  Val Loss: 0.169 | Val acc: 0.856 | Val bacc: 0.830 |Val roc_auc: 0.919549 | F1 : 0.785| Training time: 0:00:09
+Epoch 020:  | Loss_dp: 0.385 | Loss_a: 0.397  | Loss_w: 0.266  Val Loss: 0.276 | Val acc: 0.855 | Val bacc: 0.831 |Val roc_auc: 0.919184 | F1 : 0.785| Training time: 0:00:09
+Epoch 021:  | Loss_dp: 0.363 | Loss_a: 0.300  | Loss_w: 0.267  Val Loss: 0.225 | Val acc: 0.837 | Val bacc: 0.834 |Val roc_auc: 0.923092 | F1 : 0.769| Training time: 0:00:09
+Epoch 022:  | Loss_dp: 0.389 | Loss_a: 0.329  | Loss_w: 0.255  Val Loss: 0.486 | Val acc: 0.851 | Val bacc: 0.837 |Val roc_auc: 0.923198 | F1 : 0.783| Training time: 0:00:09
+Epoch 023:  | Loss_dp: 0.332 | Loss_a: 0.322  | Loss_w: 0.233  Val Loss: 0.145 | Val acc: 0.877 | Val bacc: 0.839 |Val roc_auc: 0.926200 | F1 : 0.808| Training time: 0:00:09
+Epoch 024:  | Loss_dp: 0.340 | Loss_a: 0.332  | Loss_w: 0.260  Val Loss: 0.354 | Val acc: 0.839 | Val bacc: 0.835 |Val roc_auc: 0.925512 | F1 : 0.772| Training time: 0:00:09
+Epoch 025:  | Loss_dp: 0.470 | Loss_a: 0.463  | Loss_w: 0.260  Val Loss: 0.541 | Val acc: 0.867 | Val bacc: 0.845 |Val roc_auc: 0.928213 | F1 : 0.801| Training time: 0:00:09
+Epoch 026:  | Loss_dp: 0.336 | Loss_a: 0.339  | Loss_w: 0.206  Val Loss: 0.253 | Val acc: 0.849 | Val bacc: 0.842 |Val roc_auc: 0.929870 | F1 : 0.783| Training time: 0:00:09
+Epoch 027:  | Loss_dp: 0.354 | Loss_a: 0.351  | Loss_w: 0.265  Val Loss: 0.273 | Val acc: 0.845 | Val bacc: 0.845 |Val roc_auc: 0.929439 | F1 : 0.780| Training time: 0:00:09
+Epoch 028:  | Loss_dp: 0.468 | Loss_a: 0.364  | Loss_w: 0.246  Val Loss: 0.229 | Val acc: 0.863 | Val bacc: 0.837 |Val roc_auc: 0.924472 | F1 : 0.794| Training time: 0:00:09
+Epoch 029:  | Loss_dp: 0.551 | Loss_a: 0.391  | Loss_w: 0.243  Val Loss: 0.312 | Val acc: 0.845 | Val bacc: 0.836 |Val roc_auc: 0.924419 | F1 : 0.777| Training time: 0:00:09
+Epoch 030:  | Loss_dp: 0.523 | Loss_a: 0.260  | Loss_w: 0.298  Val Loss: 0.506 | Val acc: 0.888 | Val bacc: 0.832 |Val roc_auc: 0.928773 | F1 : 0.817| Training time: 0:00:09
+Epoch 031:  | Loss_dp: 0.263 | Loss_a: 0.256  | Loss_w: 0.223  Val Loss: 0.276 | Val acc: 0.852 | Val bacc: 0.838 |Val roc_auc: 0.932795 | F1 : 0.784| Training time: 0:00:09
+Epoch 032:  | Loss_dp: 0.664 | Loss_a: 0.314  | Loss_w: 0.265  Val Loss: 0.322 | Val acc: 0.885 | Val bacc: 0.846 |Val roc_auc: 0.933348 | F1 : 0.819| Training time: 0:00:09
+Epoch 033:  | Loss_dp: 0.617 | Loss_a: 0.312  | Loss_w: 0.246  Val Loss: 0.252 | Val acc: 0.882 | Val bacc: 0.830 |Val roc_auc: 0.930543 | F1 : 0.811| Training time: 0:00:09
+Epoch 034:  | Loss_dp: 0.372 | Loss_a: 0.381  | Loss_w: 0.218  Val Loss: 0.540 | Val acc: 0.875 | Val bacc: 0.839 |Val roc_auc: 0.930723 | F1 : 0.807| Training time: 0:00:09
+Epoch 035:  | Loss_dp: 0.285 | Loss_a: 0.284  | Loss_w: 0.272  Val Loss: 0.421 | Val acc: 0.876 | Val bacc: 0.847 |Val roc_auc: 0.930704 | F1 : 0.810| Training time: 0:00:09
+Epoch 036:  | Loss_dp: 0.325 | Loss_a: 0.306  | Loss_w: 0.245  Val Loss: 0.582 | Val acc: 0.831 | Val bacc: 0.847 |Val roc_auc: 0.928723 | F1 : 0.769| Training time: 0:00:09
+Epoch 037:  | Loss_dp: 0.329 | Loss_a: 0.336  | Loss_w: 0.254  Val Loss: 0.259 | Val acc: 0.849 | Val bacc: 0.846 |Val roc_auc: 0.931654 | F1 : 0.784| Training time: 0:00:09
+Epoch 038:  | Loss_dp: 0.552 | Loss_a: 0.269  | Loss_w: 0.240  Val Loss: 0.267 | Val acc: 0.867 | Val bacc: 0.841 |Val roc_auc: 0.930781 | F1 : 0.800| Training time: 0:00:09
+Epoch 039:  | Loss_dp: 0.340 | Loss_a: 0.319  | Loss_w: 0.284  Val Loss: 0.333 | Val acc: 0.832 | Val bacc: 0.842 |Val roc_auc: 0.927961 | F1 : 0.768| Training time: 0:00:09
+Epoch 040:  | Loss_dp: 0.488 | Loss_a: 0.295  | Loss_w: 0.257  Val Loss: 0.805 | Val acc: 0.815 | Val bacc: 0.838 |Val roc_auc: 0.927799 | F1 : 0.753| Training time: 0:00:09
+Epoch 041:  | Loss_dp: 0.342 | Loss_a: 0.340  | Loss_w: 0.262  Val Loss: 0.494 | Val acc: 0.862 | Val bacc: 0.847 |Val roc_auc: 0.933009 | F1 : 0.796| Training time: 0:00:09
+Epoch 042:  | Loss_dp: 0.278 | Loss_a: 0.257  | Loss_w: 0.253  Val Loss: 0.034 | Val acc: 0.883 | Val bacc: 0.851 |Val roc_auc: 0.930865 | F1 : 0.819| Training time: 0:00:09
+Epoch 043:  | Loss_dp: 0.450 | Loss_a: 0.244  | Loss_w: 0.212  Val Loss: 0.421 | Val acc: 0.876 | Val bacc: 0.850 |Val roc_auc: 0.932432 | F1 : 0.811| Training time: 0:00:09
+Epoch 044:  | Loss_dp: 0.231 | Loss_a: 0.208  | Loss_w: 0.257  Val Loss: 0.163 | Val acc: 0.865 | Val bacc: 0.852 |Val roc_auc: 0.934042 | F1 : 0.801| Training time: 0:00:09
+Epoch 045:  | Loss_dp: 0.231 | Loss_a: 0.223  | Loss_w: 0.255  Val Loss: 0.496 | Val acc: 0.864 | Val bacc: 0.856 |Val roc_auc: 0.936195 | F1 : 0.801| Training time: 0:00:09
+Epoch 046:  | Loss_dp: 0.205 | Loss_a: 0.211  | Loss_w: 0.221  Val Loss: 0.180 | Val acc: 0.876 | Val bacc: 0.852 |Val roc_auc: 0.935774 | F1 : 0.811| Training time: 0:00:09
+Epoch 047:  | Loss_dp: 0.591 | Loss_a: 0.315  | Loss_w: 0.248  Val Loss: 0.112 | Val acc: 0.869 | Val bacc: 0.861 |Val roc_auc: 0.937911 | F1 : 0.807| Training time: 0:00:09
+Epoch 048:  | Loss_dp: 0.684 | Loss_a: 0.326  | Loss_w: 0.228  Val Loss: 0.320 | Val acc: 0.851 | Val bacc: 0.854 |Val roc_auc: 0.935162 | F1 : 0.789| Training time: 0:00:09
+Epoch 049:  | Loss_dp: 0.279 | Loss_a: 0.271  | Loss_w: 0.210  Val Loss: 0.465 | Val acc: 0.882 | Val bacc: 0.847 |Val roc_auc: 0.933656 | F1 : 0.816| Training time: 0:00:09
+Epoch 050:  | Loss_dp: 0.315 | Loss_a: 0.324  | Loss_w: 0.249  Val Loss: 0.711 | Val acc: 0.857 | Val bacc: 0.861 |Val roc_auc: 0.937781 | F1 : 0.796| Training time: 0:00:09
+Epoch 051:  | Loss_dp: 0.232 | Loss_a: 0.233  | Loss_w: 0.227  Val Loss: 0.121 | Val acc: 0.826 | Val bacc: 0.860 |Val roc_auc: 0.937481 | F1 : 0.768| Training time: 0:00:09
+Epoch 052:  | Loss_dp: 0.319 | Loss_a: 0.301  | Loss_w: 0.197  Val Loss: 0.385 | Val acc: 0.871 | Val bacc: 0.866 |Val roc_auc: 0.939093 | F1 : 0.811| Training time: 0:00:09
+Epoch 053:  | Loss_dp: 0.231 | Loss_a: 0.233  | Loss_w: 0.239  Val Loss: 0.311 | Val acc: 0.867 | Val bacc: 0.845 |Val roc_auc: 0.931186 | F1 : 0.801| Training time: 0:00:09
+Epoch 054:  | Loss_dp: 0.525 | Loss_a: 0.321  | Loss_w: 0.194  Val Loss: 0.302 | Val acc: 0.813 | Val bacc: 0.843 |Val roc_auc: 0.932512 | F1 : 0.752| Training time: 0:00:09
+Epoch 055:  | Loss_dp: 0.627 | Loss_a: 0.210  | Loss_w: 0.209  Val Loss: 0.514 | Val acc: 0.853 | Val bacc: 0.854 |Val roc_auc: 0.936051 | F1 : 0.791| Training time: 0:00:09
+Epoch 056:  | Loss_dp: 0.394 | Loss_a: 0.229  | Loss_w: 0.203  Val Loss: 0.298 | Val acc: 0.890 | Val bacc: 0.847 |Val roc_auc: 0.935416 | F1 : 0.825| Training time: 0:00:09
+Epoch 057:  | Loss_dp: 0.220 | Loss_a: 0.229  | Loss_w: 0.184  Val Loss: 0.714 | Val acc: 0.854 | Val bacc: 0.856 |Val roc_auc: 0.934117 | F1 : 0.792| Training time: 0:00:09
+Epoch 058:  | Loss_dp: 0.360 | Loss_a: 0.273  | Loss_w: 0.229  Val Loss: 0.346 | Val acc: 0.874 | Val bacc: 0.862 |Val roc_auc: 0.934233 | F1 : 0.813| Training time: 0:00:09
+Epoch 059:  | Loss_dp: 0.182 | Loss_a: 0.188  | Loss_w: 0.231  Val Loss: 0.208 | Val acc: 0.872 | Val bacc: 0.856 |Val roc_auc: 0.935279 | F1 : 0.809| Training time: 0:00:09
+Epoch 060:  | Loss_dp: 0.172 | Loss_a: 0.172  | Loss_w: 0.235  Val Loss: 1.082 | Val acc: 0.871 | Val bacc: 0.862 |Val roc_auc: 0.936285 | F1 : 0.809| Training time: 0:00:09
+Epoch 061:  | Loss_dp: 0.192 | Loss_a: 0.187  | Loss_w: 0.202  Val Loss: 0.552 | Val acc: 0.892 | Val bacc: 0.850 |Val roc_auc: 0.938659 | F1 : 0.827| Training time: 0:00:09
+Epoch 062:  | Loss_dp: 0.267 | Loss_a: 0.230  | Loss_w: 0.206  Val Loss: 0.515 | Val acc: 0.858 | Val bacc: 0.854 |Val roc_auc: 0.934625 | F1 : 0.795| Training time: 0:00:09
+Epoch 063:  | Loss_dp: 0.195 | Loss_a: 0.172  | Loss_w: 0.200  Val Loss: 0.354 | Val acc: 0.867 | Val bacc: 0.852 |Val roc_auc: 0.934325 | F1 : 0.803| Training time: 0:00:09
+Epoch 064:  | Loss_dp: 0.579 | Loss_a: 0.209  | Loss_w: 0.216  Val Loss: 0.173 | Val acc: 0.887 | Val bacc: 0.861 |Val roc_auc: 0.934354 | F1 : 0.825| Training time: 0:00:09
+Epoch 065:  | Loss_dp: 0.204 | Loss_a: 0.204  | Loss_w: 0.200  Val Loss: 0.145 | Val acc: 0.867 | Val bacc: 0.851 |Val roc_auc: 0.932451 | F1 : 0.803| Training time: 0:00:09
+Epoch 066:  | Loss_dp: 0.211 | Loss_a: 0.189  | Loss_w: 0.225  Val Loss: 0.489 | Val acc: 0.853 | Val bacc: 0.855 |Val roc_auc: 0.935658 | F1 : 0.791| Training time: 0:00:09
+Epoch 067:  | Loss_dp: 0.658 | Loss_a: 0.163  | Loss_w: 0.197  Val Loss: 0.094 | Val acc: 0.802 | Val bacc: 0.842 |Val roc_auc: 0.930948 | F1 : 0.744| Training time: 0:00:09
+Epoch 068:  | Loss_dp: 0.294 | Loss_a: 0.201  | Loss_w: 0.223  Val Loss: 0.180 | Val acc: 0.878 | Val bacc: 0.863 |Val roc_auc: 0.937153 | F1 : 0.816| Training time: 0:00:09
+Epoch 069:  | Loss_dp: 0.552 | Loss_a: 0.216  | Loss_w: 0.190  Val Loss: 0.394 | Val acc: 0.896 | Val bacc: 0.850 |Val roc_auc: 0.936743 | F1 : 0.831| Training time: 0:00:09
+Epoch 070:  | Loss_dp: 0.268 | Loss_a: 0.266  | Loss_w: 0.167  Val Loss: 0.041 | Val acc: 0.899 | Val bacc: 0.848 |Val roc_auc: 0.937453 | F1 : 0.835| Training time: 0:00:09
+Epoch 071:  | Loss_dp: 0.231 | Loss_a: 0.207  | Loss_w: 0.192  Val Loss: 0.214 | Val acc: 0.901 | Val bacc: 0.858 |Val roc_auc: 0.938363 | F1 : 0.840| Training time: 0:00:09
+Epoch 072:  | Loss_dp: 0.141 | Loss_a: 0.136  | Loss_w: 0.229  Val Loss: 0.096 | Val acc: 0.887 | Val bacc: 0.865 |Val roc_auc: 0.936790 | F1 : 0.827| Training time: 0:00:09
+Epoch 073:  | Loss_dp: 0.417 | Loss_a: 0.205  | Loss_w: 0.183  Val Loss: 0.212 | Val acc: 0.848 | Val bacc: 0.852 |Val roc_auc: 0.937302 | F1 : 0.786| Training time: 0:00:09
+Epoch 074:  | Loss_dp: 0.188 | Loss_a: 0.188  | Loss_w: 0.205  Val Loss: 0.365 | Val acc: 0.847 | Val bacc: 0.847 |Val roc_auc: 0.934119 | F1 : 0.783| Training time: 0:00:09
+Early stopping. Best Val roc_auc: 0.939
