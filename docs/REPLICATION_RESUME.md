@@ -1,5 +1,7 @@
 # How to resume the replication (read this first in a new session)
 
+> **2026-11-20: machine 1 released without a backup — see the next section first.**
+>
 > **2026-11-19 (author): two machines.** Machine 1 (this one, RTX 5060 Ti) runs only the P3 ISNet chain, its scoring, the
 > A24 in-distribution evaluations, the P3 arm feature passes, and the exploratory track. **P4, P5 and phase 5 run on
 > machine 2**; the P4, P5 and phase-5 notes below are kept for reference and are not machine 1's work.
@@ -7,6 +9,85 @@
 Kept current on every state change and by a heartbeat every 2 h (`scripts/replication/heartbeat.sh`; auto block at the
 end). Authoritative plan: `docs/REPLICATION_PLAN.md`. Rules and amendments A1–A14: `docs/PREREGISTRATION_REPLICATION.md`.
 Findings and deviations: `docs/REPLICATION_STATUS.md`. Results: `docs/REPLICATION_RESULTS.md`.
+
+## Machine 1 (e9f997b4f379, RTX 5060 Ti) RELEASED 2026-11-20 — NO BACKUP (author's decision)
+
+Machine 1 was released on **2026-11-20 without a Drive backup** (the rclone remote could not be set up on this machine).
+**Lost:** the 43 trained models listed below (3.32 GB: P2 Vanilla + RR-ClArC, ISNet ×3, P1 runs, arm d encoders, P4
+checkpoints), all data, image caches, ROI caches and features under `/workspace/data`. **In git:** every result table,
+every per-image test score (`results/replication/<paper>/scores/`), the alignment audit, the exploratory-track results, and the
+training-log summaries and P2 configs of the lost runs (`results/replication/train_logs/`). Nothing reported depends on the lost
+files; they are needed only to re-run or extend a run. The machine-2 sections below are machine 2's and are unchanged.
+
+### How to rebuild each item (GPU-hours: measured alone on the RTX 5060 Ti unless marked "estimate")
+Order: environments and data first, then models. All GPU steps through `scripts/replication/gpu_wait.sh`.
+
+| item | script / command | GPU-h |
+|---|---|---|
+| Environments | `/workspace/envs/{viviano,pahde,saab}`, `/workspace/venv-wtss`; clones in `/workspace/third_party/`, then apply `third_party/<paper>/*.patch` (see "Machine layout") | 0 |
+| Data | P1: NIH, PadChest (`images-224`), RSNA (Kaggle, token via env var only); P2: ISIC 2019 + their attacked set; P3: P3's sources + BIMCV (`bimcv_fetch.sh`) + BrixIA (`brixia_fetch.sh`; the private link was only in `/workspace/secrets/` on machine 1 and is lost with it — re-obtain it from the author's own records, never commit it); P4: ISIC + Bissoto trap sets | 0 (download) |
+| Caches | P3 `p3_prepare.py`; P2 `p2_render.py`, lesion U-Net + ROIs (`p2_window.sh` steps 2, CPU/GPU ~1 h estimate); P1 ROIs via `p1_seed_pipeline.sh`; P1 location `p1_location_prep.py`; arm d caches are built by `armd_train.py` (now with byte-exact alignment assertions) | ~1 (estimate) |
+| P2 Vanilla ResNet-50d (300 epochs) | `scripts/replication/run_pahde.sh results/replication/train_logs/pahde/vanilla_resnet50d_seed0/config.yaml 0 vanilla_resnet50d_seed0` | ~14–16 (2.8 min/epoch alone) |
+| P2 section-3 RR-ClArC grid (λ 10/50 × 3 layers) + scores | `scripts/replication/p2_chain.sh` | ~4 (estimate) |
+| P2 A18 RR-ClArC (λ 5e9, lr 1e-4, 3 layers), selection, arm a′ features | `scripts/replication/p2_window.sh` (selected: identity_2; config in `train_logs/pahde/`) | ~2–3 (estimate) |
+| P3 ISNet corner, inside, inside 90/10 (48 epochs each, alone) | `scripts/replication/p3_chain.sh` (after `p3_prepare.py`) | ~35 (14.7 min/epoch alone, ~11.8 each) |
+| P1 cardiomegaly Standard, seed 1234 | `scripts/replication/run_viviano.sh xray resnet 1234`, then `p1_seed_pipeline.sh xray 1234` (scores + arms a–c) | ~2.3 |
+| P1 RSNA ActDiff, seed 1234 | `scripts/replication/run_viviano.sh rsna resnet_actdiff 1234`, then `p1_seed_pipeline.sh rsna 1234` | ~2.5 |
+| P1 location inside / outside (A15–A17) | `/workspace/envs/viviano/bin/python scripts/replication/p1_location.py train|score --position inside|outside`; arms `p1_location_arms.py` | ~3 each (108 s/epoch alone) |
+| Arm d encoders (EfficientNet-B0, A20/A21) | `scripts/replication/armd_queue.sh p1_cardio p1_rsna p1_loc_inside p1_loc_outside p2 p3_9010_inside` (needs each setting's data; P3 needs P3's cache, not the ISNet model); P4: `armd_p4_window.sh` | ~1.5 in total (0.1–0.4 each) |
+| P4 Binary-ERM splits 1–3; Seg-ERM split 1 (machine 1's) | `/workspace/envs/saab/bin/python scripts/replication/p4_train.py --method erm|seg --split k [--grad_ckpt]` — **P4 is machine 2's (A27)**; machine 2 runs its own checkpoints, so these are not needed by its queue | ~1.8 per ERM split; Seg 2.9 to epoch 66 |
+
+Total to rebuild everything machine 1 trained: roughly **65–70 GPU-h** (alone), plus downloads.
+
+### The 43 lost files (SHA-256, for comparing a rebuild; paths relative to `$WTSS_DATA/replication/`)
+A rebuild will not be bit-identical (non-deterministic GPU kernels); compare the per-image scores in git instead. The
+hashes identify exactly which files the reported results came from.
+
+| # | paper | file | bytes | SHA-256 | what it is |
+|---|---|---|---|---|---|
+| 1 | P2 | `pahde/runs/vanilla_resnet50d_seed0/checkpoints/config/checkpoint_resnet50d_last.pth` | 283,025,083 | `d7926681c90a1bd48019897dd63dea7bfb807c21b16aaf53bb274cfe96ce6460` | P2 Vanilla ResNet50d, seed 0, their recipe (last epoch, full training state) |
+| 2 | P2 | `pahde/runs/vanilla_resnet50d_seed0/vanilla_weights_only.pth` | 94,507,857 | `a59e3e9e6ccab8618182b001bd03d6174a7d2842f71f476f3446f83305f70a2d` | P2 Vanilla weights only (A18 starting point: weights only, fresh Adam) |
+| 3 | P2 | `pahde/runs/vanilla_resnet50d_seed0/config.yaml` | 559 | `df5a1557d76f01bb7bd4ff603a86ff8d25b911b14c9b8f6bd7030c4bdbb3a445` | P2 Vanilla training config |
+| 4 | P2 | `pahde/checkpoints_corrected_a18/resnet50d_RRClarc_lamb5e9_adam_lr0.0001_identity_2/last.ckpt` | 94,509,351 | `c876df14962217e4d9b1cd9a7b27bc7331037fb58adb00fbdb983c6362dc1393` | P2 A18 selected RR-ClArC (lambda 5e9, lr 1e-4, identity_2); network of arm a' |
+| 5 | P2 | `pahde/mitigation_a18/resnet50d_RRClarc_lamb5e9_adam_lr0.0001_identity_2.yaml` | 789 | `3fed1e4f5b02256476ca5cb05dcfee395125ee9df15bf8123880aca7dcbdcabc` | P2 A18 selected RR-ClArC config |
+| 6 | P2 | `pahde/checkpoints_corrected/resnet50d_RRClarc_lamb10_adam_lr0.001_last_conv/last.ckpt` | 94,509,351 | `d742cb11800ebc11778dda491290f7cf800ff4b19deb39cdd137d7d547cd27f3` | P2 section-3 selected RR-ClArC (lambda 10, last_conv; scored, superseded by A18) |
+| 7 | P2 | `pahde/mitigation/resnet50d_RRClarc_lamb10_adam_lr0.001_last_conv.yaml` | 799 | `372d45d0fa696e294d53c9c2562fa0d649a318ea3d954d5520abec6281755ada` | P2 section-3 selected RR-ClArC config |
+| 8 | P3 | `isnet/runs/isnet_corner_all_seed0/best.pt` | 28,484,922 | `452090feb27c12ae34084843ecfa65acc20374333e1e4f259bb6712d81c56847` | ISNet corner benchmark (A12), best-validation weights (scored) |
+| 9 | P3 | `isnet/runs/isnet_corner_all_seed0/checkpoint.pt` | 56,475,059 | `0ee42ce8fc1b2b1611cd9af0918629ad600f961ea4b40562de3182fe95ab361a` | ISNet corner, final training checkpoint |
+| 10 | P3 | `isnet/runs/isnet_inside_all_seed0/best.pt` | 28,484,922 | `f8a673998790ff962ea33ccacae7bd081b5e5c1e4c6a8c22ca96d68a61c190d1` | ISNet marks inside lungs, all images, best-validation weights (scored) |
+| 11 | P3 | `isnet/runs/isnet_inside_all_seed0/checkpoint.pt` | 56,474,803 | `e256b2da1e264fa31e4414f6a2d80a3914ded797529b99c5b75164e96bef2f21` | ISNet inside all, final training checkpoint |
+| 12 | P3 | `isnet/runs/isnet_inside_9010_seed0/best.pt` | 28,484,922 | `bc063b4a5c5301ebabd5b150bbc5d08d659c4b092840853293229e49c71f4b2e` | ISNet marks inside, 90/10 (A6), best-validation weights (scored) |
+| 13 | P3 | `isnet/runs/isnet_inside_9010_seed0/checkpoint.pt` | 56,474,803 | `23aade074233abffc55c9739585461997e439a72f741f89fadb78d3197a4554a` | ISNet inside 90/10, final training checkpoint |
+| 14 | P1 | `viviano/runs/xray_resnet_1234/results/xray-seeds_resnet/best_model_1234.pth.tar` | 44,769,995 | `ca00c3773f138670fc97fd9fe6ebc36624d1a51d13ba607316c161da2d7732a4` | P1 cardiomegaly Standard, seed 1234, best (scored; arm a network) |
+| 15 | P1 | `viviano/runs/xray_resnet_1234/results/xray-seeds_resnet/last_model_1234.pth.tar` | 44,769,995 | `c352c8f5f6aeca541b438d32b3f83fddaf4e10826faebf7a439387a615486285` | P1 cardiomegaly Standard, seed 1234, last |
+| 16 | P1 | `viviano/runs/rsna_resnet_actdiff_1234/results/rsna-seeds_resnet_actdiff/best_model_1234.pth.tar` | 44,786,709 | `9b7c085d58be5604a6a93d9909319a49b5e08eec8d1de16e53aeaa0950c0b79a` | P1 RSNA ActDiff, seed 1234, best (scored; arm a network) |
+| 17 | P1 | `viviano/runs/rsna_resnet_actdiff_1234/results/rsna-seeds_resnet_actdiff/last_model_1234.pth.tar` | 44,774,421 | `fe465e6bd0a83ba9c9e2080e1a99007c9af0f84c5ba8c848987accab7132db94` | P1 RSNA ActDiff, seed 1234, last |
+| 18 | P1 | `viviano/location/inside/results/xray-location_inside/best_model_1234.pth.tar` | 44,769,995 | `05adcc19669995c5949f56a2947bf0223b5cf23df50313b380a5992420023b53` | P1 location test (A15), tube inside, best |
+| 19 | P1 | `viviano/location/inside/results/xray-location_inside/last_model_1234.pth.tar` | 44,769,995 | `afecf9204dde7cbe63c355a10ed40fb1fcd1f9df8e0cdfdf506a916b6b911c28` | P1 location test (A15), tube inside, last (epoch 100; A17 post hoc) |
+| 20 | P1 | `viviano/location/outside/results/xray-location_outside/best_model_1234.pth.tar` | 44,769,995 | `34bdfea857e8eb15734e84d40b8578f1b209697625ce5c196d52dfdb3f12180d` | P1 location test (A15), tube outside, best |
+| 21 | P1 | `viviano/location/outside/results/xray-location_outside/last_model_1234.pth.tar` | 44,769,995 | `c17dec7e05ef0d2b754164f0d3422f54773165f043d91b7ee4c341b83591ab93` | P1 location test (A15), tube outside, last |
+| 22 | armd | `armd/p1_cardio/best.pt` | 16,319,717 | `6e0fbcd26b109d58a8af753dc69b49fd58718cdb50894286b32883941dbb19fe` | Arm d EfficientNet-B0, P1 cardiomegaly 128 px (A20), best-validation |
+| 23 | armd | `armd/p1_cardio/checkpoint.pt` | 48,609,083 | `5d1e51fc9a0c8fff617942857343647dc0ad901609ad7fc63fbceb17728e83ae` | Arm d P1 cardiomegaly, final checkpoint |
+| 24 | armd | `armd/p1_rsna/best.pt` | 16,319,717 | `0dbffc042937aed905e1fa3be2f3897c7914c34a05d36602de4f53c0509ad424` | Arm d P1 RSNA 224 px, best-validation |
+| 25 | armd | `armd/p1_rsna/checkpoint.pt` | 48,608,443 | `747c3323a67445a50ae9f15aa5ab5444736e29b17e6edf8cfdf8b7585fedf59c` | Arm d P1 RSNA, final checkpoint |
+| 26 | armd | `armd/p1_loc_inside/best.pt` | 16,319,717 | `b6d17ff84acb219a8e17d14cdef49230abff10dd307169922c214478c5bc1993` | Arm d P1 location inside, best-validation |
+| 27 | armd | `armd/p1_loc_inside/checkpoint.pt` | 48,609,019 | `81bcab0b2b932b69eab999b34511248a65fc41c7acf6fe19c4a138fdac1de636` | Arm d P1 location inside, final checkpoint |
+| 28 | armd | `armd/p1_loc_outside/best.pt` | 16,319,717 | `86ef4d3163dd5cc0865413bf8bd911ff39d9d0bf62b437eebac850bde4b42c05` | Arm d P1 location outside, best-validation |
+| 29 | armd | `armd/p1_loc_outside/checkpoint.pt` | 48,608,251 | `ce10bbbfbdddd1d74b478a8f87e4b8638ace7ddc69a00da33805dcd6c1def209` | Arm d P1 location outside, final checkpoint |
+| 30 | armd | `armd/p2/best.pt` | 16,350,437 | `2947942351532fd00ee9ce0de104031550f84e423ba970a5f91857321ee54ef7` | Arm d P2, best-validation |
+| 31 | armd | `armd/p2/checkpoint.pt` | 48,702,011 | `76139609c05a07c735e251f58c1f6e6ef934d48f6143f3764dc615bab511e787` | Arm d P2, final checkpoint |
+| 32 | armd | `armd/p3_9010_inside/best.pt` | 16,324,837 | `99aff8ef85ac49aa729d17d8bb075f1a4bf34fddd6be4e676f8575603375b692` | Arm d P3 90/10 inside (A30 re-run, valid), best-validation |
+| 33 | armd | `armd/p3_9010_inside/checkpoint.pt` | 48,624,635 | `700c0418f39e287d48bb6b04da390a28ad49ca497b20f99754f0fda19a6aab61` | Arm d P3 90/10 inside (A30 re-run), final checkpoint |
+| 34 | armd | `armd/p4_split1/best.pt` | 16,319,717 | `daea99d8779c51114dd2eec752e3d67b96e3df714b840e4033c107c1c0060cf5` | Arm d P4 split 1 (512 px), best-validation |
+| 35 | armd | `armd/p4_split1/checkpoint.pt` | 48,610,171 | `384989ded98e3b46f8fbb432b07f75dc0408a45f9860d05fba71ea4e4273d3c5` | Arm d P4 split 1, final checkpoint |
+| 36 | P4 | `saab/runs/erm_split1/best.pt` | 94,348,589 | `f14ef375dee74de40a995342aba39db2be6647c5ad220ed11069198f23e99033` | P4 ERM split 1 (machine 1), best-validation |
+| 37 | P4 | `saab/runs/erm_split1/checkpoint.pt` | 282,616,180 | `22930380a8ff37080114b0b196b704a0deeee7f725831031ad7c5bdb2ff34a04` | P4 ERM split 1, final checkpoint |
+| 38 | P4 | `saab/runs/erm_split2/best.pt` | 94,348,589 | `c890213b41160adb82b29f347c859442299eb8a1f1ca7ce41c7c3f150264dff0` | P4 ERM split 2, best-validation |
+| 39 | P4 | `saab/runs/erm_split2/checkpoint.pt` | 282,616,180 | `bf8e2a3fef02bce546d95a7f25ca11d3a8dcee44988b8e61329eeb3892351362` | P4 ERM split 2, final checkpoint |
+| 40 | P4 | `saab/runs/erm_split3/best.pt` | 94,348,589 | `9f7d4799b6dd8900c55b88f6ee49db1bc762c454d48ebd45f312cf024eae820e` | P4 ERM split 3, best-validation |
+| 41 | P4 | `saab/runs/erm_split3/checkpoint.pt` | 282,616,180 | `bf4608365edf32ece9696d85f0f28681cdba570d8579d895432cdc0f6735ef37` | P4 ERM split 3, final checkpoint |
+| 42 | P4 | `saab/runs/seg_split1/best.pt` | 138,512,769 | `09286504ea7c61394abe60b20188b5201d169ab07673ea0ba09b4ad1e589fe99` | P4 segmentation-model split 1, best-validation (stopped at epoch 66) |
+| 43 | P4 | `saab/runs/seg_split1/checkpoint.pt` | 414,959,259 | `9d380b204c618b5b12887408734e78b5ea658101665a2405650d5a272b950055` | P4 segmentation-model split 1, epoch-66 checkpoint (resumable) |
 
 ## Machine layout
 - Repo `/root/Where_shortcut_sits` (container disk, NOT persistent); data and outputs under `$WTSS_DATA=/workspace/data`

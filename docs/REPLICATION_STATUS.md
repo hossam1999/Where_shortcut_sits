@@ -1196,4 +1196,15 @@ c. **Backbone / preprocessing / data — no port error.** torchvision `vit_b_16(
   and **after every ERM run** on the cache it built; failures are logged as "FAILED CACHE CHECK" (watchdog alerts, no retry).
   Running lane shells were replaced by the new script, each adopting its running job (ERM 4, DISC 2, ERM 3).
 
+### 2026-11-20 — machine 1: RELEASED without a backup (author's decision)
+- **Machine 1 (e9f997b4f379, RTX 5060 Ti) released 2026-11-20, no Drive backup.** The rclone `gdrive` remote never became
+  visible on this machine (no `rclone.conf` anywhere on its filesystem), so nothing was copied; the author decided to release
+  without a backup. **Lost:** the 43 trained models (3.32 GB: P2 Vanilla + RR-ClArC, ISNet ×3, P1 runs, arm d encoders, P4
+  checkpoints), all data, caches and features. **In git:** all results and per-image test scores; added now: P3 corner arm c
+  test scores and the two INVALID (A30) P3 arm score files (exporter extended), and training-log summaries + P2 configs of the
+  lost runs (`results/replication/train_logs/`). Per-item rebuild commands, GPU-hours (~65–70 in total) and the 43-file
+  SHA-256 list: `docs/REPLICATION_RESUME.md`, section "Machine 1 … RELEASED". No result changes.
+- Not committed (rebuildable intermediates): features (`*.npz`), `pahde/scores_a18/aprime_unmasked_scores.csv.gz` (arm a′'s
+  network re-scored on all splits; its test rows are already in git as `a18_…_identity_2`).
+
 ### Watchdog log (machine 2, automatic; `scripts/replication/m2_watchdog.sh`)

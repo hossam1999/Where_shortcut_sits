@@ -78,6 +78,12 @@ def p3_arms():
     f = Path(f"{D}/replication/isnet/arms_bc/preds_test.csv.gz")   # P3 90/10 inside, arms b and c (test rows only)
     if f.exists():
         write("isnet", "p3_9010_inside_arms_bc", pd.read_csv(f))
+    for d, run in (("arms_bc_corner", "p3_corner_arm_c"),                          # P3 corner (A12), arm c, A30 re-run
+                   ("arms_bc_invalid_A30", "p3_9010_inside_arms_bc_invalid_A30"),  # INVALID (A30 misalignment), kept for the record
+                   ("arms_bc_corner_invalid_A30", "p3_corner_arm_c_invalid_A30")):
+        f = Path(f"{D}/replication/isnet/{d}/preds_test.csv.gz")
+        if f.exists():
+            write("isnet", run, pd.read_csv(f))
 
 
 def p4():
