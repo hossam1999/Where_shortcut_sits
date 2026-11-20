@@ -1,0 +1,90 @@
+{
+ "per_set": [
+  {
+   "method": "ERM",
+   "trapset": 1,
+   "best_epoch": 18,
+   "val_auroc": 0.5470757933385785,
+   "test_auroc": 0.5313131313131313
+  },
+  {
+   "method": "ERM",
+   "trapset": 2,
+   "best_epoch": 14,
+   "val_auroc": 0.4470588235294117,
+   "test_auroc": 0.5056392235609103
+  },
+  {
+   "method": "ERM",
+   "trapset": 3,
+   "best_epoch": 70,
+   "val_auroc": 0.4364017833726724,
+   "test_auroc": 0.5235608113656894
+  },
+  {
+   "method": "ERM",
+   "trapset": 4,
+   "best_epoch": 92,
+   "val_auroc": 0.4136782786885246,
+   "test_auroc": 0.5024623215230036
+  },
+  {
+   "method": "ERM",
+   "trapset": 5,
+   "best_epoch": 71,
+   "val_auroc": 0.4109624967217414,
+   "test_auroc": 0.4740740740740741
+  },
+  {
+   "method": "DISC",
+   "trapset": 1,
+   "best_epoch": 22,
+   "val_auroc": 0.4977707841594544,
+   "test_auroc": 0.4513919684651392
+  },
+  {
+   "method": "DISC",
+   "trapset": 2,
+   "best_epoch": 36,
+   "val_auroc": 0.4556372549019608,
+   "test_auroc": 0.4925200803212851
+  },
+  {
+   "method": "DISC",
+   "trapset": 3,
+   "best_epoch": 27,
+   "val_auroc": 0.4670862837660634,
+   "test_auroc": 0.5143302948180997
+  },
+  {
+   "method": "DISC",
+   "trapset": 4,
+   "best_epoch": 13,
+   "val_auroc": 0.545594262295082,
+   "test_auroc": 0.5251024590163934
+  },
+  {
+   "method": "DISC",
+   "trapset": 5,
+   "best_epoch": 72,
+   "val_auroc": 0.4749541043797535,
+   "test_auroc": 0.4637431222797076
+  }
+ ],
+ "ERM": {
+  "mean": 0.5074099123673618,
+  "sd": 0.022198578350607675,
+  "paper": 0.364,
+  "diff": 0.14340991236736178,
+  "within": false
+ },
+ "DISC": {
+  "mean": 0.48941758498012505,
+  "sd": 0.03165755980053291,
+  "paper": 0.551,
+  "diff": -0.06158241501987499,
+  "within": false
+ },
+ "gate_passed": false,
+ "a37_reading": "ERM mean misses 0.364 by > 0.03: gate FAILED; the published numbers may carry the shared-cache bug of DISC's released code (A37 hypothesis)"
+}
