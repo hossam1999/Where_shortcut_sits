@@ -1358,6 +1358,18 @@ c. **Backbone / preprocessing / data — no port error.** torchvision `vit_b_16(
   allows. Pairing only if measured total throughput > 1.0, never beside phase 5's ISNet runs if memory does not fit. The
   bias-1 comparison is reported as soon as it is scored (each test once; the A39 verdict uses both levels, Holm over 8).
 
+### 2026-11-20 ~16:00 UTC (machine 2's clock) — machine 2: lesion U-Net beside phase 5; phase 5 stalled 15:33–15:48 (my setting), fixed; pairing measured, kept
+- **HAM10000 masks** downloaded from Harvard Dataverse (doi:10.7910/DVN/DBW86T, as `scripts/data/download_data.sh`; 10,016
+  masks + metadata). **Lesion U-Net** (`scripts/data/train_lesion_unet.py`, unchanged: ResNet-34 U-Net, 384 px, 25 epochs,
+  ISIC 2018 + HAM10000 masks, 10 % held-out groups) training since 15:33 (`m2_p6_prep.sh`; held-out Dice 0.939 at epoch 19).
+- **Stall (mine):** phase 5's runner started every job only on an empty GPU with 15 GB free (meant for ISNet), so its next
+  RR-ClArC run waited behind the U-Net from 15:33 to 15:48 — phase 5 was effectively paused ~15 min, against the author's
+  instruction. Fixed: ISNet keeps the empty-GPU / 15 GB rule; the small networks run beside at most one other job (7 GB free);
+  runner replaced by rename and restarted (no run was in progress; no duplicate).
+- **Pairing measurement (kept):** RR-ClArC `last_conv` 236 img/s alone (15:30) vs 161–166 paired → ratio ≈ 0.69; U-Net ≈ 56
+  s/epoch alone (epochs 1–15 ran alone during the stall; includes the first data load) vs 84 s paired → ≈ 0.67; **total ≈
+  1.36 > 1.0**. ISNet will not start beside anything (15 GB free required).
+
 ### Watchdog log (machine 2, automatic; `scripts/replication/m2_watchdog.sh`)
 - 2026-11-20_13:29:24 UTC watchdog (machine 2): queue failure in m2_p7.log: 'FAILED P7 arms heads' — alert only (not retried)
 - 2026-11-20_12:59:06 UTC watchdog (machine 2): queue failure in m2_p7.log: 'FAILED P7 preprocessing vgg16' — alert only (not retried)

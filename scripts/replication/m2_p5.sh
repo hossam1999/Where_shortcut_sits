@@ -9,7 +9,9 @@ cd /root/Where_shortcut_sits
 run(){ local trap=$1 fold=$2 name=$3; shift 3; local o=$D/phase5/${trap}_f$fold/$name
   [ -s $o/preds.csv.gz ] && return 0
   echo "$(date -u +%F_%T) start $trap f$fold $name"
-  MAX_OTHER_JOBS=0 $Q/gpu_wait.sh 15000 $PY scripts/phase5/p5_run.py --trap $trap --fold $fold "$@" || { echo "FAILED P5 $trap f$fold $name"; exit 1; }
+  # ISNet (13.8 GB) only on an empty GPU; the small networks (<= 5.4 GB) beside at most one other job (P6 prerequisites)
+  if [ "$name" = isnet ]; then mo=0; need=15000; else mo=1; need=7000; fi
+  MAX_OTHER_JOBS=$mo $Q/gpu_wait.sh $need $PY scripts/phase5/p5_run.py --trap $trap --fold $fold "$@" || { echo "FAILED P5 $trap f$fold $name"; exit 1; }
   local s=$D/results_push/results/replication/phase5/${trap}_f$fold/$name; mkdir -p $s; cp $o/preds.csv.gz $o/log.csv $s/
   echo "$(date -u +%F_%T) done $trap f$fold $name"; }
 for trap in trapA trapB; do for f in 0 1 2; do run $trap $f erm_r50d --net erm_r50d; done; done
