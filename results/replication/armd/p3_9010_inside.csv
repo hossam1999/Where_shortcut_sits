@@ -1,7 +1,10 @@
 test,variant,n,macro_f1
-biased,primary,4190,0.9967756499154229
-biased,size-matched,3180,0.996095772679903
-standard,primary,4190,0.40960127984822775
-standard,size-matched,3180,0.4043673971471124
-deceiving,primary,4190,0.010478399038048612
-deceiving,size-matched,3180,0.00750645085620455
+biased,primary,4190,0.9928388223922697
+biased,size-matched,3180,0.99594033251017
+standard,primary,4190,0.405917354710937
+standard,size-matched,3180,0.4047333174761483
+deceiving,primary,4190,0.002482238649119137
+deceiving,size-matched,3180,0.0013478996344350042
+A24 biased,cohort validation,3483,0.9819109544379098
+A24 standard,cohort validation,3483,0.8132453400683062
+A24 deceiving,cohort validation,3483,0.032864352124876095

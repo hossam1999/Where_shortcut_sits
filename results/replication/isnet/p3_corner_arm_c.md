@@ -9,3 +9,9 @@ Macro-F1 on the rebuilt P3 test (both A9 variants). P3 is descriptive only (A9 c
 | c_umte | biased | 0.383 | 0.376 |
 | c_umte | standard | 0.383 | 0.376 |
 | c_umte | deceiving | 0.383 | 0.376 |
+
+A24 SECONDARY (cohort validation, used for selection): | arm | condition | macro-F1 |
+|---|---|---|
+| c_umte | biased | 0.848 |
+| c_umte | standard | 0.848 |
+| c_umte | deceiving | 0.848 |

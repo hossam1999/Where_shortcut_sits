@@ -5,3 +5,6 @@ c_umte,k = 64,0.1,standard,primary,4190,0.3828752834183846
 c_umte,k = 64,0.1,standard,size-matched,3180,0.3764621118606275
 c_umte,k = 64,0.1,deceiving,primary,4190,0.3828752834183846
 c_umte,k = 64,0.1,deceiving,size-matched,3180,0.3764621118606275
+c_umte,k = 64,0.1,A24 biased,cohort validation,3483,0.8477423555612221
+c_umte,k = 64,0.1,A24 standard,cohort validation,3483,0.8477423555612221
+c_umte,k = 64,0.1,A24 deceiving,cohort validation,3483,0.8477423555612221

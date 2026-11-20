@@ -1,13 +1,19 @@
 arm,mode,C,test,variant,n,macro_f1
-b_dino518_mask_cmc,pooled,0.1,biased,primary,4190,0.9958299752304947
-b_dino518_mask_cmc,pooled,0.1,biased,size-matched,3180,0.9972897841474708
-b_dino518_mask_cmc,pooled,0.1,standard,primary,4190,0.419186857049952
-b_dino518_mask_cmc,pooled,0.1,standard,size-matched,3180,0.41619410938794976
-b_dino518_mask_cmc,pooled,0.1,deceiving,primary,4190,0.03166960263331935
-b_dino518_mask_cmc,pooled,0.1,deceiving,size-matched,3180,0.02639916998266662
-c_umte,k = 64,1.0,biased,primary,4190,0.9654856962973004
-c_umte,k = 64,1.0,biased,size-matched,3180,0.9735224385883973
-c_umte,k = 64,1.0,standard,primary,4190,0.4126148350567109
-c_umte,k = 64,1.0,standard,size-matched,3180,0.41940927232464337
-c_umte,k = 64,1.0,deceiving,primary,4190,0.07285458720401493
-c_umte,k = 64,1.0,deceiving,size-matched,3180,0.06371634411179056
+b_dino518_mask_cmc,pooled,0.1,biased,primary,4190,0.9470753969585314
+b_dino518_mask_cmc,pooled,0.1,biased,size-matched,3180,0.9460692924381074
+b_dino518_mask_cmc,pooled,0.1,standard,primary,4190,0.39840325814693683
+b_dino518_mask_cmc,pooled,0.1,standard,size-matched,3180,0.393989025234789
+b_dino518_mask_cmc,pooled,0.1,deceiving,primary,4190,0.1358629073759386
+b_dino518_mask_cmc,pooled,0.1,deceiving,size-matched,3180,0.11393101819040868
+c_umte,k = 64,0.1,biased,primary,4190,0.8365897277465147
+c_umte,k = 64,0.1,biased,size-matched,3180,0.8365364576404365
+c_umte,k = 64,0.1,standard,primary,4190,0.38894892030491873
+c_umte,k = 64,0.1,standard,size-matched,3180,0.3808103914195255
+c_umte,k = 64,0.1,deceiving,primary,4190,0.16828138784704846
+c_umte,k = 64,0.1,deceiving,size-matched,3180,0.14427477128558694
+b_dino518_mask_cmc,pooled,0.1,A24 biased,cohort validation,3483,0.9799115216096356
+b_dino518_mask_cmc,pooled,0.1,A24 standard,cohort validation,3483,0.7982684955560543
+b_dino518_mask_cmc,pooled,0.1,A24 deceiving,cohort validation,3483,0.1967450607095492
+c_umte,k = 64,0.1,A24 biased,cohort validation,3483,0.9727289798169455
+c_umte,k = 64,0.1,A24 standard,cohort validation,3483,0.7800822734263851
+c_umte,k = 64,0.1,A24 deceiving,cohort validation,3483,0.35861093502440117
