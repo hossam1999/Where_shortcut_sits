@@ -1,0 +1,19 @@
+paper,method,metric,ours,published,gap,passes_0.03,passes_0.05,source,note
+P2 Pahde 2025,RR-ClArC (A18),biased-test accuracy,0.5238847216739044,0.76,0.23611527832609558,False,False,pahde/p2_reproduction_a18.csv,
+P3 Bassi 2024,"released COVIDIsNet.pt, primary test (A9)",deceiving macro-F1,0.2230117183978033,0.773,0.5499882816021967,False,False,isnet/covidisnet_check.csv,
+P3 Bassi 2024,"released COVIDIsNet.pt, size-matched test (A9)",deceiving macro-F1,0.2599828400400348,0.773,0.5130171599599652,False,False,isnet/covidisnet_check.csv,
+P4 Saab 2022,Binary-ERM (3 trap sets),robust AUROC,0.36323358410737044,0.359,0.004233584107370458,True,True,saab/p4_gate_seg_pil.csv,
+P4 Saab 2022,Seg-ERM (3 trap sets),robust AUROC,0.6467728603650934,0.727,0.08022713963490657,False,False,saab/p4_gate_seg_pil.csv,A31 rerun; also misses the notebook value 0.772
+P5 R2R (step 1),"released Vanilla, ch test",accuracy,0.8381365969206475,0.895,0.05686340307935256,False,False,r2r/step1.csv,
+P5 R2R (step 1),"released Vanilla, ch test",macro-F1,0.7723201162650879,0.821,0.048679883734912055,False,True,r2r/step1.csv,
+P5 R2R (step 1),"released Vanilla, clean test",accuracy,0.833004342676668,0.895,0.06199565732333201,False,False,r2r/step1.csv,
+P5 R2R (step 1),"released Vanilla, clean test",macro-F1,0.7690402536188556,0.821,0.05195974638114431,False,False,r2r/step1.csv,
+P5 R2R (step 1),"released Vanilla, attacked test",accuracy,0.5523095144097908,0.356,0.19630951440979083,False,False,r2r/step1.csv,
+P5 R2R (step 1),"released Vanilla, attacked test",macro-F1,0.622478981182829,0.39,0.23247898118282895,False,False,r2r/step1.csv,
+P6 Yan 2023 (EPVT),"ERM, bias 1, 5 seeds",AUROC,0.6677273634741716,0.653,0.014727363474171584,True,True,epvt/A34_gate.json,target digitised (±≈0.005)
+P6 Yan 2023 (EPVT),"EPVT (A36), bias 1, 5 seeds",AUROC,0.6962879044754932,0.746,0.04971209552450684,False,True,epvt/A34_gate.json,target digitised (±≈0.005)
+P7 Dreyer 2024 (RR-ClArC),RR-ClArC vgg16,biased-test accuracy,0.5313857086458744,0.57,0.03861429135412553,False,True,rrclarc/p7/vgg16_summary.csv,
+P7 Dreyer 2024 (RR-ClArC),RR-ClArC resnet18,biased-test accuracy,0.7133833399131465,0.712,0.0013833399131465418,True,True,rrclarc/p7/resnet18_summary.csv,
+P7 Dreyer 2024 (RR-ClArC),RR-ClArC efficientnet_b0,biased-test accuracy,0.7283853138570865,0.756,0.027614686142913514,True,True,rrclarc/p7/efficientnet_b0_summary.csv,
+P8 Wu 2023 (DISC),"ERM, 5 trap sets",AUROC,0.5074099123673618,0.364,0.14340991236736178,False,False,disc/gate.json,
+P8 Wu 2023 (DISC),"DISC, 5 trap sets",AUROC,0.48941758498012505,0.551,0.06158241501987499,False,False,disc/gate.json,

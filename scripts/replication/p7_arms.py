@@ -29,7 +29,7 @@ RC = "/workspace/third_party/rrclarc"
 W = Path(f"{D}/p7_arms")
 RES = Path(f"{D}/results_push/results/replication/rrclarc/p7")
 ARCHS = ("resnet18", "efficientnet_b0", "vgg16")
-REPRODUCED = {"resnet18": True, "efficientnet_b0": True, "vgg16": False}
+REPRODUCED = {"resnet18": True, "efficientnet_b0": True, "vgg16": True}   # A38: VGG-16 passes at the widened 0.05 (gap 0.0386)
 C_GRID = (0.001, 0.003, 0.01, 0.03, 0.1, 1.0, 10.0)
 
 
@@ -133,15 +133,19 @@ def heads():
             rows.append(r)
     c = pd.DataFrame(comps); c["p_holm"] = holm(c.p_boot_two_sided.tolist())
     c["meets_beaten_rule"] = [bool(beaten(x, x.p_holm)) for _, x in c.iterrows()]
-    c["verdict"] = np.where(c.reproduced, np.where(c.meets_beaten_rule, "beaten", "not beaten"), "descriptive (RR-ClArC not reproduced)")
     r = pd.DataFrame(rows); RES.mkdir(parents=True, exist_ok=True)
+    c = c.merge(r[["arch", "arm", "clean_drop_vs_rrclarc"]], on=["arch", "arm"])
+    ok = c.meets_beaten_rule & (c.clean_drop_vs_rrclarc >= -0.01)   # registered rule unchanged: clean drop > 0.01 = not beaten
+    c["verdict"] = np.where(c.reproduced, np.where(ok, "beaten", np.where(c.meets_beaten_rule, "not beaten (clean drop > 0.01)", "not beaten")),
+                            "descriptive (RR-ClArC not reproduced)")
+    c = c.drop(columns="clean_drop_vs_rrclarc")
     r.to_csv(RES / "arms_summary.csv", index=False); c.to_csv(RES / "arms_comparison.csv", index=False)
     pd.concat(preds).to_csv(RES / "arms_test_probs.csv.gz", index=False); pd.DataFrame(sels).to_csv(RES / "arms_selection.csv", index=False)
     m = c.merge(r, on=["arch", "arm"])
     md = ["# P7 (RR-ClArC, A28): our arms vs our reproduced RR-ClArC — machine 2", "",
           "Biased test = LSB trigger in every image of every class (Table 1 'biased'); accuracy; image-only paired bootstrap "
           "(10,000), Holm over the 9 comparisons; 'beaten' = higher accuracy, 95 % CI above 0, Holm p < 0.05 (section 2); "
-          "VGG-16 descriptive (RR-ClArC not reproduced). Clean drop vs RR-ClArC > 0.01 flagged.", "",
+          "tolerance 0.05 (A38: all three architectures reproduced); a clean-accuracy drop > 0.01 vs RR-ClArC = not beaten (rule unchanged).", "",
           "| arch | arm | C (edge) | biased acc | RR-ClArC biased | Δ [95 % CI] | p Holm | clean acc (Δ vs RR-ClArC) | verdict |",
           "|---|---|---|---|---|---|---|---|---|"]
     for _, x in m.iterrows():

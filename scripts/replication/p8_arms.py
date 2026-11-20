@@ -326,6 +326,8 @@ def compare():
         md.append(f"| {x.rule} | {x.arm} | {x.ours_mean:.3f} | {x.theirs_mean:.3f} | {x.delta:+.3f} [{x.ci95_lo:+.3f}, "
                   f"{x.ci95_hi:+.3f}] | {x.p_boot_two_sided:.4f} | " + (f"{x.p_holm:.4f} | {'yes' if x.meets_beaten_rule else 'no'} |"
                                                                        if x.rule == "primary" else "— | — |"))
+    md += ["", "Published-number row (descriptive): **CBDebug (Enouen & Galhotra, ICLR 2026) 0.580 ± 0.116** on the same Bissoto "
+           "trap sets — not reproduced: no ISIC code released (published numbers come from a protocol we could not check; A37)."]
     md += ["", "Per trap set: `arms_per_set.csv`; per-image test scores (arms, DISC, ERM): `scores_test.csv.gz`; selection grids: "
            "`selection.csv`. ERM 5-set mean (same images): " +
            f"{np.mean([__import__('sklearn.metrics', fromlist=['roc_auc_score']).roc_auc_score(g.label, g.score) for _, g in e.groupby('trapset')]):.3f}."]
