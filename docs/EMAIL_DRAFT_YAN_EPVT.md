@@ -1,5 +1,7 @@
 # Draft email to Yan, Ge et al. — EPVT trap-set reproduction (not sent; the author sends it)
 
+**Sent 2026-11-20 by the author (signed "Hossam Elkady"; audit table and A34 gate attached). zongyuan.ge@monash.edu bounced (550 user unknown); siyuan.yan@monash.edu delivered.**
+
 **To:** Siyuan Yan <siyuan.yan@monash.edu> (first author), Zongyuan Ge <zongyuan.ge@monash.edu>
 *Addresses as printed on p. 1 of the PLDG paper (IEEE TMI 44(1), 2025); the EPVT MICCAI 2023 paper prints none and neither
 paper marks a corresponding author. Monash addresses may have changed since.*

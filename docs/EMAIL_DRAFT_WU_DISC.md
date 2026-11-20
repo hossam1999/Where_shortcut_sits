@@ -1,5 +1,7 @@
 # Draft email to Wu, Zou et al. — DISC ISIC trap-set results and the shared image cache (not sent; the author sends it)
 
+**Sent 2026-11-20 by the author to shirwu@cs.stanford.edu and jamesz@stanford.edu (signed "Hossam Elkady"); no bounce at send time.**
+
 **To:** Shirley Wu <shirwu@cs.stanford.edu>, James Zou <jamesz@stanford.edu>
 *Addresses as printed on p. 1 of the ICML 2023 paper ("Correspondence to: Shirley Wu …, James Zou …"). Stanford addresses may
 have changed since.*
