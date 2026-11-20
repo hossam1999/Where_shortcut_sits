@@ -1,0 +1,9 @@
+bias,arm,epvt_seed,flags,test_auroc,mode,C,val_auroc,C_edge
+1.0,b_dino518_mask_cmc,all,"dark_corner,hair,gel_border,gel_bubble,ruler,ink,vasc",0.7819054972998877,pooled,0.01,0.8965736122181368,lowest
+1.0,c_umte,all,"dark_corner,hair,gel_border,gel_bubble,ruler,ink,vasc",0.62471343105638,none,0.01,0.9267718484045973,lowest
+1.0,a_epvt_mask_cmc,0,"dark_corner,hair,gel_border,gel_bubble,ruler,ink,vasc",0.757061893258152,pooled,0.1,0.8754467384876455,
+1.0,a_epvt_mask_cmc,1,"dark_corner,hair,gel_border,gel_bubble,ruler,ink,vasc",0.7502504342327136,pooled,0.1,0.8863436222456483,
+1.0,a_epvt_mask_cmc,2,"dark_corner,hair,gel_border,gel_bubble,ruler,ink,vasc",0.7377637569817895,pooled,0.1,0.881296120124444,
+1.0,a_epvt_mask_cmc,3,"dark_corner,hair,gel_border,gel_bubble,ruler,ink,vasc",0.7859411415294076,pooled,0.01,0.8738526212943203,lowest
+1.0,a_epvt_mask_cmc,4,"dark_corner,hair,gel_border,gel_bubble,ruler,ink,vasc",0.7566115517697294,pooled,0.1,0.8859868742447227,
+1.0,d_effb0_mask_cmc,all,"dark_corner,hair,gel_border,gel_bubble,ruler,ink,vasc",0.7182078803070491,pooled,0.1,0.9084925307896023,
