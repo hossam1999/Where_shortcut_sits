@@ -1,7 +1,13 @@
 # Pre-registration — Phase 5 (thyroid TN3K calipers, Trap A / Trap B): their methods vs our arms, one rule for all
 
-**Status: DRAFT for the author's approval (machine 2, 2026-11-20). No phase-5 network has been trained beyond the timing
-test (30 batches each, outputs tagged `timing`, never scored). Nothing in this document has been run on a test set.**
+**Status: APPROVED by the author (2026-11-20 ~15:00 UTC, machine 2's clock) with the five recommendations of section 5:
+ISNet from ImageNet weights; each method's own published optimiser; constant learning rate; Holm family of 4 on Trap A;
+RR-ClArC 3 λ × 3 layers selected on validation. Recorded before any phase-5 network was trained (the timing test — 30
+batches each, outputs tagged `timing` and deleted, never scored — is the only phase-5 run so far).**
+
+Confirmed in this document: **fp32** for every network; **early stopping on `val_clean` AUROC, patience 5, at most 48
+epochs** (RR-ClArC's fine-tune: their fixed 10 epochs); **one selection criterion for every tuned choice** (`val_clean`
+AUROC: early stopping, RR-ClArC λ and layer, mask_cmc mode and C); **arm d included**; mask_cmc heads on the **A21 C grid**.
 
 Basis: `docs/REPLICATION_PLAN.md` "Phase 5, minimal scope" (author, 2026-11-18), A18 (RR-ClArC λ), A20/A21 (arm d, C grid),
 A31 (fp32). Code: `src/wtss/experiments/phase5.py`, `scripts/phase5/p5_run.py` (10 unit tests pass, `tests/test_phase5.py`).
@@ -68,7 +74,7 @@ RR-ClArC's (λ, layer), mask_cmc's mode and C.
 **Total ≤ ~7 GPU-h** (early stopping usually ends sooner); ISNet runs alone (13.8 GB). CPU heads (DINOv2 features at 518
 for ~2,600 images, mask_cmc, U-MtE, bootstrap) ≈ 1 h.
 
-## 5. Open decisions for the author (recommendation first)
+## 5. Decisions (author: all five recommendations approved, 2026-11-20)
 1. **ISNet initialisation.** Their class defaults to `pretrained=False` and P3 ran from scratch; every other phase-5 network is
    ImageNet-initialised and the training sets are small (~820–960 images). **Recommend ImageNet init** (a fair competitor,
    and 15 % faster); alternative: from scratch, as P3.
