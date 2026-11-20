@@ -1264,7 +1264,23 @@ c. **Backbone / preprocessing / data — no port error.** torchvision `vit_b_16(
   one selection criterion (val_clean AUROC), proposed outcomes / Holm family / success rule, and five open decisions (ISNet
   init, optimisers, constant lr, comparisons, RR-ClArC grid) with recommendations. Nothing runs until the author approves.
 
+### 2026-11-20 ~13:20 UTC (machine 2's clock) — machine 2: P7 (RR-ClArC, A28) correction runs started while PREREGISTRATION_PHASE5 waits
+- Queue (author): P7 fills the GPU while the phase-5 pre-registration waits for approval. Settings exactly as A28 (no grid):
+  `scripts/replication/p7_configs.py` writes their config format — VGG-16 `features.28` SGD λ 5·10⁸ p 8 %, ResNet-18
+  `last_conv` SGD λ 10¹¹ p 12.5 %, EfficientNet-B0 `last_conv` Adam λ 5·10⁹ p 8 %; lr 1e-4, 10 epochs, batch 64, their LSB
+  trigger and lsb_factor, `all_logits_random`, `l2_mean`, `cavs_max`, `signal`; their `Freeze` callback (rrc.py
+  `configure_callbacks`) freezes up to the CAV layer as the paper says. `scripts/replication/m2_p7.sh`: their preprocessing →
+  their correction → `p7_score.py` (scored once, as step 1: clean / attacked / ch, test and val, per-image logits kept).
+- **Environment ports (Python 3.11 / torch 2.11 / NumPy 2.4 vs their 3.8 / 1.x; `third_party/rrclarc/py311_port.patch`):**
+  (1) `random.seed(idx)` with a NumPy integer → `random.seed(int(idx))` (3.8 seeded with hash(idx) = the same integer);
+  (2) `torch.load(..., weights_only=False)` for their activation files and model loaders; (3) `if np.argwhere(...)` on an
+  empty array (NumPy ≥ 2.2 raises) → a helper that reproduces old NumPy exactly, **including its quirk that a matching
+  artifact sample at position 0 is skipped**. No setting changed. ResNet-18 correction runs (≈ 47 s/epoch).
+
 ### Watchdog log (machine 2, automatic; `scripts/replication/m2_watchdog.sh`)
+- 2026-11-20_12:32:21 UTC watchdog (machine 2): queue failure in m2_p7.log: 'FAILED P7 correction resnet18' — alert only (not retried)
+- 2026-11-20_12:31:51 UTC watchdog (machine 2): queue failure in m2_p7.log: 'FAILED P7 correction resnet18' — alert only (not retried)
+- 2026-11-20_12:27:18 UTC watchdog (machine 2): queue failure in m2_p7.log: 'FAILED P7 preprocessing resnet18' — alert only (not retried)
 - 2026-11-20_04:43:09 UTC watchdog (machine 2): queue failure in m2_p8_post.log: '2026-11-20_04:42:57 FAILED P8POST features_a' — alert only (not retried)
 - 2026-11-20_04:41:39 UTC watchdog (machine 2): queue failure in m2_p8_post.log: '2026-11-20_04:41:13 FAILED P8POST features_a' — alert only (not retried)
 - 2026-11-20_04:41:08 UTC watchdog (machine 2): queue failure in m2_p8_post.log: '**Gate: FAILED.** ERM mean misses 0.364 by > 0.03: gate FAILED; the published numbers may carry the shared-cache bug of DISC's released code (A37 hypothesis).' — alert only (not retried)

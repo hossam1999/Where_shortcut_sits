@@ -1,0 +1,114 @@
+diff --git a/datasets/bone_attacked.py b/datasets/bone_attacked.py
+index 782e1ca..4abfc0a 100644
+--- a/datasets/bone_attacked.py
++++ b/datasets/bone_attacked.py
+@@ -52,9 +52,9 @@ class BoneAttackedDataset(BoneDataset):
+         print(f"Artifacts ({len(self.artifact_ids)}) / Clean ({len(self.clean_sample_ids)})")
+ 
+     def add_artifact(self, img, idx):
+-        random.seed(idx);
++        random.seed(int(idx));
+         torch.manual_seed(idx);
+-        np.random.seed(idx)
++        np.random.seed(int(idx))
+         kwargs = {
+             'text': "Clever Hans",
+             'fill': (0, 0, 0),
+diff --git a/datasets/imagenet_attacked.py b/datasets/imagenet_attacked.py
+index 3832f4d..8ce9be6 100644
+--- a/datasets/imagenet_attacked.py
++++ b/datasets/imagenet_attacked.py
+@@ -80,9 +80,9 @@ class ImageNetAttackedDataset(ImageNetDataset):
+ 
+ 
+     def add_artifact(self, img, idx):
+-        random.seed(idx)
++        random.seed(int(idx))
+         torch.manual_seed(idx)
+-        np.random.seed(idx)
++        np.random.seed(int(idx))
+ 
+         return insert_artifact(img, self.artifact_type, **self.artifact_kwargs)
+     
+diff --git a/datasets/isic_attacked.py b/datasets/isic_attacked.py
+index 30c8adf..cc277cc 100644
+--- a/datasets/isic_attacked.py
++++ b/datasets/isic_attacked.py
+@@ -80,9 +80,9 @@ class ISICAttackedDataset(ISICDataset):
+         self.clean_sample_ids = [i for i in range(len(self)) if i not in self.artifact_ids]
+ 
+     def add_artifact(self, img, idx):
+-        random.seed(idx)
++        random.seed(int(idx))
+         torch.manual_seed(idx)
+-        np.random.seed(idx)
++        np.random.seed(int(idx))
+ 
+         return insert_artifact(img, self.artifact_type, **self.artifact_kwargs)
+ 
+diff --git a/model_training/correction_methods/clarc.py b/model_training/correction_methods/clarc.py
+index cb7f6b7..a5f4ee8 100644
+--- a/model_training/correction_methods/clarc.py
++++ b/model_training/correction_methods/clarc.py
+@@ -65,7 +65,7 @@ class Clarc(LitClassifier):
+             if "bone" in self.dataset_name:
+                 classes = [2]
+         for class_id in classes:
+-            data = torch.load(f"{path}/{self.layer_name}_class_{class_id}_all.pth")
++            data = torch.load(f"{path}/{self.layer_name}_class_{class_id}_all.pth", weights_only=False)
+             if data['samples']:
+                 sample_ids += data['samples']
+                 vecs.append(torch.stack(data[mode], 0))
+@@ -80,9 +80,12 @@ class Clarc(LitClassifier):
+         vecs = vecs[filter_sample]
+         sample_ids = sample_ids[filter_sample]
+ 
++        # port (numpy >= 2.2): `if np.argwhere(...)` on an empty array raised; old numpy evaluated it as False and a
++        # one-element result as bool(its index) (so a match at index 0 was skipped) - reproduced exactly
++        _hit = lambda a: a.size > 0 and bool(a.reshape(-1)[0]) if a.size <= 1 else bool(a)
+         target_ids = np.array(
+             [np.argwhere(sample_ids == id_)[0][0] for id_ in self.artifact_sample_ids if
+-             np.argwhere(sample_ids == id_)])
++             _hit(np.argwhere(sample_ids == id_))])
+         targets = np.array([1 * (j in target_ids) for j, x in enumerate(sample_ids)])
+         X = vecs.detach().cpu().numpy()
+ 
+diff --git a/models/efficientnet.py b/models/efficientnet.py
+index db16e9e..d644e1d 100644
+--- a/models/efficientnet.py
++++ b/models/efficientnet.py
+@@ -30,7 +30,7 @@ def get_efficientnet(model_fn, ckpt_path=None, pretrained=True, n_class: int = N
+         model.classifier.add_module('last', new_layer)
+     if ckpt_path:
+         print("Loading from existing checkpoint.")
+-        checkpoint = torch.load(ckpt_path)
++        checkpoint = torch.load(ckpt_path, weights_only=False)
+         if "state_dict" in checkpoint:
+             checkpoint = checkpoint["state_dict"]
+         model.load_state_dict(checkpoint)
+diff --git a/models/resnet.py b/models/resnet.py
+index 26e3494..769cb61 100644
+--- a/models/resnet.py
++++ b/models/resnet.py
+@@ -30,7 +30,7 @@ def get_resnet(model_fn, ckpt_path=None, pretrained=True, n_class: int = None) -
+         num_in = model.fc.in_features
+         model.fc = torch.nn.Linear(num_in, n_class, bias=True)
+     if ckpt_path:
+-        checkpoint = torch.load(ckpt_path)
++        checkpoint = torch.load(ckpt_path, weights_only=False)
+         if "state_dict" in checkpoint:
+             checkpoint = checkpoint["state_dict"]
+         if "module" in list(checkpoint.keys())[0]:
+diff --git a/models/vgg.py b/models/vgg.py
+index 83e257a..d00f1e2 100644
+--- a/models/vgg.py
++++ b/models/vgg.py
+@@ -39,7 +39,7 @@ def get_vgg(model_fn, ckpt_path=None, pretrained=True, n_class: int = None) -> t
+     if n_class and n_class != 1000:
+         model.classifier[-1] = torch.nn.Linear(4096, n_class, bias=True)
+     if ckpt_path:
+-        checkpoint = torch.load(ckpt_path)
++        checkpoint = torch.load(ckpt_path, weights_only=False)
+         if "state_dict" in checkpoint:
+             checkpoint = checkpoint["state_dict"]
+         if "module" in list(checkpoint.keys())[0]:

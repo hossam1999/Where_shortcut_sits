@@ -123,7 +123,8 @@ run) → P7.
 | P6 FINAL (2026-11-20) | not reproduced: ERM 0.668 ± 0.017 (pass), EPVT (A36) 0.696 ± 0.006 vs 0.746 (miss); email draft `docs/EMAIL_DRAFT_YAN_EPVT.md` | — |
 | A34 P6 5 seeds (A36 mixup) | A33 missed (EPVT 0.655): ERM seeds 1–4 + EPVT seeds 0–4 with A36 (paper Eq. 3); after P8 gate + arms, before P7; audit `docs/P6_EPVT_AUDIT.md` | `nohup scripts/replication/m2_p6_5seeds.sh > /workspace/logs/m2_p6_5seeds.log 2>&1 &` (needs `third_party/epvt/mixup_eq3.patch` applied in `/workspace/third_party/epvt`) |
 | Phase 5 | trainer + 10 unit tests done (`scripts/phase5/p5_run.py`); timing test + prereg next, then wait | — |
-| P7 RR-ClArC | step 1 reproduced (`results/replication/rrclarc/step1.md`); fine-tunes fill GPU during approvals | — |
+| P7 RR-ClArC (A28) | running: their preprocessing → correction → scoring per architecture (ResNet-18, EfficientNet-B0, VGG-16) | `WTSS_DATA=/workspace/data nohup scripts/replication/m2_p7.sh > /workspace/logs/m2_p7.log 2>&1 &` (skips finished steps; needs `third_party/rrclarc/py311_port.patch` applied) |
+| P7 RR-ClArC (old row) | step 1 reproduced (`results/replication/rrclarc/step1.md`); fine-tunes fill GPU during approvals | — |
 
 ## Done (results in git)
 - Phase 0–1, amendments A1–A14 (pushed).
