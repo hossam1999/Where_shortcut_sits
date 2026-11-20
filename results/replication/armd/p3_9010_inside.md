@@ -1,5 +1,7 @@
 # Arm d (A20/A21) — P3 90/10 inside variant (A6), EfficientNet-B0 on lung-masked images + mask_cmc, seed 1234
 
+> **INVALID (A30, machine 1, 2026-11-20):** produced with the P3 image–label misalignment bug in our arm adapter (training and validation images did not match their labels). Kept for the record; do not use.
+
 One seed: test values are point estimates on the rebuilt P3 test (A9/A10; both variants); the paired comparison with the ISNet 90/10 inside run is added when that run is scored.
 
 Encoder training: 20 epochs, best validation macro-F1 0.873 at epoch 14. Head: mode pooled, C = 0.03 (edge of the A21 grid: **no**).

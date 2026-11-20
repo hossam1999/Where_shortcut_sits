@@ -1,5 +1,7 @@
 # P3 original corner benchmark (every image marked, A12): our arm c (U-MtE), the corner ISNet run's data
 
+> **INVALID (A30, machine 1, 2026-11-20):** produced with the P3 image–label misalignment bug in our arm adapter (training and validation images did not match their labels). Kept for the record; do not use.
+
 Macro-F1 on the rebuilt P3 test (both A9 variants). P3 is descriptive only (A9 check failed, 2026-11-18). One data seed; point estimates; the paired comparison with ISNet is added when that run is scored. Validation = P3's validation split with its marks (registered); registered C grid.
 
 - **c_umte**: selected mode **k = 64**, C = 10 (validation macro-F1 0.284; edge of the registered grid: highest)

@@ -44,7 +44,8 @@ def features():
         if f.exists():
             continue
         g, r, idx, ids, y, pl, marks = S.src[k]
-        data = S.T.Data(g, r, ids, y, pl, marks, False, 0)
+        data = S.T.Data(np.asarray(g[idx]), np.asarray(r[idx]), ids, y, pl, marks, False, 0)   # A30: split subset (was full array)
+        assert np.array_equal((data[0][0][0].numpy() * 255).round().astype(np.uint8), np.asarray(g[idx[0]])) or marks[0] is not None
         X = []
         for s0 in range(0, len(ids), 512):
             ims, rois = [], []

@@ -1,5 +1,7 @@
 # P3 (Bassi et al. 2024) — final table, DESCRIPTIVE (machine 1, 2026-11-20)
 
+**A30 (2026-11-20): every row of OUR arms below is INVALID** (image–label misalignment in our P3 arm adapter; ISNet rows are unaffected). Corrected arm rows replace them after re-scoring.
+
 **Caveats.** (1) P3 is not reproduced and carries no verdict (A9: P3's released COVIDIsNet.pt scores 0.223 / 0.260 on our rebuilt test and fails on P3's own training sources; no pipeline difference found). (2) The A24 secondary evaluation uses P3's cohort-validation images, which were used for epoch / model selection. (3) One seed. (4) By the author's scope change (2026-11-19) the A24 feature passes for our arms were not run; our arms on P3 are reported as a limitation.
 
 Macro-F1. Rebuilt external test (primary): full / size-matched (A9). A24 secondary: cohort validation.

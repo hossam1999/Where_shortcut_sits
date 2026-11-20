@@ -305,7 +305,8 @@ class P3:
 
     def dataset(self, k, train):
         g, r, idx, ids, y, pl, marks = self.src[k]
-        return P3Masked(self.T.Data(g, r, ids, y, pl, marks, train, SEED), idx)
+        gs, rs = np.asarray(g[idx]), np.asarray(r[idx])   # A30: the split's own images and masks (was the full array: misaligned)
+        return P3Masked(self.T.Data(gs, rs, ids, y, pl, marks, train, SEED), idx)
 
     def val_metric(self, preds):
         from sklearn.metrics import f1_score

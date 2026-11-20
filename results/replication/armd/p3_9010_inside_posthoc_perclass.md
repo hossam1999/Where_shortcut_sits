@@ -1,5 +1,7 @@
 # POST HOC, exploratory — arm d on P3 90/10 inside with mode = per_class (author, 2026-11-18)
 
+> **INVALID (A30, machine 1, 2026-11-20):** produced with the P3 image–label misalignment bug in our arm adapter (training and validation images did not match their labels). Kept for the record; do not use.
+
 **Not a registered result.** Same EfficientNet-B0 features as the registered arm d; mode fixed to per_class (span of the 3 per-class mark directions); C by the same validation rule (macro-F1 on P3's validation split with its marks, A21 grid): C = 1 (edge: no; validation macro-F1 0.851). Test scored once. The registered row (pooled, C = 0.03) is shown for comparison.
 
 | test | variant | registered (pooled, C = 0.03) | POST HOC per_class |

@@ -756,3 +756,16 @@ is scored on trap sets 4 or 5).**
 - **Published rows (descriptive, not reproduced):** DISC Table 1 baselines (ERM 36.4 … LISA 38.0) and **CBDebug (Enouen &
   Galhotra, ICLR 2026) 58.0 ± 11.6** on the same benchmark, labelled "published number only — not reproduced: released code
   has no ISIC experiment (R4)"; no claim is made against it.
+
+**A30 (machine 1, 2026-11-20, before any re-score; port bug in our P3 arm code, recorded like A7; author's correctness
+check).** The author asked for a correctness check because arm c on the P3 corner benchmark was below chance on validation
+(macro-F1 0.284). **Bug:** `scripts/replication/armd_train.py`, `P3.dataset()` built P3's `Data` with the **full**
+cohort image and lung-mask arrays but the split's ids, labels and marks; P3's own trainer (`p3_train.py`) replaces the arrays
+with the split's subset after building `Data`, our adapter did not. Training and validation images were therefore
+misaligned with their labels (verified: 201 of 201 sampled training and 204 of 205 validation images differed from their
+own cohort image; the test sets were aligned because there the subset is the whole array). **Affected (all our P3 arms):**
+arm d on the 90/10 inside variant (registered result and the post-hoc per_class row), arms b and c on the 90/10 inside
+variant, arm c on the corner benchmark. **Not affected:** every ISNet run (P3's own code), the A9 check, the A24 ISNet
+evaluations, all non-P3 results. **Fix:** pass the split's subset arrays (`gray[idx]`, `roi[idx]`), with an alignment
+assertion. **Re-scoring:** arm c on the corner benchmark is re-extracted and re-scored once (authorised); the other affected
+results are marked invalid and wait for the author's decision. The invalid results files are kept, labelled.
