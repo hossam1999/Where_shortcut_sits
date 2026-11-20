@@ -305,19 +305,26 @@ def compare():
             out.append({"rule": r, "arm": arm, "primary_arm": arm[0] in "bd", **boot_sets(per)})
     o = pd.DataFrame(out)
     m = o.rule == "primary"; o.loc[m, "p_holm"] = holm(o.loc[m, "p_boot_two_sided"].tolist())
-    o["beaten"] = [bool(beaten(x, x.p_holm)) if x.rule == "primary" else None for _, x in o.iterrows()]
+    o["meets_beaten_rule"] = [bool(beaten(x, x.p_holm)) if x.rule == "primary" else None for _, x in o.iterrows()]
+    g = json.load(open(RES.parent / "gate.json"))
+    o["gate_passed"] = g["gate_passed"]   # A32: verdicts only if the gate passes; otherwise descriptive (tier 2)
     o.to_csv(RES / "comparison.csv", index=False)
     e = s[s.method == "ERM"]
-    md = ["# P8: our arms vs our reproduced DISC (A32, A35, A37) — machine 2", "",
+    status = ("**Gate PASSED: verdicts apply.**" if g["gate_passed"] else
+              f"**Gate FAILED (ERM {g['ERM']['mean']:.3f} vs 0.364, DISC {g['DISC']['mean']:.3f} vs 0.551; A37 reading): P8 is "
+              "DESCRIPTIVE.** The comparison is against our run of DISC's official code under identical conditions (reporting "
+              "tier 2), not against the published 0.551; the last column says whether the registered rule's conditions hold, "
+              "not a verdict.")
+    md = ["# P8: our arms vs our reproduced DISC (A32, A35, A37) — machine 2", "", status, "",
           "5-set mean test ROC-AUC (618 test images per trap set, DISC's split); paired image-only bootstrap (10,000 "
           "replicates, one Poisson weight per image shared across trap sets and methods, trap sets fixed). Primary rule = "
           "DISC's protocol (selection on 154 test-distribution validation images, as DISC and ERM); secondary = fit on "
           "1,563 / select on Bissoto's 259 held-out validation images (no test-distribution data). Holm family = the 4 "
           "primary comparisons; arms b and d primary, a and c secondary.", "",
-          "| rule | arm | arm mean | DISC mean | Δ [95 % CI] | p | p Holm | beaten |", "|---|---|---|---|---|---|---|---|"]
+          "| rule | arm | arm mean | DISC mean | Δ [95 % CI] | p | p Holm | rule conditions met |", "|---|---|---|---|---|---|---|---|"]
     for _, x in o.iterrows():
         md.append(f"| {x.rule} | {x.arm} | {x.ours_mean:.3f} | {x.theirs_mean:.3f} | {x.delta:+.3f} [{x.ci95_lo:+.3f}, "
-                  f"{x.ci95_hi:+.3f}] | {x.p_boot_two_sided:.4f} | " + (f"{x.p_holm:.4f} | {'yes' if x.beaten else 'no'} |"
+                  f"{x.ci95_hi:+.3f}] | {x.p_boot_two_sided:.4f} | " + (f"{x.p_holm:.4f} | {'yes' if x.meets_beaten_rule else 'no'} |"
                                                                        if x.rule == "primary" else "— | — |"))
     md += ["", "Per trap set: `arms_per_set.csv`; per-image test scores (arms, DISC, ERM): `scores_test.csv.gz`; selection grids: "
            "`selection.csv`. ERM 5-set mean (same images): " +
