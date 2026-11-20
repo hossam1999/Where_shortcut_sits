@@ -1370,6 +1370,15 @@ c. **Backbone / preprocessing / data — no port error.** torchvision `vit_b_16(
   s/epoch alone (epochs 1–15 ran alone during the stall; includes the first data load) vs 84 s paired → ≈ 0.67; **total ≈
   1.36 > 1.0**. ISNet will not start beside anything (15 GB free required).
 
+### 2026-11-20 ~16:05 UTC (machine 2's clock) — machine 2: three GPU jobs at once (gpu_wait race) — fixed; bias-0.9 ERM seed 0 restarted
+- At 16:00 the U-Net prediction, a phase-5 RR-ClArC run and the new bias-0.9 ERM seed 0 ran together (15.3 / 16.3 GB),
+  against the one-other-job rule. Cause (my `gpu_wait.sh`): it released its lock after 180 s even when the launched job had
+  not reached the GPU yet; EPVT's runs spend minutes on CPU set-up, so a third job was let in. Fix: every launched job leaves a
+  pending marker that all other waits count until it appears on the GPU or exits (new file swapped in by rename).
+- The bias-0.9 ERM seed 0 (the lowest-priority job, ~1 min old) was stopped (folder set aside as
+  `stopped_race_erm_bias0.9_1_seed0_x`, nothing scored) and its script restarted; it now waits for a free slot. Phase 5 and
+  the U-Net prediction were not touched.
+
 ### Watchdog log (machine 2, automatic; `scripts/replication/m2_watchdog.sh`)
 - 2026-11-20_13:29:24 UTC watchdog (machine 2): queue failure in m2_p7.log: 'FAILED P7 arms heads' — alert only (not retried)
 - 2026-11-20_12:59:06 UTC watchdog (machine 2): queue failure in m2_p7.log: 'FAILED P7 preprocessing vgg16' — alert only (not retried)
