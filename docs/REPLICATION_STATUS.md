@@ -1447,6 +1447,15 @@ c. **Backbone / preprocessing / data — no port error.** torchvision `vit_b_16(
   at 23:03 (watchdog alert). Nothing was scored. Its folder is set aside (`oom_erm_bias0.9_1_seed3_x`) and the bias-0.9 script
   restarts automatically when P4's three encoders are done and the GPU is empty (it skips the six finished runs).
 
+### 2026-11-20 23:15 UTC (machine 2's clock) — machine 2: P4 second-tier comparison (A40, descriptive) — no arm above our Seg-ERM
+- `results/replication/saab/a40/comparison.md`. Robust AUROC, Bissoto ISIC 2018 trap sets 1–3 (772 test images each), our arms
+  vs our A31 Seg-ERM run of Saab's code (3-set mean 0.647; P4 not reproduced, no claim against the published 0.727):
+  b DINOv2 + mask_cmc **0.670** (Δ +0.023 [−0.029, +0.076], Holm p 0.88); c U-MtE 0.623 (−0.023); d EfficientNet-B0 + mask_cmc
+  0.621 (−0.026 [−0.073, +0.022]); a mask_cmc on Seg-ERM's encoder 0.552 (−0.095 [−0.141, −0.049], Holm p 0.0004, worse).
+- Reading: Segmentation-ERM uses the lesion masks as supervision during training; our arms use the same masks only to mask
+  images / define the ROI. On these trap sets that supervision is as good as our constraint (b level with it, a below it).
+- P6: bias-0.9 seeds restarted 23:14 (ERM seed 3), chain restarted (fresh logs; the old ones kept as `*.log.1`).
+
 ### Watchdog log (machine 2, automatic; `scripts/replication/m2_watchdog.sh`)
 - 2026-11-20_23:03:04 UTC watchdog (machine 2): queue failure in m2_p6_bias09.log: 'FAILED P6B09 erm 3' — alert only (not retried)
 - 2026-11-20_16:33:43 UTC watchdog (machine 2): queue failure in m2_p6_chain.log: '2026-11-20_16:33:41 FAILED P6CHAIN cache' — alert only (not retried)
