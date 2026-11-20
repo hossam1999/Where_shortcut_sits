@@ -12,8 +12,8 @@ D=${WTSS_DATA:-/workspace/data}; REPO=/root/Where_shortcut_sits; Q=$REPO/scripts
 ST=${WD_STATE:-$D/watchdog}; mkdir -p $ST; ALERTS=$LG/watchdog_alerts.log; STATUS=${WD_STATUS:-$REPO/docs/REPLICATION_STATUS.md}
 DRY=${WD_DRY:-0}   # 1 = test mode: log actions, never move folders or start lanes
 L=$D/disc/output; K=$D/disc/locks
-QUEUE_LOGS="$LG/m2_p6_chain.log $LG/m2_p6_bias09.log $LG/m2_p6_prep.log $LG/m2_p5.log $LG/m2_p7.log $LG/m2_p8_post.log $LG/m2_push.log $LG/m2_p8_queue.log $LG/m2_p6_a33.log $LG/m2_p6_5seeds.log $LG/m2_pair_p6p8.log $LG/m2_pair_p8p8.log"
-QUEUE_SCRIPTS='m2_p6_chain\.sh|m2_p6_bias09\.sh|m2_p6_prep\.sh|m2_p5\.sh|m2_p7\.sh|m2_p8_post\.sh|m2_p8_lanes\.sh|m2_pair_p6p8\.sh|m2_pair_p8p8\.sh|m2_p6_queue\.sh|m2_p6_a33\.sh|m2_p6_5seeds\.sh|gpu_wait\.sh'
+QUEUE_LOGS="$LG/m2_p6_clean.log $LG/m2_p6_chain.log $LG/m2_p6_bias09.log $LG/m2_p6_prep.log $LG/m2_p5.log $LG/m2_p7.log $LG/m2_p8_post.log $LG/m2_push.log $LG/m2_p8_queue.log $LG/m2_p6_a33.log $LG/m2_p6_5seeds.log $LG/m2_pair_p6p8.log $LG/m2_pair_p8p8.log"
+QUEUE_SCRIPTS='m2_p6_clean\.sh|m2_p6_chain\.sh|m2_p6_bias09\.sh|m2_p6_prep\.sh|m2_p5\.sh|m2_p7\.sh|m2_p8_post\.sh|m2_p8_lanes\.sh|m2_pair_p6p8\.sh|m2_pair_p8p8\.sh|m2_p6_queue\.sh|m2_p6_a33\.sh|m2_p6_5seeds\.sh|gpu_wait\.sh'
 JOB_PROCS='run_expt\.py|train_(erm|epvt)|p5_run\.py|p4_train\.py'
 IDLE_MIN=${IDLE_MIN:-10}
 

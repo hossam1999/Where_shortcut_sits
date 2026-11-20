@@ -339,11 +339,145 @@ def compare(biases, final):
     (RES / f"comparison_bias{tag}.md").write_text("\n".join(md) + "\n"); print("\n".join(md))
 
 
+# ------------------------------------------------------------------------------------------------------ A42 clean check
+def test0():
+    return pd.read_csv(f"{TS}/test_bias_0_1.csv")
+
+
+class _Orig:
+    """test_bias_0_1 images loaded from the originals (they are not all in the 224/256 caches), lesion-masked."""
+    def __init__(self, ids, size):
+        self.ids, self.size, self.src = list(ids), size, None
+
+    def __len__(self):
+        return len(self.ids)
+
+    def __getitem__(self, k):
+        import torch
+        import torchvision.transforms as T
+        if self.src is None:
+            self.src = mask_source(); self.norm = T.Compose([T.ToTensor(), T.Normalize([0.485, 0.456, 0.406], [0.229, 0.224, 0.225])])
+        x, r, _ = load(self.ids[k], self.size, self.src)
+        return self.norm(Image.fromarray(masked(x, r))), torch.tensor(0)
+
+
+def clean_features(biases, part):
+    """A42 features of test_bias_0_1: part 'a' (EPVT env: each EPVT seed's classifier input), 'bd' (venv-wtss: DINOv2 @ 518
+    masked; arm d's encoder of each bias)."""
+    import torch
+    t0 = test0(); ids = t0.image.tolist()
+    if part == "a":
+        sys.path.insert(0, "/workspace/third_party/epvt")
+        from domainbed import algorithms
+        for b in biases:
+            for s in range(5):
+                out = W / f"a_bias{bstr(b)}_seed{s}_test0.npz"
+                if out.exists():
+                    continue
+                c = torch.load(f"{D}/epvt/runs/epvt_a36_bias{bstr(b)}_1_seed{s}/epvt.pkl", map_location="cpu", weights_only=False)
+                alg = algorithms.get_algorithm_class(c["args"]["algorithm"])(c["model_input_shape"], c["model_num_classes"], 5, c["model_hparams"])
+                alg.load_state_dict(c["model_dict"]); alg.cuda().eval()
+                F = []; h = alg.classifier.register_forward_hook(lambda m, i, o: F.append(i[0].float().cpu())); X = []
+                with torch.no_grad():
+                    for x, _ in torch.utils.data.DataLoader(_Orig(ids, 224), batch_size=128, shuffle=False, num_workers=12):
+                        F.clear(); alg.predict(x.cuda()); X.append(F[-1].numpy())
+                h.remove(); np.savez(out, ids=np.array(ids, dtype="U"), X=np.concatenate(X)); print("clean a", b, s, flush=True)
+                del alg; torch.cuda.empty_cache()
+        return
+    from wtss.umte import UMtE
+    f = W / "dino518_masked_test0.npz"
+    if not f.exists():
+        um = UMtE("dino518", device="cuda", seed=0, batch_size=16); src = mask_source(); X = []
+        with ThreadPoolExecutor(16) as ex:
+            for s0 in range(0, len(ids), 256):
+                L = list(ex.map(lambda i: load(i, 518, src), ids[s0:s0 + 256]))
+                X.append(um.masked_features([Image.fromarray(x) for x, _, _ in L], [r for _, r, _ in L]))
+        np.savez(f, ids=np.array(ids, dtype="U"), X=np.concatenate(X)); print("clean dino", len(ids), flush=True)
+        del um; torch.cuda.empty_cache()
+    import armd_train as A
+    for b in biases:
+        out = W / "armd" / f"p6_bias{bstr(b)}" / "features_test0.npz"
+        if out.exists():
+            continue
+        m = A.make_model(2, False).to("cuda"); m.load_state_dict(torch.load(W / "armd" / f"p6_bias{bstr(b)}" / "best.pt", map_location="cuda"))
+        _, Fd = A.predict(m, torch.utils.data.DataLoader(_Orig(ids, 224), batch_size=64, shuffle=False, num_workers=12), feats=True)
+        np.savez(out, ids=np.array(ids, dtype="U"), X=Fd); print("clean d", b, flush=True)
+
+
+def _select_scores(Xs, ys, A, modes, grid):
+    """as _select (same fit, same selection), returning decision values for every non-fit/val set"""
+    import candidates as CA
+    from sklearn.linear_model import LogisticRegression
+    from sklearn.metrics import roc_auc_score
+    best = None
+    for mode in modes:
+        if mode is None:
+            Z = Xs
+        else:
+            Q = np.concatenate([CA.cmc_directions(Xs["fit"], ys["fit"], A[:, j], mode) for j in range(A.shape[1])], 1)
+            q, rr = np.linalg.qr(Q); Q = q[:, np.abs(np.diag(rr)) > 1e-10 * max(1.0, np.abs(rr).max())]
+            P = CA.Projector(Q); Z = {s: P(v) for s, v in Xs.items()}
+        for C in grid:
+            clf = LogisticRegression(C=C, class_weight="balanced", max_iter=5000, solver="liblinear", random_state=0).fit(Z["fit"], ys["fit"])
+            v = float(roc_auc_score(ys["val"], clf.decision_function(Z["val"])))
+            if best is None or v > best[1]:
+                best = (clf, v, Z)
+    clf, v, Z = best
+    return {k: clf.decision_function(z) for k, z in Z.items() if k not in ("fit", "val")}
+
+
+def clean(biases):
+    """A42: the A39 heads refitted identically (same data, same selection) and applied to test_bias_0_1; EPVT seeds' scores on
+    test_bias_0_1 from p6_epvt_score.py; flag 'within EPVT - 0.01'. The A39 test scores are re-derived and asserted equal."""
+    import candidates as CA
+    import armd_train as A
+    from sklearn.metrics import roc_auc_score
+    from wtss.methods.insertion import fit_difference_subspace
+    t0 = test0(); y0 = t0.label.to_numpy()
+    zb = np.load(W / "dino518_masked_all.npz"); bpos = {i: j for j, i in enumerate(zb["ids"].astype(str))}
+    zb0 = np.load(W / "dino518_masked_test0.npz"); assert list(zb0["ids"]) == t0.image.tolist()
+    prev = pd.read_csv(RES / f"scores_test_bias{'_'.join(bstr(b) for b in biases)}.csv.gz") if (RES / f"scores_test_bias{'_'.join(bstr(b) for b in biases)}.csv.gz").exists() else None
+    rows = []
+    for b in biases:
+        sp = split(b); used = used_flags(sp["fit"]); Afl = flags01(sp["fit"])[used].to_numpy().astype(int); B = bstr(b)
+        ys = {s: sp[s].label.to_numpy() for s in sp}
+        Xb = {**{s: zb["X"][[bpos[i] for i in sp[s].image]] for s in sp}, "test0": zb0["X"]}
+        res = {"b_dino518_mask_cmc": [_select_scores(Xb, ys, Afl, CA.CMC_MODES, CS)] * 5}
+        ins = np.load(W / f"dino518_insert_fit_bias{B}.npz")
+        er = fit_difference_subspace(Xb["fit"], ins["X"], energy=0.90, max_k=64, seed=0)
+        res["c_umte"] = [_select_scores({s: er(v) for s, v in Xb.items()}, ys, Afl, (None,), CS)] * 5
+        res["a_epvt_mask_cmc"] = [_select_scores({**{k: np.load(W / f"a_bias{B}_seed{s}.npz")[f"X_{k}"] for k in sp},
+                                                  "test0": np.load(W / f"a_bias{B}_seed{s}_test0.npz")["X"]}, ys, Afl, CA.CMC_MODES, CS) for s in range(5)]
+        Fd = np.load(W / "armd" / f"p6_bias{B}" / "features.npz")
+        res["d_effb0_mask_cmc"] = [_select_scores({**{k: Fd[k] for k in sp}, "test0": np.load(W / "armd" / f"p6_bias{B}" / "features_test0.npz")["X"]},
+                                                  ys, Afl, CA.CMC_MODES, A.CS)] * 5
+        e0 = []
+        for s in range(5):
+            f = f"{D}/epvt/runs/epvt_a36_bias{B}_1_seed{s}/epvt__test_bias_0_1.json"
+            e0.append(json.load(open(f))["roc_auc"])
+        for arm, per in res.items():
+            if prev is not None:   # the A39 test scores must come out identical
+                for sd, d in enumerate(per):
+                    q = prev[(prev.bias == b) & (prev.method == arm) & (prev.seed == sd)]
+                    assert np.allclose(q.score.to_numpy(), d["test"]), (arm, b, sd)
+            arm0 = [float(roc_auc_score(y0, d["test0"])) for d in per]
+            m_arm = float(np.mean(arm0)) if arm == "a_epvt_mask_cmc" else arm0[0]
+            rows.append({"bias": b, "arm": arm, "clean_auroc_arm": m_arm, "clean_auroc_epvt_5seed": float(np.mean(e0)),
+                         "diff": m_arm - float(np.mean(e0)), "within_epvt_minus_0.01": bool(m_arm >= np.mean(e0) - 0.01),
+                         "arm_per_seed": arm0 if arm == "a_epvt_mask_cmc" else None, "epvt_per_seed": e0})
+    o = pd.DataFrame(rows); RES.mkdir(parents=True, exist_ok=True); o.to_csv(RES / f"clean_check_bias{'_'.join(bstr(b) for b in biases)}.csv", index=False)
+    md = ["# P6 reported clean check (A42; NOT part of the A39 verdict) — AUROC on test_bias_0_1", "",
+          "| bias (training) | arm | arm clean AUROC | EPVT clean AUROC (5 seeds) | Δ | within EPVT − 0.01 |", "|---|---|---|---|---|---|"]
+    md += [f"| {bstr(r.bias)} | {r.arm} | {r.clean_auroc_arm:.3f} | {r.clean_auroc_epvt_5seed:.3f} | {r['diff']:+.3f} | {'yes' if r['within_epvt_minus_0.01'] else 'no'} |" for _, r in o.iterrows()]
+    (RES / f"clean_check_bias{'_'.join(bstr(b) for b in biases)}.md").write_text("\n".join(md) + "\n"); print("\n".join(md))
+
+
 if __name__ == "__main__":
     ap = argparse.ArgumentParser()
-    ap.add_argument("--stage", choices=["cache", "features_a", "features_bc", "armd", "heads", "compare"], required=True)
+    ap.add_argument("--stage", choices=["cache", "features_a", "features_bc", "armd", "heads", "compare", "clean_a", "clean_bd", "clean"], required=True)
     ap.add_argument("--bias", nargs="+", type=float, default=[1.0]); ap.add_argument("--workers", type=int, default=12)
     ap.add_argument("--final", action="store_true")
     a = ap.parse_args()
     {"cache": lambda: cache(a.bias), "features_a": lambda: features_a(a.bias), "features_bc": lambda: features_bc(a.bias),
-     "armd": lambda: armd(a.bias, a.workers), "heads": lambda: heads(a.bias), "compare": lambda: compare(a.bias, a.final)}[a.stage]()
+     "armd": lambda: armd(a.bias, a.workers), "heads": lambda: heads(a.bias), "compare": lambda: compare(a.bias, a.final),
+     "clean_a": lambda: clean_features(a.bias, "a"), "clean_bd": lambda: clean_features(a.bias, "bd"), "clean": lambda: clean(a.bias)}[a.stage]()
