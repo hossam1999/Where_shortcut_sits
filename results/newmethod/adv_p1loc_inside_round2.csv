@@ -1,0 +1,7 @@
+alpha,post_hoc,C (half A),val_auroc_halfA (selection),val_auroc_halfB (report),tube_probe_halfB,epochs
+0.0,none,0.001,0.605,0.623,0.988,15
+0.0,mask_cmc pooled,0.001,0.719,0.74,0.73,15
+0.1,none,0.001,0.67,0.694,0.963,20
+0.1,mask_cmc pooled,0.001,0.601,0.617,0.962,20
+1.0,none,0.1,0.684,0.713,0.986,11
+1.0,mask_cmc pooled,0.03,0.586,0.619,0.982,11
