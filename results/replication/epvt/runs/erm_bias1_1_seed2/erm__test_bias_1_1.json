@@ -1,0 +1,1 @@
+{"ckpt": "/workspace/data/epvt/runs/erm_bias1_1_seed2/erm.pkl", "test": "test_bias_1_1.csv", "n": 6181, "roc_auc": 0.6822825834742632, "acc": 0.6219058404788869, "bacc": 0.6349297393336143, "f1": 0.5566078383831091}
