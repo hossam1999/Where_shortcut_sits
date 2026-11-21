@@ -118,6 +118,10 @@ def main():
         md.append(f"| {METHODS[r.method]} | {r.pos} | {r.rev_mean:.3f} ± {r.rev_sd:.3f} | {r.corr_mean:.3f} | {r.clean_mean:.3f} | {g} | {vm} | {cr} |")
     md += ["", "**Registered expectations (section 5), Holm over 5:**", "", "| expectation | Δ [95 % CI] | p | p Holm | verdict |", "|---|---|---|---|---|"]
     md += [f"| {e.expectation} | {e.delta:+.3f} [{e.ci95_lo:+.3f}, {e.ci95_hi:+.3f}] | {e.p:.4f} | {e.p_holm:.4f} | {e.verdict} |" for _, e in E.iterrows()]
+    ps = au[au.test_set == "rev"].pivot_table(index=["method", "pos"], columns="seed", values="auroc")
+    md += ["", "**Per seed, reversed-test AUROC** (seed 1234 = machine 1):", "",
+           "| method | position | " + " | ".join(f"seed {s}" for s in SEEDS) + " |", "|---|---|" + "---|" * len(SEEDS)]
+    md += [f"| {METHODS[m]} | {p} | " + " | ".join(f"{ps.loc[(m, p), s]:.3f}" for s in SEEDS) + " |" for m in METHODS for p in POS]
     (out / "location_3seed.md").write_text("\n".join(md) + "\n"); print("\n".join(md))
 
 
