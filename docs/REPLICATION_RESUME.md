@@ -107,7 +107,7 @@ and the viviano env (torch 2.11 + cu128; numpy 1.26.4, pandas 1.5.3, opencv-pyth
 because their `training.py` uses `OneHotEncoder(sparse=False)`). Rebuild check of seed 1234's test split: exact match.
 Seeds 3232 and 3221 × inside / outside trained 4 at once (117 epochs/h total vs 60 for 2 and 33 for 1); scored; arms a–d.
 **Done 2026-11-21 ~14:30: formal 3-seed result in `docs/REPLICATION_RESULTS.md`** (E-L1 supported; E-L2, E-L3 not
-supported). Re-run: `P1_SEED=<s> WTSS_DATA=/workspace/data scripts/replication/m2_p1_loc.sh` (per seed: list → prep →
+supported). Re-run: `SEEDS="3232 3221" WTSS_DATA=/workspace/data scripts/replication/m2_p1_loc.sh` (per seed: list → prep →
 train both positions → score → arms a–c → arm d), then `venv-wtss/bin/python scripts/replication/p1_location_table3.py`.
 No checkpoints kept (non-persistent disk).
 Every experiment is finished; final tables: `docs/REPLICATION_RESULTS.md`. Model checkpoints, feature caches and data lived only on
