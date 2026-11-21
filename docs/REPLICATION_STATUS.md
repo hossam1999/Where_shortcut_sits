@@ -1508,7 +1508,21 @@ c. **Backbone / preprocessing / data — no port error.** torchvision `vit_b_16(
 - Seeds 3232 and 3221 × inside / outside train concurrently (2 GB each); a throughput measurement (4 vs 2 vs 1 jobs) follows
   after 2 epochs.
 
+### 2026-11-21 ~10:30 UTC (machine 2's clock) — machine 2: P1 location — third environment fault (scikit-learn); 4 runs restarted 10:24 and training
+- The 10:19 start also failed before any epoch: their `training.py` calls `OneHotEncoder(sparse=False)`, removed in
+  scikit-learn 1.4 (the rebuilt environment had 1.7.2). Fixed in the environment only (their code unchanged): scikit-learn
+  pinned to 1.3.2 (NumPy 1.26.4, pandas 1.5.3 kept); imports re-checked. Failed folders set aside (`*_failed_sklearn_1023_x`).
+- Restarted 10:24; all four runs train (≈3.1 it/s each at 4 concurrent, ≈2 min per epoch; their config: 100 epochs,
+  batch 16). The watchdog alerts above from 10:05–10:21 are these start-up faults; none of them produced a result.
+- Throughput measurement (4 vs 2 vs 1 concurrent, 2 epochs each, by pausing jobs) running; the pairing is reported next.
+
 ### Watchdog log (machine 2, automatic; `scripts/replication/m2_watchdog.sh`)
+- 2026-11-21_10:21:02 UTC watchdog (machine 2): queue failure in p1loc_seed3221.log: 'FAILED P1LOC seed 3221' — alert only (not retried)
+- 2026-11-21_10:21:02 UTC watchdog (machine 2): queue failure in p1loc_seed3221.log: '2026-11-21_10:20:59 FAILED P1LOC score_s3221_inside' — alert only (not retried)
+- 2026-11-21_10:21:02 UTC watchdog (machine 2): queue failure in p1loc_seed3232.log: 'FAILED P1LOC seed 3232' — alert only (not retried)
+- 2026-11-21_10:21:02 UTC watchdog (machine 2): queue failure in p1loc_seed3232.log: '2026-11-21_10:20:58 FAILED P1LOC score_s3232_inside' — alert only (not retried)
+- 2026-11-21_10:21:02 UTC watchdog (machine 2): queue failure in m2_p1_loc.log: 'FAILED P1LOC (see seed logs)' — alert only (not retried)
+- 2026-11-21_10:21:02 UTC watchdog (machine 2): queue failure in m2_p1_loc.log: 'FAILED P1LOC seed 3232' — alert only (not retried)
 - 2026-11-21_10:18:30 UTC watchdog (machine 2): queue failure in p1loc_seed3221.log: 'FAILED P1LOC seed 3221' — alert only (not retried)
 - 2026-11-21_10:18:30 UTC watchdog (machine 2): queue failure in p1loc_seed3221.log: '2026-11-21_10:18:02 FAILED P1LOC score_s3221_inside' — alert only (not retried)
 - 2026-11-21_10:17:29 UTC watchdog (machine 2): queue failure in p1loc_seed3232.log: 'FAILED P1LOC seed 3232' — alert only (not retried)
