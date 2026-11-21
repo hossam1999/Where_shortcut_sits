@@ -6,7 +6,7 @@
 export WTSS_DATA=${WTSS_DATA:-/workspace/data}; D=$WTSS_DATA; Q=/root/Where_shortcut_sits/scripts/replication
 PV=/workspace/envs/viviano/bin/python; PW=/workspace/venv-wtss/bin/python
 export MLFLOW_DISABLE_AGENT_HINT=1 PYTHONPATH=/workspace/third_party/viviano:/workspace/third_party/viviano/activmask
-cd /root/Where_shortcut_sits
+cd /root/Where_shortcut_sits; mkdir -p $D/replication/viviano
 step(){ local n=$1; shift; echo "$(date -u +%F_%T) start $n"; "$@" || { echo "$(date -u +%F_%T) FAILED P1LOC $n"; return 1; }; echo "$(date -u +%F_%T) done $n"; }
 stage(){ local s=$1 src=$2 dst=$3; mkdir -p $(dirname $D/results_push/results/replication/viviano/$dst); cp $src $D/results_push/results/replication/viviano/$dst; }
 seed_job(){ local s=$1; local L=$D/replication/viviano/location_s$s
@@ -26,5 +26,5 @@ seed_job(){ local s=$1; local L=$D/replication/viviano/location_s$s
     stage $s $L/$pos/arms/preds_d_effb0_mask_cmc.csv.gz scores/location_${pos}_d_effb0_mask_cmc_$s.csv.gz
   done
   echo "$(date -u +%F_%T) seed $s done"; }
-for s in ${SEEDS:-3232 3221}; do seed_job $s > $D/replication/viviano/p1loc_seed$s.log 2>&1 & done; wait
-echo "$(date -u +%F_%T) P1 location seeds done"
+for s in ${SEEDS:-3232 3221}; do ( seed_job $s || echo "FAILED P1LOC seed $s" ) > $D/replication/viviano/p1loc_seed$s.log 2>&1 & done; wait
+grep -h "FAILED" $D/replication/viviano/p1loc_seed*.log && echo "FAILED P1LOC (see seed logs)" || echo "$(date -u +%F_%T) P1 location seeds done"

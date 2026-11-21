@@ -1479,7 +1479,29 @@ c. **Backbone / preprocessing / data — no port error.** torchvision `vit_b_16(
   (arm b, both bias levels, Holm-adjusted CIs above 0). Recorded with the clean-check caveat above (arm b's clean flag is
   "no"; arm d meets the rule at bias 1 with its clean flag "yes", not at bias 0.9).
 
+### 2026-11-21 ~10:10 UTC (machine 2's clock) — machine 2: P1 location test (A43) — setup done, rebuild check EXACT MATCH, 4 runs starting
+- **Machine:** machine 2 was kept, not released (RESUME said released): same disk; P6–P8 data still present. Budget 12 h from
+  ~09:10 (setup limit 13:10; stop, push and report at ~20:10).
+- **Data (verified against `docs/DATA_MANIFEST.md`):** NIH 224 — 112,122 files, 2,427,299,660 bytes, listing SHA256 `ff835069…`
+  **identical**; PadChest 224 — 160,846 files, 12,764,886,194 bytes, `d558783a…` **identical**. Source: the Academic Torrents
+  swarms were too slow (10–600 KB/s), so the same files were taken from Kaggle mirrors (`khanfashee/nih-chest-x-ray-14-224x224-resized`,
+  `seoyunje/padchest-small-dataset`), arranged in the torrent layout (`BBox_List_2017_Official_NIH.csv` renamed to the torrent's
+  `BBox_List_2017.csv`; Kaggle-only extra files dropped) — identical names and sizes for every file. RSNA not downloaded (author).
+- **Environment:** `/workspace/envs/viviano` rebuilt (Python 3.10, torch 2.11 + cu128, TorchXRayVision 0.0.18 as they pin, numpy
+  1.26, pandas 1.5); their repo @ 3398602 + `cu128_port.patch`.
+- **Rebuild check (`results/replication/viviano/location_rebuild_check.md`): EXACT MATCH** — seed 1234's rebuilt test split
+  (their JointDataset, ratio 0.5, seed 1234) and tube flags equal the committed seed-1234 files in ids, order, labels and
+  tube flags for corr / rev / clean at both positions (2,772 images each).
+- **Code:** location scripts take `P1_SEED` (default 1234 = original paths; other seeds in `location_s<seed>/`); a `list` stage
+  writes the No-SPC split listing (machine 1's listing script was never committed); arm d's setting and outputs carry the seed.
+  `p1_location_table3.py` (3-seed analysis) reproduces the committed seed-1234 numbers on seed 1234 alone (e.g. Masked
+  crossover +0.032).
+- Incidents: the first runner start failed on a missing folder; both seeds' prep downloaded the PSPNet weights at once and seed
+  3221 read a partial file (EOFError) — restarted after the weights existed. Nothing trained or scored before the check.
+
 ### Watchdog log (machine 2, automatic; `scripts/replication/m2_watchdog.sh`)
+- 2026-11-21_10:05:51 UTC watchdog (machine 2): queue failure in p1loc_seed3221.log: 'FAILED P1LOC seed 3221' — alert only (not retried)
+- 2026-11-21_10:05:51 UTC watchdog (machine 2): queue failure in p1loc_seed3221.log: '2026-11-21_10:05:47 FAILED P1LOC prep_s3221' — alert only (not retried)
 - 2026-11-21_03:09:24 UTC watchdog (machine 2): GPU idle > 10 min while queue scripts wait (m2_p6_clean.sh ) — alert only
 - 2026-11-20_23:03:04 UTC watchdog (machine 2): queue failure in m2_p6_bias09.log: 'FAILED P6B09 erm 3' — alert only (not retried)
 - 2026-11-20_16:33:43 UTC watchdog (machine 2): queue failure in m2_p6_chain.log: '2026-11-20_16:33:41 FAILED P6CHAIN cache' — alert only (not retried)
