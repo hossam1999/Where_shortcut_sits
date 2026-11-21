@@ -1499,7 +1499,27 @@ c. **Backbone / preprocessing / data — no port error.** torchvision `vit_b_16(
 - Incidents: the first runner start failed on a missing folder; both seeds' prep downloaded the PSPNet weights at once and seed
   3221 read a partial file (EOFError) — restarted after the weights existed. Nothing trained or scored before the check.
 
+### 2026-11-21 ~10:22 UTC (machine 2's clock) — machine 2: P1 location — 4 training runs started 10:19 after two environment faults (nothing trained before)
+- Training failed at start twice: (1) the rebuilt viviano environment lacked OpenCV (needed by our tube drawing,
+  `wtss.synthetic`); (2) installing the current OpenCV pulled NumPy 2, which broke the pinned pandas 1.5 (binary mismatch).
+  Fixed: `numpy` 1.26.4 + `opencv-python-headless` 4.10.0.84; every import checked (their training and dataset code, our
+  tube code). The failed attempts never reached an epoch; their folders are set aside (`*_failed_*_x`). Splits, ROIs and
+  placements (both seeds) were computed before and are unaffected.
+- Seeds 3232 and 3221 × inside / outside train concurrently (2 GB each); a throughput measurement (4 vs 2 vs 1 jobs) follows
+  after 2 epochs.
+
 ### Watchdog log (machine 2, automatic; `scripts/replication/m2_watchdog.sh`)
+- 2026-11-21_10:18:30 UTC watchdog (machine 2): queue failure in p1loc_seed3221.log: 'FAILED P1LOC seed 3221' — alert only (not retried)
+- 2026-11-21_10:18:30 UTC watchdog (machine 2): queue failure in p1loc_seed3221.log: '2026-11-21_10:18:02 FAILED P1LOC score_s3221_inside' — alert only (not retried)
+- 2026-11-21_10:17:29 UTC watchdog (machine 2): queue failure in p1loc_seed3232.log: 'FAILED P1LOC seed 3232' — alert only (not retried)
+- 2026-11-21_10:17:29 UTC watchdog (machine 2): queue failure in p1loc_seed3232.log: '2026-11-21_10:17:00 FAILED P1LOC score_s3232_inside' — alert only (not retried)
+- 2026-11-21_10:15:28 UTC watchdog (machine 2): queue failure in p1loc_seed3221.log: 'FAILED P1LOC seed 3221' — alert only (not retried)
+- 2026-11-21_10:15:27 UTC watchdog (machine 2): queue failure in p1loc_seed3221.log: '2026-11-21_10:15:05 FAILED P1LOC score_s3221_inside' — alert only (not retried)
+- 2026-11-21_10:13:56 UTC watchdog (machine 2): queue failure in p1loc_seed3232.log: 'FAILED P1LOC seed 3232' — alert only (not retried)
+- 2026-11-21_10:13:56 UTC watchdog (machine 2): queue failure in p1loc_seed3232.log: '2026-11-21_10:13:46 FAILED P1LOC score_s3232_inside' — alert only (not retried)
+- 2026-11-21_10:13:56 UTC watchdog (machine 2): queue failure in m2_p1_loc.log: 'FAILED P1LOC (see seed logs)' — alert only (not retried)
+- 2026-11-21_10:13:56 UTC watchdog (machine 2): queue failure in m2_p1_loc.log: 'FAILED P1LOC seed 3232' — alert only (not retried)
+- 2026-11-21_10:13:56 UTC watchdog (machine 2): queue failure in m2_p1_loc.log: '2026-11-21_10:13:46 FAILED P1LOC score_s3232_inside' — alert only (not retried)
 - 2026-11-21_10:05:51 UTC watchdog (machine 2): queue failure in p1loc_seed3221.log: 'FAILED P1LOC seed 3221' — alert only (not retried)
 - 2026-11-21_10:05:51 UTC watchdog (machine 2): queue failure in p1loc_seed3221.log: '2026-11-21_10:05:47 FAILED P1LOC prep_s3221' — alert only (not retried)
 - 2026-11-21_03:09:24 UTC watchdog (machine 2): GPU idle > 10 min while queue scripts wait (m2_p6_clean.sh ) — alert only
