@@ -979,3 +979,18 @@ added after the bias-1 results were seen** (A39 and section 2 register none for 
   tables `preliminary_{xray,rsna}_1234.csv`, RSNA arm a's and arm d's per-image scores, and the location-test scores). The
   registered check "re-score seed 1234 within 0.005" is therefore impossible, and seed 1234 cannot enter a crossed bootstrap
   without being re-run. The choice is recorded as an addendum to A43 before any P1 training starts.
+- **Addendum (author, 2026-11-21 ~09:15; replaces A43's scope above; recorded before any P1 run).** **Scope = ONLY the P1
+  location test** (A15–A17): Standard with the tube **inside** and **outside** the lungs + heart, **seeds 3232 and 3221** (4 runs;
+  Masked scored from each, A5), and our **arms a, b, c, d** on each seed's network / split as registered (A16, A20). The P1
+  original-test head-to-heads stay **preliminary** (A14 unchanged for them); RSNA is not rebuilt.
+  - **Seed 1234 is not re-run:** its committed per-image location scores (`results/replication/viviano/scores/
+    location_{inside,outside}_*1234.csv.gz`, incl. arms a–d) are the seed-1234 results. **Disclosure:** seed 1234 ran on
+    machine 1 (different GPU and software build); its full location results (A16 registered table, A17 post-hoc epoch-100
+    table) were seen.
+  - **Rebuild check (before any training):** the rebuilt seed-1234 location test split (image ids, labels, tube flags, row
+    order) must match the committed seed-1234 files exactly; otherwise P1 stops and is reported.
+  - **Formal analysis on 3 seeds** (committed 1234 + new 3232, 3221): the A16 table per position (reversed, correlated, clean
+    AUROC; gain over Standard; paired difference vs Masked; crossover = gain outside − gain inside) on 3-seed means, with the
+    crossed seed × image bootstrap (section 2; one Poisson weight per image, shared by seeds, methods and positions); Holm as
+    registered for the location test; tier and verdict reported (E-L1 to E-L3 judged on the registered epoch-selection table,
+    A17 unchanged).
