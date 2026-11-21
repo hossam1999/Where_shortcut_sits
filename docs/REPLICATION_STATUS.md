@@ -1516,6 +1516,12 @@ c. **Backbone / preprocessing / data — no port error.** torchvision `vit_b_16(
   batch 16). The watchdog alerts above from 10:05–10:21 are these start-up faults; none of them produced a result.
 - Throughput measurement (4 vs 2 vs 1 concurrent, 2 epochs each, by pausing jobs) running; the pairing is reported next.
 
+### 2026-11-21 ~10:40 UTC (machine 2's clock) — machine 2: P1 location — throughput measured; keep 4 concurrent jobs
+- Measured by pausing jobs (SIGSTOP, resumed straight after), 2 epochs per level, their training at 128 px:
+  4 jobs 117.4 epochs/h total (29.4 per job) · 2 jobs 59.9 · 1 job 33.4. **Kept: all 4 at once** (≈3.5× one job).
+  (The first measurement attempt counted a log line their code does not print; fixed to count "Mean valid", one per epoch.)
+- Expected: training ends ≈14:00 UTC (100 epochs); then scoring (Standard + Masked), arms a–d, the 3-seed analysis.
+
 ### Watchdog log (machine 2, automatic; `scripts/replication/m2_watchdog.sh`)
 - 2026-11-21_10:21:02 UTC watchdog (machine 2): queue failure in p1loc_seed3221.log: 'FAILED P1LOC seed 3221' — alert only (not retried)
 - 2026-11-21_10:21:02 UTC watchdog (machine 2): queue failure in p1loc_seed3221.log: '2026-11-21_10:20:59 FAILED P1LOC score_s3221_inside' — alert only (not retried)

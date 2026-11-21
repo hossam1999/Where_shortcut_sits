@@ -1,6 +1,6 @@
 """A43 / author: measure total throughput of the concurrent P1 location training jobs (their training, 128 px ResNet) at 4, 2
 and 1 concurrent jobs, by pausing jobs with SIGSTOP (main process + DataLoader workers) and timing epochs from their
-train.log ("epoch N Mean train loss" lines). Paused jobs resume immediately after; nothing else changes. Prints and writes
+train.log ("epoch N Mean valid loss" lines, one per epoch). Paused jobs resume immediately after; nothing else changes. Prints and writes
 /workspace/logs/p1_loc_throughput.json: epochs per hour per running job and in total, per concurrency level.
     /workspace/venv-wtss/bin/python scripts/replication/p1_loc_measure.py [--epochs 2]
 """
@@ -28,7 +28,7 @@ def jobs():
 
 
 def epochs(j):
-    return sum(1 for l in open(j["log"]) if "Mean train" in l)
+    return sum(1 for l in open(j["log"]) if "Mean valid" in l)
 
 
 def measure(running, n):
