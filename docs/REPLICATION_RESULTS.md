@@ -16,6 +16,7 @@ gate results were known** (A38); unrounded gaps at both tolerances: `results/rep
 | paper (artifact) | reproduced? (gap; tolerance 0.05) | tier | our best arm vs their method (our run) | verdict / reading |
 |---|---|---|---|---|
 | P1 Viviano, ICLR 2021 (global hospital / view shortcut) | gate passed on kept runs; 1 seed (A14) | preliminary | arm b: cardiomegaly +0.040 vs Masked, RSNA +0.059 vs ActDiff | **no verdict** (1 seed); secondary (not localized) |
+| P1 location test (tube inside / outside the lungs + heart; A15–A17, A43) | — (our test in their pipeline) | **formal** (3 seeds; crossed bootstrap; Holm over 5) | arms a / b gain inside +0.195 / +0.204 (CIs reach −0.006) | **E-L1 supported (by the letter); E-L2 (a, b, d) and E-L3 not supported**; none contradicted |
 | P2 Pahde, ML 2025 (inserted microscope) | **no** (RR-ClArC 0.524 vs 0.76; gap 0.236) | 2 | arm a′ 0.667 vs RR-ClArC 0.524 (+0.143) | descriptive |
 | P3 Bassi, Nat. Commun. 2024 (marks) | **no** (A9: 0.223 / 0.260 vs 0.773) | 2 | see P3 section (inside-the-lungs controlled comparison) | descriptive |
 | P4 Saab, MLHC 2022 (ISIC 2018 trap sets) | **no** (Seg-ERM 0.647 vs 0.727; gap 0.080) | 2 | arm b 0.670 vs Seg-ERM 0.647 (+0.023, n.s.) | descriptive: **no arm above Seg-ERM** |
@@ -92,6 +93,74 @@ Notes:
 - U-MtE is designed for localized overlays inside the ROI and does not remove a global shortcut; it fails on both P1 tasks.
 
 ### Location test (primary for P1; phase 4; A15, A16; post-hoc sensitivity A17)
+
+#### Formal result: 3 seeds (A43; machine 2, 2026-11-21) — **this is the registered P1 location result**
+Seeds **1234** (machine 1, committed per-image scores; **different GPU and software build**; its results below were seen
+before A43), **3232** and **3221** (machine 2: RTX 5070 Ti, torch 2.11 + cu128, scikit-learn 1.3.2 pinned for their code).
+Before any training the rebuilt seed-1234 test split matched the committed files exactly (ids, order, labels, tube flags;
+`results/replication/viviano/location_rebuild_check.md`). Their code and Standard config, their epoch-selection rule; Masked =
+the Standard model with P1's circle mask (A5); arms a–d as registered (arm d via A20). Reversed-test AUROC as the 3-seed mean
+± SD; gain and Δ = paired difference on the reversed test; crossover = gain outside − gain inside. **Crossed seed × image
+bootstrap**, 10,000 replicates (one Poisson weight per test image, shared by seeds, methods and positions; seeds resampled).
+
+| method | position | reversed (mean ± SD) | correlated | clean | gain over Standard [95% CI] | Δ vs Masked [95% CI] | crossover [95% CI] |
+|---|---|---|---|---|---|---|---|
+| Standard (theirs) | inside | 0.672 ± 0.187 | 0.933 | 0.885 | — | — | — |
+| Standard (theirs) | outside | 0.913 ± 0.017 | 0.918 | 0.916 | — | — | — |
+| Masked (theirs, A5) | inside | 0.615 ± 0.195 | 0.912 | 0.845 | −0.057 [−0.082, −0.039] | — | +0.040 [+0.018, +0.067] |
+| Masked (theirs, A5) | outside | 0.896 ± 0.013 | 0.896 | 0.896 | −0.017 [−0.025, −0.010] | — | (same) |
+| a: mask_cmc on their net | inside | 0.867 ± 0.010 | 0.899 | 0.889 | +0.195 [−0.006, +0.338] | +0.252 [+0.037, +0.384] | −0.195 [−0.324, −0.007] |
+| a: mask_cmc on their net | outside | 0.913 ± 0.007 | 0.913 | 0.913 | +0.000 [−0.012, +0.013] | +0.017 [+0.009, +0.026] | (same) |
+| b: DINOv2 + mask_cmc | inside | 0.876 ± 0.005 | 0.912 | 0.897 | +0.204 [−0.006, +0.359] | +0.261 [+0.038, +0.404] | −0.215 [−0.354, −0.015] |
+| b: DINOv2 + mask_cmc | outside | 0.902 ± 0.002 | 0.902 | 0.902 | −0.011 [−0.025, +0.005] | +0.006 [−0.007, +0.020] | (same) |
+| c: U-MtE | inside | 0.618 ± 0.021 | 0.963 | 0.890 | −0.054 [−0.257, +0.080] | +0.004 [−0.214, +0.131] | +0.055 [−0.068, +0.251] |
+| c: U-MtE | outside | 0.915 ± 0.006 | 0.915 | 0.915 | +0.002 [−0.010, +0.014] | +0.019 [+0.009, +0.029] | (same) |
+| d: EfficientNet-B0 + mask_cmc (A20) | inside | 0.754 ± 0.023 | 0.964 | 0.910 | +0.082 [−0.129, +0.218] | +0.139 [−0.086, +0.269] | −0.072 [−0.194, +0.127] |
+| d: EfficientNet-B0 + mask_cmc (A20) | outside | 0.924 ± 0.004 | 0.924 | 0.924 | +0.010 [−0.003, +0.026] | +0.027 [+0.016, +0.040] | (same) |
+
+**Registered expectations (section 5), Holm over the 5 tests of phase 4.** The family is P1's five: P3's location test
+ended descriptive (A9 check failed) and has no E-L test, so the earlier note "the family also contains the P3 location test"
+no longer applies.
+
+| expectation | Δ [95% CI] | p | p Holm | verdict |
+|---|---|---|---|---|
+| E-L1 Masked: crossover > 0, gain inside ≤ 0 or CI includes 0 | +0.040 [+0.018, +0.067]; gain inside −0.057 | 0.0001 | 0.0005 | **supported** (by the letter; see below) |
+| E-L2 arm a: gain inside > 0 | +0.195 [−0.006, +0.338] | 0.074 | 0.276 | **not supported** |
+| E-L2 arm b: gain inside > 0 | +0.204 [−0.006, +0.359] | 0.069 | 0.276 | **not supported** |
+| E-L2 arm d (A20): gain inside > 0 | +0.082 [−0.129, +0.218] | 0.52 | 1.00 | **not supported** |
+| E-L3 arm c (U-MtE): gain inside > 0 | −0.054 [−0.257, +0.080] | 0.61 | 1.00 | **not supported** |
+
+No expectation is contradicted. **Tier: formal (3 seeds, crossed bootstrap, Holm).** Sources:
+`results/replication/viviano/location_3seed.{md,csv}`, `location_3seed_expectations.csv`; per-image scores
+`results/replication/viviano/scores/location_{inside,outside}[_<arm>]_{1234,3232,3221}.csv.gz`; arm d per seed
+`results/replication/armd/p1_loc_{inside,outside}_s{3232,3221}.md`.
+
+**Per seed, reversed-test AUROC** (Standard: correlated / reversed / clean; the epoch their rule kept):
+
+| | seed 1234 | seed 3232 | seed 3221 |
+|---|---|---|---|
+| Standard inside | 0.943 / 0.514 / 0.866 (epoch 11) | 0.887 / **0.879** / 0.884 (**epoch 5**) | 0.971 / 0.624 / 0.903 (epoch 15) |
+| Standard outside | 0.901 / 0.894 / 0.898 (epoch 8) | 0.930 / 0.923 / 0.927 (epoch 12) | 0.923 / 0.923 / 0.923 (epoch 9) |
+| Masked inside | 0.469 | 0.836 | 0.540 |
+| a inside | 0.856 | 0.871 | 0.874 |
+| b inside | 0.877 | 0.870 | 0.880 |
+| c inside | 0.598 | 0.618 | 0.640 |
+| d inside | 0.735 | 0.746 | 0.780 |
+
+**Reading.** (1) The arms' own inside AUROC is stable across seeds (a 0.856–0.874, b 0.870–0.880). What varies is the
+Standard reference. **At seed 3232 their selection rule kept epoch 5** (the end of burn-in), before the inside marker was
+learned: the kept Standard model has no inside shortcut (correlated 0.887 ≈ reversed 0.879), so the arms gain ≈ 0 there
+(a −0.008, b −0.009), against +0.34 / +0.25 (a) and +0.36 / +0.26 (b) at seeds 1234 / 3221. With 3 seeds resampled, this
+spread puts the lower CI bound of arms a and b just below 0 (−0.006), so E-L2 is not supported as registered. Their
+paired advantage over Masked inside is significant before multiplicity correction (a +0.252 [+0.037, +0.384], b +0.261
+[+0.038, +0.404]) but was not a registered test. (2) At the outside position the kept Standard model has no shortcut at any
+seed (correlated ≈ reversed; as found for seed 1234), so E-L1's crossover is "supported by the letter": it reflects Masked
+costing less outside than inside, not Masked removing an outside shortcut. (3) U-MtE (arm c) does not remove an inside
+marker (reversed 0.62, correlated 0.96). Seed 1234's one-seed "supported" for E-L3 (+0.084, image-only CI) does not hold up: arm c gains
++0.016 at seed 3221 and −0.261 at seed 3232 (where Standard has no inside shortcut). (4) A17's epoch-100 sensitivity analysis was not repeated for
+the new seeds (A43).
+
+#### Seed 1234 alone (machine 1; A16, registered one-seed table, superseded by the 3-seed result above)
 **Design.** P1's own pipeline (their code, Standard config, seed 1234) on P1's balanced cardiomegaly split. The artifact
 is **a synthetic bar-shaped radio-opaque marker (43 x 6 px at 224 px; straight, bright, with a central stripe), not a
 realistic tube**. It is drawn on the 224-px image after their intensity normalisation and before their resize to 128 px.
@@ -137,7 +206,7 @@ there is therefore no shortcut in the kept model for any method to remove, and t
 every method. Masked, arm a and arms b and c score identically on the three outside tests because their masks remove the
 whole marker.
 
-**Registered expectations (section 5), before Holm (the family also contains the P3 location test, still pending):**
+**Seed 1234 alone, expectations before Holm (superseded by the 3-seed analysis above; kept as seen before A43):**
 - E-L1 (Masked): crossover +0.032 [+0.023, +0.041] > 0 and gain inside −0.045 ≤ 0 → *supported by the letter*, but not
   for the reason the expectation states: the outside Standard model has no shortcut, so the crossover reflects Masked
   costing less outside than inside, not Masked removing an outside shortcut.

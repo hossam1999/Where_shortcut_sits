@@ -100,6 +100,16 @@ hashes identify exactly which files the reported results came from.
   by pattern; stop a job by PID **and its DataLoader workers** (`pgrep -P <pid>`), else they keep GPU memory.
 
 ## Machine 2 (A27) — **machine 2 released 2026-11-21; all results in git; no checkpoints kept** (machine 1 released 2026-11-20)
+
+**Machine 2, second instance (2026-11-21, A43; P1 location test only).** A new machine (RTX 5070 Ti 16 GB, 28 cores, no
+persistent disk) rebuilt P1's data (Kaggle mirrors of NIH 224 and PadChest 224, verified against `docs/DATA_MANIFEST.md`)
+and the viviano env (torch 2.11 + cu128; numpy 1.26.4, pandas 1.5.3, opencv-python-headless 4.10.0.84, **scikit-learn 1.3.2**
+because their `training.py` uses `OneHotEncoder(sparse=False)`). Rebuild check of seed 1234's test split: exact match.
+Seeds 3232 and 3221 × inside / outside trained 4 at once (117 epochs/h total vs 60 for 2 and 33 for 1); scored; arms a–d.
+**Done 2026-11-21 ~14:30: formal 3-seed result in `docs/REPLICATION_RESULTS.md`** (E-L1 supported; E-L2, E-L3 not
+supported). Re-run: `P1_SEED=<s> WTSS_DATA=/workspace/data scripts/replication/m2_p1_loc.sh` (per seed: list → prep →
+train both positions → score → arms a–c → arm d), then `venv-wtss/bin/python scripts/replication/p1_location_table3.py`.
+No checkpoints kept (non-persistent disk).
 Every experiment is finished; final tables: `docs/REPLICATION_RESULTS.md`. Model checkpoints, feature caches and data lived only on
 machine 2's non-persistent disk and are gone with it; everything needed to re-run is in the scripts and documents below.
 History of the machine-2 queue (kept for the record):

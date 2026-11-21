@@ -1532,6 +1532,21 @@ c. **Backbone / preprocessing / data — no port error.** torchvision `vit_b_16(
   P3 behaviour is unchanged. The crash came after encoder training and features and before any test prediction was written;
   the head step was re-run once from the saved features (no retraining). Seed 3221 continues from there (inside → outside).
 
+### 2026-11-21 ~14:50 UTC (machine 2's clock) — machine 2: P1 location test FORMAL (A43) — 3 seeds; E-L1 supported, E-L2 / E-L3 not supported
+- All 20 per-image files of seeds 3232 and 3221 (Standard + Masked, arms a–d, inside and outside) were pushed as they appeared;
+  seed 1234's committed files reused unchanged (machine 1; different GPU and software build; seen before A43).
+- `p1_location_table3.py`: crossed seed × image bootstrap (10,000), Holm over the 5 phase-4 tests (P3's location test is
+  descriptive, no E-L test). **E-L1 Masked crossover +0.040 [+0.018, +0.067], Holm p 0.0005 → supported** (by the letter:
+  the outside Standard model has no shortcut at any seed). **E-L2 arm a +0.195 [−0.006, +0.338], arm b +0.204 [−0.006,
+  +0.359] (Holm p 0.276 each), arm d +0.082 [−0.129, +0.218] → not supported; E-L3 arm c −0.054 [−0.257, +0.080] → not
+  supported.** None contradicted. Tier: formal.
+- Why E-L2 misses: at seed 3232 their selection rule kept epoch 5 (end of burn-in), before the inside marker was learned
+  (Standard correlated 0.887, reversed 0.879), so the arms gain ≈ 0 there; at seeds 1234 / 3221 arm a gains +0.34 / +0.25.
+  The arms' own inside AUROC is stable (a 0.856–0.874, b 0.870–0.880). Full write-up: `docs/REPLICATION_RESULTS.md` (P1
+  location test, formal result); tables `results/replication/viviano/location_3seed.md`.
+- The 3-seed script was re-run once to add a per-seed table to its report; its bootstrap seed is fixed and the expectations
+  file is byte-identical to the first run.
+
 ### Watchdog log (machine 2, automatic; `scripts/replication/m2_watchdog.sh`)
 - 2026-11-21_14:07:14 UTC watchdog (machine 2): queue failure in p1loc_seed3221.log: 'FAILED P1LOC seed 3221' — alert only (not retried)
 - 2026-11-21_14:07:14 UTC watchdog (machine 2): queue failure in p1loc_seed3221.log: '2026-11-21_14:06:53 FAILED P1LOC armd_heads_s3221_inside' — alert only (not retried)
