@@ -961,3 +961,21 @@ added after the bias-1 results were seen** (A39 and section 2 register none for 
   encoders as A39, applied to these images; EPVT: `p6_epvt_score.py`). Reported beside the A39 verdict with the flag
   **"within EPVT − 0.01 (the margin used for P2 / P7 / phase 5): yes / no"** (arm's clean AUROC vs EPVT's 5-seed mean at the
   same bias; arm a seed-matched means). It does not change any verdict.
+
+**A43 (2026-11-21 ~09:30 UTC by machine 2's clock; P1 made formal; author's decision; recorded before any new P1 run).**
+- **Reinstated:** the originally registered P1 seeds **3232 and 3221** (section 1, A3), **reversing A14 item 1 for P1 only**.
+  Reason (author): P1 is a primary comparison and A14 left it preliminary. **Scope:** cardiomegaly Standard (Masked scored from
+  it, A5) and RSNA ActDiff (the runs A12 kept), their code and protocol unchanged (A7 split code, A11 RSNA Masked caveat, A12
+  arm a on each paper's best network). The P1 location test (A15–A17) is **not** in scope unless the author confirms it.
+- **Disclosure — results seen before this amendment:** all seed-1234 P1 results: cardiomegaly Standard 0.627, Masked 0.829,
+  arms a 0.866 / b 0.869 / c 0.593 / d (`results/replication/armd/p1_cardio.md`); RSNA Standard 0.186, Masked 0.759 (A11), ActDiff
+  0.708, arms a 0.610 / b 0.767 / c 0.378 / d (`p1_rsna.md`); the P1 location test (A16, A17); and every other result of the
+  programme (P2–P8, phase 5).
+- **Verdict rule (as registered):** "reproduced" on the 3-seed mean, ±1 SD of the paper (cardiomegaly Masked 0.77 ± 0.09, RSNA
+  ActDiff 0.68 ± 0.05; A38 leaves P1's rule unchanged); head-to-heads with the crossed seed × image bootstrap (section 2),
+  Holm as registered; tier and verdict reported.
+- **Open point (to be settled by the author before any training):** P1 ran on machine 1, which was released without a backup.
+  **Seed 1234's trained networks are gone, and so are most of its per-image test scores** (git holds only the aggregated
+  tables `preliminary_{xray,rsna}_1234.csv`, RSNA arm a's and arm d's per-image scores, and the location-test scores). The
+  registered check "re-score seed 1234 within 0.005" is therefore impossible, and seed 1234 cannot enter a crossed bootstrap
+  without being re-run. The choice is recorded as an addendum to A43 before any P1 training starts.
