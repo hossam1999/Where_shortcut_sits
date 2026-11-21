@@ -99,7 +99,10 @@ hashes identify exactly which files the reported results came from.
 - GPU rules (mandatory): all GPU work through `scripts/replication/gpu_wait.sh` (memory + at most one other job); never kill
   by pattern; stop a job by PID **and its DataLoader workers** (`pgrep -P <pid>`), else they keep GPU memory.
 
-## Machine 2 (A27; updated 2026-11-19 14:05 UTC, machine 2's clock) — **machine 1 released 2026-11-19; machine 2 is the only machine**
+## Machine 2 (A27) — **machine 2 released 2026-11-21; all results in git; no checkpoints kept** (machine 1 released 2026-11-20)
+Every experiment is finished; final tables: `docs/REPLICATION_RESULTS.md`. Model checkpoints, feature caches and data lived only on
+machine 2's non-persistent disk and are gone with it; everything needed to re-run is in the scripts and documents below.
+History of the machine-2 queue (kept for the record):
 RTX 5070 Ti 16 GB, 28 cores, 62 GB RAM, **no persistent volume**: every result is pushed the moment it exists by
 `scripts/replication/m2_push_results.sh` (detached worktree `/root/wtss_push`; small result files only, never checkpoints).
 Repo `/root/Where_shortcut_sits`; `WTSS_DATA=/workspace/data`; clones `/workspace/third_party/{saab,bissoto,pahde,isnet,r2r,epvt,disc}`

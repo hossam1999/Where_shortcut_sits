@@ -1,8 +1,36 @@
-# Replication results: Viviano 2021 (P1), Pahde 2025 (P2), Bassi/ISNet 2024 (P3)
+# Replication results: P1 Viviano 2021, P2 Pahde 2025, P3 Bassi/ISNet 2024, P4 Saab 2022, P5 R2R, P6 Yan/EPVT 2023, P7 Dreyer/RR-ClArC 2024, P8 Wu/DISC 2023, and phase 5
 
-Status: **in progress**, filled in as runs finish. Every number traces to a file under `results/replication/`. Rules:
-`docs/PREREGISTRATION_REPLICATION.md` (with amendments A1–A11). Phase-0 checks, deviations and engineering notes:
-`docs/REPLICATION_STATUS.md`.
+Status: **final** (machine 2, 2026-11-21; machine 1 released 2026-11-20). Every number traces to a file under
+`results/replication/`. Rules: `docs/PREREGISTRATION_REPLICATION.md` (amendments A1–A42) and `docs/PREREGISTRATION_PHASE5.md`.
+Phase-0 checks, deviations and engineering notes: `docs/REPLICATION_STATUS.md`.
+
+## Final summary (2026-11-21)
+
+**Tiers.** **Tier 1** = the paper's best method was reproduced (gate passed), so "beaten / not beaten" verdicts apply
+(section 2: higher mean, 95 % CI of the paired difference above 0, Holm-adjusted p < 0.05). **Tier 2** = not reproduced:
+descriptive comparisons against **our run of their official code** under identical conditions; no claim against the published
+number. **Confirmatory** = phase 5: our test design, their methods run by us under one pre-registered rule.
+**Tolerance:** the reproduction tolerance was widened from 0.03 to 0.05 for every paper (P2–P8) on 2026-11-20, **after the first
+gate results were known** (A38); unrounded gaps at both tolerances: `results/replication/GATES_TOLERANCE.md`.
+
+| paper (artifact) | reproduced? (gap; tolerance 0.05) | tier | our best arm vs their method (our run) | verdict / reading |
+|---|---|---|---|---|
+| P1 Viviano, ICLR 2021 (global hospital / view shortcut) | gate passed on kept runs; 1 seed (A14) | preliminary | arm b: cardiomegaly +0.040 vs Masked, RSNA +0.059 vs ActDiff | **no verdict** (1 seed); secondary (not localized) |
+| P2 Pahde, ML 2025 (inserted microscope) | **no** (RR-ClArC 0.524 vs 0.76; gap 0.236) | 2 | arm a′ 0.667 vs RR-ClArC 0.524 (+0.143) | descriptive |
+| P3 Bassi, Nat. Commun. 2024 (marks) | **no** (A9: 0.223 / 0.260 vs 0.773) | 2 | see P3 section (inside-the-lungs controlled comparison) | descriptive |
+| P4 Saab, MLHC 2022 (ISIC 2018 trap sets) | **no** (Seg-ERM 0.647 vs 0.727; gap 0.080) | 2 | arm b 0.670 vs Seg-ERM 0.647 (+0.023, n.s.) | descriptive: **no arm above Seg-ERM** |
+| P5 R2R (LSB / attacked ISIC) | **no** (step-1 checkpoints: 0.838 / 0.552 vs 0.895 / 0.356) | — | not run (dropped) | — |
+| **P6 Yan, MICCAI 2023 (EPVT; ISIC 2019 trap sets)** | **yes** at 0.05 (bias 1: EPVT gap 0.0497, within the ±0.005 digitisation uncertainty; bias 0.9: 0.017) | **1** | **arm b +0.086 (bias 1) / +0.031 (bias 0.9)**, Holm p 0.0008 | **beaten** at both levels (arm b; also arm a); arm d beaten at bias 1 only |
+| P7 Dreyer, AAAI 2024 (RR-ClArC; invisible LSB trigger) | **yes** (ResNet-18 0.713 vs 0.712; EffNet-B0 0.728 vs 0.756; VGG-16 0.531 vs 0.570) | 1 | arm a 0.709 vs 0.713 (ResNet-18) | **not beaten** (secondary: whole-image artifact) |
+| P8 Wu, ICML 2023 (DISC; ISIC 2018 trap sets) | **no** (ERM 0.507 vs 0.364; DISC 0.489 vs 0.551) | 2 | arm b 0.736 vs DISC 0.489 (+0.247 [+0.204, +0.290]) | descriptive: all four arms above our DISC run |
+| **Phase 5 (thyroid TN3K calipers; Trap A inside the ROI)** | — | **confirmatory** | **DINOv2 + mask_cmc 0.716, arm d 0.690 vs ISNet 0.561, RR-ClArC 0.467** | **beaten: 4 / 4 registered comparisons** (clean condition met) |
+
+**Caveats that travel with these labels.** P6's bias-1 pass is inside 0.05 by less than the digitisation uncertainty; P6
+had **no registered clean condition** — the reported clean check (A42, `test_bias_0_1`) shows arm b 0.02–0.04 AUROC below
+EPVT, arm d within 0.01. Phase 5's comparisons against ISNet have wide CIs (ISNet's Trap A fold 2 collapsed to 0.365).
+P8: the published numbers may carry a shared-cache bug of DISC's released code (A37); P6: the released EPVT mixup pairing
+differs from the paper (A36; we follow the paper). Several heads chose the lowest C of their registered grid (reported in each
+section). New-method track: **cancelled** (author's rule after A39).
 
 ## How to read this report
 
@@ -198,3 +226,78 @@ Lesion ROIs: HAM10000 manual 10,015, ISIC 2018 manual 772, U-Net 14,544 (held-ou
 - **Inside-the-lungs comparison** (ISNet and our arms trained by us on identical data, A6): reported with 95% CIs as a
   **controlled, descriptive comparison**.
 
+
+
+## P4 — Saab et al., MLHC 2022 (tier 2, descriptive; A13, A31, A38, A40)
+**Not reproduced:** Binary-ERM 0.363 vs 0.359 (passes); Segmentation-ERM (A31 rerun) **0.647** vs 0.727 (gap 0.080; also misses
+the notebook's 0.772) (`results/replication/saab/p4_gate_seg_pil.md`). Second-tier comparison vs our Seg-ERM run, trap sets 1–3,
+772 test images each; image-only bootstrap shared across sets; Holm over 4 (`results/replication/saab/a40/comparison.md`):
+
+| arm | 3-set mean | vs Seg-ERM 0.647: Δ [95 % CI] | p Holm |
+|---|---|---|---|
+| b DINOv2 + mask_cmc | 0.670 | +0.023 [−0.029, +0.076] | 0.88 |
+| c U-MtE | 0.623 | −0.023 [−0.075, +0.029] | 0.88 |
+| d EfficientNet-B0 + mask_cmc | 0.621 | −0.026 [−0.073, +0.022] | 0.88 |
+| a mask_cmc on Seg-ERM's encoder | 0.552 | −0.095 [−0.141, −0.049] | 0.0004 |
+
+Reading: Segmentation-ERM uses the lesion masks as training supervision; on these trap sets that is as good as our constraint.
+
+## P5 — R2R (dropped)
+Step 1 failed: the released checkpoints give 0.838 / 0.833 / 0.552 (original / clean / poisoned accuracy) vs 0.895 / 0.895 /
+0.356 in the paper (`results/replication/r2r/step1.md`); not reproduced at 0.03 or 0.05; dropped before any arm was run.
+
+## P6 — Yan et al., MICCAI 2023 (EPVT) / TMI 2025 (PLDG) (tier 1; A29, A33, A34, A36, A38, A39, A41, A42)
+**Reproduced at 0.05** (A38). Bias 1 (5 seeds): ERM 0.668 vs 0.653, EPVT (A36: paper's Eq. 3 mixup) **0.696** vs 0.746 (gap
+0.0497 — within the digitisation uncertainty); bias 0.9: ERM 0.762 vs 0.762, EPVT 0.775 vs 0.792 (`results/replication/epvt/
+A34_gate.json`, `A39_bias09_gate.json`; audit `docs/P6_EPVT_AUDIT.md`). A39 comparison vs our EPVT (5 seeds), crossed seed ×
+image bootstrap, Holm over 8, Holm-adjusted CIs (`results/replication/epvt/arms/comparison_holm_ci.md`):
+
+| arm | bias 1: AUROC, Δ [Holm-adj. CI] | bias 0.9: AUROC, Δ [Holm-adj. CI] | beaten (1 / 0.9) | clean check A42 (bias 0 test; within EPVT − 0.01?) |
+|---|---|---|---|---|
+| **b DINOv2 + mask_cmc** | **0.782, +0.086 [+0.064, +0.107]** | **0.806, +0.031 [+0.009, +0.054]** | **yes / yes** | 0.889 / 0.889 vs EPVT 0.910 / 0.929: no |
+| a mask_cmc on EPVT's features | 0.758, +0.061 [+0.039, +0.086] | 0.795, +0.021 [+0.003, +0.040] | yes / yes | 0.885 / 0.886: no |
+| **d EfficientNet-B0 + mask_cmc** | 0.718, +0.022 [+0.003, +0.040] | 0.754, −0.021 [−0.039, −0.003] | yes / no | 0.924 / 0.932: yes |
+| c U-MtE (label-free) | 0.625, −0.072 | 0.687, −0.088 | no / no | 0.870 / 0.877: no |
+
+EPVT 0.696 / 0.775; ERM 0.668 / 0.762. The clean check is reported, not part of the verdict (A39 registered no clean
+condition; A42). Lesion ROIs: HAM10000 manual, ISIC 2018 manual, lesion U-Net (rebuilt on machine 2, held-out Dice 0.942).
+
+## P7 — Dreyer et al., AAAI 2024 (RR-ClArC; tier 1; secondary: invisible whole-image trigger; A28, A38)
+**Reproduced** (biased-test accuracy): ResNet-18 0.713 vs 0.712, EfficientNet-B0 0.728 vs 0.756, VGG-16 0.531 vs 0.570 (passes at
+0.05). Our arms vs our RR-ClArC, Holm over 9; a clean drop > 0.01 = not beaten (`results/replication/rrclarc/p7/arms_comparison.md`):
+ResNet-18 arm a 0.709 (−0.004, n.s.), arm b 0.614; EfficientNet-B0 arm a 0.712 (−0.017), arm b 0.668; VGG-16 arm a 0.571
+(+0.039, clean −0.015) and arm b 0.616 (+0.085, clean −0.078) → **not beaten** on any architecture. Arms a and a′ coincide (the
+paper's `Freeze` leaves the pooled features unchanged).
+
+## P8 — Wu et al., ICML 2023 (DISC; tier 2; A32, A35, A37, A38)
+**Not reproduced:** ERM 5-set mean **0.507** vs 0.364, DISC **0.489** vs 0.551 (`results/replication/disc/gate.md`), with one
+data root per trap set (A37: their released code's image cache is shared across trap sets; caches verified row by row). The
+published numbers may carry that bug (pre-specified A37 reading). Second-tier comparison vs our DISC run (DISC's own 154 / 618
+rows; image bootstrap shared across sets; Holm over 4; `results/replication/disc/arms/comparison.md`):
+
+| arm | primary rule (DISC's 154 val) | secondary (held-out 259 val) |
+|---|---|---|
+| b DINOv2 + mask_cmc | **0.736** (+0.247 [+0.204, +0.290]) | 0.757 (+0.268) |
+| d EfficientNet-B0 + mask_cmc | 0.691 (+0.201 [+0.154, +0.248]) | 0.648 (+0.159) |
+| c U-MtE | 0.630 (+0.141) | 0.661 (+0.171) |
+| a mask_cmc on DISC's features | 0.621 (+0.132) | 0.608 (+0.118) |
+
+Our DISC 0.489, our ERM 0.507. Published row (descriptive): CBDebug (ICLR 2026) 0.580 ± 0.116 — not reproduced: no ISIC code.
+
+## Phase 5 — thyroid TN3K calipers (confirmatory; `docs/PREREGISTRATION_PHASE5.md`, approved 2026-11-20)
+72 networks (ERM ResNet-50d bases, arm d, RR-ClArC 3 λ × 3 layers chosen on val_clean, ISNet ImageNet init), folds 0–2, one
+selection criterion (val_clean AUROC) (`results/replication/phase5/analysis/results.md`). test_rev AUROC (mean ± SD):
+
+| method | Trap A (inside the ROI) | Trap B (outside) |
+|---|---|---|
+| **DINOv2 + mask_cmc** | **0.716 ± 0.027** | 0.789 |
+| **arm d (EfficientNet-B0 + mask_cmc)** | **0.690 ± 0.076** | 0.746 |
+| ISNet (P3) | 0.561 ± 0.172 | 0.673 |
+| RR-ClArC (P2) | 0.467 ± 0.049 | 0.595 |
+| U-MtE | 0.504 | 0.782 |
+| ERM ResNet-50d | 0.440 | 0.546 |
+
+Trap A, Holm family of 4, crossed fold × image bootstrap; "beaten" also needs a clean drop ≤ 0.01: arm d vs RR-ClArC +0.224
+[+0.159, +0.292]; arm d vs ISNet +0.129 [+0.035, +0.239]; DINOv2 + mask_cmc vs RR-ClArC +0.249 [+0.192, +0.304]; DINOv2 +
+mask_cmc vs ISNet +0.155 [+0.019, +0.316] — **all beaten**, clean AUROC higher in every case. ISNet improves when the marker is
+outside (0.673) rather than inside (0.561), as the thesis predicts for location-based methods.
