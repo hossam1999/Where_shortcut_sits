@@ -25,8 +25,8 @@ from PIL import Image
 ROOT = Path(__file__).resolve().parents[2]
 sys.path[:0] = [str(ROOT / "src"), str(ROOT / "scripts" / "round8")]
 D = os.environ.get("WTSS_DATA", "/workspace/data")
-L = Path(f"{D}/replication/viviano/location")
-SEED, W, H = 1234, 43, 6
+SEED, W, H = int(os.environ.get("P1_SEED", "1234")), 43, 6   # A43
+L = Path(f"{D}/replication/viviano/location" + ("" if SEED == 1234 else f"_s{SEED}"))
 P_TUBE = {"train": (0.1, 0.9), "valid": (0.9, 0.1), "corr": (0.1, 0.9), "rev": (0.9, 0.1), "clean": (0.0, 0.0)}
 SPLIT = {"train": "train", "valid": "valid", "corr": "test", "rev": "test", "clean": "test"}
 CS = [0.01, 0.1, 1.0, 10.0]
@@ -63,10 +63,10 @@ def main():
     pos = args.position
     sfx = "" if args.model == "best" else "_last"
     out = L / pos / f"arms{sfx}"; out.mkdir(parents=True, exist_ok=True)
-    sp = pd.read_csv(L / "nospc_1234.csv").sort_values(["split", "pos"])
+    sp = pd.read_csv(L / f"nospc_{SEED}.csv").sort_values(["split", "pos"])
     sp["key"] = sp.site.astype(str) + "/" + sp.image_id
-    pl = pd.read_csv(L / "placements_1234.csv").set_index("key")
-    z = np.load(L / "roi224_1234.npz"); roi = dict(zip(z["ids"], z["masks"]))
+    pl = pd.read_csv(L / f"placements_{SEED}.csv").set_index("key")
+    z = np.load(L / f"roi224_{SEED}.npz"); roi = dict(zip(z["ids"], z["masks"]))
     env = {e: sp[sp.split == SPLIT[e]].reset_index(drop=True) for e in P_TUBE}
     for e, d in env.items():
         d["tube"] = presence(d.key, d.y, e)

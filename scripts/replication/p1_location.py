@@ -22,8 +22,8 @@ V = "/workspace/third_party/viviano"
 ROOT = Path(__file__).resolve().parents[2]
 sys.path[:0] = [V, f"{V}/activmask", str(ROOT / "src")]
 D = os.environ.get("WTSS_DATA", "/workspace/data")
-L = Path(f"{D}/replication/viviano/location")
-SEED = 1234
+SEED = int(os.environ.get("P1_SEED", "1234"))   # A43: seeds 3232 / 3221 added; 1234 keeps its original paths
+L = Path(f"{D}/replication/viviano/location" + ("" if SEED == 1234 else f"_s{SEED}"))
 W, H = 43, 6                                   # TUBE_GEOMETRY[224]
 P_TUBE = {"train": (0.1, 0.9), "valid": (0.9, 0.1), "corr": (0.1, 0.9), "rev": (0.9, 0.1), "clean": (0.0, 0.0)}  # P(tube | y=0), P(tube | y=1)
 PATHS = dict(d1data=f"{D}/cxr_at/NIH/images-224", d1csv=f"{D}/cxr_at/NIH/Data_Entry_2017.csv",
@@ -36,7 +36,7 @@ def make_dataset_class():
     from wtss.synthetic import tube_masks
     from wtss.utils import stable_int
 
-    pl = pd.read_csv(L / "placements_1234.csv").set_index("key")
+    pl = pd.read_csv(L / f"placements_{SEED}.csv").set_index("key")
 
     class TubeJointDataset(X.JointDataset):
         def __init__(self, position="inside", env=None, **kw):
@@ -93,11 +93,24 @@ def redirect(cls):
 
 def main():
     ap = argparse.ArgumentParser()
-    ap.add_argument("stage", choices=["train", "score"])
+    ap.add_argument("stage", choices=["list", "train", "score"])
     ap.add_argument("--position", choices=["inside", "outside"], required=True)
     ap.add_argument("--model", choices=["best", "last"], default="best")   # last: A17 post-hoc sensitivity analysis
     args = ap.parse_args()
     os.environ.setdefault("MLFLOW_DISABLE_AGENT_HINT", "1")
+    if args.stage == "list":   # their JointDataset split listing (ratio 0.5, this seed), read by p1_location_prep.py
+        import activmask.datasets.xray as X
+        L.mkdir(parents=True, exist_ok=True); rows = []
+        for split in ("train", "valid", "test"):
+            ds = X.JointDataset(mode=split, seed=SEED, ratio=0.5, verbose=False, **PATHS)
+            for pos, (st, i) in enumerate(zip(ds.site, ds.imageids)):
+                if st == 0:
+                    iid = str(ds.dataset1.csv["Image Index"].iloc[i]); path = f"NIH/images-224/{iid}"
+                else:
+                    iid = str(ds.dataset2.csv["ImageID"].iloc[i]); path = f"PC/images-224/{iid}"
+                rows.append({"site": int(st), "image_id": iid, "path": path, "split": split, "pos": pos, "y": int(ds.labels[pos])})
+        pd.DataFrame(rows).to_csv(L / f"nospc_{SEED}.csv", index=False); print("listed", len(rows), "rows for seed", SEED)
+        return
     out = L / args.position; out.mkdir(parents=True, exist_ok=True); os.chdir(out)
     cls = make_dataset_class()
     if args.stage == "train":

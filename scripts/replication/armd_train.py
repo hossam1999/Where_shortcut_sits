@@ -258,11 +258,13 @@ class P1Loc:
         import p1_location_arms as LA
         from wtss.ops import apply_roi_mask
         from wtss.synthetic import draw_tube
-        L = Path(f"{D}/replication/viviano/location")
-        sp = pd.read_csv(L / "nospc_1234.csv").sort_values(["split", "pos"])
+        L, s = LA.L, LA.SEED   # A43: the P1_SEED split (seed 1234 = the original paths)
+        if s != 1234:
+            self.KEY = f"{self.KEY}_s{s}"
+        sp = pd.read_csv(L / f"nospc_{s}.csv").sort_values(["split", "pos"])
         sp["key"] = sp.site.astype(str) + "/" + sp.image_id
-        pl = pd.read_csv(L / "placements_1234.csv").set_index("key")
-        z = np.load(L / "roi224_1234.npz"); self._roi = dict(zip(z["ids"], z["masks"]))
+        pl = pd.read_csv(L / f"placements_{s}.csv").set_index("key")
+        z = np.load(L / f"roi224_{s}.npz"); self._roi = dict(zip(z["ids"], z["masks"]))
         self._pl = pl
         self.part = {}
         for e in self.sets:
@@ -714,7 +716,8 @@ def heads_binary(S, out, name, title, ref_scores):
 def heads_p1loc(S, out):
     """As heads_binary against the registered Standard and Masked, and the test predictions are also written next to arms
     a-c (location/<pos>/arms/preds_d_effb0_mask_cmc.csv.gz), so the A16 table and its crossover include arm d."""
-    L = Path(f"{D}/replication/viviano/location/{S.POS}")
+    import p1_location_arms as LA
+    L = LA.L / S.POS   # A43: the P1_SEED location folder (seed 1234 = the original path)
     sc = pd.read_csv(L / "scores.csv.gz")
 
     def ref(method):
@@ -822,7 +825,7 @@ def main():
     ap.add_argument("--workers", type=int, default=16)
     a = ap.parse_args()
     S = SETTINGS[a.setting]()
-    out = Path(f"{D}/replication/armd/{a.setting}"); out.mkdir(parents=True, exist_ok=True)
+    out = Path(f"{D}/replication/armd/{getattr(S, 'KEY', None) or a.setting}"); out.mkdir(parents=True, exist_ok=True)   # A43: seed-suffixed KEY
     if a.stage == "train":
         train(S, out, a.workers)
     elif a.stage == "features":

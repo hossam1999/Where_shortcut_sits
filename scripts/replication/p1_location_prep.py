@@ -21,7 +21,8 @@ from wtss.data.cxr import TUBE_GEOMETRY  # noqa: E402
 from wtss.synthetic import find_best_placements_for_mask  # noqa: E402
 
 D = os.environ.get("WTSS_DATA", "/workspace/data")
-L = Path(f"{D}/replication/viviano/location")
+SEED = int(os.environ.get("P1_SEED", "1234"))   # A43
+L = Path(f"{D}/replication/viviano/location" + ("" if SEED == 1234 else f"_s{SEED}"))
 S = 224
 
 
@@ -35,7 +36,7 @@ def circle(size=S):
 def main():
     torch.cuda.set_per_process_memory_fraction(0.15)
     import torchxrayvision as xrv
-    df = pd.read_csv(L / "nospc_1234.csv")
+    df = pd.read_csv(L / f"nospc_{SEED}.csv")
     keys = (df.site.astype(str) + "/" + df.image_id).tolist()
     m = xrv.baseline_models.chestx_det.PSPNet().eval().cuda()
     keep = [m.targets.index(t) for t in ("Left Lung", "Right Lung", "Heart")]
@@ -53,7 +54,7 @@ def main():
             roi[k:k + 8] = np.stack([cv2.resize(z, (S, S), interpolation=cv2.INTER_NEAREST) for z in r])
             if k % 1600 == 0:
                 print(f"{k}/{len(df)}", flush=True)
-    np.savez_compressed(L / "roi224_1234.npz", ids=np.asarray(keys, dtype="U"), masks=roi)
+    np.savez_compressed(L / f"roi224_{SEED}.npz", ids=np.asarray(keys, dtype="U"), masks=roi)
     w, h = TUBE_GEOMETRY[S]
     circ = circle()
     rows = []
@@ -65,7 +66,7 @@ def main():
     p = pd.DataFrame(rows)
     p["in_feasible"] = p.in_overlap >= 0.95
     p["out_feasible"] = p.out_overlap_roi_or_circle <= 0.02
-    p.to_csv(L / "placements_1234.csv", index=False)
+    p.to_csv(L / f"placements_{SEED}.csv", index=False)
     print(f"ROI mean fraction {roi.mean():.3f}; inside feasible {p.in_feasible.mean():.4f} "
           f"({(~p.in_feasible).sum()} not); outside feasible {p.out_feasible.mean():.4f} ({(~p.out_feasible).sum()} not)")
 
