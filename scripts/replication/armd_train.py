@@ -659,7 +659,7 @@ def heads_binary(S, out, name, title, ref_scores):
     AUROC; test AUROC scored once; paired image-only bootstrap vs each reference (descriptive)."""
     import candidates as CA
     from sklearn.linear_model import LogisticRegression
-    from sklearn.metrics import roc_auc_score
+    from sklearn.metrics import roc_auc_score, f1_score
     from wtss.replication_stats import paired_bootstrap
     F = np.load(out / "features.npz")
     ytr, atr = S.labels(S.train_set)
@@ -697,7 +697,7 @@ def heads_binary(S, out, name, title, ref_scores):
             r[f"delta_vs_{rn}"] = res["delta"]; r[f"ci_vs_{rn}"] = f"[{res['ci95_lo']:+.3f}, {res['ci95_hi']:+.3f}]"
         rows.append(r)
     for k, cond in (("valid", "biased"), ("valid_standard", "standard"), ("valid_deceiving", "deceiving")):   # A24 (secondary)
-        if k in Z:
+        if k in Z and "valid_standard" in Z:   # A24 is P3's cohort validation only (P1 location has a plain "valid")
             yy = S.labels(k)[0]; pp = clf.predict(Z[k])
             rows.append({"test": f"A24 {cond}", "variant": "cohort validation", "n": len(yy), "macro_f1": float(f1_score(yy, pp, average="macro"))})
     pd.concat(preds).to_csv(out / "preds_test.csv.gz", index=False)

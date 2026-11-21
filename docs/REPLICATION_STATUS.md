@@ -1522,7 +1522,19 @@ c. **Backbone / preprocessing / data — no port error.** torchvision `vit_b_16(
   (The first measurement attempt counted a log line their code does not print; fixed to count "Mean valid", one per epoch.)
 - Expected: training ends ≈14:00 UTC (100 epochs); then scoring (Standard + Masked), arms a–d, the 3-seed analysis.
 
+### 2026-11-21 ~14:10 UTC (machine 2's clock) — machine 2: P1 location — training done; arm d head-stage fault fixed (code path, no result affected)
+- All four Standard runs finished (100 epochs, their rule selects the epoch); scoring (Standard + Masked) and arms a–c ran
+  for seed 3221 and 3232 inside; per-image files pushed as they appeared.
+- Arm d's head stage (seed 3221 inside) crashed with `NameError: f1_score` in the A24 cohort-validation block that machine 1
+  added to `heads_binary` on 2026-11-20 for P3. The block also fired for P1 location (which has a plain `valid` split);
+  seed 1234's P1 location arm d ran before the block existed. Fix in `armd_train.py`: import `f1_score`, and run the A24
+  rows only for settings with P3's cohort-validation splits (`valid_standard`). P1 location output keeps seed 1234's format;
+  P3 behaviour is unchanged. The crash came after encoder training and features and before any test prediction was written;
+  the head step was re-run once from the saved features (no retraining). Seed 3221 continues from there (inside → outside).
+
 ### Watchdog log (machine 2, automatic; `scripts/replication/m2_watchdog.sh`)
+- 2026-11-21_14:07:14 UTC watchdog (machine 2): queue failure in p1loc_seed3221.log: 'FAILED P1LOC seed 3221' — alert only (not retried)
+- 2026-11-21_14:07:14 UTC watchdog (machine 2): queue failure in p1loc_seed3221.log: '2026-11-21_14:06:53 FAILED P1LOC armd_heads_s3221_inside' — alert only (not retried)
 - 2026-11-21_10:21:02 UTC watchdog (machine 2): queue failure in p1loc_seed3221.log: 'FAILED P1LOC seed 3221' — alert only (not retried)
 - 2026-11-21_10:21:02 UTC watchdog (machine 2): queue failure in p1loc_seed3221.log: '2026-11-21_10:20:59 FAILED P1LOC score_s3221_inside' — alert only (not retried)
 - 2026-11-21_10:21:02 UTC watchdog (machine 2): queue failure in p1loc_seed3232.log: 'FAILED P1LOC seed 3232' — alert only (not retried)
