@@ -1456,7 +1456,31 @@ c. **Backbone / preprocessing / data — no port error.** torchvision `vit_b_16(
   images / define the ROI. On these trap sets that supervision is as good as our constraint (b level with it, a below it).
 - P6: bias-0.9 seeds restarted 23:14 (ERM seed 3), chain restarted (fresh logs; the old ones kept as `*.log.1`).
 
+### 2026-11-21 ~03:25 UTC (machine 2's clock) — machine 2: **P6 FINAL A39 VERDICT — arm b beats EPVT at both bias levels**; section C CANCELLED
+- **Bias-0.9 gate (A39):** ERM 5-seed mean 0.7619 vs 0.762 (gap 0.0001), EPVT 0.7750 vs 0.792 (gap 0.0170) → both within 0.05;
+  bias 0.9 is verdict-bearing (`results/replication/epvt/A39_bias09_gate.json`).
+- **A39 comparisons** (each arm scored once; crossed seed × image bootstrap vs our EPVT's 5 seeds; Holm over 8; Holm-adjusted
+  CIs at each comparison's step-down level, `results/replication/epvt/arms/comparison_holm_ci.md`):
+
+  | arm | bias 1: Δ [Holm-adj. CI], p Holm | bias 0.9: Δ [Holm-adj. CI], p Holm | beaten (section 2) |
+  |---|---|---|---|
+  | **b DINOv2 + mask_cmc** | **+0.086 [+0.064, +0.107], 0.0008** | **+0.031 [+0.009, +0.054], 0.0008** | **yes / yes** |
+  | **d EfficientNet-B0 + mask_cmc** | +0.022 [+0.003, +0.040], 0.0192 | −0.021 [−0.039, −0.003], 0.0260 | yes / no |
+  | a mask_cmc on EPVT's features | +0.061 [+0.039, +0.086], 0.0008 | +0.021 [+0.003, +0.040], 0.0120 | yes / yes |
+  | c U-MtE | −0.072 [−0.094, −0.050], 0.0008 | −0.088 [−0.111, −0.066], 0.0008 | no / no |
+
+  AUROC: arm b 0.782 / 0.806, arm a 0.758 / 0.795, arm d 0.718 / 0.754, arm c 0.625 / 0.687; EPVT 0.696 / 0.775; ERM 0.668 / 0.762.
+  (A39 itself names no primary arms; b and d are primary by A32's convention.)
+- **A42 reported clean check (NOT part of the verdict; AUROC on test_bias_0_1; flag "within EPVT − 0.01"):** EPVT 0.910 (bias-1
+  models) / 0.929 (bias-0.9 models); arm b 0.889 / 0.889 (−0.021 / −0.040: **no**), arm a 0.885 / 0.886 (no), arm c 0.870 /
+  0.877 (no), **arm d 0.924 / 0.932 (+0.014 / +0.004: yes)**. So the arm that beats EPVT on the trap tests by the widest margin
+  (b, frozen DINOv2) gives up 0.02–0.04 AUROC on unbiased ISIC images; the trained small encoder (d) does not.
+- **Section C (new-method track) CANCELLED** under the author's rule: A39's registered success rule is met for a primary arm
+  (arm b, both bias levels, Holm-adjusted CIs above 0). Recorded with the clean-check caveat above (arm b's clean flag is
+  "no"; arm d meets the rule at bias 1 with its clean flag "yes", not at bias 0.9).
+
 ### Watchdog log (machine 2, automatic; `scripts/replication/m2_watchdog.sh`)
+- 2026-11-21_03:09:24 UTC watchdog (machine 2): GPU idle > 10 min while queue scripts wait (m2_p6_clean.sh ) — alert only
 - 2026-11-20_23:03:04 UTC watchdog (machine 2): queue failure in m2_p6_bias09.log: 'FAILED P6B09 erm 3' — alert only (not retried)
 - 2026-11-20_16:33:43 UTC watchdog (machine 2): queue failure in m2_p6_chain.log: '2026-11-20_16:33:41 FAILED P6CHAIN cache' — alert only (not retried)
 - 2026-11-20_16:07:57 UTC watchdog (machine 2): queue failure in m2_p6_prep.log: 'FAILED P6PREP lesion rois' — alert only (not retried)
