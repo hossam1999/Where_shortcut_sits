@@ -1,0 +1,86 @@
+% Replication programme (November 2026). Numbers: docs/REPLICATION_RESULTS.md (final) and results/replication/.
+\section{Validation against published methods (replication programme)}\label{sec:replication}
+\plain{To make sure our conclusions are not just about methods we built ourselves, we took eight published papers on
+shortcut learning in medical images, ran their best method with the authors' own code, and compared it with ours ---
+first on \emph{their} data and test, then on \emph{our} real-artifact test (thyroid calipers). Every rule was written
+down before the results. The main outcome: published methods that restrict the model to the region of interest fail
+when the artifact is inside it, and our class-conditional constraint beats ISNet, RR-ClArC and EPVT under registered
+rules.}
+
+\subsection{How the comparison works}
+\begin{itemize}[leftmargin=*]
+\item \textbf{Reproduction gate.} We first ran each paper's best method with its code and compared it with the published
+number (tolerance 0.05 in the paper's metric; widened from 0.03 for every paper after the first gates were known --- a
+deviation we report).
+\item \textbf{Tier 1 (reproduced):} a formal ``beaten / not beaten'' verdict (95\% CI of the paired difference above 0,
+Holm-corrected). \textbf{Tier 2 (not reproduced):} a descriptive comparison with our run of the official code under
+identical conditions, with no claim against the published number.
+\item \textbf{Our four registered variants:} (a) the constraint on the competitor's own network; (b) the constraint on
+frozen DINOv2 features of masked images (our pipeline); (c) U-MtE (no artifact labels); (d) the constraint on a small
+EfficientNet-B0 (5.3\,M parameters) trained on masked images.
+\item \textbf{Our environment (``phase 5''):} ISNet and RR-ClArC trained by us on the thyroid traps with their published
+recipes, one selection rule for everyone, registered before any result.
+\end{itemize}
+
+\subsection{Results at a glance}
+\begin{longtable}{>{\raggedright\arraybackslash}p{4.4cm}>{\raggedright\arraybackslash}p{2.2cm}>{\raggedright\arraybackslash}p{1.3cm}>{\raggedright\arraybackslash}p{6.4cm}}\toprule
+Paper (artifact) & Reproduced? & Tier & Outcome\\\midrule\endhead
+\textbf{Phase 5}: ISNet, RR-ClArC on thyroid calipers inside the nodule & --- & confirm. & \ok: our constraint beats both, 4/4 comparisons, also better on clean images\\
+\textbf{EPVT} (MICCAI 2023 / IEEE TMI 2025; hair, rulers, gel) & yes & 1 & \ok: beaten at both bias levels ($+0.086$, $+0.031$); 0.02--0.04 lower on artifact-free images\\
+\textbf{DISC} (ICML 2023; hair) & no & 2 & \ok\ (descriptive): 0.736 vs 0.489 for their code, above on all five trap sets\\
+\textbf{RR-ClArC} (Machine Learning 2025; vignette) & no & 2 & \ok\ (descriptive): 0.785 vs 0.524 for their code (0.76 published)\\
+\textbf{ISNet} (Nat.\ Commun.\ 2024; class marks) & no & 2 & \ok\ (shows the problem): ISNet ignores corner marks but relies only on marks inside the lungs\\
+\textbf{Viviano et al.} (ICLR 2021; tube, location test, 3 seeds) & yes & formal & \mixed: masking's crossover supported; our gain over their model not significant\\
+\textbf{Saab et al.} (MLHC 2022; trap sets) & no & 2 & \mixed: tie ($+0.023$, CI $-0.029$ to $+0.076$)\\
+\textbf{RR-ClArC} (AAAI 2024; invisible trigger) & yes & 1 & \no: not beaten (the artifact has no location)\\
+\textbf{Reveal to Revise} (MICCAI 2023) & no & --- & not compared (released weights did not match the paper)\\
+\bottomrule\end{longtable}
+
+\subsection{Our environment: real calipers inside the nodule}
+\plain{This is the decisive test: real clinical artifacts, a test set nobody had looked at, and the published methods
+run by us under the same rules as ours.}
+\begin{table}[H]\centering\small
+\begin{tabular}{lccc}\toprule
+Method & Trap A (inside) & Trap B (outside) & Clean\\\midrule
+Constraint, frozen DINOv2 (ours) & \textbf{0.716} & 0.789 & 0.797\\
+Constraint, EfficientNet-B0 (ours) & 0.690 & 0.746 & 0.733\\
+ISNet & 0.561 & 0.673 & 0.633\\
+RR-ClArC & 0.467 & 0.595 & 0.643\\
+U-MtE (ours, no labels) & 0.504 & 0.782 & 0.727\\
+ERM (plain training) & 0.440 & 0.546 & 0.625\\\bottomrule
+\end{tabular}
+\caption{Reversed-test AUROC (three folds). All four registered comparisons are ``beaten'' (e.g.\ DINOv2 vs ISNet
+$+0.155$ [$+0.019, +0.316$], vs RR-ClArC $+0.249$ [$+0.192, +0.304$]). ISNet is better with the caliper outside the
+nodule than inside it, exactly the location effect.}
+\end{table}
+
+\subsection{Their environment}
+\begin{itemize}[leftmargin=*]
+\item \textbf{EPVT} reproduced after a 37-item audit of its code (one port error fixed; the paper's mixup followed where
+the code differs). Our DINOv2 variant beat it at bias 1 (0.782 vs 0.696) and bias 0.9 (0.806 vs 0.775); adding our
+constraint to EPVT's own network also improved it. On artifact-free images our frozen variant is 0.02--0.04 lower.
+\item \textbf{DISC} did not reproduce. Its released code shares one image cache across trap sets, so later trap sets read
+the wrong images; our misaligned runs matched its published baseline (0.368 vs 0.364). Run correctly, DISC scores 0.489;
+all our variants are higher (DINOv2 0.736), and also above the published DISC (0.551) and CBDebug (0.580, ICLR 2026).
+\item \textbf{ISNet}: with its marks moved from the corner into the lungs, it went from ignoring them (0.84 / 0.83 / 0.83
+on own-class / no / swapped marks) to relying on them alone (0.998 / 0.167 / 0.000).
+\item \textbf{Viviano et al.}: with a tube inside the lungs+heart ROI, their masked model dropped to 0.615 (0.896 with
+the tube outside); our variants scored 0.867--0.876 at every seed, but the registered gain over their standard model was
+not significant because at one seed their checkpoint rule kept a model that had not learned the tube.
+\end{itemize}
+
+\subsection{Limits found}
+\begin{itemize}[leftmargin=*]
+\item Class-specific marks inside the ROI (ISNet's design): our variants resist better than ISNet (0.20--0.36 vs 0.03
+under swapped marks) but still mostly follow the marks.
+\item An invisible trigger spread over the whole image (RR-ClArC, AAAI 2024): not beaten --- outside the method's scope.
+\item Segmentation-supervised ERM (Saab et al.) ties with us while using lesion masks as training targets.
+\item A trained encoder absorbs strong shortcuts; this is why the frozen encoder is the default.
+\end{itemize}
+
+\subsection{Reproducibility findings}
+\plain{Five of the eight published results did not reproduce from the authors' code. For three we found concrete causes,
+and we emailed the authors of every paper that did not reproduce.}
+DISC: shared image cache across trap sets; EPVT: mixup labels paired differently in the code than in the paper; Saab et
+al.: the evaluation notebook scores an epoch-1 checkpoint; ISNet: the released model fails even on its own training
+sources under the stated preprocessing; RR-ClArC (2025): 0.52 vs 0.76 at the paper's stated settings.
