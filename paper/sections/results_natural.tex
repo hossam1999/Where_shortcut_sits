@@ -32,11 +32,11 @@ the loss among the 78 conflicting nodules---from 0.744 to 0.223 ($-0.521$ [$-0.6
 crossover.
 
 \paragraph{Is the loss a threshold artefact? (pre-registered)} Re-tuning each model's threshold on the test set
-itself---the best that recalibration at a deployment site can achieve---makes the overall sensitivity of the two arms
-equal, but the conflicting subgroup still loses, for the fine-tuned model ($-0.154$ [$-0.302, -0.023$]) and for the
-frozen probe (Holm $p=0.019$ each; Table~\ref{tab:natural}). About 30\% of the loss at validation-fixed thresholds
-therefore cannot be removed by any threshold; the rest follows from transporting thresholds from validation to test
-data, as deployment does.
+itself so that both arms reach specificity 0.80---an oracle sensitivity analysis, not a deployable procedure---leaves
+overall sensitivity similar (fine-tuned model 0.557 vs 0.540), but the conflicting subgroup still loses, for the
+fine-tuned model ($-0.154$ [$-0.302, -0.023$]) and for the frozen probe (Holm $p=0.019$ each; Table~\ref{tab:natural}).
+The subgroup deficit is therefore not explained solely by the validation-selected threshold; the larger loss at
+validation-fixed thresholds also reflects transporting thresholds from validation to test data, as deployment does.
 
 \paragraph{New patients at natural prevalence (pre-registered)} Trained on all ISIC 2019 images and tested on ISIC 2020
 without resampling, masking lowers the AUROC on conflicting pairs under both duplicate rules, while overall AUROC is
