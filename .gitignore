@@ -45,3 +45,18 @@ results/round9/_smoke/
 third_party/*/*
 !third_party/*/SOURCE.md
 !third_party/*/*.patch
+
+# LaTeX build files
+manuscript_bmc/*.aux
+manuscript_bmc/*.bbl
+manuscript_bmc/*.blg
+manuscript_bmc/*.out
+paper/*.aux
+paper/*.bbl
+paper/*.out
+paper/*.spl
+report/*.aux
+report/*.bbl
+report/*.blg
+report/*.out
+report/*.toc
