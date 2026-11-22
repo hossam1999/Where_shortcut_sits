@@ -1,8 +1,8 @@
-% Manuscript for BMC Medical Imaging (Research article). Revised 2026-11-22 after an internal review:
-% clinical subgroup result in the main text, ISIC 2020 filtering, audit wording, expanded Methods, softer conclusions,
-% EPVT/PLDG labelling, ethics template.
+% Manuscript for BMC Medical Imaging (Research article). Revision of 2026-11-22 (editorial pass):
+% authors and affiliation, language and consistency, number verification against the repository, EPVT/Viviano
+% qualification, declarations with explicit author-confirmation placeholders. See FINAL_SUBMISSION_CHECK.md.
 % Numbers: paper/tables (generated), results/round4/natural_isic2020/counts.json, results/round7/SUMMARY.md,
-% docs/REPLICATION_RESULTS.md (final, 2026-11-21).
+% results/grouped_bootstrap/SUMMARY.md, docs/ARTIFACT_MASK_AUDIT.md, docs/REPLICATION_RESULTS.md (final, 2026-11-21).
 \documentclass[12pt]{article}
 \usepackage[a4paper,margin=2.5cm]{geometry}
 \usepackage[T1]{fontenc}
@@ -13,44 +13,48 @@
 \linenumbers
 \doublespacing
 \setlength{\emergencystretch}{2em}
-\newcommand{\ph}[1]{\textcolor{red}{[#1]}}
+\newcommand{\confirm}[1]{\textcolor{red}{[AUTHOR CONFIRMATION REQUIRED: #1]}}
 
 \begin{document}
 
 \begin{center}
 {\Large\bfseries Masking cannot remove what is inside the region of interest: location-dependent shortcut learning
 in medical image classification}\par\bigskip
-Hossam Elkady$^{1,*}$ \ph{and co-authors/supervisors}\par\medskip
-{\small $^1$\ph{Department, University, City, Country}\\
-$^*$Corresponding author: \ph{email address}}
+Hossam Elkady$^{1,*}$, Nagia Ghanem$^{1}$, Samia Hafez$^{1}$\par\medskip
+{\small $^1$Department of Computer and Systems Engineering, Faculty of Engineering, Alexandria University, Alexandria,
+Egypt\\[2pt]
+$^*$Corresponding author: Hossam Elkady, \href{mailto:es-Hossam.Elkady2022@alexu.edu.eg}{es-Hossam.Elkady2022@alexu.edu.eg}\\[2pt]
+Nagia Ghanem: \href{mailto:nagia.ghanem@alexu.edu.eg}{nagia.ghanem@alexu.edu.eg}; Samia Hafez:
+\href{mailto:s.hafez@alexu.edu.eg}{s.hafez@alexu.edu.eg}\\[2pt]
+\confirm{official spelling of each author's name and the affiliation for all three authors}}
 \end{center}
 
 \section*{Abstract}
-\paragraph{Background} Medical image classifiers exploit acquisition artifacts, such as hair, sonographer calipers and
-intestinal debris, that correlate with the diagnosis. A common defence restricts the classifier to the region of
+\paragraph{Background} Medical image classifiers can exploit acquisition artifacts, such as hair, sonographer calipers
+and intestinal debris, that correlate with the diagnosis. A common defence restricts the classifier to the region of
 interest (ROI). We asked whether this defence depends on where the artifact lies relative to the ROI.
 
-\paragraph{Methods} We built pre-registered traps from real artifacts in four diseases and three modalities
-(dermoscopy, thyroid and ovarian ultrasound, capsule endoscopy), training with the artifact on 90\% of positive and 10\%
-of negative images and testing with the association reversed. We transplanted the same real artifacts inside or outside
-the ROI of the same images, measured consequences on unaltered clinical test data, evaluated a class-conditional mean
-constraint on masked frozen features, and audited eight published mitigation papers, with head-to-head comparisons where
-their results reproduced.
+\paragraph{Methods} In four diseases and three modalities (dermoscopy, thyroid and ovarian ultrasound, capsule
+endoscopy), we built pre-registered traps from real artifacts, trained with the artifact on 90\% of positive and 10\% of
+negative images, and tested with the association reversed. We transplanted the same real artifacts inside or outside the
+ROI of the same images, measured consequences on unaltered clinical test data, evaluated a class-conditional mean
+constraint on masked frozen features, and audited eight published mitigation papers.
 
-\paragraph{Results} Masking removed out-of-ROI shortcuts but left in-ROI ones largely intact (location crossover in
-reversed-test AUROC $+0.15$ to $+0.38$ across cohorts); transplanting the same artifact across the ROI boundary
-reproduced the effect. On an unaltered, patient-disjoint thyroid test set, masking left overall AUROC unchanged but,
-among 78 malignant nodules with an in-nodule caliper, lowered sensitivity at a fixed specificity of 0.80 from 0.744 to
-0.223 for a fine-tuned model ($-0.52$, 95\% CI $-0.64$ to $-0.38$); in an oracle analysis with specificity matched on the
-test set, a deficit persisted (0.544 vs 0.390). The constraint improved on masking in every in-ROI trap but lost 0.021 overall AUROC on new
-ISIC 2020 patients. In a registered comparison on thyroid calipers inside the nodule it outperformed ISNet and RR-ClArC
-(4/4 comparisons), and it outperformed EPVT on EPVT's dermoscopy trap sets. Of the eight audited papers, two reproduced
-fully, one on a single seed only, and five not at all.
+\paragraph{Results} Masking removed out-of-ROI shortcuts but left in-ROI shortcuts largely intact (location crossover in
+reversed-test AUROC $+0.15$ to $+0.38$); transplanting the same artifacts reproduced the effect. On an unaltered,
+patient-disjoint thyroid test set, masking left overall AUROC unchanged, but among 78 malignant nodules with an
+in-nodule caliper it lowered a fine-tuned model's sensitivity at a validation-fixed specificity of 0.80 from 0.744 to
+0.223 (difference $-0.52$, 95\% CI $-0.64$ to $-0.38$); with specificity matched on the test set (an oracle analysis), a
+deficit remained (0.544 vs 0.390). The constraint improved on masking in every in-ROI trap but did not dominate it,
+losing 0.021 overall AUROC on new ISIC 2020 patients. In a registered comparison on in-nodule calipers it outperformed
+ISNet and RR-ClArC (4/4 comparisons). Of the eight audited papers, two reproduced, one only on a single seed, and five
+did not; against EPVT, which passed a widened reproduction tolerance by a narrow margin, the constraint performed better
+on EPVT's own trap sets.
 
-\paragraph{Conclusions} ROI masking is unreliable when artifacts lie inside the ROI, and its harm is concentrated in
+\paragraph{Conclusions} ROI masking is unreliable when artifacts lie inside the ROI, and its harm concentrates in
 shortcut-conflicting patients that overall metrics hide. Where in-ROI artifacts are expected and image-level artifact
-labels are available, a class-conditional constraint on masked features is a promising alternative. Audits of masked
-models should report artifact location and performance on shortcut-conflicting cases.
+labels are available, a class-conditional constraint on masked features is a promising alternative. Evaluations of
+masked models should report artifact location and performance on shortcut-conflicting cases.
 
 \paragraph{Keywords} Shortcut learning; Spurious correlation; Region of interest; Masking; Artifacts; Thyroid
 ultrasound; Dermoscopy; Capsule endoscopy; Reproducibility
@@ -60,224 +64,244 @@ ultrasound; Dermoscopy; Capsule endoscopy; Reproducibility
 Deep classifiers for medical images often rely on features that correlate with the label in the training data but are
 not evidence of disease \cite{geirhos2020shortcut,degrave2021ai}. Surgical skin markings \cite{winkler2019markings} and
 ruler scale bars \cite{winkler2021scalebars} changed the melanoma predictions of a market-approved dermoscopy system,
-and pneumothorax classifiers detect the chest drain that treats the condition
-\cite{oakden2020hidden,rueckel2021pneumothorax,jimenez2023shortcuts}. Such correlations arise from clinical practice
-itself: suspicious lesions are measured and marked, so the artifacts are present in retrospectively collected data.
+and pneumothorax classifiers can detect the chest drain that treats the condition rather than the condition itself
+\cite{oakden2020hidden,rueckel2021pneumothorax,jimenez2023shortcuts}. Such correlations arise from clinical practice:
+suspicious lesions are measured and marked, so the artifacts are present in retrospectively collected data.
 
-A widely recommended defence restricts the classifier to the ROI: the lesion is segmented and the rest discarded, or
-relevance outside the segmentation is penalised \cite{maron2021confounding,bassi2024isnet}. This assumes that the
-shortcut lives in the background. Rulers, hair, calipers and debris often lie on the lesion. Several studies note this
-risk without testing it \cite{maron2021confounding,viviano2021saliency,benahmed2022multisite,pahde2025ensuring}, and
-synthetic studies varied the distance of a bias from the disease region, but always outside it
+A widely recommended defence restricts the classifier to the ROI, either by segmenting the lesion and discarding the rest
+of the image or by penalising relevance outside the segmentation \cite{maron2021confounding,bassi2024isnet}. This
+defence assumes that the shortcut lies in the background. Rulers, hair, calipers and debris, however, often lie on the
+lesion. Several studies mention this risk without testing it
+\cite{maron2021confounding,viviano2021saliency,benahmed2022multisite,pahde2025ensuring}, and simulation studies have varied
+the distance between a bias and the disease region, but always with the bias outside that region
 \cite{stanley2023framework,stanley2024simba}. Benchmarks of shortcut mitigation in medical imaging mostly use global
 attributes such as patient sex or hospital \cite{mueller2026shortcut,viviano2021saliency}, which have no location.
 
-We test whether ROI restriction depends on the location of a real artifact relative to the ROI, whether this matters on
-unaltered clinical data, whether a simple constraint on the masked features helps, and how these findings compare with
-published mitigation methods.
+We therefore asked four questions: whether ROI restriction depends on the location of a real artifact relative to the
+ROI; whether this matters on unaltered clinical data; whether a simple constraint on the masked features helps; and how
+these findings compare with published mitigation methods.
 
 \section*{Methods}
 \subsection*{Data and populations}
-\emph{Dermoscopy.} ISIC 2019 training images (25,331) with hair masks and lesion masks (manual for HAM10000, otherwise
-from a U-Net trained on ISIC 2018 Task 1). \emph{New patients:} of the ISIC 2020 images with a lesion mask (32,997), we
-removed 7,657 near-duplicates of ISIC 2019 images by perceptual hash and duplicate names (none), leaving an evaluation
-population of 25,340 images of 2,044 patients (483 melanomas); hair masks came from a segmenter trained on ISIC 2019
-only. \emph{Thyroid ultrasound.} TN3K \cite{gong2021tn3k} (3,493 images, 1,210 malignant by cytology) with manual nodule
-masks; the official patient-disjoint split (2,879 training, 614 test images) was used for unaltered-data tests. Calipers
-were segmented by a frozen rule-based detector (dotted measurement lines and `+' ends). \emph{Ovarian ultrasound.} MMOTU
-OTU\_2d \cite{zhao2022mmotu} (1,202 images with tumour masks; benign cystic vs lesions with solid components), with the
-thyroid caliper detector applied unchanged; in a visual audit of 40 detected images, all carried an on-screen overlay but
-only 31 a caliper specifically (others: dotted zoom arcs, focus markers, thumbnail insets), so ovarian ``artifacts''
-are localized graphical overlays, mostly calipers, and ``artifact-free'' means caliper-free. The thyroid detector lay on a
-real caliper or measurement mark in 38 of 40 audited images. \emph{Capsule endoscopy.} SEE-AI frames \cite{seeai2023} with only erosions
-(3,550) or only polyp-like lesions (1,931); the ROI is the union of expert lesion boxes, and debris, bubbles and bile
-were segmented by a linear probe on DINOv2 patch tokens (held-out IoU 0.62 against expert masks).
+\emph{Dermoscopy.} We used the 25,331 ISIC 2019 training images with hair masks and lesion masks (manual for HAM10000,
+otherwise predicted by a U-Net trained on ISIC 2018 Task~1). \emph{New patients:} of the 32,997 ISIC 2020 images with a
+lesion mask, we removed 7,657 near-duplicates of ISIC 2019 images by perceptual hash (no duplicates by file name), leaving
+an evaluation population of 25,340 images of 2,044 patients (483 melanomas); hair masks for ISIC 2020 came from a
+segmenter trained on ISIC 2019 only.
+\emph{Thyroid ultrasound.} TN3K \cite{gong2021tn3k} comprises 3,493 images (1,210 malignant, confirmed by cytology) with
+manual nodule masks; its official patient-disjoint split (2,879 training and 614 test images) was used for the
+unaltered-data analyses. Calipers were segmented by a frozen rule-based detector (dotted measurement lines with `+' ends).
+In a visual audit of 40 images flagged by the detector, it lay on a real caliper or measurement mark in 38.
+\emph{Ovarian ultrasound.} MMOTU OTU\_2d \cite{zhao2022mmotu} comprises 1,202 images with tumour masks (benign cystic
+lesions versus lesions with solid components); the thyroid caliper detector was applied unchanged. In a visual audit of 40
+flagged images, all carried an on-screen overlay but only 31 a caliper; the others showed dotted zoom arcs, focus markers
+or thumbnail insets. Ovarian ``artifacts'' are therefore localized graphical overlays, mostly calipers, and
+``artifact-free'' means caliper-free.
+\emph{Capsule endoscopy.} We used SEE-AI frames \cite{seeai2023} showing only erosions (3,550) or only polyp-like lesions
+(1,931). The ROI is the union of the expert lesion boxes; debris, bubbles and bile were segmented by a linear probe on
+DINOv2 patch tokens (held-out intersection over union 0.62 against expert masks).
 
 \subsection*{Artifact location and trap construction}
-For each image, the overlap $r=|\mathrm{artifact}\cap\mathrm{ROI}|/|\mathrm{artifact}|$ measures where the artifact
-lies. Trap~A uses images whose artifact overlaps the ROI ($r\ge0.5$), Trap~B images whose artifact lies outside it
-($r<0.1$); both share one artifact-free group (thyroid: Trap~A 1,150, Trap~B 326, caliper-free 1,801 images). Each trap
-trains with $P(A{=}1\mid Y{=}1)=0.9$ and $P(A{=}1\mid Y{=}0)=0.1$, where $Y$ is the diagnosis and $A$ the artifact, and
-is tested on a correlated environment (same rates), a reversed environment (rates swapped) and a clean environment
-(artifact independent of the label), following earlier reversed-test designs
-\cite{arjovsky2019irm,bissoto2020debiasing,puli2022nurd,viviano2021saliency,bassi2024isnet}. In-ROI and out-of-ROI
-artifact images differ in other respects, so we also matched them 1:1 on propensity scores (caliper 0.2 SD). The
-\emph{transplant} design removes this confounding: one real artifact instance is pasted inside ($r\ge0.95$) or outside
-($r=0$) the ROI of the same artifact-free images, and neutral tissue pasted through the same mask, position and blending
-serves as a paste-edge control (Fig.~\ref{fig:design}; real examples in Fig.~\ref{fig:examples}).
+For each image, the overlap $r=|\mathrm{artifact}\cap\mathrm{ROI}|/|\mathrm{artifact}|$ describes where the artifact lies.
+Trap~A uses images whose artifact overlaps the ROI ($r\ge0.5$) and Trap~B images whose artifact lies outside it
+($r<0.1$); both share one artifact-free group (thyroid: 1,150 Trap~A, 326 Trap~B and 1,801 caliper-free images). Each trap
+is trained with $P(A{=}1\mid Y{=}1)=0.9$ and $P(A{=}1\mid Y{=}0)=0.1$, where $Y$ is the diagnosis and $A$ the presence of
+the artifact, and is tested in three environments: correlated (same rates), reversed (rates swapped) and clean (artifact
+independent of the label). This follows earlier reversed-test designs
+\cite{arjovsky2019irm,bissoto2020debiasing,puli2022nurd,viviano2021saliency,bassi2024isnet}. Because images with in-ROI
+and out-of-ROI artifacts may differ in other respects, we also matched them 1:1 on propensity scores (caliper 0.2 standard
+deviations). The \emph{transplant} design removes this confounding: one real artifact instance is pasted inside
+($r\ge0.95$) or outside ($r=0$) the ROI of the same artifact-free images, and neutral tissue pasted through the same mask,
+position and blending serves as a paste-edge control (Fig.~\ref{fig:design}; real examples in Fig.~\ref{fig:examples}).
 
 \begin{figure}[t]\centering\includegraphics[width=\linewidth]{../paper/figures/design.pdf}
 \caption{Study design. (a) Controlled sweeps paste a synthetic artifact at a controlled overlap $r$ with the ROI.
 (b) Real traps compare images whose real artifact lies inside (Trap~A) or outside (Trap~B) the ROI. (c) The transplant
 pastes one real artifact inside or outside the ROI of the same images, with neutral tissue as a paste-edge control.
-(d) ERM sees the whole image; ROI masking removes everything outside the ROI.}\label{fig:design}\end{figure}
+(d) Empirical risk minimisation (ERM) sees the whole image; ROI masking removes everything outside the ROI.}\label{fig:design}\end{figure}
 
 \begin{figure}[t]\centering\includegraphics[width=\linewidth]{../paper/figures/examples.pdf}
-\caption{Real artifacts inside and outside the ROI (green outline or box; artifact in red). Left: ovarian ultrasound
-with a caliper inside the tumour and an overlay outside it (MMOTU, CC BY 4.0). Right: capsule endoscopy with debris on
-and off the lesion (SEE-AI, CC BY 4.0).}\label{fig:examples}\end{figure}
+\caption{Real artifacts inside and outside the ROI (ROI outline or box in green; artifact in red). Left: ovarian
+ultrasound with a caliper inside the tumour and an overlay outside it (MMOTU, CC BY 4.0). Right: capsule endoscopy with
+debris on and off the lesion (SEE-AI, CC BY 4.0).}\label{fig:examples}\end{figure}
 
 \subsection*{Masking and models}
-\emph{ROI masking} keeps ROI pixels and replaces all others by the ImageNet mean colour; four alternative implementations
-(black fill, blurred background, crop to the lesion box, crop of the masked image) were tested as sensitivity analyses.
-Unless stated otherwise, images were encoded by a frozen DINOv2 ViT-B/14 at 518\,px and a logistic head was fitted;
-replications used MedSigLIP, ConvNeXt-Base, DINOv2 at three sizes and end-to-end fine-tuning. For the unaltered thyroid
-tests we additionally fine-tuned a ConvNeXt-T (ImageNet-22k) with a recipe chosen on validation images only (five seeds;
-test AUROC 0.769, close to the published cross-entropy baseline of 0.773 \cite{gong2022acl}). The inverse regularisation
-strength and the decision threshold (balanced accuracy) were chosen on clean validation data; test sets were not used for
-any choice.
+\emph{ROI masking} keeps the ROI pixels and replaces all others with the ImageNet mean colour. Four alternative
+implementations (black fill, blurred background, crop to the lesion box and crop of the masked image) served as
+sensitivity analyses. Unless stated otherwise, images were encoded by a frozen DINOv2 ViT-B/14 at 518\,px and a logistic
+head was fitted; replications used MedSigLIP, ConvNeXt-Base, DINOv2 at three model sizes and end-to-end fine-tuning. For
+the unaltered thyroid analyses we additionally fine-tuned a ConvNeXt-T pretrained on ImageNet-22k, with a recipe chosen on
+validation images only (five seeds; test AUROC 0.769, close to the published cross-entropy baseline of 0.773
+\cite{gong2022acl}). The inverse regularisation strength and the decision threshold (maximising balanced accuracy) were
+chosen on clean validation data; test sets were never used for a choice.
 
 \subsection*{Class-conditional constraint}
-The constraint uses the image-level artifact label $a$ (from the automatic detectors above) during training only. With
-$x$ the frozen features of the masked image, we compute on the training images the within-class mean differences
-$\delta_y=\mu(x\mid a{=}1,y)-\mu(x\mid a{=}0,y)$ for $y\in\{0,1\}$, project all features onto the orthogonal complement
-of $\{\delta_0,\delta_1\}$ (or of their average; chosen on validation data) and fit a logistic head on all training images
-at their natural weights. Within each class the head then cannot score images with and without the artifact differently
-on average, and no image is down-weighted. The constraint is the first-moment linear case of counterfactual invariance
-\cite{veitch2021counterfactual,makar2022causally} and is related to class artifact compensation
-\cite{anders2022clever,pahde2025ensuring}; it removes within-class differences, is applied after masking, and needs only
-the masked image at test time. We registered a criterion for dominating masking with 42 components (not worse than
-masking within 0.01 AUROC on unaltered and out-of-ROI tests, better on every in-ROI trap and on every set of conflicting
-cases), assessed on trap resamples generated after registration and on one cohort (ovary) held out from all choices.
+The constraint uses the image-level artifact label $a$, obtained from the automatic detectors above, during training
+only. With $x$ the frozen features of the masked image, we compute on the training images the within-class mean
+differences $\delta_y=\mu(x\mid a{=}1,y)-\mu(x\mid a{=}0,y)$ for $y\in\{0,1\}$, project all features onto the orthogonal
+complement of $\{\delta_0,\delta_1\}$ (or of their average, chosen on validation data) and fit a logistic head on all
+training images at their natural weights. Within each class, the head then cannot score images with and without the
+artifact differently on average, and no image is down-weighted. The constraint is the first-moment, linear case of
+counterfactual invariance \cite{veitch2021counterfactual,makar2022causally} and is related to class artifact compensation
+\cite{anders2022clever,pahde2025ensuring}; unlike those methods, it removes within-class differences, is applied after
+masking and needs only the masked image at test time. We registered a 42-component criterion for dominating masking:
+not worse than masking (margin 0.01 AUROC) on the unaltered and out-of-ROI tests, and better on every in-ROI trap and
+on every set of shortcut-conflicting cases. It was assessed on trap resamples generated after registration and on one
+cohort (ovary) held out from all design choices.
 
 \subsection*{Unaltered clinical data}
 Models were trained on natural (unresampled) training data and tested on the official thyroid test split, on each
 ISIC 2019 source held out in turn, on ISIC 2020 and on held-out capsule frame blocks. We report AUROC over all
 positive--negative pairs and over \emph{shortcut-conflicting} pairs, in which the in-ROI artifact points to the wrong
 diagnosis, and sensitivity at operating points fixed on validation data. The subgroup of 78 malignant thyroid nodules
-with an in-nodule caliper was registered before any result of the fine-tuned model; for the frozen model it was
-defined after its first unaltered-data analysis. A further registered analysis re-tuned each model's threshold on the
-test set itself so that both arms reach specificity 0.80. This is an oracle sensitivity analysis, not a deployable
-threshold-selection procedure: it asks whether the subgroup deficit is explained by the validation-selected threshold alone.
+with an in-nodule caliper was registered before any result of the fine-tuned model was available; for the frozen model it
+was defined after its first unaltered-data analysis. A further registered analysis re-tuned each model's threshold on the
+test set itself so that both arms reached a specificity of 0.80. This is an oracle sensitivity analysis, not a
+deployable threshold-selection procedure: it asks whether the subgroup deficit is explained by the validation-selected
+threshold alone.
 
 \subsection*{Audit of published mitigation methods}
-We selected eight published shortcut-mitigation papers on medical image classification with released code and public
-data (Table~\ref{tab:repl}). For each we first ran its best method with the authors' code and compared it with the
-published value (reproduction check; tolerance 0.05 in the paper's metric). Our initial registration specified 0.03; the tolerance was
-widened for all papers after the first reproduction checks and before EPVT's head-to-head comparison was run (at bias
-0.9, EPVT also met the original 0.03). Where the check passed, we compared our method head-to-head and counted a
-method as outperformed only if the Holm-adjusted 95\% CI of the paired difference lay above zero. Where it failed, we
-report comparisons with our run of the authors' code as descriptive only and make no claim relative to the published
-value. Our variants were registered in advance: the constraint on frozen DINOv2 features of masked images; on the
-competitor's own trained network; on an EfficientNet-B0 (5.3\,M parameters) trained on masked images; and the label-free
-U-MtE. In a confirmatory comparison on the thyroid traps (three folds, registered before any result), ISNet
-\cite{bassi2024isnet} (from ImageNet weights) and RR-ClArC \cite{pahde2025ensuring} (on a ResNet-50d base, $\lambda$ and
-layer chosen on clean validation data) were trained with their published recipes under one selection rule for all
-methods.
+We selected eight published shortcut-mitigation papers on medical image classification with released code and public data
+(Table~\ref{tab:repl}). For each, we first ran its best method with the authors' code and compared the result with the
+published value (reproduction check). Our initial registration specified a tolerance of 0.03 in the paper's metric; after
+the first reproduction checks, the tolerance was widened to 0.05 for all papers, before EPVT's head-to-head comparison was
+run. We distinguish four outcomes: \emph{reproduced} (all registered runs within the tolerance), \emph{preliminary}
+(within the tolerance on fewer training seeds than registered), \emph{not reproduced}, and comparisons that are
+therefore \emph{descriptive}. Where a paper reproduced, a method of ours counted as having outperformed it only if the
+Holm-adjusted 95\% CI of the paired difference lay above zero. Where it did not, we report comparisons with our run of
+the authors' code as descriptive and make no claim relative to the published value. Four variants were registered in
+advance: the constraint on frozen DINOv2 features of masked images; on the competitor's own trained network; on an
+EfficientNet-B0 (5.3\,M parameters) trained on masked images; and the label-free U-MtE. In a confirmatory comparison on
+the thyroid traps (three folds, registered before any result), ISNet \cite{bassi2024isnet} (initialised from ImageNet
+weights) and RR-ClArC \cite{pahde2025ensuring} (on a ResNet-50d base, with $\lambda$ and layer chosen on clean validation
+data) were trained with their published recipes under one selection rule shared by all methods.
 
 \subsection*{Statistics, grouping and registration}
-The statistical unit is the test image, nested in training seeds or folds. Uncertainty is a paired crossed bootstrap:
-seeds or folds are resampled as clusters and each test image receives one Poisson weight shared by all clusters,
-methods and environments (10,000 replicates); differences are computed within each cluster. Non-independent images were
-kept on one side of every split: by lesion or patient identifier where published, otherwise by perceptual-hash groups of
-near-duplicates, and for capsule by blocks of 100 consecutive frames. Patient identifiers are not released for TN3K and MMOTU, so grouping there relies on near-duplicate detection;
-as a sensitivity analysis we recomputed the headline crossovers with one bootstrap weight per lesion, near-duplicate
-group or frame block instead of per image (Results). Each family of tests was Holm-corrected. Every
-confirmatory analysis was registered in a document committed before its results; analyses decided after the data were
-seen are labelled exploratory.
+The statistical unit is the test image, nested in training seeds or folds. Uncertainty is estimated with a paired
+crossed bootstrap: seeds or folds are resampled as clusters, each test image receives one Poisson weight shared by all
+clusters, methods and environments (10,000 replicates), and differences are computed within each cluster. Non-independent
+images were kept on one side of every split: by lesion or patient identifier where published, otherwise by
+perceptual-hash groups of near-duplicates, and for capsule endoscopy by blocks of 100 consecutive frames. TN3K and MMOTU
+do not release patient identifiers, so grouping there relies on near-duplicate detection; as a sensitivity analysis we
+recomputed the headline crossovers with one bootstrap weight per lesion, near-duplicate group or frame block instead of
+per image. Each family of tests was Holm-corrected. Every confirmatory analysis was registered in a document committed
+before its results; analyses decided after the data were seen are labelled exploratory.
 
 \section*{Results}
-\subsection*{1. Masking fails when the artifact lies inside the ROI}
-In real traps, masking removed out-of-ROI shortcuts but left in-ROI ones largely intact: the location crossover was
-$+0.147$ (hair), $+0.239$ (thyroid), $+0.170$ (ovary) and $+0.377$ (capsule), all Holm-significant
-(Table~\ref{tab:law}). Matched traps gave the same result in the three cohorts where matching was feasible. All four
-alternative masking implementations gave a positive crossover in all four cohorts (16/16, Holm $p\le0.010$), and the
-mask gain fell continuously with the real overlap $r$. With one bootstrap weight per
-lesion, near-duplicate group or frame block, all four crossovers remained significant (Holm-adjusted $p=0.0008$ each);
-the intervals widened by a factor of 0.97--1.16 except for capsule (1.50; 129 frame blocks). The effect replicated across
-encoders and with end-to-end fine-tuning. It was not universal in direction: masking still improved in-ROI reversed-test AUROC in capsule and ovary
-(e.g.\ capsule 0.58 to 0.67 with DINOv2), but by much less than out of the ROI; for the dermatology encoder DermLIP the
-crossover vanished.
+\subsection*{1. Location-dependent failure of masking}
+In the real traps, masking removed out-of-ROI shortcuts but left in-ROI shortcuts largely intact. The location crossover
+was $+0.147$ (hair), $+0.239$ (thyroid), $+0.170$ (ovary) and $+0.377$ (capsule), all Holm-significant
+(Table~\ref{tab:law}). Matched traps gave the same result in the three cohorts in which matching was feasible. All four
+alternative masking implementations produced a positive crossover in all four cohorts (16/16, Holm $p\le0.010$), and the
+gain from masking decreased continuously with the real overlap $r$. With one bootstrap weight per lesion,
+near-duplicate group or frame block, all four crossovers remained significant (Holm-adjusted $p=0.0008$ each); the
+intervals changed in width by a factor of 0.97--1.16, except for capsule endoscopy (1.50; 129 frame blocks). The effect
+replicated across encoders and with end-to-end fine-tuning.
 
-\subsection*{2. Moving the same artifact across the ROI boundary}
-Transplanting one real artifact instance into or out of the ROI of the same images reproduced the location effect in
-all four cohorts (Table~\ref{tab:law}). Pasting neutral tissue through the same masks also produced a crossover, so
-part of the effect comes from pasting itself; the artifact exceeded this paste-edge control in hair ($+0.049$) and
-thyroid ($+0.132$), not significantly in ovary and capsule.
+Masking did not always harm in-ROI performance. With in-ROI artifacts it still raised reversed-test AUROC in three
+cohorts (thyroid 0.29 to 0.40, ovary 0.41 to 0.55, capsule 0.58 to 0.67 with DINOv2), although far less than with
+out-of-ROI artifacts, and it lowered it for hair (0.51 to 0.46). For the dermatology encoder DermLIP the crossover
+vanished.
+
+\subsection*{2. Same-image transplants and the paste-edge control}
+Transplanting one real artifact instance into or out of the ROI of the same images reproduced the location effect in all
+four cohorts (Table~\ref{tab:law}). Pasting neutral tissue through the same masks also produced a crossover (hair
+$+0.204$, thyroid $+0.145$, ovary $+0.052$, capsule $+0.459$), so part of the transplant effect is caused by pasting
+itself. The artifact exceeded this control in hair ($+0.049$) and thyroid ($+0.132$); in ovary and capsule the difference
+was not significant, so the transplant alone does not separate the artifact from the paste edge in those cohorts, and the
+location evidence there rests on the real and matched traps.
 
 \begin{table}[t]\centering\small
 \caption{Location crossover $[\text{mask}-\text{ERM}]_{\text{out}}-[\text{mask}-\text{ERM}]_{\text{in}}$ in
 reversed-test AUROC (DINOv2; 95\% crossed CIs). Matched: 1:1 propensity matching. Transplant: the same artifact pasted
 inside or outside the ROI of the same images; neutral: neutral tissue pasted through the same masks.}\label{tab:law}
-\begin{tabular}{lcccc}\toprule
-Cohort & Real traps & Matched & Transplant & Transplant $-$ neutral\\\midrule
+\setlength{\tabcolsep}{3pt}
+\resizebox{\linewidth}{!}{\begin{tabular}{lcccc}\toprule
+Cohort & Real traps & Matched & Transplant & Transpl.\ $-$ neutral\\\midrule
 Hair & $+0.147$ [$+0.109,+0.185$] & $+0.154$ [$+0.122,+0.187$] & $+0.253$ [$+0.214,+0.293$] & $+0.049$ [$+0.026,+0.072$]\\
 Thyroid & $+0.239$ [$+0.196,+0.280$] & $+0.238$ [$+0.186,+0.291$] & $+0.277$ [$+0.256,+0.298$] & $+0.132$ [$+0.116,+0.148$]\\
 Ovary & $+0.170$ [$+0.087,+0.253$] & $+0.163$ [$+0.049,+0.274$] & $+0.074$ [$+0.044,+0.104$] & $+0.022$ [$-0.002,+0.048$]\\
 Capsule & $+0.377$ [$+0.326,+0.425$]$^\dagger$ & infeasible & $+0.497$ [$+0.427,+0.567$] & $+0.037$ [$-0.017,+0.093$]\\
-\bottomrule\end{tabular}
+\bottomrule\end{tabular}}
 \par\smallskip{\footnotesize $^\dagger$Descriptive: capsule lesions carrying debris are much larger than those with debris beside
 them, and matching was infeasible (19 pairs).}
 \end{table}
 
 \subsection*{3. Consequences on unaltered clinical data}
-Without any resampling, in-ROI artifacts remain associated with the label (calipers on 37.6\% of benign vs 24.1\% of
-malignant thyroid nodules; in-lesion hair on 31\% of melanomas vs 20\% of benign lesions). On the patient-disjoint
+Without any resampling, in-ROI artifacts remain associated with the label: calipers appear on 37.6\% of benign and 24.1\%
+of malignant thyroid nodules, and in-lesion hair on 31\% of melanomas and 20\% of benign lesions. On the patient-disjoint
 thyroid test split, masking changed overall AUROC by only $-0.004$ [$-0.048, +0.041$] but lowered AUROC on
 shortcut-conflicting pairs by $-0.095$ [$-0.167, -0.023$] (frozen model) and $-0.102$ [$-0.178, -0.026$] (fine-tuned
-model). The loss concentrated in the 78 malignant nodules carrying an in-nodule caliper (Table~\ref{tab:clinical}): at
-a validation-fixed specificity of 0.80, sensitivity fell from 0.744 to 0.223 for the fine-tuned model. At matched test-set specificity (an oracle analysis; overall specificity 0.806 vs 0.804),
-overall sensitivity was similar (0.557 vs 0.540), but the sensitivity deficit persisted in malignant nodules carrying an
-in-nodule caliper (0.544 vs 0.390; Holm-adjusted $p=0.019$). The subgroup deficit is therefore not explained solely by
-differences in the validation-selected operating threshold. On new patients (ISIC 2020),
-masking left overall AUROC nearly unchanged ($+0.016$ [$-0.000, +0.033$]) and lowered AUROC on conflicting pairs
-($-0.026$ [$-0.052, -0.000$], registered rule). On held-out ISIC 2019 sources the conflicting-pair effect was negative
-for two sources and positive for one; in capsule endoscopy masking improved overall AUROC ($+0.077$).
+model). The loss was concentrated in the 78 malignant nodules carrying an in-nodule caliper (Table~\ref{tab:clinical}): at
+a validation-fixed specificity of 0.80, the fine-tuned model's sensitivity fell from 0.744 to 0.223. At matched test-set
+specificity (an oracle analysis; overall specificity 0.806 vs 0.804), overall sensitivity was similar (0.557 vs 0.540), but
+the deficit persisted in the 78 nodules (0.544 vs 0.390; Holm-adjusted $p=0.019$). The subgroup deficit is therefore not
+explained solely by the validation-selected operating threshold. On new patients (ISIC 2020), masking left overall AUROC
+nearly unchanged ($+0.016$ [$-0.000, +0.033$]) and lowered AUROC on conflicting pairs ($-0.026$ [$-0.052, -0.000$],
+registered duplicate rule). On held-out ISIC 2019 sources the conflicting-pair effect was negative for two sources and
+positive for one, and in capsule endoscopy masking improved overall AUROC ($+0.077$).
 
 \begin{table}[t]\centering\small
+\setlength{\tabcolsep}{4pt}
 \caption{Sensitivity among the 78 malignant thyroid nodules with an in-nodule caliper (official patient-disjoint test
-split; five seeds; crossed 95\% CIs). Registered before any result of the fine-tuned model; the subgroup of the frozen
-model was defined after its first analysis. ``Re-tuned on test'' is an oracle sensitivity analysis, not a deployable
-procedure.}\label{tab:clinical}
+split; five seeds; crossed 95\% CIs). The subgroup was registered before any result of the fine-tuned model and defined
+after the first analysis of the frozen model. Validation: threshold fixed on validation data; oracle (test): threshold re-tuned on the test set, a
+sensitivity analysis, not a deployable procedure.}\label{tab:clinical}
 \begin{tabular}{llcc}\toprule
 Model & Threshold & ERM $\to$ mask & Mask $-$ ERM [95\% CI]\\\midrule
-Fine-tuned ConvNeXt-T & validation specificity 0.80 & 0.744 $\to$ 0.223 & $-0.521$ [$-0.642, -0.382$]\\
-Fine-tuned ConvNeXt-T & re-tuned on test (specificity 0.80) & 0.544 $\to$ 0.390 & $-0.154$ [$-0.302, -0.023$]\\
-Frozen DINOv2 & validation specificity 0.80 & 0.549 $\to$ 0.177 & $-0.372$ [$-0.499, -0.236$]\\
-Frozen DINOv2 & re-tuned on test (specificity 0.80) & 0.505 $\to$ 0.331 & $-0.174$ [$-0.313, -0.012$]\\
+Fine-tuned ConvNeXt-T & validation, spec.\ 0.80 & 0.744 $\to$ 0.223 & $-0.521$ [$-0.642, -0.382$]\\
+Fine-tuned ConvNeXt-T & oracle (test), spec.\ 0.80 & 0.544 $\to$ 0.390 & $-0.154$ [$-0.302, -0.023$]\\
+Frozen DINOv2 & validation, spec.\ 0.80 & 0.549 $\to$ 0.177 & $-0.372$ [$-0.499, -0.236$]\\
+Frozen DINOv2 & oracle (test), spec.\ 0.80 & 0.505 $\to$ 0.331 & $-0.174$ [$-0.313, -0.012$]\\
 \bottomrule\end{tabular}\end{table}
 
 \subsection*{4. The class-conditional constraint, including its failures}
 The constraint was better than masking in every in-ROI trap, by $+0.118$ (held-out ovary) to $+0.330$ (thyroid, 0.400 to
-0.730), and on every set of conflicting cases, and never worse on an out-of-ROI test. It met 40 of the 42 registered
-components. It failed two: non-inferiority on the thyroid split was inconclusive ($-0.002$ [$-0.011, +0.007$]), and on
-ISIC 2020 it lost overall AUROC ($-0.021$ [$-0.027, -0.016$]), where in-lesion hair still points to melanoma for most
-patients. It therefore does not dominate masking. Its label-free variant (U-MtE) helped only where the artifact is a
-distinct overlay (thyroid), and a small encoder trained on masked images, unlike a frozen one, absorbed strong shortcuts.
+0.730), and on every set of conflicting cases, and it was never worse on an out-of-ROI test. It met 40 of the 42
+registered components and failed two: non-inferiority on the thyroid split was inconclusive ($-0.002$
+[$-0.011, +0.007$]), and on ISIC 2020 it lost overall AUROC ($-0.021$ [$-0.027, -0.016$]), where in-lesion hair still
+points to melanoma for most patients. The constraint therefore does not dominate masking. Its label-free variant (U-MtE)
+helped only where the artifact is a distinct overlay (thyroid), and a small encoder trained on masked images, unlike a
+frozen encoder, absorbed strong shortcuts.
 
 \subsection*{5. Audit of published mitigation methods}
-Table~\ref{tab:repl} summarises the audit. Two papers reproduced fully (EPVT and RR-ClArC 2024). Viviano et al.'s
-reproduction gate was passed on one training seed only, so their original-test comparison is preliminary; a separate
-three-seed location experiment in their pipeline is reported below. Five papers did not reproduce from the authors'
-code, and Reveal to Revise was not compared further.
+Table~\ref{tab:repl} summarises the audit. Two papers reproduced: EPVT and RR-ClArC (2024). Viviano et al.\ passed the
+reproduction check on one training seed only, so the comparison on their original tests is preliminary and carries no
+verdict; a separate three-seed location experiment in their pipeline is reported below. Five papers did not reproduce
+from the authors' code, and Reveal to Revise was not compared further.
 
 \emph{Confirmatory comparison (our test design).} With calipers inside the nodule, both registered variants of the
 constraint outperformed ISNet and RR-ClArC in all four comparisons and had higher clean AUROC (Table~\ref{tab:phase5}).
-ISNet was better with calipers outside the nodule (0.673) than inside it (0.561), as expected for a method that acts only
-outside the ROI; its in-ROI result varied strongly across folds (0.681, 0.637, 0.365).
+ISNet performed better with calipers outside the nodule (0.673) than inside it (0.561), as expected for a method that acts
+only outside the ROI; its in-ROI result varied strongly across folds (0.681, 0.637 and 0.365).
 
-\emph{Reproduced comparisons (their test designs).} EPVT \cite{yan2023epvt} reproduced on Bissoto's dermoscopy trap sets
-\cite{bissoto2022artifact} after an audit of its code (five seeds; bias~1: 0.696 vs 0.746 read from the published figure,
-a gap of 0.0497, meeting the 0.05 tolerance by a margin of 0.0003, smaller than the approximate 0.005 uncertainty of
-reading the published value from a figure; bias~0.9: 0.775 vs 0.792). The constraint on frozen DINOv2 features
-outperformed it at both bias levels ($+0.086$ [$+0.064, +0.107$] and $+0.031$ [$+0.009, +0.054$], Holm over eight), and
-applying the constraint to EPVT's own features also improved on EPVT. On artifact-free images it was 0.02--0.04 AUROC
-below EPVT; this clean comparison was not part of the registered rule. RR-ClArC on an invisible trigger written into
-every pixel \cite{dreyer2024hope} reproduced and was not outperformed; that artifact has no location. In the chest
-radiograph setup of Viviano et al.~\cite{viviano2021saliency}, a tube moved inside the lungs+heart ROI lowered their masked model to
-0.615 reversed-test AUROC (0.896 with the tube outside; three seeds); the constraint scored 0.867--0.876 at every seed,
-but its registered gain over their standard model was not significant (CIs reaching $-0.006$).
+\emph{Reproduced papers (their test designs).} EPVT \cite{yan2023epvt} reproduced on Bissoto's dermoscopy trap sets
+\cite{bissoto2022artifact} after an audit of its code (five seeds). At bias~1 the gap to the value read from the published
+figure was 0.0497 (0.696 vs 0.746): this met the widened tolerance of 0.05 by a margin of 0.0003, smaller than the
+approximate 0.005 uncertainty of reading a value from a figure, and would not have met the original 0.03. At bias~0.9 the
+gap was 0.017 (0.775 vs 0.792), within both tolerances. The constraint on frozen DINOv2 features outperformed EPVT at both
+bias levels ($+0.086$ [$+0.064, +0.107$] and $+0.031$ [$+0.009, +0.054$]; Holm over eight), and applying the constraint to
+EPVT's own features also improved on EPVT. On artifact-free images it was 0.02--0.04 AUROC below EPVT; this clean
+comparison was not part of the registered rule. RR-ClArC on an invisible trigger written into every pixel
+\cite{dreyer2024hope} reproduced on ResNet-18 and EfficientNet-B0 within 0.03 and on VGG-16 within 0.05 only, and was not
+outperformed on any architecture; that artifact has no location.
 
-\emph{Non-reproduced papers (descriptive only).} Under identical conditions, the constraint scored higher than our runs of
-the official code of DISC \cite{wu2023disc} (0.736 vs 0.489 average AUROC on five trap sets) and of RR-ClArC on an inserted
-vignette \cite{pahde2025ensuring} (0.785 vs 0.524 biased-test accuracy), tied with segmentation-supervised ERM
-\cite{saab2022spatial} ($+0.023$ [$-0.029, +0.076$]), and in ISNet's pipeline, moving its class marks from the image
-corner into the lungs changed ISNet from ignoring them (macro-F1 0.84/0.83/0.83 with own-class, no and swapped marks) to
-relying on them alone (0.998/0.167/0.000). Our variants also followed these class-specific marks, though less than ISNet.
+\emph{Viviano et al., location experiment (three seeds).} In the chest radiograph pipeline of Viviano et
+al.~\cite{viviano2021saliency}, a tube moved inside the lungs-and-heart ROI lowered their masked model to 0.615
+reversed-test AUROC (0.896 with the tube outside). The constraint scored 0.856--0.880 across seeds (means 0.867 on their
+network and 0.876 on DINOv2), but its registered gain over their standard model was not significant (CIs reaching
+$-0.006$), because at one seed their checkpoint rule retained a model that had not learned the tube.
+
+\emph{Papers that did not reproduce (descriptive only).} Under identical conditions, the constraint scored higher than our
+runs of the official code of DISC \cite{wu2023disc} (0.736 vs 0.489 mean AUROC over five trap sets) and of RR-ClArC on an
+inserted vignette \cite{pahde2025ensuring} (0.785 vs 0.524 biased-test accuracy), and tied with segmentation-supervised ERM
+\cite{saab2022spatial} ($+0.023$ [$-0.029, +0.076$]). In ISNet's pipeline, moving its class marks from the image corner
+into the lungs changed ISNet from ignoring them (macro-F1 0.84/0.83/0.83 with own-class, no and swapped marks) to relying
+on them alone (0.998/0.167/0.000). Our variants also followed these class-specific marks, although less than ISNet did.
 
 \begin{table}[t]\centering\small
-\caption{Confirmatory comparison on thyroid calipers (registered before any result). Reversed-test AUROC, mean $\pm$ SD
-over three folds; differences with 95\% CIs, Holm over four.}\label{tab:phase5}
+\caption{Confirmatory comparison on thyroid calipers (registered before any result). Reversed-test AUROC, mean $\pm$
+standard deviation over three folds; differences with 95\% CIs, Holm over four comparisons.}\label{tab:phase5}
 \begin{tabular}{lccc}\toprule
 Method & Trap A (inside) & Trap B (outside) & Clean (Trap A)\\\midrule
 Constraint, frozen DINOv2 & \textbf{0.716} $\pm$ 0.027 & 0.789 & 0.797\\
@@ -291,84 +315,95 @@ ERM (ResNet-50d) & 0.440 & 0.546 & 0.625\\\midrule
 
 \begin{table}[t]\centering\footnotesize
 \caption{Audit of eight published mitigation papers. Reproduced: the paper's best method, run with the authors' code,
-matched the published value within the tolerance; only then are comparisons confirmatory.}\label{tab:repl}
-\begin{tabular}{>{\raggedright\arraybackslash}p{5.0cm}>{\raggedright\arraybackslash}p{2.0cm}>{\raggedright\arraybackslash}p{6.2cm}}\toprule
-Paper (artifact) & Reproduced & Outcome\\\midrule
-EPVT, MICCAI 2023 \cite{yan2023epvt} (hair, rulers, gel) & yes & outperformed at both bias levels\\
-RR-ClArC, AAAI 2024 \cite{dreyer2024hope} (invisible trigger) & yes & not outperformed (artifact has no location)\\
-Viviano et al., ICLR 2021 \cite{viviano2021saliency} (hospital/view; tube in location test) & preliminary (1 seed) & original test: no verdict; location test (3 seeds): masking's location effect supported, gain over their model not significant\\
-DISC, ICML 2023 \cite{wu2023disc} (hair) & no & descriptive: above our run of the official code\\
-RR-ClArC, Mach.\ Learn.\ 2025 \cite{pahde2025ensuring} (vignette) & no & descriptive: above our run of the official code\\
-ISNet, Nat.\ Commun.\ 2024 \cite{bassi2024isnet} (class marks) & no & descriptive: ISNet relies on marks moved inside the ROI\\
-Saab et al., MLHC 2022 \cite{saab2022spatial} (trap sets) & no & descriptive: tie\\
-Reveal to Revise, MICCAI 2023 \cite{pahde2023r2r} & no & not compared\\
+matched the published value within the tolerance (0.05; 0.03 in the initial registration). Only comparisons with
+reproduced papers carry a verdict.}\label{tab:repl}
+\begin{tabular}{>{\raggedright\arraybackslash}p{4.8cm}>{\raggedright\arraybackslash}p{3.0cm}>{\raggedright\arraybackslash}p{5.6cm}}\toprule
+Paper (artifact) & Reproduction & Outcome\\\midrule
+EPVT, MICCAI 2023 \cite{yan2023epvt} (hair, rulers, gel) & reproduced (bias 1: within 0.05 by 0.0003; bias 0.9: within 0.03) & outperformed at both bias levels\\
+RR-ClArC, AAAI 2024 \cite{dreyer2024hope} (invisible trigger) & reproduced (VGG-16 only within 0.05) & not outperformed (artifact has no location)\\
+Viviano et al., ICLR 2021 \cite{viviano2021saliency} (hospital or view; tube in the location experiment) & preliminary (1 seed) & original tests: no verdict; location experiment (3 seeds): masking's location effect supported, gain over their model not significant\\
+DISC, ICML 2023 \cite{wu2023disc} (hair) & not reproduced & descriptive: above our run of the official code\\
+RR-ClArC, Mach.\ Learn.\ 2025 \cite{pahde2025ensuring} (vignette) & not reproduced & descriptive: above our run of the official code\\
+ISNet, Nat.\ Commun.\ 2024 \cite{bassi2024isnet} (class marks) & not reproduced & descriptive: ISNet relies on marks moved inside the ROI\\
+Saab et al., MLHC 2022 \cite{saab2022spatial} (trap sets) & not reproduced & descriptive: tie\\
+Reveal to Revise, MICCAI 2023 \cite{pahde2023r2r} & not reproduced & not compared\\
 \bottomrule\end{tabular}\end{table}
 
 \section*{Discussion}
-Masking removes everything outside the ROI and keeps everything inside it. When an artifact lies inside, masking
-discards competing evidence while keeping the artifact, so the model relies on it at least as much as before. The same
-limit applies to a published method that penalises relevance outside the ROI: ISNet worked as designed with marks in the
-image corner and relied on them entirely once they were moved into the lungs, and on real calipers it was worse inside
-the nodule than outside.
+Masking removes everything outside the ROI and keeps everything inside it. When an artifact lies inside the ROI, masking
+discards competing evidence while retaining the artifact, so the model can rely on it as much as before or more. A
+published method that penalises relevance outside the ROI showed the same limit: ISNet behaved as designed with marks in
+the image corner but relied on them entirely once they were moved into the lungs, and on real calipers it performed worse
+with the artifact inside the nodule than outside it. Masking is not always harmful, however: with in-ROI artifacts it
+still improved reversed-test AUROC in three of four cohorts, only far less than with out-of-ROI artifacts.
 
 \paragraph{Clinical implications} The harm of in-ROI masking is hidden in overall metrics. On a patient-disjoint thyroid
-test set the overall AUROC did not change, but malignant nodules carrying a caliper lost most of their sensitivity at a
-validation-fixed threshold, and a deficit persisted when specificity was matched on the test data in an oracle analysis. These are the
-patients for whom a shortcut is most dangerous: the artifact points to the benign diagnosis. Evaluations of masked
-models should therefore report where artifacts lie relative to the ROI and performance on shortcut-conflicting cases.
+test set, overall AUROC did not change, but malignant nodules carrying a caliper lost most of their sensitivity at a
+validation-fixed threshold, and a deficit persisted when specificity was matched on the test data in an oracle analysis.
+These are the patients for whom a shortcut is most dangerous, because the artifact points to the benign diagnosis.
+Evaluations of masked models should therefore report where artifacts lie relative to the ROI and how the model performs on
+shortcut-conflicting cases.
 
-\paragraph{The constraint} The class-conditional constraint addresses the in-ROI case without artifact information at
-test time and outperformed two published methods in a registered comparison on real calipers and EPVT on its own test
-design. It is not a universal replacement for masking: it did not dominate masking under our registered criterion, lost
-overall AUROC on new ISIC 2020 patients, and tied with a method that uses lesion masks as training targets.
+\paragraph{The constraint} The class-conditional constraint addresses the in-ROI case without requiring artifact
+information at test time. It outperformed two published methods in a registered comparison on real calipers, and EPVT on
+EPVT's own test design, with the reproduction caveat stated above. It is not a universal replacement for masking: it did
+not dominate masking under our registered criterion, lost overall AUROC on new ISIC 2020 patients, and tied with a method
+that uses lesion masks as training targets.
 
-\paragraph{Limitations} First, the constraint needs image-level artifact labels during training, here from automatic
-detectors; its label-free variant was weaker. Second, it removes within-class artifact directions and cannot remove marks
-whose shape identifies the class, nor artifacts without a location. Third, frozen encoders cost some accuracy on
-artifact-free images (0.02--0.04 AUROC against EPVT), while trained encoders absorbed strong shortcuts. Fourth, intervals on the unaltered thyroid test set
-are image-level because patient identifiers are not released, which may understate uncertainty if a patient contributes
-several images. Fifth, most traps
-use a 90/10 association, stronger than in clinical data; the unaltered-data results address this, but in three cohorts
-only. Sixth, EPVT's reproduction margin at bias 1 was smaller than the uncertainty of reading its published figure, and
-five audited papers did not reproduce, so several comparisons are
-descriptive; we contacted the authors of every non-reproduced paper. Finally, the artifact masks were produced by
-automatic detectors and checked visually by a non-clinician; the ovarian detector also captured non-caliper overlays
-(9 of 40 audited images).
+\paragraph{Limitations} First, the constraint needs image-level artifact labels during training, here obtained from
+automatic detectors; its label-free variant was weaker. Second, it removes within-class artifact directions and therefore
+cannot remove marks whose shape identifies the class, nor artifacts without a location. Third, frozen encoders cost some
+accuracy on artifact-free images (0.02--0.04 AUROC against EPVT), whereas trained encoders absorbed strong shortcuts.
+Fourth, patient identifiers are not released for TN3K, so the intervals on the unaltered thyroid test set treat images as
+independent and may understate uncertainty if a patient contributed several images; the grouped sensitivity analysis
+covered the trap crossovers only. Fifth, the neutral-paste control explained part of the transplant effect and did not
+separate the artifact from the paste edge in ovary and capsule. Sixth, most traps use a 90/10 association, stronger than
+in clinical data; the unaltered-data analyses address this in three cohorts only. Seventh, the reproduction tolerance was
+widened from 0.03 to 0.05 after the first reproduction checks, EPVT met it at bias~1 by less than the uncertainty of
+reading its published figure, and five audited papers did not reproduce, so several comparisons are descriptive; we
+contacted the authors of every paper that did not reproduce. Finally, the artifact masks were produced by automatic
+detectors and checked visually by a non-clinician, and the ovarian detector also captured non-caliper overlays (9 of 40
+audited images).
 
-\paragraph{Reproducibility of published results} For three of the five non-reproduced papers we identified concrete
-causes in the released code: an image cache shared across trap sets (DISC), a mixup label pairing that differs from
-the paper (EPVT, corrected before our comparison), and checkpoint selection (Saab et al.). Comparisons with published
-mitigation methods should state whether the comparator was reproduced.
+\paragraph{Reproducibility of published results} For two of the five papers that did not reproduce, we identified
+concrete causes in the released code: an image cache shared across trap sets (DISC) and the selection of an early
+checkpoint in the evaluation notebook (Saab et al.). In one reproduced paper (EPVT), the released mixup pairs labels
+differently from the paper; we followed the paper. Comparisons with published mitigation methods should state whether the
+comparator was reproduced.
 
 \section*{Conclusions}
-Artifact location relative to the ROI determines whether ROI masking removes a shortcut. When artifacts lie inside the
-ROI, masking can leave the shortcut intact and harm the shortcut-conflicting patients while overall metrics look
-unchanged. Where such artifacts are expected and image-level artifact labels are available, a class-conditional
-constraint on masked features is a promising alternative, with the trade-offs reported here. Audits of masked models
-should report artifact location and performance on shortcut-conflicting cases.
+The location of an artifact relative to the ROI determines whether ROI masking removes the shortcut it creates. When
+artifacts lie inside the ROI, masking can leave the shortcut intact and harm shortcut-conflicting patients while overall
+metrics appear unchanged. Where such artifacts are expected and image-level artifact labels are available, a
+class-conditional constraint on masked features is a promising alternative, with the trade-offs reported here.
+Evaluations of masked models should report artifact location and performance on shortcut-conflicting cases.
 
 \section*{Abbreviations}
-AUROC: area under the receiver operating characteristic curve; CI: confidence interval; ERM: empirical risk minimisation;
-ROI: region of interest; U-MtE: unsupervised mask-then-erase (label-free variant).
+AUROC: area under the receiver operating characteristic curve; CI: confidence interval; ERM: empirical risk
+minimisation; ROI: region of interest; U-MtE: unsupervised mask-then-erase (label-free variant).
 
 \section*{Declarations}
 \paragraph{Ethics approval and consent to participate} This study is a secondary analysis of publicly available,
 de-identified medical image datasets; no new data were collected and no participants were contacted. The datasets were
 released by their creators under their own ethics approvals and licences: ISIC 2019 and ISIC 2020 (ISIC Archive, CC
-BY-NC), TN3K \cite{gong2021tn3k}, MMOTU \cite{zhao2022mmotu} (CC BY 4.0), SEE-AI \cite{seeai2023} (CC BY 4.0), and, for the
+BY-NC), TN3K \cite{gong2021tn3k}, MMOTU \cite{zhao2022mmotu} (CC BY 4.0), SEE-AI \cite{seeai2023} (CC BY 4.0) and, for the
 audit of published methods, NIH ChestX-ray14, PadChest, RSNA Pneumonia, BrixIA, CheXpert and BIMCV COVID-19+, each used
-under its data use agreement. \ph{Insert ONLY a determination you actually hold, e.g.: ``The [committee name] determined that this
-secondary analysis of de-identified public data did not require further approval (reference [number], [date]).'' If no
-determination has been obtained, request one before submission; do not state an exemption you do not have.} All methods were performed in accordance with the relevant guidelines and regulations and the
-Declaration of Helsinki.
+under its data use agreement. \confirm{state the determination of the Alexandria University (Faculty of Engineering or
+Faculty of Medicine) research ethics committee that this secondary analysis of de-identified public data did not require
+further approval or consent, with its reference number and date; do not state an exemption that has not been issued}
+All methods were carried out in accordance with relevant guidelines and regulations.
 \paragraph{Consent for publication} Not applicable.
-\paragraph{Availability of data and materials} All datasets are publicly available from their sources (see Methods).
-Code, pre-registration documents, per-image predictions and result files are available at \ph{repository URL}.
-\paragraph{Competing interests} The authors declare no competing interests.
-\paragraph{Funding} \ph{Funding statement, or ``This research received no specific funding.''}
-\paragraph{Authors' contributions} \ph{H.E. designed the study, performed the experiments, analysed the results and wrote
-the manuscript. Supervisor/co-author contributions.} All authors read and approved the final manuscript.
-\paragraph{Acknowledgements} \ph{Supervisor and others.}
+\paragraph{Clinical trial number} Not applicable.
+\paragraph{Availability of data and materials} All datasets are publicly available from their original sources (see
+Methods). Code, pre-registration documents, per-image predictions and result files are available at
+\url{https://github.com/hossam1999/Where_shortcut_sits}.
+\paragraph{Competing interests} \confirm{each author confirms: ``The authors declare that they have no competing
+interests.''}
+\paragraph{Funding} \confirm{funding sources and grant numbers, or ``This research received no specific grant from any
+funding agency.''}
+\paragraph{Authors' contributions} \confirm{CRediT-style contributions of H.E., N.G. and S.H., agreed by all authors}
+\confirm{``All authors read and approved the final manuscript.''}
+\paragraph{Acknowledgements} \confirm{acknowledgements, or ``Not applicable''}
 
 \bibliographystyle{vancouver}
 \bibliography{../paper/refs}
