@@ -30,7 +30,7 @@ registered in advance, partly even after re-tuning the threshold. Against a regi
 masking; the closest, a class-conditional mean constraint on the masked features, removes masking's failure in every
 cohort and on every set of conflicting cases, at a cost of 0.02 overall AUROC on one external set. Against published methods, run under registered rules, the
 constraint beat ISNet and RR-ClArC on real thyroid calipers inside the ROI (4/4 comparisons) and beat EPVT on its own
-trap sets, while ISNet relied entirely on class marks once they were moved inside the lungs. Audits of ROI-masked
+trap sets (three of eight audited papers reproduced), while ISNet relied entirely on class marks once they were moved inside the lungs. Audits of ROI-masked
 models should report artifact location and shortcut-conflicting performance. Code, pre-registrations and results are
 public.
 \end{abstract}
@@ -78,10 +78,10 @@ re-tuning the threshold on the test set (Sec.~\ref{sec:natural}).
 remedy dominates masking. The closest, a class-conditional mean constraint on the masked features, removes masking's
 in-ROI failure in every cohort and on every set of conflicting cases, at a small overall cost on one external set
 (Sec.~\ref{sec:guide}).
-\item \textbf{External validation.} We reproduced eight published mitigation papers and ran their best methods in
-our traps. On real calipers inside the ROI the constraint beat ISNet and RR-ClArC (4/4 registered comparisons); in
+\item \textbf{Audit of published methods.} We audited eight published mitigation papers with the authors' code,
+comparing head-to-head where they reproduced, and ran two of their methods in our traps. On real calipers inside the ROI the constraint beat ISNet and RR-ClArC (4/4 registered comparisons); in
 their own environments it beat EPVT and exceeded DISC and RR-ClArC run from their official code, and ISNet failed once
-its marks were moved inside the ROI (Sec.~\ref{sec:replication}).
+its marks were moved inside the ROI (Sec.~\ref{sec:external}).
 \end{enumerate}
 Every confirmatory analysis was registered before its results, every reported interval is traced automatically to a
 result file, and code, registrations and result files are public.

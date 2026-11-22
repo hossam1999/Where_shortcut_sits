@@ -621,7 +621,7 @@ td.n { font-family: var(--mono); font-variant-numeric: tabular-nums; text-align:
 
   <section class="slide" id="repl-how" data-chapter="4 · Tested against others" data-name="How we tested against others">
     <p class="eyebrow">Chapter 4 · tested against published methods</p>
-    <h2>Eight published papers, their code, our rules written down first</h2>
+    <h2>An audit of eight published papers: their code, our rules written down first</h2>
     <div class="cards">
       <div class="panel"><h3>1. Reproduce first</h3><p class="small">We ran each paper's best method with the authors' own code and checked it against their published number (within 0.05). The limit was widened from 0.03 for every paper after the first checks; we report that.</p></div>
       <div class="panel"><h3>2. Two kinds of result</h3><p class="small"><span class="tag win">formal</span> the paper reproduced, so "beaten" needs a 95% interval above zero after correction. <span class="tag desc">descriptive</span> it did not reproduce, so we compare with our run of their official code and make no claim about their printed number.</p></div>
@@ -677,7 +677,7 @@ td.n { font-family: var(--mono); font-variant-numeric: tabular-nums; text-align:
     <div class="tablewrap">
       <table>
         <tr><th>Paper</th><th>Their method</th><th>Ours</th><th>Difference [95% CI]</th><th>Result</th></tr>
-        <tr><td><b>EPVT</b>, MICCAI 2023 / IEEE TMI 2025 · bias 1</td><td class="n">0.696</td><td class="n">0.782</td><td class="n">+0.086 [+0.064, +0.107]</td><td><span class="tag win">beaten</span></td></tr>
+        <tr><td><b>EPVT</b>, MICCAI 2023 · bias 1</td><td class="n">0.696</td><td class="n">0.782</td><td class="n">+0.086 [+0.064, +0.107]</td><td><span class="tag win">beaten</span></td></tr>
         <tr><td><b>EPVT</b> · bias 0.9</td><td class="n">0.775</td><td class="n">0.806</td><td class="n">+0.031 [+0.009, +0.054]</td><td><span class="tag win">beaten</span></td></tr>
         <tr><td><b>DISC</b>, ICML 2023 (official code; published 0.551)</td><td class="n">0.489</td><td class="n">0.736</td><td class="n">+0.247 [+0.204, +0.290]</td><td><span class="tag desc">above, descriptive</span></td></tr>
         <tr><td><b>RR-ClArC</b>, Machine Learning 2025 (accuracy; published 0.76)</td><td class="n">0.524</td><td class="n">0.785</td><td class="n">CI 0.769–0.801</td><td><span class="tag desc">above, descriptive</span></td></tr>
@@ -694,7 +694,7 @@ td.n { font-family: var(--mono); font-variant-numeric: tabular-nums; text-align:
       <table>
         <tr><th>Paper</th><th>Reproduced?</th><th>Result</th><th style="width:34%">In one line</th></tr>
         <tr><td><b>ISNet + RR-ClArC on real calipers</b> (our test)</td><td>—</td><td><span class="tag win">formal win</span></td><td class="small">4 of 4 registered comparisons, registered before any result</td></tr>
-        <tr><td><b>EPVT</b>, MICCAI 2023 / IEEE TMI 2025</td><td>yes</td><td><span class="tag win">formal win</span></td><td class="small">both bias levels; slightly lower on artifact-free images</td></tr>
+        <tr><td><b>EPVT</b>, MICCAI 2023 (extended as PLDG, IEEE TMI 2025)</td><td>yes</td><td><span class="tag win">formal win</span></td><td class="small">both bias levels; slightly lower on artifact-free images</td></tr>
         <tr><td><b>DISC</b>, ICML 2023</td><td>no</td><td><span class="tag desc">descriptive win</span></td><td class="small">above its official code and its published number</td></tr>
         <tr><td><b>RR-ClArC</b>, Machine Learning 2025</td><td>no</td><td><span class="tag desc">descriptive win</span></td><td class="small">above its official code and its published number</td></tr>
         <tr><td><b>ISNet</b>, Nature Communications 2024</td><td>no</td><td><span class="tag desc">shows the problem</span></td><td class="small">ignores marks outside the lungs, follows them inside</td></tr>

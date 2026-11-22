@@ -1,7 +1,7 @@
 % Replication programme (November 2026). Numbers: docs/REPLICATION_RESULTS.md (final) and results/replication/.
 \section{Validation against published methods (replication programme)}\label{sec:replication}
-\plain{To make sure our conclusions are not just about methods we built ourselves, we took eight published papers on
-shortcut learning in medical images, ran their best method with the authors' own code, and compared it with ours ---
+\plain{To make sure our conclusions are not just about methods we built ourselves, we audited eight published papers on
+shortcut learning in medical images: we ran their best method with the authors' own code, and compared it with ours ---
 first on \emph{their} data and test, then on \emph{our} real-artifact test (thyroid calipers). Every rule was written
 down before the results. The main outcome: published methods that restrict the model to the region of interest fail
 when the artifact is inside it, and our class-conditional constraint beats ISNet, RR-ClArC and EPVT under registered
@@ -26,7 +26,7 @@ recipes, one selection rule for everyone, registered before any result.
 \begin{longtable}{>{\raggedright\arraybackslash}p{4.4cm}>{\raggedright\arraybackslash}p{2.2cm}>{\raggedright\arraybackslash}p{1.3cm}>{\raggedright\arraybackslash}p{6.4cm}}\toprule
 Paper (artifact) & Reproduced? & Tier & Outcome\\\midrule\endhead
 \textbf{Phase 5}: ISNet, RR-ClArC on thyroid calipers inside the nodule & --- & confirm. & \ok: our constraint beats both, 4/4 comparisons, also better on clean images\\
-\textbf{EPVT} (MICCAI 2023 / IEEE TMI 2025; hair, rulers, gel) & yes & 1 & \ok: beaten at both bias levels ($+0.086$, $+0.031$); 0.02--0.04 lower on artifact-free images\\
+\textbf{EPVT} (MICCAI 2023, extended as PLDG in IEEE TMI 2025; hair, rulers, gel) & yes & 1 & \ok: beaten at both bias levels ($+0.086$, $+0.031$); 0.02--0.04 lower on artifact-free images\\
 \textbf{DISC} (ICML 2023; hair) & no & 2 & \ok\ (descriptive): 0.736 vs 0.489 for their code, above on all five trap sets\\
 \textbf{RR-ClArC} (Machine Learning 2025; vignette) & no & 2 & \ok\ (descriptive): 0.785 vs 0.524 for their code (0.76 published)\\
 \textbf{ISNet} (Nat.\ Commun.\ 2024; class marks) & no & 2 & \ok\ (shows the problem): ISNet ignores corner marks but relies only on marks inside the lungs\\

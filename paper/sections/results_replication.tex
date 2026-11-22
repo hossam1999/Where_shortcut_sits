@@ -1,10 +1,11 @@
 % External validation against published methods (replication programme, 2026-11).
 % Numbers: docs/REPLICATION_RESULTS.md (final, 2026-11-21) and the files it cites under results/replication/;
 % rules: docs/PREREGISTRATION_REPLICATION.md (A1-A43) and docs/PREREGISTRATION_PHASE5.md.
-\section{External validation against published methods}\label{sec:replication}
+\section{Audit of published mitigation methods}\label{sec:external}
 The results so far compare masking with remedies we implemented. To test the location law and the class-conditional
-constraint against the field, we reproduced eight published shortcut-mitigation papers in their own environment (their
-code, data, splits and metric) and ran their best methods in ours (thyroid calipers, Trap~A and Trap~B), under rules
+constraint against the field, we audited eight published shortcut-mitigation papers: we ran each paper's best method with the
+authors' code in its own environment (data, splits and metric), compared head-to-head where it reproduced, and ran
+two of the methods in ours (thyroid calipers, Trap~A and Trap~B), under rules
 registered before each result.
 
 \paragraph{Protocol} For each paper we first ran its best method with the authors' code and compared it with the
@@ -26,7 +27,7 @@ registered variant minus their method; 95\% CIs Holm-adjusted where a verdict ap
 \begin{tabular}{>{\raggedright\arraybackslash}p{3.6cm}>{\raggedright\arraybackslash}p{2.5cm}>{\raggedright\arraybackslash}p{1.3cm}>{\raggedright\arraybackslash}p{4.4cm}>{\raggedright\arraybackslash}p{2.8cm}}\toprule
 Paper (artifact) & Reproduced? & Tier & Ours vs theirs & Reading\\\midrule
 Phase 5: ISNet, RR-ClArC on thyroid calipers inside the ROI & --- (our design) & confirm. & (b) $+0.155$ vs ISNet, $+0.249$ vs RR-ClArC & beaten, 4/4 \\
-EPVT, MICCAI 2023 / TMI 2025 (hair, rulers, gel; trap sets) & yes (gap 0.050 / 0.017) & 1 & (b) $+0.086$ [$+0.064,+0.107$] (bias 1), $+0.031$ [$+0.009,+0.054$] (bias 0.9) & beaten at both levels\\
+EPVT, MICCAI 2023 (hair, rulers, gel; trap sets) & yes (gap 0.050 / 0.017) & 1 & (b) $+0.086$ [$+0.064,+0.107$] (bias 1), $+0.031$ [$+0.009,+0.054$] (bias 0.9) & beaten at both levels\\
 DISC, ICML 2023 (hair; trap sets) & no (0.489 vs 0.551) & 2 & (b) 0.736 vs 0.489, $+0.247$ [$+0.204,+0.290$] & above official code and published value\\
 RR-ClArC, Mach.\ Learn.\ 2025 (inserted vignette) & no (0.524 vs 0.76, accuracy) & 2 & (d) 0.785 vs 0.524 & above official code and published value\\
 Viviano et al., ICLR 2021: location test & --- (our test) & formal, 3 seeds & (a), (b) gain inside $+0.20$, CIs reach $-0.006$ & masking's crossover supported; gain not supported\\
@@ -59,7 +60,7 @@ ERM (ResNet-50d) & 0.440 & 0.546 & 0.625\\\midrule
 \multicolumn{4}{l}{EfficientNet-B0 vs ISNet $+0.129$ [$+0.035,+0.239$]; vs RR-ClArC $+0.224$ [$+0.159,+0.292$]}\\
 \bottomrule\end{tabular}\end{table}
 
-\paragraph{Their environment: artifacts on the lesion} EPVT \citep{yan2023epvt,yan2025pldg} treats dermoscopy artifact
+\paragraph{Their environment: artifacts on the lesion} EPVT \citep{yan2023epvt} (extended as PLDG, \citealp{yan2025pldg}) treats dermoscopy artifact
 types as domains and is evaluated on Bissoto's trap sets \citep{bissoto2022artifact}, in which hair, rulers and gel
 often lie on the lesion. After a full audit of its code against the paper (37 items; one port error corrected, and the
 paper's mixup followed where the released code differs), EPVT reproduced within the widened tolerance (five seeds;

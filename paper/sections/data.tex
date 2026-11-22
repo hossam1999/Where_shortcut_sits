@@ -5,8 +5,9 @@ the lesion. \emph{Real hair:} all 25,331 ISIC 2019 training images; hair masks f
 masks manual for HAM10000 \citep{tschandl2018ham} and otherwise from a U-Net trained on ISIC 2018 Task 1. Two traps share
 one hair-free group ($\le 30$ hair pixels): Trap~A 704/157/2,738/989 and Trap~B 704/157/4,327/930 images (hair-free
 benign/melanoma, hair benign/melanoma), subsampled to the hair-free source mix within each label; five seeds of
-five-fold cross-validation grouped by lesion identifier and perceptual hash. \emph{New patients:} ISIC 2020 (32,997
-images of 2,056 patients), hair masks from a segmenter trained only on ISIC 2019.
+five-fold cross-validation grouped by lesion identifier and perceptual hash. \emph{New patients:} ISIC 2020: of the 32,997
+images with a lesion mask, 7,657 near-duplicates of ISIC 2019 images were removed by perceptual hash, leaving 25,340 test
+images of 2,044 patients (483 melanomas); hair masks from a segmenter trained only on ISIC 2019.
 
 \paragraph{Thyroid ultrasound} TN3K images \citep{gong2021tn3k} with benign/malignant labels from cytological biopsy
 \citep{gong2022acl} (3,493 images; 1,210 malignant) and manual nodule masks; the official train/test split
