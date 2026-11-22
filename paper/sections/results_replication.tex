@@ -9,8 +9,9 @@ two of the methods in ours (thyroid calipers, Trap~A and Trap~B), under rules
 registered before each result.
 
 \paragraph{Protocol} For each paper we first ran its best method with the authors' code and compared it with the
-published number (the \emph{reproduction gate}; tolerance 0.05 in the paper's metric, widened from 0.03 for every paper
-after the first gates were known, which we report as a deviation). Where the gate passed (\emph{tier~1}), a method of
+published number (the \emph{reproduction gate}; tolerance 0.05 in the paper's metric; our initial registration specified 0.03, and the
+tolerance was widened for all papers after the first gates and before EPVT's head-to-head comparison was run; at
+bias~0.9 EPVT also met 0.03). Where the gate passed (\emph{tier~1}), a method of
 ours counts as having beaten theirs only if its mean is higher and the 95\% CI of the paired difference, Holm-adjusted
 within the paper's family, lies above~0. Where the gate failed (\emph{tier~2}), we compare against our run of the
 authors' official code under identical conditions and make no claim against the published number. Four variants of our
@@ -64,7 +65,7 @@ ERM (ResNet-50d) & 0.440 & 0.546 & 0.625\\\midrule
 types as domains and is evaluated on Bissoto's trap sets \citep{bissoto2022artifact}, in which hair, rulers and gel
 often lie on the lesion. After a full audit of its code against the paper (37 items; one port error corrected, and the
 paper's mixup followed where the released code differs), EPVT reproduced within the widened tolerance (five seeds;
-bias~1: 0.696 vs 0.746 read from the published figure, gap 0.0497, smaller than the reading uncertainty; bias~0.9:
+bias~1: 0.696 vs 0.746 read from the published figure, gap 0.0497, meeting the tolerance by a margin of 0.0003, smaller than the $\approx$0.005 reading uncertainty; bias~0.9:
 0.775 vs 0.792). The constraint on frozen DINOv2 features beat EPVT at both bias levels (0.782 and 0.806; Holm over
 eight, crossed seed $\times$ image bootstrap), and the constraint applied to EPVT's own features also improved on EPVT
 (0.758 and 0.795). EPVT was not compared with a clean condition in the registration; on the artifact-free bias-0 test
