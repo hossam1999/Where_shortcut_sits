@@ -172,13 +172,30 @@ td.n { font-family: var(--mono); font-variant-numeric: tabular-nums; text-align:
 }
 @media (max-width: 480px) { .scenes, .split { grid-template-columns: minmax(0, 1fr); } body { font-size: 17px; } }
 @media (prefers-reduced-motion: no-preference) { .slide { animation: in 0.35s ease both; } @keyframes in { from { opacity: 0.4; transform: translateY(6px); } to { opacity: 1; transform: none; } } }
+
+/* chapters and roadmap */
+.road { display: grid; grid-template-columns: repeat(5, minmax(0, 1fr)); gap: 10px; position: relative; }
+.road::before { content: ""; position: absolute; left: 4%; right: 4%; top: 22px; height: 2px; background: var(--line); }
+.stop { position: relative; text-align: left; background: transparent; border: 0; color: var(--ink); padding: 0; display: flex; flex-direction: column; gap: 8px; min-width: 0; }
+.stop .pin { width: 44px; height: 44px; border-radius: 50%; display: grid; place-items: center; background: var(--surface); border: 2px solid var(--roi); font-family: var(--mono); font-size: 16px; color: var(--roi); position: relative; }
+.stop.v .pin { background: var(--roi); color: var(--surface); }
+.stop h3 { font-size: 18px; }
+.stop p { font-size: 15px; color: var(--muted); margin: 0; }
+.stop .ans { color: var(--ink); font-size: 15px; border-left: 3px solid var(--artifact); padding-left: 8px; }
+@media (max-width: 900px) { .road { grid-template-columns: minmax(0, 1fr); } .road::before { display: none; } .stop { flex-direction: row; align-items: flex-start; gap: 12px; } .stop .pin { flex: none; } }
+.tag { display: inline-block; font-family: var(--mono); font-size: 12.5px; padding: 2px 9px; border-radius: 99px; white-space: nowrap; border: 1px solid var(--line); }
+.tag.win { background: var(--roi); color: var(--surface); border-color: var(--roi); }
+.tag.desc { background: var(--roi-soft); color: var(--ink); }
+.tag.tie { background: var(--surface); color: var(--ink); }
+.tag.loss { background: var(--artifact-soft); color: var(--ink); border-color: var(--artifact); }
+.formula { font-family: var(--mono); font-size: 16px; background: var(--surface); border: 1px solid var(--line); border-radius: 8px; padding: 10px 12px; overflow-x: auto; }
 </style>
 
 <div class="deck">
-  <div class="topbar"><span><b>Where the Shortcut Sits</b> · MSc thesis progress</span><span id="secname"></span></div>
+  <div class="topbar"><span><b>Where the Shortcut Sits</b> · MSc thesis</span><span id="secname"></span></div>
   <main class="slides" id="slides" tabindex="-1">
 
-  <section class="slide title-slide" id="start" data-name="Start">
+  <section class="slide title-slide" id="start" data-chapter="1 · The problem" data-name="Start">
     <p class="eyebrow">MSc thesis · progress, November 2026</p>
     <h1>Where the Shortcut Sits</h1>
     <p class="lead">Does masking the region of interest remove artifact shortcuts from medical image classifiers? It depends on where the artifact sits.</p>
@@ -188,7 +205,20 @@ td.n { font-family: var(--mono); font-variant-numeric: tabular-nums; text-align:
     </div>
   </section>
 
-  <section class="slide" id="problem" data-name="The problem">
+  <section class="slide" id="roadmap" data-chapter="1 · The problem" data-name="Roadmap">
+    <p class="eyebrow">The talk in five chapters</p>
+    <h2>From a cheating model to a tested fix</h2>
+    <div class="road" id="road">
+      <button class="stop" data-go="problem"><span class="pin">1</span><h3>The problem</h3><p>Models learn the artifact, and the usual fix is masking.</p><span class="ans">Masking assumes the artifact is outside the lesion.</span></button>
+      <button class="stop" data-go="data"><span class="pin">2</span><h3>The evidence</h3><p>Does masking still work when the artifact is inside?</p><span class="ans">No. In 4 diseases and 3 modalities, it fails inside.</span></button>
+      <button class="stop" data-go="our-fix"><span class="pin">3</span><h3>The fix</h3><p>What should be used instead?</p><span class="ans">A class-conditional constraint on masked features.</span></button>
+      <button class="stop v" data-go="repl-how"><span class="pin">4</span><h3>Tested against others</h3><p>Does it beat published methods?</p><span class="ans">Yes: ISNet, RR-ClArC and EPVT, under registered rules.</span></button>
+      <button class="stop" data-go="limits"><span class="pin">5</span><h3>Limits and next</h3><p>Where does it stop working, and what comes next?</p><span class="ans">Class-specific marks, whole-image triggers; a BMC submission.</span></button>
+    </div>
+    <p class="small muted">Click a chapter to jump to it. The bar at the bottom marks each chapter with a tall tick.</p>
+  </section>
+
+  <section class="slide" id="problem" data-chapter="1 · The problem" data-name="The problem">
     <p class="eyebrow">The problem</p>
     <h2>Classifiers learn the ruler, not the disease</h2>
     <div class="cols">
@@ -208,7 +238,7 @@ td.n { font-family: var(--mono); font-variant-numeric: tabular-nums; text-align:
     </div>
   </section>
 
-  <section class="slide" id="papers" data-name="Related work">
+  <section class="slide" id="papers" data-chapter="1 · The problem" data-name="Related work">
     <p class="eyebrow">What others found · 2022 to 2026</p>
     <h2>Nineteen key papers, 2022 to 2026</h2>
     <div style="display:flex;gap:12px;flex-wrap:wrap;align-items:center">
@@ -228,7 +258,7 @@ td.n { font-family: var(--mono); font-variant-numeric: tabular-nums; text-align:
     <p class="small muted">Selected from the 69 peer-reviewed studies in our literature review, plus RoentMod, NuRD and Corbetta et al., added after a full-text check of every card (November 2026). Each was checked against its publisher’s page. Venues: Nature family journals, CVPR, ICLR, MICCAI, Medical Image Analysis, and others.</p>
   </section>
 
-  <section class="slide" id="key-bassi" data-name="Key paper 1: ISNet">
+  <section class="slide" id="key-bassi" data-chapter="1 · The problem" data-name="Key paper 1: ISNet">
     <p class="eyebrow">Key paper 1 of 2 · the two papers that matter most for us</p>
     <h2>Bassi et al., <i>Nature Communications</i> 2024 (ISNet): they already run our three tests</h2>
     <p class="kp-why"><b>Why it matters most:</b> it is the closest <b>test design</b> to ours. They train with a shortcut mark, then test on <b>matched, reversed and clean</b> images, and they compare with a model that only sees the <b>lungs</b>. But the mark is <b>always outside the lungs</b>, so they only see the case where masking is expected to work.</p>
@@ -273,7 +303,7 @@ td.n { font-family: var(--mono); font-variant-numeric: tabular-nums; text-align:
     </div>
   </section>
 
-  <section class="slide" id="key-stanley" data-name="Key paper 2: SimBA">
+  <section class="slide" id="key-stanley" data-chapter="1 · The problem" data-name="Key paper 2: SimBA">
     <p class="eyebrow">Key paper 2 of 2 · the two papers that matter most for us</p>
     <h2>Stanley et al., <i>JAMIA</i> 2024 (SimBA): where the bias sits changes the harm</h2>
     <p class="kp-why"><b>Why it matters most:</b> it is the closest study of <b>our variable, position</b>. They put the same kind of bias in two places and show that the place changes how unfair the model is, and how well fixes work. But <b>both places are outside the disease region</b>, the images are synthetic, and nobody masks.</p>
@@ -323,7 +353,7 @@ td.n { font-family: var(--mono); font-variant-numeric: tabular-nums; text-align:
     </div>
   </section>
 
-  <section class="slide" id="gap" data-name="The gap">
+  <section class="slide" id="gap" data-chapter="1 · The problem" data-name="The gap">
     <p class="eyebrow">What is new in our design</p>
     <h2>Earlier work did the parts, not the combination</h2>
     <div class="tablewrap">
@@ -333,7 +363,7 @@ td.n { font-family: var(--mono); font-variant-numeric: tabular-nums; text-align:
     <p class="small muted">Closest precedents: Bassi et al. (matched, reversed and clean tests; the mark is always outside the lungs), Puli et al. (90/10 → 10/90 on chest X-rays), Bissoto et al. (reversed skin artifacts, with masking; workshop), Corbetta et al. (inverted artifacts, MICCAI 2026), Stanley et al. and Boland et al. (bias near vs far, or fixed vs random position, not relative to a masking ROI). Li et al. (CVPR 2023) showed in natural images that removing one shortcut can amplify another. Named but untested: Maron et al. (JMIR 2021) show an artifact inside the lesion still visible after segmentation and say segmentation cannot remove hairs or rulers that lie on the lesion; Viviano et al. (ICLR 2021) state that their masking methods may not remove confounders inside the mask; Ben Ahmed et al. (IEEE Access 2022) saw a shortcut survive lung segmentation; Sourget et al. point to confounders located at the area of interest; Pahde et al. (MICCAI 2023, Machine Learning 2025) note artifacts can overlap clinically important regions; Nauta et al. (2022) excluded pasted patches that covered the lesion. The outside case is well documented: cropping away peripheral skin ink restored specificity from 45.8% to 97.2% (Winkler et al., JAMA Dermatology 2019). Viviano, Pahde and Bassi (ISNet) are our planned replication targets.</p>
   </section>
 
-  <section class="slide" id="data" data-name="Datasets">
+  <section class="slide" id="data" data-chapter="2 · The evidence" data-name="Datasets">
     <p class="eyebrow">Datasets we used</p>
     <h2>Six public datasets, four kinds of medical images</h2>
     <div class="cols">
@@ -342,7 +372,7 @@ td.n { font-family: var(--mono); font-variant-numeric: tabular-nums; text-align:
     </div>
   </section>
 
-  <section class="slide" id="leakage" data-name="No data leakage">
+  <section class="slide" id="leakage" data-chapter="2 · The evidence" data-name="No data leakage">
     <p class="eyebrow">How we prevented data leakage</p>
     <h2>The same lesion, patient or look-alike image never sits in both training and test</h2>
     <div class="cols even">
@@ -384,7 +414,7 @@ td.n { font-family: var(--mono); font-variant-numeric: tabular-nums; text-align:
     </div>
   </section>
 
-  <section class="slide" id="method" data-name="How we test it">
+  <section class="slide" id="method" data-chapter="2 · The evidence" data-name="How we test it">
     <p class="eyebrow">How we test it</p>
     <h2>Two models, one trap</h2>
     <div class="cols">
@@ -405,7 +435,7 @@ td.n { font-family: var(--mono); font-variant-numeric: tabular-nums; text-align:
     </div>
   </section>
 
-  <section class="slide" id="step-1" data-name="Step 1">
+  <section class="slide" id="step-1" data-chapter="2 · The evidence" data-name="Step 1">
     <p class="eyebrow">Step 1 · moving a ruler into the lesion</p>
     <h2>Drag the ruler into the lesion</h2>
     <div class="cols">
@@ -429,7 +459,7 @@ td.n { font-family: var(--mono); font-variant-numeric: tabular-nums; text-align:
     </div>
   </section>
 
-  <section class="slide" id="robust" data-name="Is it a fluke?">
+  <section class="slide" id="robust" data-chapter="2 · The evidence" data-name="Is it a fluke?">
     <p class="eyebrow">Step 1 · is it a fluke?</p>
     <h2>The location effect survives every change we tried</h2>
     <div class="cols">
@@ -442,7 +472,7 @@ td.n { font-family: var(--mono); font-variant-numeric: tabular-nums; text-align:
     </div>
   </section>
 
-  <section class="slide" id="step-2" data-name="Step 2">
+  <section class="slide" id="step-2" data-chapter="2 · The evidence" data-name="Step 2">
     <p class="eyebrow">Step 2 · why does masking fail?</p>
     <h2>The ruler survives, its competitors are deleted</h2>
     <div class="cols">
@@ -459,7 +489,7 @@ td.n { font-family: var(--mono); font-variant-numeric: tabular-nums; text-align:
     </div>
   </section>
 
-  <section class="slide" id="step-3" data-name="Step 3">
+  <section class="slide" id="step-3" data-chapter="2 · The evidence" data-name="Step 3">
     <p class="eyebrow">Step 3 · is it only skin images?</p>
     <h2>The same pattern in ultrasound, capsule endoscopy and chest X-rays</h2>
     <div class="cols">
@@ -472,7 +502,7 @@ td.n { font-family: var(--mono); font-variant-numeric: tabular-nums; text-align:
     </div>
   </section>
 
-  <section class="slide" id="step-4" data-name="Step 4">
+  <section class="slide" id="step-4" data-chapter="2 · The evidence" data-name="Step 4">
     <p class="eyebrow">Step 4 · real artifacts</p>
     <h2>With real artifacts, masking helps much more when the artifact is away from the lesion</h2>
     <div class="cols lit">
@@ -497,7 +527,7 @@ td.n { font-family: var(--mono); font-variant-numeric: tabular-nums; text-align:
     </div>
   </section>
 
-  <section class="slide" id="step-5" data-name="Step 5: transplant">
+  <section class="slide" id="step-5" data-chapter="2 · The evidence" data-name="Step 5: transplant">
     <p class="eyebrow">Step 5 · is it really the location? (pre-registered)</p>
     <h2>We moved the same real artifact into and out of the ROI of the same images</h2>
     <p class="kp-why"><b>The worry after Step 4:</b> images with the artifact on the lesion are different images. For example, lesions with hair on them are much bigger. So the difference could come from the lesion, not from where the artifact sits.</p>
@@ -537,13 +567,35 @@ td.n { font-family: var(--mono); font-variant-numeric: tabular-nums; text-align:
     </div>
   </section>
 
-  <section class="slide" id="checks-done" data-name="Error bars">
+  <section class="slide" id="checks-done" data-chapter="2 · The evidence" data-name="Error bars">
     <p class="eyebrow">Are the error bars honest?</p>
     <h2>We tested our own statistics</h2>
     <div class="cards three" id="stats"></div>
   </section>
 
-  <section class="slide" id="learned" data-name="Other findings">
+  <section class="slide" id="our-fix" data-chapter="3 · The fix" data-name="Our fix">
+    <p class="eyebrow">Chapter 3 · what to use instead of masking</p>
+    <h2>Mask first, then make the artifact useless within each class</h2>
+    <div class="cols">
+      <div>
+        <ol class="plain" style="list-style:none;padding:0;display:flex;flex-direction:column;gap:10px">
+          <li><b>1. Mask</b> the image to the ROI, as before, and take frozen DINOv2 features.</li>
+          <li><b>2. Measure</b>, on the training images only, how the artifact shifts the features <i>inside each diagnosis</i>: benign with vs without caliper, malignant with vs without caliper.</li>
+          <li><b>3. Remove</b> those directions from every image's features, then fit an ordinary classifier.</li>
+        </ol>
+        <div class="formula">δ<sub>y</sub> = mean(features | artifact, y) − mean(features | no artifact, y)<br>project out δ<sub>benign</sub>, δ<sub>malignant</sub>, then fit the head</div>
+        <p class="small muted">Inside each class the head can no longer tell artifact images apart, and no image is thrown away or down-weighted. It needs artifact labels for training only; at test time it needs just the masked image.</p>
+      </div>
+      <div class="panel">
+        <h3>Against masking, registered in advance</h3>
+        <div class="readout"><span class="big pos">+0.12 to +0.33</span><span class="muted">better than masking in every Trap A (artifact inside)</span></div>
+        <div class="readout"><span class="big">40 / 42</span><span class="muted">parts of a strict "beats masking everywhere" rule met</span></div>
+        <p class="small">The two it missed: a thyroid split where the result is inconclusive (−0.002) and ISIC 2020 overall (−0.021), where hair on the lesion still points to melanoma for most patients.</p>
+      </div>
+    </div>
+  </section>
+
+  <section class="slide" id="learned" data-chapter="3 · The fix" data-name="Other findings">
     <p class="eyebrow">Other things we learned · four ways to fight the artifact</p>
     <h2>Methods that know the artifact help in both traps, but need labels</h2>
     <div class="seg" role="group" aria-label="Method" id="armTabs"></div>
@@ -567,62 +619,146 @@ td.n { font-family: var(--mono); font-variant-numeric: tabular-nums; text-align:
     </div>
   </section>
 
-  <section class="slide" id="status" data-name="Where we are">
+  <section class="slide" id="repl-how" data-chapter="4 · Tested against others" data-name="How we tested against others">
+    <p class="eyebrow">Chapter 4 · tested against published methods</p>
+    <h2>Eight published papers, their code, our rules written down first</h2>
+    <div class="cards">
+      <div class="panel"><h3>1. Reproduce first</h3><p class="small">We ran each paper's best method with the authors' own code and checked it against their published number (within 0.05). The limit was widened from 0.03 for every paper after the first checks; we report that.</p></div>
+      <div class="panel"><h3>2. Two kinds of result</h3><p class="small"><span class="tag win">formal</span> the paper reproduced, so "beaten" needs a 95% interval above zero after correction. <span class="tag desc">descriptive</span> it did not reproduce, so we compare with our run of their official code and make no claim about their printed number.</p></div>
+      <div class="panel"><h3>3. Two environments</h3><p class="small">Their data and test design, and ours: real thyroid calipers, where we trained ISNet and RR-ClArC with their own recipes under one selection rule.</p></div>
+      <div class="panel"><h3>4. Four versions of our fix</h3><p class="small">On frozen DINOv2 (our pipeline), on the competitor's own network, on a small EfficientNet-B0 (smaller than every competitor), and label-free (U-MtE).</p></div>
+    </div>
+  </section>
+
+  <section class="slide" id="phase5" data-chapter="4 · Tested against others" data-name="Real calipers">
+    <p class="eyebrow">Chapter 4 · our environment · the confirmatory test</p>
+    <h2>On real calipers inside the nodule, our fix beats ISNet and RR-ClArC</h2>
+    <div class="cols">
+      <div>
+        <div class="chart" id="p5Chart"></div>
+        <div class="legend"><span><span class="dotkey" style="background:var(--roi)"></span> Ours, DINOv2</span><span><span class="dotkey" style="background:var(--third)"></span> Ours, EfficientNet-B0</span><span><span class="dotkey" style="background:var(--artifact)"></span> ISNet</span><span><span class="dotkey" style="background:var(--std)"></span> RR-ClArC</span><span><span class="dotkey" style="background:var(--maskgrey)"></span> Plain training</span></div>
+        <p class="small muted">Reversed-test AUROC, thyroid (TN3K), three folds. 0.5 = chance.</p>
+      </div>
+      <div class="panel">
+        <h3>4 of 4 registered comparisons won</h3>
+        <ul class="plain small">
+          <li>DINOv2 vs ISNet <span class="num pos">+0.155</span> [+0.019, +0.316]</li>
+          <li>DINOv2 vs RR-ClArC <span class="num pos">+0.249</span> [+0.192, +0.304]</li>
+          <li>EfficientNet-B0 vs ISNet <span class="num pos">+0.129</span> [+0.035, +0.239]</li>
+          <li>EfficientNet-B0 vs RR-ClArC <span class="num pos">+0.224</span> [+0.159, +0.292]</li>
+        </ul>
+        <p class="small">Also better on clean images (0.797 vs 0.633 and 0.643).</p>
+        <p class="statement" style="font-size:20px">ISNet does better when the caliper is outside the nodule (0.673) than inside (0.561): the location effect, in a published method.</p>
+      </div>
+    </div>
+  </section>
+
+  <section class="slide" id="isnet-inside" data-chapter="4 · Tested against others" data-name="ISNet with marks inside">
+    <p class="eyebrow">Chapter 4 · their environment · ISNet (Nature Communications 2024)</p>
+    <h2>Move ISNet's own marks into the lungs and it learns nothing else</h2>
+    <div class="cols">
+      <div>
+        <div class="chart" id="isnetChart"></div>
+        <div class="legend"><span><span class="dotkey" style="background:var(--std)"></span> Marks in the corner (their design)</span><span><span class="dotkey" style="background:var(--artifact)"></span> Same marks inside the lungs (our test)</span></div>
+        <p class="small muted">Macro-F1 on in-distribution images. Same data, code and marks; only the position changes.</p>
+      </div>
+      <div class="panel">
+        <h3>What this shows</h3>
+        <p class="small">ISNet penalises anything the model uses outside the lungs. With the mark in the corner it ignores it, exactly as published. Inside the lungs the penalty cannot reach it: perfect when the mark matches the class, zero when it is swapped.</p>
+        <p class="small">Masked training in Viviano et al. (ICLR 2021) shows the same: with a tube inside the lungs it drops to 0.615 reversed-test AUROC, against 0.896 with the tube outside (3 seeds).</p>
+        <p class="small muted">Our fix also follows ISNet's marks here, because each class has its own mark shape. That is a limit, shown in chapter 5.</p>
+      </div>
+    </div>
+  </section>
+
+  <section class="slide" id="their-env" data-chapter="4 · Tested against others" data-name="Their data, their tests">
+    <p class="eyebrow">Chapter 4 · their environment · dermoscopy trap sets</p>
+    <h2>On their own tests, our fix beats EPVT and the official code of DISC and RR-ClArC</h2>
+    <div class="tablewrap">
+      <table>
+        <tr><th>Paper</th><th>Their method</th><th>Ours</th><th>Difference [95% CI]</th><th>Result</th></tr>
+        <tr><td><b>EPVT</b>, MICCAI 2023 / IEEE TMI 2025 · bias 1</td><td class="n">0.696</td><td class="n">0.782</td><td class="n">+0.086 [+0.064, +0.107]</td><td><span class="tag win">beaten</span></td></tr>
+        <tr><td><b>EPVT</b> · bias 0.9</td><td class="n">0.775</td><td class="n">0.806</td><td class="n">+0.031 [+0.009, +0.054]</td><td><span class="tag win">beaten</span></td></tr>
+        <tr><td><b>DISC</b>, ICML 2023 (official code; published 0.551)</td><td class="n">0.489</td><td class="n">0.736</td><td class="n">+0.247 [+0.204, +0.290]</td><td><span class="tag desc">above, descriptive</span></td></tr>
+        <tr><td><b>RR-ClArC</b>, Machine Learning 2025 (accuracy; published 0.76)</td><td class="n">0.524</td><td class="n">0.785</td><td class="n">CI 0.769–0.801</td><td><span class="tag desc">above, descriptive</span></td></tr>
+      </table>
+    </div>
+    <p class="small">EPVT was reproduced after a 37-point audit of its code. Adding our fix to <b>EPVT's own network</b> also beat EPVT (0.758 and 0.795). Cost: on images without artifacts our DINOv2 version is 0.02–0.04 lower than EPVT.</p>
+    <p class="small muted">DISC did not reproduce: its released code reuses one image cache for all five trap sets. We told the authors.</p>
+  </section>
+
+  <section class="slide" id="scoreboard" data-chapter="4 · Tested against others" data-name="Scoreboard">
+    <p class="eyebrow">Chapter 4 · all eight papers</p>
+    <h2>Two formal wins, two descriptive wins, one tie, one loss</h2>
+    <div class="tablewrap">
+      <table>
+        <tr><th>Paper</th><th>Reproduced?</th><th>Result</th><th style="width:34%">In one line</th></tr>
+        <tr><td><b>ISNet + RR-ClArC on real calipers</b> (our test)</td><td>—</td><td><span class="tag win">formal win</span></td><td class="small">4 of 4 registered comparisons, registered before any result</td></tr>
+        <tr><td><b>EPVT</b>, MICCAI 2023 / IEEE TMI 2025</td><td>yes</td><td><span class="tag win">formal win</span></td><td class="small">both bias levels; slightly lower on artifact-free images</td></tr>
+        <tr><td><b>DISC</b>, ICML 2023</td><td>no</td><td><span class="tag desc">descriptive win</span></td><td class="small">above its official code and its published number</td></tr>
+        <tr><td><b>RR-ClArC</b>, Machine Learning 2025</td><td>no</td><td><span class="tag desc">descriptive win</span></td><td class="small">above its official code and its published number</td></tr>
+        <tr><td><b>ISNet</b>, Nature Communications 2024</td><td>no</td><td><span class="tag desc">shows the problem</span></td><td class="small">ignores marks outside the lungs, follows them inside</td></tr>
+        <tr><td><b>Viviano et al.</b>, ICLR 2021</td><td>yes</td><td><span class="tag tie">partly</span></td><td class="small">masking fails inside (3 seeds); our gain not significant</td></tr>
+        <tr><td><b>Saab et al.</b>, MLHC 2022</td><td>no</td><td><span class="tag tie">tie</span></td><td class="small">their method uses lesion outlines for training; ours does not</td></tr>
+        <tr><td><b>RR-ClArC</b>, AAAI 2024</td><td>yes</td><td><span class="tag loss">not beaten</span></td><td class="small">invisible trigger spread over the whole image: no location</td></tr>
+      </table>
+    </div>
+    <p class="small muted">Reveal to Revise (MICCAI 2023) failed its reproduction check and was not compared. Five of the eight published results did not reproduce from the authors' code.</p>
+  </section>
+
+  <section class="slide" id="limits" data-chapter="5 · Limits and next" data-name="Limits">
+    <p class="eyebrow">Chapter 5 · limits</p>
+    <h2>Where the fix stops working</h2>
+    <div class="cards">
+      <div class="panel"><h3>Class-specific marks inside the ROI</h3><p class="small">When each class has its own mark shape inside the lungs (ISNet's design), our fix resists more than ISNet (0.20–0.36 vs 0.03 with swapped marks) but still mostly follows the marks.</p></div>
+      <div class="panel"><h3>Artifacts without a location</h3><p class="small">An invisible trigger written into every pixel (RR-ClArC, AAAI 2024) is outside the question: there is no inside or outside.</p></div>
+      <div class="panel"><h3>Frozen encoders cost some clean accuracy</h3><p class="small">0.02–0.04 below EPVT on artifact-free images. A small trained encoder keeps clean accuracy but learns strong shortcuts; that is why the frozen encoder is the default.</p></div>
+      <div class="panel"><h3>Needs artifact labels for training</h3><p class="small">The label-free version (U-MtE) did not beat the published methods inside the ROI. A method trained with lesion outlines (Saab et al.) tied with us.</p></div>
+    </div>
+  </section>
+
+  <section class="slide" id="status" data-chapter="5 · Limits and next" data-name="Where we are">
     <p class="eyebrow">Where we are</p>
-    <h2>What the work so far shows</h2>
+    <h2>What the work shows</h2>
     <div class="tablewrap">
       <table>
         <tr><th style="width:24%">Question</th><th>Answer</th><th style="width:28%">Evidence</th></tr>
         <tr><td><b>Does masking depend on where the artifact sits?</b></td><td>Yes. It helps when the artifact is outside the ROI and loses its benefit (often turns harmful) when it is inside.</td><td>Steps 1 and 3: 10 of 11 experiments; both ruler sizes</td></tr>
         <tr><td><b>Why?</b></td><td>The artifact inside survives, its competitors are deleted, and the model relies on it more.</td><td>Step 2: four checks</td></tr>
         <tr><td><b>Does it hold for real artifacts?</b></td><td>Yes, in all four cohorts with DINOv2, and in every cohort tested with MedSigLIP (3) and ConvNeXt (2).</td><td>Step 4: four planned tests, all significant, also with grouped intervals</td></tr>
+        <tr><td><b>Does our fix work?</b></td><td>Yes. It beats masking in every Trap A and meets 40 of 42 parts of a strict registered rule.</td><td>Chapter 3</td></tr>
+        <tr><td><b>Does it beat published methods?</b></td><td>Yes: ISNet and RR-ClArC on real calipers (4/4), EPVT on its own tests; above DISC and RR-ClArC's official code.</td><td>Chapter 4: eight papers, rules registered first</td></tr>
         <tr><td><b>Exceptions</b></td><td>DermLIP (likely needs the skin around the lesion); RAD-DINO (does not use a tube outside the lungs).</td><td>Steps 3 and 4</td></tr>
       </table>
     </div>
   </section>
 
-  <section class="slide" id="next-steps" data-name="Next steps">
+  <section class="slide" id="next-steps" data-chapter="5 · Limits and next" data-name="Next steps">
     <p class="eyebrow">Next steps</p>
     <h2>Six questions a sceptical reader would ask</h2>
     <p class="muted">Click a card to see the worry behind each question and how it can be tested.</p>
     <div class="cards three" id="nextCards"></div>
   </section>
 
-  <section class="slide" id="padchest" data-name="Future option">
-    <p class="eyebrow">A future option · second chest X-ray hospital</p>
-    <h2>PadChest could test the chest X-ray result at another hospital</h2>
-    <p>About 160,000 chest X-rays from about 67,000 patients (San Juan Hospital, Spain, 2009–2017). It would give a second device trap: drains or catheters <b>inside</b> the lungs (Trap A) against endotracheal or tracheostomy tubes <b>outside</b> them (Trap B).</p>
-    <div class="cols even">
-      <div class="panel">
-        <h3 class="pos">What it has</h3>
-        <ul class="plain">
-          <li><b>Device labels</b> from the reports: endotracheal tube, nasogastric tube, chest drain, central venous catheter.</li>
-          <li><b>NEATX tube labels</b> (about 1,000; chest drain, tracheostomy, nasogastric and endotracheal tubes), the same source as our NIH drain labels.</li>
-          <li><b>Patient IDs</b>, so we can keep each patient on one side of the split.</li>
-          <li><b>Lung masks</b> through CheXmask, for the ROI.</li>
-        </ul>
-      </div>
-      <div class="panel">
-        <h3 class="neg">What it lacks</h3>
-        <ul class="plain">
-          <li><b>No pixel masks of the devices:</b> labels say a tube is present, not where. Location comes from the device type, as in our NIH device traps.</li>
-          <li><b>Noisy labels:</b> 73% come from a text model reading Spanish reports; 27% were labelled by physicians.</li>
-          <li><b>Few NEATX labels</b> per tube type: probably too few for our minimum trap sizes on their own.</li>
-          <li><b>Heavy access:</b> about 1 TB, research-use agreement with BIMCV, no redistribution of images.</li>
-        </ul>
-      </div>
+  <section class="slide" id="whats-next" data-chapter="5 · Limits and next" data-name="What comes next">
+    <p class="eyebrow">Chapter 5 · what comes next</p>
+    <h2>Three documents are ready; the experiments are finished</h2>
+    <div class="cards three">
+      <div class="panel"><h3>BMC Medical Imaging</h3><p class="small">Manuscript drafted: structured abstract, the location effect, the fix, and the validation against eight papers. Needs affiliation, funding and supervisor details.</p></div>
+      <div class="panel"><h3>Journal paper and thesis report</h3><p class="small">Both updated with an external-validation section and the full replication tables.</p></div>
+      <div class="panel"><h3>Waiting on authors</h3><p class="small">Questions sent to the authors of RR-ClArC, ISNet, Saab et al., EPVT and DISC. Any answer is recorded and, where it gives exact settings, rerun once.</p></div>
     </div>
-    <p class="statement">Worth doing only if chest X-rays stay in the main text. Cheap first step: request access and count the device groups from the label file before downloading any images.</p>
+    <p class="statement">Optional: two more training seeds for Viviano's original test would turn that comparison from preliminary into formal (about one GPU-day).</p>
   </section>
 
-  <section class="slide" id="discuss" data-name="Questions">
+  <section class="slide" id="discuss" data-chapter="5 · Limits and next" data-name="Questions">
     <p class="eyebrow">Questions for discussion</p>
     <h2>Where we would like your view</h2>
     <ol class="cards" style="list-style:none;padding:0">
-      <li class="panel"><h3>1. The main score</h3><p>Is the reversed-test AUROC acceptable as the main score, or should a clinical measure (sensitivity at a fixed specificity) be added from the start?</p></li>
-      <li class="panel"><h3>2. How to state the rule</h3><p>“Masking is worth less inside the ROI” (true in all real cohorts) or “masking hurts inside the ROI” (true for skin hair/ruler artifacts and in 7 of 11 moving-artifact experiments)?</p></li>
-      <li class="panel"><h3>3. The artifact masks</h3><p>The masks were checked by eye by a non-clinician. Should a clinician check a sample?</p></li>
-      <li class="panel"><h3>4. Chest X-rays</h3><p>Present them as a boundary case, or leave them out of the main text? If they stay, should we add PadChest as a second hospital?</p></li>
+      <li class="panel"><h3>1. The journal</h3><p>Is BMC Medical Imaging the right first target, or should the full version go to a more selective journal first?</p></li>
+      <li class="panel"><h3>2. Descriptive wins</h3><p>How should comparisons against papers that did not reproduce (DISC, RR-ClArC 2025) be presented: main text or supplement?</p></li>
+      <li class="panel"><h3>3. The widened tolerance</h3><p>We widened the reproduction limit from 0.03 to 0.05 after the first checks, for every paper. Is reporting it openly enough?</p></li>
+      <li class="panel"><h3>4. Viviano seeds</h3><p>Is it worth one more GPU-day to make the Viviano original-test comparison formal?</p></li>
     </ol>
   </section>
 
@@ -1566,6 +1702,14 @@ td.n { font-family: var(--mono); font-variant-numeric: tabular-nums; text-align:
     { c: "var(--third)", v: [0.775, 0.775, 0.775] },
   ], 0, 1, [0, 0.25, 0.5, 0.75, 1], "Macro-F1 of three models on matched, clean and reversed tests in Bassi et al.", v => v.toFixed(2));
 
+
+  groupedBars("p5Chart", ["Caliper inside (Trap A)", "Caliper outside (Trap B)"], [
+    { c: "var(--roi)", v: [0.716, 0.789] }, { c: "var(--third)", v: [0.690, 0.746] },
+    { c: "var(--artifact)", v: [0.561, 0.673] }, { c: "var(--std)", v: [0.467, 0.595] }, { c: "var(--maskgrey)", v: [0.440, 0.546] },
+  ], 0.3, 0.9, [0.3, 0.5, 0.7, 0.9], "Reversed-test AUROC on thyroid calipers inside and outside the nodule for our two versions, ISNet, RR-ClArC and plain training", v => v.toFixed(2));
+  groupedBars("isnetChart", ["Own-class mark", "No mark", "Swapped mark"], [
+    { c: "var(--std)", v: [0.841, 0.834, 0.831] }, { c: "var(--artifact)", v: [0.998, 0.167, 0.000] },
+  ], 0, 1, [0, 0.25, 0.5, 0.75, 1], "ISNet macro-F1 with marks in the corner versus inside the lungs", v => v.toFixed(2));
   function chestScene(mode) {
     const W = 520, H = 250;
     let g = `<rect x="140" y="12" width="240" height="226" rx="18" fill="var(--maskgrey)" opacity="0.35"/>`;
@@ -1632,7 +1776,7 @@ td.n { font-family: var(--mono); font-variant-numeric: tabular-nums; text-align:
   let cur = 0;
   slides.forEach((s, i) => {
     const b = document.createElement("button"); b.type = "button"; b.setAttribute("aria-label", `Go to slide ${i + 1}: ${s.dataset.name}`);
-    if (i % 4 === 0) b.classList.add("major");
+    if (i === 0 || s.dataset.chapter !== slides[i - 1].dataset.chapter) b.classList.add("major");
     b.addEventListener("click", () => show(i, true)); mm.appendChild(b);
   });
   function show(i, push) {
@@ -1640,7 +1784,7 @@ td.n { font-family: var(--mono); font-variant-numeric: tabular-nums; text-align:
     slides.forEach((s, j) => { s.hidden = j !== cur; });
     [...mm.children].forEach((b, j) => { b.classList.toggle("cur", j === cur); b.classList.toggle("done", j < cur); b.setAttribute("aria-current", j === cur ? "step" : "false"); });
     counter.textContent = `${cur + 1} / ${slides.length}`;
-    secname.textContent = slides[cur].dataset.name;
+    secname.textContent = slides[cur].dataset.chapter + " · " + slides[cur].dataset.name;
     box.scrollTop = 0;
     if (push && location.hash.slice(1) !== slides[cur].id) { try { history.replaceState(null, "", "#" + slides[cur].id); } catch (e) { location.hash = slides[cur].id; } }
   }
@@ -1651,6 +1795,7 @@ td.n { font-family: var(--mono); font-variant-numeric: tabular-nums; text-align:
     if (e.key === "ArrowRight" || e.key === "PageDown") { e.preventDefault(); show(cur + 1, true); }
     if (e.key === "ArrowLeft" || e.key === "PageUp") { e.preventDefault(); show(cur - 1, true); }
   });
+  $("road").addEventListener("click", e => { const b = e.target.closest("[data-go]"); if (b) show(slides.findIndex(x => x.id === b.dataset.go), true); });
   const fromHash = () => { const k = slides.findIndex(s => s.id === location.hash.slice(1)); show(k >= 0 ? k : 0, false); };
   window.addEventListener("hashchange", fromHash);
   fromHash();
