@@ -1,5 +1,5 @@
 panel,image_id,rule_score_px
 a  Ovary: caliper inside the tumour,ov_299,443.0
 b  Ovary: caliper outside the tumour,ov_1345,186.0
-c  Capsule: debris on the lesion,see13848,0.080093469089608
-d  Capsule: debris off the lesion,see00061,0.0802388157600512
+c  Capsule: debris on the lesion,see15225,0.0800152054978309
+d  Capsule: debris off the lesion,see00061,0.0798698588273877
