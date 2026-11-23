@@ -11,7 +11,7 @@ Revision 2026-11-23: Okabe-Ito colours (ROI sky blue, pasted region outlined in 
 pasted region when it is small (small calipers were invisible at print size), placed in a corner clear of the ROI and
 the paste, the neutral-paste column, and a deterministic selection: per cohort the two recipients whose donor instance
 has the most pixels (ties by image id), with distinct donors, skipping a recipient whose neutral fill is not plain tissue
-(> 2% white or specular pixels; colour images only). The rule picks examples for legibility only.
+(> 2% bright pixels, luminance > 200; colour images only). The rule picks examples for legibility only.
 """
 from __future__ import annotations
 
@@ -79,11 +79,13 @@ def inset(a, src, pasted, avoid, size=170, pad=14, small=120):
 
 def plain_fill(neu, max_bright=0.02):
     """Legibility check for the neutral-paste control in colour (capsule) images: at most `max_bright` of the masked
-    fill pixels are specular or white (all channels > 215), so the control does not look like a pasted object."""
+    fill pixels are bright (luminance > 200: white, specular or yellow-white strands; mucosa is darker), so the
+    control does not look like a pasted object."""
     pix, m = neu["pix"], neu["mask"] > 0
     if pix.ndim != 3 or not m.any():
         return True
-    return float((pix[m] > 215).all(-1).mean()) <= max_bright
+    lum = pix[m].astype(float) @ np.array([0.299, 0.587, 0.114])
+    return float((lum > 200).mean()) <= max_bright
 
 
 def main():
