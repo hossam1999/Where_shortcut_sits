@@ -55,3 +55,35 @@ RULES
 - Push to claude/festive-bohr-95evo5 only. Do not create branches or pull requests.
 - Report the two commands' printed counts, the chosen image IDs, the commit hash, and anything that did not match.
 ```
+
+## Follow-up prompt: transplant figure (same machine, same data)
+
+```
+Follow-up on the same machine, same repo, same $WTSS_DATA (MMOTU, SEE-AI and both cohorts are already built).
+Task: regenerate paper/figures/transplant_examples.{pdf,png} (Figure 3 of manuscript_bmc/manuscript.tex, also in
+paper/supplement.tex). Nothing else is changed or re-run.
+
+1. git pull origin claude/festive-bohr-95evo5  (brings the new scripts/make_transplant_figure.py)
+2. Rebuild the registered placements, which are deterministic (stable seeds), for both cohorts:
+     PYTHONPATH=src python scripts/run_transplant.py --cohort ovary --placements_only
+     PYTHONPATH=src python scripts/run_transplant.py --cohort capsule --placements_only
+   This writes $WTSS_DATA/review2/transplant_{ovary,capsule}_placements.json. It also rewrites files that are already
+   committed: results/review2/transplant/<cohort>_dino518/placements.csv, design.json and feasibility_by_label.csv.
+   Check with `git diff --stat results/` that these files are unchanged: same recipients, donors, ops and overlaps.
+   If anything differs, stop and report the difference. Afterwards run `git checkout -- results/` so nothing under
+   results/ is committed.
+3. PYTHONPATH=src python scripts/make_transplant_figure.py
+   This writes paper/figures/transplant_examples.{pdf,png} and transplant_selection.csv. Rows are chosen by a fixed
+   rule: the two recipients per cohort with the largest donor instance. Do not change the rule.
+4. Look at the PNG and tell me, row by row:
+   - the pasted caliper or debris is visible, outlined in orange, and has a magnified inset;
+   - "inside" is in the blue ROI and "outside" is clear of it;
+   - the neutral-paste column shows the same mask shape filled with plain tissue;
+   - no inset covers the ROI or the pasted region.
+   Send me the PNG.
+5. Rebuild manuscript_bmc (pdflatex, bibtex, pdflatex, pdflatex): 0 errors, 0 undefined citations, 0 overfull boxes.
+   Rebuild paper/ only if its Makefile target works without data; otherwise skip and say so.
+6. Commit only paper/figures/transplant_examples.pdf, paper/figures/transplant_examples.png,
+   paper/figures/transplant_selection.csv and manuscript_bmc/manuscript.pdf. Push to claude/festive-bohr-95evo5 only.
+   Never commit data, caches or tokens. Report the chosen recipients and the commit hash.
+```

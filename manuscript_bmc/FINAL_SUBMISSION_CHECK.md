@@ -82,6 +82,7 @@ No experiments were run in this pass, and none were needed: every claim could be
 6. **Co-author approval.** "All authors read and approved the final manuscript." Do not submit until both co-authors have actually approved.
 7. **Acknowledgements.**
 9. **Figure 2 must be regenerated before submission.** The caption now describes the revised figure (2×2 layout, blue ROI, orange artifact masks with arrows, a caliper-like ovary example outside the tumour chosen by a fixed rule). The PDF still embeds the old figure until `python scripts/make_figures.py` is run on a machine with MMOTU and SEE-AI (prompt: `docs/PROMPT_EXAMPLES_FIGURE.md`). Check the chosen images by eye.
+9b. **Figure 3 (transplant and neutral paste) must be regenerated too.** Added 2026-11-23. Until `python scripts/make_transplant_figure.py` runs on the data machine, the PDF embeds the old supplement figure: red/green colours, no neutral-paste column, ovary calipers barely visible.
 10. **TN3K permission.** Requested by email on 2026-11-23 (`docs/EMAIL_DRAFT_TN3K_PERMISSION.md`). Thyroid images go into a published figure only after written permission.
 8. **Repository URL.** The authors plan a new public repository holding only code and pre-registrations (export: `python scripts/release/make_code_release.py <dir>`). Replace the URL in *Availability of data and materials* once it exists; the pre-registrations, including amendment A38, must be in it because the manuscript's "registered before results" statements rest on them.
 

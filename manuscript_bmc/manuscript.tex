@@ -112,7 +112,8 @@ independent of the label). This follows earlier reversed-test designs
 and out-of-ROI artifacts may differ in other respects, we also matched them 1:1 on propensity scores (caliper 0.2 standard
 deviations). The \emph{transplant} design removes this confounding: one real artifact instance is pasted inside
 ($r\ge0.95$) or outside ($r=0$) the ROI of the same artifact-free images, and neutral tissue pasted through the same mask,
-position and blending serves as a paste-edge control (Fig.~\ref{fig:design}; real examples in Fig.~\ref{fig:examples}).
+position and blending serves as a paste-edge control (Fig.~\ref{fig:design}; real examples in Figs.~\ref{fig:examples}
+and~\ref{fig:transplant}).
 
 \begin{figure}[t]\centering\includegraphics[width=\linewidth]{../paper/figures/design.pdf}
 \caption{Study design. (a) Controlled sweeps paste a synthetic artifact at a controlled overlap $r$ with the ROI.
@@ -127,6 +128,14 @@ BY 4.0). Blue: ROI (tumour outline; expert lesion box). Orange, marked by arrows
 rule-based caliper detector; capsule: the linear probe on DINOv2 patch features), not manual ground truth. The four panels
 are different images chosen by a fixed rule from images outside the visual audit; they illustrate artifact location and
 are not examples of the transplant experiment, in which one artifact is moved within the same image.}\label{fig:examples}\end{figure}
+
+\begin{figure}[t]\centering\includegraphics[width=\linewidth]{../paper/figures/transplant_examples.pdf}
+\caption{Real-artifact transplant and paste-edge control. Each row is one artifact-free image (ROI in blue) with the
+same real artifact instance, cut from another image of the cohort, pasted inside the ROI and outside it, and with neutral
+tissue pasted through the same mask, position and blending inside the ROI. Orange outline: pasted region; orange-framed
+inset: the pasted region magnified. Rows show the recipients with the largest donor instances, chosen for legibility;
+all placements are the registered ones. Ovarian ultrasound (MMOTU) and capsule endoscopy (SEE-AI), CC BY 4.0.}
+\label{fig:transplant}\end{figure}
 
 \subsection*{Masking and models}
 \emph{ROI masking} keeps the ROI pixels and replaces all others with the ImageNet mean colour. Four alternative
@@ -208,7 +217,7 @@ vanished.
 
 \subsection*{2. Same-image transplants and the paste-edge control}
 Transplanting one real artifact instance into or out of the ROI of the same images reproduced the location effect in all
-four cohorts (Table~\ref{tab:law}). Pasting neutral tissue through the same masks also produced a crossover (hair
+four cohorts (Table~\ref{tab:law}; examples in Fig.~\ref{fig:transplant}). Pasting neutral tissue through the same masks also produced a crossover (hair
 $+0.204$, thyroid $+0.145$, ovary $+0.052$, capsule $+0.459$), so part of the transplant effect is caused by pasting
 itself. The artifact exceeded this control in hair ($+0.049$) and thyroid ($+0.132$); in ovary and capsule the difference
 was not significant, so the transplant alone does not separate the artifact from the paste edge in those cohorts, and the
