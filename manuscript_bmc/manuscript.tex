@@ -121,9 +121,12 @@ pastes one real artifact inside or outside the ROI of the same images, with neut
 (d) Empirical risk minimisation (ERM) sees the whole image; ROI masking removes everything outside the ROI.}\label{fig:design}\end{figure}
 
 \begin{figure}[t]\centering\includegraphics[width=\linewidth]{../paper/figures/examples.pdf}
-\caption{Real artifacts inside and outside the ROI (ROI outline or box in green; artifact in red). Left: ovarian
-ultrasound with a caliper inside the tumour and an overlay outside it (MMOTU, CC BY 4.0). Right: capsule endoscopy with
-debris on and off the lesion (SEE-AI, CC BY 4.0).}\label{fig:examples}\end{figure}
+\caption{Examples of real artifacts inside and outside the ROI. (a, b) Ovarian ultrasound with a sonographer caliper
+inside and outside the tumour (MMOTU, CC BY 4.0); (c, d) capsule endoscopy with debris on and off the lesion (SEE-AI, CC
+BY 4.0). Blue: ROI (tumour outline; expert lesion box). Orange, marked by arrows: automatic artifact masks (ovary: the
+rule-based caliper detector; capsule: the linear probe on DINOv2 patch features), not manual ground truth. The four panels
+are different images chosen by a fixed rule from images outside the visual audit; they illustrate artifact location and
+are not examples of the transplant experiment, in which one artifact is moved within the same image.}\label{fig:examples}\end{figure}
 
 \subsection*{Masking and models}
 \emph{ROI masking} keeps the ROI pixels and replaces all others with the ImageNet mean colour. Four alternative
