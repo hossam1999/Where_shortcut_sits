@@ -8,8 +8,8 @@ control (docs/PREREGISTRATION_REVIEW3.md, R5), for the openly licensed cohorts o
 Columns: artifact-free image | the same real artifact instance pasted inside the ROI | outside the ROI | neutral tissue
 pasted through the same mask, position and blending inside the ROI (paste-edge control).
 Revision 2026-11-23: Okabe-Ito colours (ROI sky blue, pasted region outlined in orange), a magnified inset of the
-pasted region when it is small (small calipers were invisible at print size), placed in a corner clear of the ROI and
-the paste, the neutral-paste column, and a deterministic selection: per cohort the two recipients whose donor instance
+pasted region when it is small (small calipers were invisible at print size), placed in a corner clear of the ROI, the
+paste and burned-in text, the neutral-paste column, and a deterministic selection: per cohort the two recipients whose donor instance
 has the most pixels (ties by image id), with distinct donors, skipping a recipient whose neutral fill is not plain tissue
 (> 2% bright pixels, luminance > 200; colour images only). The rule picks examples for legibility only.
 """
@@ -77,6 +77,15 @@ def inset(a, src, pasted, avoid, size=170, pad=14, small=120):
     return a
 
 
+def text_mask(img, k=9, thr=60):
+    """Burned-in text and screen graphics: small bright structures (white top-hat > thr on a k x k kernel) of the
+    artifact-free image, so an inset never covers scanner labels or the capsule logo. Anatomy with strong speckle can
+    also trigger it; the inset then shrinks or is dropped, which is the safe failure."""
+    g = cv2.cvtColor(img, cv2.COLOR_RGB2GRAY) if img.ndim == 3 else img
+    th = cv2.morphologyEx(g.astype(np.uint8), cv2.MORPH_TOPHAT, cv2.getStructuringElement(cv2.MORPH_RECT, (k, k)))
+    return th > thr
+
+
 def plain_fill(neu, max_bright=0.02):
     """Legibility check for the neutral-paste control in colour (capsule) images: at most `max_bright` of the masked
     fill pixels are bright (luminance > 200: white, specular or yellow-white strands; mucosa is darker), so the
@@ -120,7 +129,7 @@ def main():
             for ins, key in ((inst, "1.00"), (inst, "0.00"), (neu, "1.00")):
                 im, m = composite(Image.fromarray(rgb), ins, p["op"], p[key]["x"], p[key]["y"])
                 im = np.asarray(im)
-                avoid = cv2.dilate(((roi > 0) | (m > 0)).astype(np.uint8), np.ones((15, 15), np.uint8)) > 0
+                avoid = cv2.dilate(((roi > 0) | (m > 0) | text_mask(base)).astype(np.uint8), np.ones((15, 15), np.uint8)) > 0
                 tiles.append(inset(draw(im, roi, m), im, m, avoid))
             rows.append((label, tiles))
             sel.append({"cohort": cohort, "recipient": i, "donor": p["donor"], "op": p["op"], "n_px": npx[i],
