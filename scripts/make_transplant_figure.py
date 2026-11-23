@@ -8,9 +8,10 @@ control (docs/PREREGISTRATION_REVIEW3.md, R5), for the openly licensed cohorts o
 Columns: artifact-free image | the same real artifact instance pasted inside the ROI | outside the ROI | neutral tissue
 pasted through the same mask, position and blending inside the ROI (paste-edge control).
 Revision 2026-11-23: Okabe-Ito colours (ROI sky blue, pasted region outlined in orange), a magnified inset of the
-pasted region (small calipers were invisible at print size), the neutral-paste column, and a deterministic selection:
-per cohort the two recipients whose donor instance has the most pixels (ties by image id), so that the pasted artifact
-is visible. The rule picks examples for legibility only; every placement is the registered one.
+pasted region when it is small (small calipers were invisible at print size), placed in a corner clear of the ROI and
+the paste, the neutral-paste column, and a deterministic selection: per cohort the two recipients whose donor instance
+has the most pixels (ties by image id), with distinct donors, skipping a recipient whose neutral fill is not plain tissue
+(> 2% white or specular pixels; colour images only). The rule picks examples for legibility only.
 """
 from __future__ import annotations
 
@@ -47,25 +48,42 @@ def draw(a, roi, pasted=None):
     return a
 
 
-def inset(a, src, pasted, size=170, pad=14):
-    """Magnify the pasted region of `src` (unannotated) into the corner of `a` farthest from it."""
+def inset(a, src, pasted, avoid, size=170, pad=14, small=120):
+    """Magnify the pasted region of `src` (unannotated) into a corner of `a`, only when the pasted region is small
+    (longest side < `small` px). The corner is the first, farthest from the paste, whose inset box does not touch
+    `avoid` (ROI and pasted region, dilated); the inset shrinks (170, 130, 100 px) before it is dropped."""
     if pasted is None or not pasted.any():
         return a
     ys, xs = np.nonzero(pasted)
+    if max(np.ptp(ys), np.ptp(xs)) + 1 >= small:
+        return a
     y0, y1 = max(0, ys.min() - pad), min(src.shape[0], ys.max() + pad + 1)
     x0, x1 = max(0, xs.min() - pad), min(src.shape[1], xs.max() + pad + 1)
     crop = np.ascontiguousarray(src[y0:y1, x0:x1])
     crop = crop if crop.ndim == 3 else np.repeat(crop[..., None], 3, -1)
-    s = size / max(crop.shape[:2])
-    z = cv2.resize(crop, (max(1, int(crop.shape[1] * s)), max(1, int(crop.shape[0] * s))), interpolation=cv2.INTER_NEAREST)
     H, W = a.shape[:2]
     cy, cx = (y0 + y1) / 2, (x0 + x1) / 2
-    oy = 6 if cy > H / 2 else H - z.shape[0] - 6
-    ox = 6 if cx > W / 2 else W - z.shape[1] - 6
-    a = a.copy()
-    a[oy:oy + z.shape[0], ox:ox + z.shape[1]] = z
-    cv2.rectangle(a, (ox, oy), (ox + z.shape[1] - 1, oy + z.shape[0] - 1), ART_RGB, 3)
+    for sz in (size, 130, 100):
+        s = sz / max(crop.shape[:2])
+        z = cv2.resize(crop, (max(1, int(crop.shape[1] * s)), max(1, int(crop.shape[0] * s))), interpolation=cv2.INTER_NEAREST)
+        corners = [(oy, ox) for oy in (6, H - z.shape[0] - 6) for ox in (6, W - z.shape[1] - 6)]
+        corners.sort(key=lambda c: -((c[0] + z.shape[0] / 2 - cy) ** 2 + (c[1] + z.shape[1] / 2 - cx) ** 2))
+        for oy, ox in corners:
+            if not avoid[oy:oy + z.shape[0], ox:ox + z.shape[1]].any():
+                a = a.copy()
+                a[oy:oy + z.shape[0], ox:ox + z.shape[1]] = z
+                cv2.rectangle(a, (ox, oy), (ox + z.shape[1] - 1, oy + z.shape[0] - 1), ART_RGB, 3)
+                return a
     return a
+
+
+def plain_fill(neu, max_bright=0.02):
+    """Legibility check for the neutral-paste control in colour (capsule) images: at most `max_bright` of the masked
+    fill pixels are specular or white (all channels > 215), so the control does not look like a pasted object."""
+    pix, m = neu["pix"], neu["mask"] > 0
+    if pix.ndim != 3 or not m.any():
+        return True
+    return float((pix[m] > 215).all(-1).mean()) <= max_bright
 
 
 def main():
@@ -76,19 +94,32 @@ def main():
         free = rec.image_id.tolist()
         fb = [cache.get(free[j])[0] for j in np.random.default_rng(20260928).choice(len(free), 20, replace=False)]
         npx = {i: p.get("n_px", 0) for i, p in pl.items()}
-        ids = sorted(pl, key=lambda i: (-npx[i], i))[:2]
-        for i in ids:
+        chosen, used_donors, skipped = [], set(), []
+        for i in sorted(pl, key=lambda i: (-npx[i], i)):        # largest donor instance first; distinct donors
+            if len(chosen) == 2:
+                break
             p = pl[i]
-            rgb, roi, _ = cache.get(i)
+            if p["donor"] in used_donors:
+                continue
             drgb, _, dart = cache.get(p["donor"])
             inst = extract_instance(dart, drgb, kind)
             neu = neutral_instance(inst, drgb, dart, f"{i}|{p['donor']}", fb)
+            if not plain_fill(neu):
+                skipped.append(i)
+                continue
+            chosen.append((i, inst, neu)); used_donors.add(p["donor"])
+        if skipped:
+            print(f"{cohort}: skipped (neutral fill not plain): {skipped}")
+        for i, inst, neu in chosen:
+            p = pl[i]
+            rgb, roi, _ = cache.get(i)
             base = np.asarray(Image.fromarray(rgb).convert("RGB"))
             tiles = [draw(base, roi)]
             for ins, key in ((inst, "1.00"), (inst, "0.00"), (neu, "1.00")):
                 im, m = composite(Image.fromarray(rgb), ins, p["op"], p[key]["x"], p[key]["y"])
                 im = np.asarray(im)
-                tiles.append(inset(draw(im, roi, m), im, m))
+                avoid = cv2.dilate(((roi > 0) | (m > 0)).astype(np.uint8), np.ones((15, 15), np.uint8)) > 0
+                tiles.append(inset(draw(im, roi, m), im, m, avoid))
             rows.append((label, tiles))
             sel.append({"cohort": cohort, "recipient": i, "donor": p["donor"], "op": p["op"], "n_px": npx[i],
                         "ov_in": p["1.00"]["achieved"], "ov_out": p["0.00"]["achieved"]})
