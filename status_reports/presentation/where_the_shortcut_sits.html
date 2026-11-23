@@ -189,6 +189,42 @@ td.n { font-family: var(--mono); font-variant-numeric: tabular-nums; text-align:
 .tag.tie { background: var(--surface); color: var(--ink); }
 .tag.loss { background: var(--artifact-soft); color: var(--ink); border-color: var(--artifact); }
 .formula { font-family: var(--mono); font-size: 16px; background: var(--surface); border: 1px solid var(--line); border-radius: 8px; padding: 10px 12px; overflow-x: auto; }
+/* animated stories */
+.story { display: flex; flex-direction: column; gap: 12px; }
+.story .stage { background: var(--surface); border: 1px solid var(--line); border-radius: 10px; padding: 10px; min-width: 0; }
+.story .stage svg { width: 100%; height: auto; max-height: 50vh; }
+.story .stage svg text { font-size: 16px; }
+.story .stage svg .t-s { font-size: 14px; }
+.story .stage svg .big-s { font-size: 24px; }
+.story .stage svg .num { font-family: var(--mono); }
+.storytext { display: grid; grid-template-columns: minmax(0, 3fr) minmax(0, 2fr); gap: 18px; }
+.storytext > div { min-width: 0; display: flex; flex-direction: column; gap: 6px; }
+.storytext p { margin: 0; }
+.storyres .tag { align-self: flex-start; }
+.storyctl { display: flex; gap: 8px; flex-wrap: wrap; align-items: center; }
+.story [data-end] { transition: opacity 0.8s ease, transform 1.2s cubic-bezier(0.45, 0, 0.2, 1); }
+.story svg [data-end] { transform-box: fill-box; transform-origin: center; }
+.story svg [data-end].o-left { transform-origin: left center; }
+.story svg [data-end].o-bottom { transform-origin: center bottom; }
+@media (prefers-reduced-motion: reduce) { .story [data-end] { transition: none; } }
+.jcards { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 10px; }
+.jcard { background: var(--paper); border: 1px solid var(--line); border-radius: 8px; padding: 12px; display: flex; flex-direction: column; gap: 6px; min-width: 0; }
+@media (max-width: 760px) { .storytext, .jcards { grid-template-columns: minmax(0, 1fr); } }
+svg .f-skin { fill: var(--skin); } svg .f-lesion { fill: var(--lesion); } svg .f-lesion2 { fill: #5e3a2e; opacity: 0.7; }
+svg .f-rulerbody { fill: var(--rulerbody); } svg .s-tick { stroke: #3a3a3a; stroke-width: 1; }
+svg .f-mask { fill: var(--maskgrey); } svg .f-dark { fill: #111518; }
+svg .s-hair { stroke: #26170f; stroke-width: 1.8; fill: none; } svg .s-gel { stroke: #ffffff; stroke-width: 1.5; fill: none; opacity: 0.85; }
+svg .f-usbg { fill: #1b1e21; } svg .f-usspk { fill: #6b7177; opacity: 0.55; } svg .f-usnod { fill: #4c5156; stroke: #9aa1a6; stroke-width: 1.5; }
+svg .s-cal { stroke: var(--artifact); stroke-width: 2.2; fill: none; }
+svg .f-xrbg { fill: #121416; } svg .f-lung { fill: #5f666b; } svg .f-spine { fill: #8e959a; opacity: 0.6; }
+svg .f-muc { fill: #8e3b33; } svg .f-mucsoft { fill: #b7574b; opacity: 0.8; } svg .f-ero { fill: #eadb9c; } svg .f-deb { fill: #b38a2c; }
+svg .f-art { fill: var(--artifact); } svg .f-artsoft { fill: var(--artifact-soft); } svg .f-roi { fill: var(--roi); } svg .f-roisoft { fill: var(--roi-soft); }
+svg .f-std { fill: var(--std); } svg .f-third { fill: var(--third); } svg .f-maskgrey { fill: var(--maskgrey); }
+svg .f-ink { fill: var(--ink); } svg .f-muted { fill: var(--muted); } svg .f-surface { fill: var(--surface); } svg .f-paper { fill: var(--paper); }
+svg .s-art { stroke: var(--artifact); } svg .s-roi { stroke: var(--roi); stroke-width: 2.5; } svg .s-ink { stroke: var(--ink); }
+svg .s-muted { stroke: var(--muted); } svg .s-line { stroke: var(--line); fill-opacity: 1; }
+svg line.s-line { stroke-width: 1; }
+svg text.on { fill: var(--surface); }
 </style>
 
 <div class="deck">
@@ -573,6 +609,13 @@ td.n { font-family: var(--mono); font-variant-numeric: tabular-nums; text-align:
     <div class="cards three" id="stats"></div>
   </section>
 
+  <section class="slide" id="journey" data-chapter="3 · The fix" data-name="How we got there">
+    <p class="eyebrow">Chapter 3 · eight steps from masking to the fix</p>
+    <h2>Every remedy we tried, and why each one led to the next</h2>
+    <p class="small muted">Press a step, or play all eight. Each animation is a drawing of the idea; the numbers are the registered results.</p>
+    <div class="story" data-story="journey"></div>
+  </section>
+
   <section class="slide" id="our-fix" data-chapter="3 · The fix" data-name="Our fix">
     <p class="eyebrow">Chapter 3 · what to use instead of masking</p>
     <h2>Mask first, then make the artifact useless within each class</h2>
@@ -628,6 +671,36 @@ td.n { font-family: var(--mono); font-variant-numeric: tabular-nums; text-align:
       <div class="panel"><h3>3. Two environments</h3><p class="small">Their data and test design, and ours: real thyroid calipers, where we trained ISNet and RR-ClArC with their own recipes under one selection rule.</p></div>
       <div class="panel"><h3>4. Four versions of our fix</h3><p class="small">On frozen DINOv2 (our pipeline), on the competitor's own network, on a small EfficientNet-B0 (smaller than every competitor), and label-free (U-MtE).</p></div>
     </div>
+  </section>
+
+  <section class="slide" id="paper-epvt" data-chapter="4 · Tested against others" data-name="EPVT, step by step">
+    <p class="eyebrow">Chapter 4 · paper by paper · EPVT, MICCAI 2023</p>
+    <h2>EPVT: their trap sets, their prompts, our fix</h2>
+    <div class="story" data-story="epvt"></div>
+  </section>
+
+  <section class="slide" id="paper-isnet" data-chapter="4 · Tested against others" data-name="ISNet, step by step">
+    <p class="eyebrow">Chapter 4 · paper by paper · ISNet, Nature Communications 2024</p>
+    <h2>ISNet: a heatmap penalty that only works outside the ROI</h2>
+    <div class="story" data-story="isnet"></div>
+  </section>
+
+  <section class="slide" id="paper-rrclarc" data-chapter="4 · Tested against others" data-name="RR-ClArC, step by step">
+    <p class="eyebrow">Chapter 4 · paper by paper · RR-ClArC, AAAI 2024, on real calipers</p>
+    <h2>RR-ClArC: penalising the artifact direction, with the caliper inside the nodule</h2>
+    <div class="story" data-story="rrclarc"></div>
+  </section>
+
+  <section class="slide" id="paper-disc" data-chapter="4 · Tested against others" data-name="DISC, step by step">
+    <p class="eyebrow">Chapter 4 · paper by paper · DISC, ICML 2023 (did not reproduce)</p>
+    <h2>DISC: a concept bank, a shared cache, and a descriptive comparison</h2>
+    <div class="story" data-story="disc"></div>
+  </section>
+
+  <section class="slide" id="paper-vignette" data-chapter="4 · Tested against others" data-name="RR-ClArC 2025, step by step">
+    <p class="eyebrow">Chapter 4 · paper by paper · RR-ClArC, Machine Learning 2025 (did not reproduce)</p>
+    <h2>RR-ClArC on an inserted vignette: their test, our fix</h2>
+    <div class="story" data-story="vignette"></div>
   </section>
 
   <section class="slide" id="phase5" data-chapter="4 · Tested against others" data-name="Real calipers">
@@ -1784,6 +1857,7 @@ td.n { font-family: var(--mono); font-variant-numeric: tabular-nums; text-align:
     slides.forEach((s, j) => { s.hidden = j !== cur; });
     [...mm.children].forEach((b, j) => { b.classList.toggle("cur", j === cur); b.classList.toggle("done", j < cur); b.setAttribute("aria-current", j === cur ? "step" : "false"); });
     counter.textContent = `${cur + 1} / ${slides.length}`;
+    document.dispatchEvent(new CustomEvent("slidechange", { detail: slides[cur] }));
     secname.textContent = slides[cur].dataset.chapter + " · " + slides[cur].dataset.name;
     box.scrollTop = 0;
     if (push && location.hash.slice(1) !== slides[cur].id) { try { history.replaceState(null, "", "#" + slides[cur].id); } catch (e) { location.hash = slides[cur].id; } }
@@ -1799,5 +1873,376 @@ td.n { font-family: var(--mono); font-variant-numeric: tabular-nums; text-align:
   const fromHash = () => { const k = slides.findIndex(s => s.id === location.hash.slice(1)); show(k >= 0 ? k : 0, false); };
   window.addEventListener("hashchange", fromHash);
   fromHash();
+})();
+</script>
+<script>
+/* ---------------- animated stories: the road to the fix, and each audited paper ----------------
+   Every number below is from docs/FINDINGS_OVERVIEW.md, results/round8/SUMMARY.md, results/round9/SUMMARY.md,
+   docs/REPLICATION_RESULTS.md (final) or the presentation's existing slides. Images are drawings, not patient data. */
+(function () {
+  const RM = matchMedia("(prefers-reduced-motion: reduce)").matches;
+  const W = 640, H = 320;
+  const G = (s0, s1, d, inner, extra = "") => `<g${extra} style="${s0}" data-end="${s1}" data-d="${d}">${inner}</g>`;
+  const fin = (d, inner) => G("opacity:0", "opacity:1", d, inner);
+  const fout = (d, inner) => G("opacity:1", "opacity:0", d, inner);
+  const mv = (dx, dy, d, inner) => G("transform:translate(0px,0px)", `transform:translate(${dx}px,${dy}px)`, d, inner);
+  const t = (x, y, s, cls = "", anchor = "start") => `<text x="${x}" y="${y}" text-anchor="${anchor}" class="${cls}">${s}</text>`;
+  const svgw = (inner, label) => `<svg viewBox="0 0 ${W} ${H}" role="img" aria-label="${label}">${inner}</svg>`;
+  function arrow(x1, y1, x2, y2, cls = "s-muted", fcls = "f-muted", wdt = 2.5) {
+    const a = Math.atan2(y2 - y1, x2 - x1), L = 9;
+    const p = [[x2, y2], [x2 - L * Math.cos(a - 0.45), y2 - L * Math.sin(a - 0.45)], [x2 - L * Math.cos(a + 0.45), y2 - L * Math.sin(a + 0.45)]];
+    return `<line x1="${x1}" y1="${y1}" x2="${x2 - 6 * Math.cos(a)}" y2="${y2 - 6 * Math.sin(a)}" class="${cls}" style="stroke-width:${wdt}"/><polygon points="${p.map(q => q.join(",")).join(" ")}" class="${fcls}"/>`;
+  }
+  function animate(root) {
+    const els = [...root.querySelectorAll("[data-end]")];
+    if (RM) { els.forEach(e => e.setAttribute("style", e.dataset.end + ";transition:none")); return; }
+    void root.offsetWidth;
+    requestAnimationFrame(() => requestAnimationFrame(() => els.forEach(e => e.setAttribute("style", `${e.dataset.end};transition-delay:${e.dataset.d}ms`))));
+  }
+
+  /* ---- image drawings (orange = artifact, teal = ROI, as everywhere in the deck) ---- */
+  function rulerSvg(x, y, w, h) {
+    let s = `<rect x="${x}" y="${y}" width="${w}" height="${h}" rx="1.5" class="f-rulerbody s-art" style="stroke-width:2"/>`;
+    for (let i = 1; i < 12; i++) { const tx = x + i * w / 12; s += `<line x1="${tx}" y1="${y}" x2="${tx}" y2="${y + (i % 4 ? h * 0.35 : h * 0.6)}" class="s-tick"/>`; }
+    return s;
+  }
+  function maskPath(x, y, w, h, holes, extra = "") {
+    const hs = holes.map(([cx, cy, rx, ry]) => `M${cx - rx},${cy} a${rx},${ry} 0 1,0 ${2 * rx},0 a${rx},${ry} 0 1,0 ${-2 * rx},0 Z`).join(" ");
+    return `<path d="M${x},${y} h${w} v${h} h${-w} Z ${hs}" fill-rule="evenodd" class="f-mask"${extra}/>`;
+  }
+  // dermoscopy: art = ruler | hair | gel | corner | vignette | null; inside = artifact on the lesion
+  function derm(x, y, w, art = null, inside = true) {
+    const h = w * 0.75, cx = x + w / 2, cy = y + h / 2, rx = w * 0.22, ry = h * 0.26;
+    let s = `<rect x="${x}" y="${y}" width="${w}" height="${h}" rx="4" class="f-skin"/>`;
+    s += `<ellipse cx="${cx}" cy="${cy}" rx="${rx}" ry="${ry}" class="f-lesion"/><ellipse cx="${cx - rx * 0.25}" cy="${cy - ry * 0.2}" rx="${rx * 0.45}" ry="${ry * 0.45}" class="f-lesion2"/>`;
+    let a = "";
+    if (art === "ruler") a = inside ? rulerSvg(cx - w * 0.16, cy - h * 0.05, w * 0.32, h * 0.1) : rulerSvg(x + w * 0.58, y + h * 0.8, w * 0.36, h * 0.1);
+    if (art === "hair") { const ox = inside ? cx - rx : x + w * 0.62, oy = inside ? cy - ry * 0.6 : y + h * 0.12;
+      for (let i = 0; i < 4; i++) a += `<path d="M${ox + i * w * 0.05},${oy + i * h * 0.05} q${w * 0.15},${h * 0.18} ${w * 0.3},${h * 0.1}" class="s-hair"/>`; }
+    if (art === "gel") { const ox = inside ? cx : x + w * 0.85, oy = inside ? cy : y + h * 0.2;
+      [[0, 0, 0.06], [0.08, 0.06, 0.04], [-0.07, 0.07, 0.035]].forEach(([dx, dy, r]) => { a += `<circle cx="${ox + dx * w}" cy="${oy + dy * h}" r="${r * w}" class="s-gel"/>`; }); }
+    if (art === "corner") a = `<path d="M${x},${y} h${w * 0.28} q${-w * 0.2},${h * 0.05} ${-w * 0.28},${h * 0.32} Z" class="f-dark"/>`;
+    if (art === "vignette") a = maskPath(x, y, w, h, [[cx, cy, w * 0.42, h * 0.48]], ` style="opacity:1"`).replace("f-mask", "f-dark");
+    return { s, a, x, y, w, h, holes: [[cx, cy, rx * 1.15, ry * 1.15]], roi: `<ellipse cx="${cx}" cy="${cy}" rx="${rx * 1.15}" ry="${ry * 1.15}" class="s-roi" style="fill:none;stroke-dasharray:5 4"/>` };
+  }
+  // thyroid ultrasound: cal = "in" | "out" | null
+  function us(x, y, w, cal = null) {
+    const h = w * 0.75, cx = x + w * 0.5, cy = y + h * 0.55, rx = w * 0.2, ry = h * 0.19;
+    let s = `<rect x="${x}" y="${y}" width="${w}" height="${h}" rx="4" class="f-usbg"/>`;
+    for (let i = 0; i < 26; i++) { const px = x + ((i * 37) % 97) / 97 * w, py = y + ((i * 53) % 89) / 89 * h; s += `<circle cx="${px}" cy="${py}" r="${w * 0.012}" class="f-usspk"/>`; }
+    s += `<ellipse cx="${cx}" cy="${cy}" rx="${rx}" ry="${ry}" class="f-usnod"/>`;
+    let a = "";
+    const plus = (px, py) => `<path d="M${px - 5},${py} h10 M${px},${py - 5} v10" class="s-cal"/>`;
+    if (cal === "in") a = plus(cx - rx * 0.8, cy) + plus(cx + rx * 0.8, cy) + `<line x1="${cx - rx * 0.8}" y1="${cy}" x2="${cx + rx * 0.8}" y2="${cy}" class="s-cal" style="stroke-dasharray:2 4"/>`;
+    if (cal === "out") a = plus(x + w * 0.12, y + h * 0.15) + plus(x + w * 0.4, y + h * 0.15) + `<line x1="${x + w * 0.12}" y1="${y + h * 0.15}" x2="${x + w * 0.4}" y2="${y + h * 0.15}" class="s-cal" style="stroke-dasharray:2 4"/>`;
+    return { s, a, x, y, w, h, holes: [[cx, cy, rx * 1.15, ry * 1.2]], roi: `<ellipse cx="${cx}" cy="${cy}" rx="${rx * 1.15}" ry="${ry * 1.2}" class="s-roi" style="fill:none;stroke-dasharray:5 4"/>` };
+  }
+  // chest radiograph: mark = circle | tri | sq; pos = corner | lung
+  function cxr(x, y, w, mark = null, pos = "corner") {
+    const h = w * 0.85, lx = x + w * 0.32, rx2 = x + w * 0.68, ly = y + h * 0.5, erx = w * 0.15, ery = h * 0.3;
+    let s = `<rect x="${x}" y="${y}" width="${w}" height="${h}" rx="4" class="f-xrbg"/>`;
+    s += `<ellipse cx="${lx}" cy="${ly}" rx="${erx}" ry="${ery}" class="f-lung"/><ellipse cx="${rx2}" cy="${ly}" rx="${erx}" ry="${ery}" class="f-lung"/>`;
+    s += `<rect x="${x + w * 0.47}" y="${y + h * 0.1}" width="${w * 0.06}" height="${h * 0.85}" class="f-spine"/>`;
+    const mx = pos === "corner" ? x + w * 0.1 : lx, my = pos === "corner" ? y + h * 0.12 : ly, r = w * 0.05;
+    let a = "";
+    if (mark === "circle") a = `<circle cx="${mx}" cy="${my}" r="${r}" class="f-art"/>`;
+    if (mark === "tri") a = `<polygon points="${mx},${my - r} ${mx + r},${my + r * 0.8} ${mx - r},${my + r * 0.8}" class="f-art"/>`;
+    if (mark === "sq") a = `<rect x="${mx - r * 0.85}" y="${my - r * 0.85}" width="${r * 1.7}" height="${r * 1.7}" class="f-art"/>`;
+    const holes = [[lx, ly, erx * 1.08, ery * 1.06], [rx2, ly, erx * 1.08, ery * 1.06]];
+    return { s, a, x, y, w, h, holes, mx, my, lx, ly, roi: holes.map(([a1, b, c, d]) => `<ellipse cx="${a1}" cy="${b}" rx="${c}" ry="${d}" class="s-roi" style="fill:none;stroke-dasharray:5 4"/>`).join("") };
+  }
+  function capsule(x, y, w) {
+    const h = w * 0.75;
+    let s = `<rect x="${x}" y="${y}" width="${w}" height="${h}" rx="4" class="f-muc"/>`;
+    s += `<circle cx="${x + w / 2}" cy="${y + h / 2}" r="${h * 0.46}" class="f-mucsoft"/>`;
+    const ero = `<ellipse cx="${x + w * 0.38}" cy="${y + h * 0.48}" rx="${w * 0.1}" ry="${h * 0.09}" class="f-ero"/><circle cx="${x + w * 0.36}" cy="${y + h * 0.46}" r="${w * 0.03}" class="f-deb"/>`;
+    const deb = `<circle cx="${x + w * 0.72}" cy="${y + h * 0.7}" r="${w * 0.045}" class="f-deb"/><circle cx="${x + w * 0.78}" cy="${y + h * 0.64}" r="${w * 0.03}" class="f-deb"/><circle cx="${x + w * 0.7}" cy="${y + h * 0.62}" r="${w * 0.02}" class="f-deb"/>`;
+    const box = `<rect x="${x + w * 0.24}" y="${y + h * 0.3}" width="${w * 0.28}" height="${h * 0.36}" class="s-roi" style="fill:none"/>`;
+    return { s, ero, deb, box, x, y, w, h };
+  }
+  const draw = (o, withArt = true) => o.s + (withArt ? o.a : "");
+
+  /* ---- feature space: artifact images sit a within-class shift δ away; the fix projects δ out ---- */
+  function featCollapse(ox, oy, k, d0, opts = {}) {
+    const P = (x, y) => [ox + x * k, oy + y * k];
+    const C = [{ c: [120, 175], dl: [110, -20], cls: "f-std", sh: "c" }, { c: [330, 80], dl: [100, 45], cls: "f-third", sh: "s" }];
+    const J = [[-34, -10], [-6, 24], [20, -24], [34, 12], [-22, 30], [8, -2]], JA = [[-16, 8], [14, -14], [26, 20], [-28, -18]];
+    const r = Math.max(4, 7 * Math.sqrt(k));
+    const dot = (x, y, cls, sh, art) => {
+      const [X, Y] = P(x, y), st = art ? ` class="${cls} s-art" style="stroke-width:${Math.max(2, 3 * k)}"` : ` class="${cls}"`;
+      return sh === "c" ? `<circle cx="${X}" cy="${Y}" r="${r}"${st}/>` : `<rect x="${X - r}" y="${Y - r}" width="${2 * r}" height="${2 * r}"${st}/>`;
+    };
+    let s = "";
+    C.forEach(g => { J.forEach(([a, b]) => { s += dot(g.c[0] + a, g.c[1] + b, g.cls, g.sh, false); }); });
+    C.forEach((g, i) => {
+      const [x1, y1] = P(g.c[0], g.c[1]), [x2, y2] = P(g.c[0] + g.dl[0], g.c[1] + g.dl[1]);
+      s += G("opacity:0", "opacity:1", d0, G("opacity:1", "opacity:0", d0 + 1500, arrow(x1, y1, x2, y2, "s-art", "f-art", 3) +
+        (opts.labels ? t((x1 + x2) / 2, Math.min(y1, y2) - 10 - i * 4, i ? "δ malignant" : "δ benign", "art b t-s", "middle") : "")));
+      let pts = ""; JA.forEach(([a, b]) => { pts += dot(g.c[0] + g.dl[0] + a, g.c[1] + g.dl[1] + b, g.cls, g.sh, true); });
+      s += mv(-g.dl[0] * k, -g.dl[1] * k, d0 + 1100, pts);
+    });
+    const [lx1, ly1] = P(170, 30), [lx2, ly2] = P(280, 230);
+    s += fin(d0 + 2400, `<line x1="${lx1}" y1="${ly1}" x2="${lx2}" y2="${ly2}" class="s-ink" style="stroke-width:2;stroke-dasharray:6 5"/>` + (opts.labels ? t(lx2 + 6, ly2 - 4, "classifier", "ink t-s") : ""));
+    return s;
+  }
+
+  /* ---- our fix as a pipeline, on any of the drawings above ---- */
+  function ourFix(o, enc = "Frozen DINOv2") {
+    let s = draw(o) + fin(400, maskPath(o.x, o.y, o.w, o.h, o.holes)) + o.roi;
+    const midY = o.y + o.h / 2;
+    s += t(o.x + o.w / 2, o.y + o.h + 22, "1. Mask to the ROI", "ink t-s", "middle");
+    s += fin(900, arrow(o.x + o.w + 8, midY, 238, midY) + `<rect x="242" y="${midY - 30}" width="118" height="60" rx="8" class="f-surface s-line"/>` +
+      t(301, midY - 4, enc.split("|")[0], "ink b t-s", "middle") + t(301, midY + 15, enc.split("|")[1] || "encoder", "t-s", "middle") + t(301, midY + 52, "2. Features", "ink t-s", "middle"));
+    s += fin(1400, arrow(366, midY, 392, midY) + `<rect x="396" y="34" width="230" height="200" rx="8" class="f-paper s-line"/>`);
+    s += fin(1400, featCollapse(396, 30, 0.44, 1700));
+    s += fin(1500, t(511, 256, "3. Remove each class's artifact shift", "ink t-s", "middle"));
+    s += fin(4100, t(511, 278, "4. Ordinary classifier on what is left", "roi b t-s", "middle"));
+    return s;
+  }
+
+  /* ---- bar charts drawn to scale ---- */
+  function bars(rows, lo, hi, opts = {}) {
+    const L = opts.L || 230, R = W - 40, top = opts.top || 40, rh = opts.rh || 40, x = v => L + (v - lo) / (hi - lo) * (R - L);
+    let s = "";
+    const ticks = opts.ticks || [];
+    ticks.forEach(v => { s += `<line x1="${x(v)}" x2="${x(v)}" y1="${top - 8}" y2="${top + rows.length * rh}" class="s-line"/>` + t(x(v), top + rows.length * rh + 18, v.toFixed(opts.dp ?? 1), "t-s", "middle"); });
+    if (opts.chance != null) s += `<line x1="${x(opts.chance)}" x2="${x(opts.chance)}" y1="${top - 8}" y2="${top + rows.length * rh}" class="s-ink" style="stroke-dasharray:4 4"/>` + t(x(opts.chance) + 4, top - 12, "chance", "t-s");
+    rows.forEach((r, i) => {
+      const y = top + i * rh;
+      if (r.head) { s += t(L - 12, y + rh * 0.62, r.head, "ink b t-s", "end"); return; }
+      s += t(L - 12, y + rh * 0.62, r.label, r.bold ? "ink b" : "ink", "end");
+      s += G("transform:scaleX(0)", "transform:scaleX(1)", (opts.d || 200) + i * 180, `<rect x="${L}" y="${y + rh * 0.18}" width="${x(r.v) - L}" height="${rh * 0.64}" rx="3" class="${r.cls}"/>`, ` class="o-left"`);
+      s += fin((opts.d || 200) + i * 180 + 900, opts.inLabel ? t(x(r.v) - 10, y + rh * 0.62, r.txt || r.v.toFixed(opts.vdp ?? 3), "on b num", "end") : t(x(r.v) + 6, y + rh * 0.62, r.txt || r.v.toFixed(opts.vdp ?? 3), "ink b num"));
+      if (r.ref != null) s += fin((opts.d || 200) + i * 180 + 1100, `<line x1="${x(r.ref)}" x2="${x(r.ref)}" y1="${y + 4}" y2="${y + rh - 4}" class="s-ink" style="stroke-width:3"/>` + t(x(r.ref), y + 2, r.refLabel || "published", "t-s", "middle"));
+    });
+    if (opts.axis) s += t((L + R) / 2, top + rows.length * rh + 40, opts.axis, "ink t-s", "middle");
+    return s;
+  }
+  function trapRows(tile, trainA, trainB, testA, testB, rowA, rowB) {
+    let s = t(20, 26, "Training", "ink b") + t(340, 26, "Test: the association is reversed", "art b");
+    s += t(20, 52, rowA, "t-s") + t(20, 167, rowB, "t-s") + t(340, 52, rowA, "t-s") + t(340, 167, rowB, "t-s");
+    [0, 1, 2].forEach(i => {
+      s += fin(i * 200, draw(tile(20 + i * 100, 58, 92, trainA[i])) + draw(tile(20 + i * 100, 173, 92, trainB[i])));
+      s += fin(1600 + i * 200, draw(tile(340 + i * 100, 58, 92, testA[i])) + draw(tile(340 + i * 100, 173, 92, testB[i])));
+    });
+    return s;
+  }
+  const dT = (x, y, w, a) => { const o = derm(x, y, w, a); return o; };
+  const uT = (x, y, w, a) => us(x, y, w, a);
+
+  /* ---------------- story content ---------------- */
+  const STORIES = {
+    journey: [
+      { label: "1 · Mask", dur: 5200,
+        draw: () => { const L = derm(45, 20, 250, "ruler", false), R = derm(345, 20, 250, "ruler", true);
+          return draw(L) + draw(R) + fin(700, maskPath(45, 20, 250, 187.5, L.holes) + maskPath(345, 20, 250, 187.5, R.holes)) + L.roi + R.roi +
+            t(170, 232, "Ruler outside the lesion", "ink", "middle") + t(470, 232, "Ruler on the lesion", "ink", "middle") +
+            fin(1700, t(170, 262, "Shortcut removed", "roi b", "middle") + t(470, 262, "Shortcut kept, its competitors removed", "art b", "middle")); },
+        what: "We started with the standard defence: grey out everything outside the region of interest (ROI). An artifact outside the lesion disappears. One on the lesion survives and becomes one of the few cues left.",
+        result: "Location crossover +0.15 to +0.38 in reversed-test AUROC, in four cohorts.", next: "It cannot remove anything inside the ROI, so we looked for something that can." },
+      { label: "2 · Paint out", dur: 5600,
+        draw: () => { const L = derm(45, 20, 250, "ruler", true), C = capsule(345, 20, 250);
+          const pr = `<rect x="${170 - 40}" y="${113.75 - 9.4}" width="80" height="18.75" class="f-lesion"/><rect x="${170 - 40}" y="${113.75 - 9.4}" width="80" height="18.75" class="s-art" style="fill:none;stroke-dasharray:4 3"/>`;
+          return L.s + fout(600, L.a) + fin(600, pr) + C.s + C.box + fout(1900, C.ero) + fout(1900, C.deb) +
+            fin(700, `<rect x="${345 + 250 * 0.25}" y="${20 + 187.5 * 0.36}" width="62" height="50" class="s-art" style="fill:none;stroke-dasharray:5 4"/><rect x="${345 + 250 * 0.64}" y="${20 + 187.5 * 0.55}" width="56" height="44" class="s-art" style="fill:none;stroke-dasharray:5 4"/>`) +
+            t(170, 232, "Ruler pixels filled from the lesion", "ink", "middle") + t(470, 232, "Capsule: debris and erosion look alike", "ink", "middle") +
+            fin(2600, t(170, 262, "Works when the artifact is distinct", "roi b", "middle") + t(470, 262, "Disease evidence painted out too", "art b", "middle")); },
+        what: "Next we tried finding the artifact's pixels and filling them in from the surroundings (inpainting), in training and at test time.",
+        result: "Small gains in skin (+0.10) and thyroid (+0.10 inside); harm in capsule (−0.17 inside, −0.12 outside).", next: "It needs an artifact mask for every test image, and it fails when the artifact looks like disease." },
+      { label: "3 · Reweight", dur: 5200,
+        draw: () => { let s = fin(1800, t(320, 26, "After weighting, the artifact sits on half the weight of each class", "ink b", "middle"));
+          [["Disease", "+ artifact", 90, "art"], ["Disease,", "no artifact", 10, "clean"], ["Other", "+ artifact", 10, "art"], ["Other,", "no artifact", 90, "clean"]].forEach(([a, b, n, c], i) => {
+            const x = 75 + i * 130, base = 250, full = 190;
+            s += G(`transform:scaleY(${n / 90})`, "transform:scaleY(0.5)", 600, `<rect x="${x}" y="${base - full}" width="100" height="${full}" rx="4" class="${c === "art" ? "f-artsoft s-art" : "f-roisoft s-roi"}" style="stroke-width:2"/>`, ` class="o-bottom"`);
+            s += fout(500, t(x + 50, base - full * n / 90 - 8, n + " images", "ink b num", "middle")) + fin(1300, t(x + 50, base - full * 0.5 - 8, "25% weight", "ink b num", "middle"));
+            s += t(x + 50, 274, a, "ink t-s", "middle") + t(x + 50, 292, b, "ink t-s", "middle"); });
+          return s; },
+        what: "Then the textbook remedies that know the artifact: give each of the four groups equal weight in training (balanced reweighting), or refit only the last layer on a small balanced set (DFR).",
+        result: "Helps in both traps, wherever the artifact lies (thyroid inside: +0.39 reweighting, +0.46 DFR).", next: "Both need artifact labels and ignore the ROI. We wanted to keep masking's benefit outside the ROI and fix the inside." },
+      { label: "4 · U-MtE", dur: 6200,
+        draw: () => { const o = derm(20, 70, 220, null); const cx = 130, cy = 152.5;
+          let s = draw(o) + maskPath(20, 70, 220, 165, o.holes) + o.roi;
+          const ov = [`<line x1="${cx - 40}" y1="${cy - 20}" x2="${cx + 40}" y2="${cy - 20}" class="s-art" style="stroke-width:3"/>`, `<circle cx="${cx + 25}" cy="${cy + 15}" r="12" class="s-art" style="fill:none;stroke-width:3"/>`,
+            `<path d="M${cx - 35},${cy + 10} h14 M${cx - 28},${cy + 3} v14" class="s-art" style="stroke-width:3"/>`, `<rect x="${cx - 12}" y="${cy + 26}" width="34" height="6" class="f-art"/>`, `<line x1="${cx - 30}" y1="${cy - 5}" x2="${cx + 10}" y2="${cy - 5}" class="s-art" style="stroke-width:3;stroke-dasharray:3 4"/>`];
+          ov.forEach((g, i) => { s += fin(300 + i * 200, g); });
+          s += t(130, 262, "Synthetic overlays, no real artifact", "ink t-s", "middle");
+          s += fin(1300, arrow(250, 152, 300, 152) + `<rect x="310" y="30" width="310" height="240" rx="8" class="f-paper s-line"/>`);
+          const pts = [[360, 210], [390, 170], [420, 225], [450, 190], [470, 240], [400, 120], [440, 150], [500, 200]];
+          let base = "", arr = "", moved = "";
+          pts.forEach(([x, y], i) => { const dx = 70 + (i % 3) * 6, dy = -45 + (i % 2) * 6;
+            base += `<circle cx="${x}" cy="${y}" r="6" class="f-std"/>`; arr += arrow(x, y, x + dx, y + dy, "s-art", "f-art", 2);
+            moved += `<g style="transform:translate(0px,0px)" data-end="transform:translate(${-dx}px,${-dy}px)" data-d="3200"><circle cx="${x + dx}" cy="${y + dy}" r="6" class="f-std s-art" style="stroke-width:2.5"/></g>`; });
+          s += fin(2500, `<rect x="315" y="155" width="260" height="40" rx="20" class="f-artsoft" transform="rotate(-33 445 175)"/>`);
+          s += fin(1500, base) + fin(1900, fout(3200, arr) + moved);
+          s += fin(2500, t(470, 56, "overlay directions", "art b t-s", "middle"));
+          s += fin(3800, t(465, 292, "Erase those directions", "roi b", "middle"));
+          return s; },
+        what: "Our first own method, U-MtE (unsupervised mask-then-erase), needed no artifact labels: paste many synthetic overlays onto masked images, find the feature directions they move, and erase those directions.",
+        result: "Thyroid +0.22 over masking. Real capsule debris −0.115: debris looks like the fibrin in erosions. A protected version recovered to −0.010.", next: "Strong where the artifact is a distinct overlay, unreliable where it resembles disease." },
+      { label: "5 · Six more", dur: 5600, html: true,
+        draw: () => { const C = [
+            ["SLAS", "Few-shot artifact finder: hair from 5 annotated images (patch AUROC 0.93).", "Small gains: +0.02 hair, +0.08 thyroid. Kept as a localisation tool."],
+            ["JTT", "Label-free: retrain with extra weight on images a first model got wrong.", "Best only on hair (0.564); U-MtE beat it on thyroid (+0.198)."],
+            ["SPLINCE", "Closest published erasure method.", "Flipped the shortcut in thyroid, capsule and hair instead of removing it."],
+            ["LaMa inpainting", "A strong inpainting model with the true artifact masks.", "Strong, but needs a mask of every artifact in every test image."],
+            ["Adaptive selector", "Choose masking, U-MtE or balancing on validation data.", "Beat masking in 5/5 cohorts (+0.17 to +0.40); not DFR on hair and chest drains."],
+            ["Fine-tune, then erase", "Erase overlay directions inside a fine-tuned network.", "No gain (+0.004): erasing works on frozen features."]];
+          return `<div class="jcards">` + C.map(([h, a, b], i) => `<div class="jcard" style="opacity:0;transform:translateY(10px)" data-end="opacity:1;transform:none" data-d="${150 + i * 260}"><b>${h}</b><span class="small">${a}</span><span class="small muted">${b}</span></div>`).join("") + `</div>`; },
+        what: "Alongside, we tested six other ideas, each with its own registered test.",
+        result: "None worked everywhere. The winner changed with what carried the shortcut in each cohort.", next: "So we asked one sharp question: is there a remedy that is never worse than masking, and better wherever masking fails?" },
+      { label: "6 · Round 8", dur: 5600,
+        draw: () => t(320, 22, "Registered rule: meet all 42 components to dominate masking", "ink b", "middle") +
+          bars([{ label: "Class-conditional (mask_cmc)", v: 40, cls: "f-roi", txt: "40 / 42", bold: true }, { label: "Masking + balancing", v: 39, cls: "f-std", txt: "39 / 42" },
+            { label: "Copy-paste, random place", v: 39, cls: "f-std", txt: "39 / 42" }, { label: "Class-conditional, no mask", v: 36, cls: "f-std", txt: "36 / 42" }], 0, 42,
+            { top: 50, rh: 48, inLabel: true, ticks: [0, 10, 20, 30, 42], dp: 0, axis: "Components met (never worse than masking where it works, better where it fails)" }) +
+          fin(2600, `<line x1="600" x2="600" y1="42" y2="242" class="s-art" style="stroke-width:3"/>` + t(596, 40, "dominates", "art b t-s", "end")),
+        what: "Round 8 was a registered tournament. Four candidates, designed after the earlier results, were scored on new trap resamples and a held-out cohort (ovary) against 42 components.",
+        result: "No candidate dominated. The class-conditional constraint on masked features came closest: 40 of 42.", next: "Its two misses: an inconclusive thyroid split (−0.002) and ISIC 2020 overall (−0.021)." },
+      { label: "7 · Round 9", dur: 5600,
+        draw: () => t(320, 22, "New seeds, three new candidates; mask_cmc as a reference", "ink b", "middle") +
+          bars([{ label: "Masking + IRM penalty", v: 41, cls: "f-std", txt: "41 / 42" }, { label: "mask_cmc (reference)", v: 41, cls: "f-roi", txt: "41 / 42", bold: true },
+            { label: "Masking + V-REx", v: 40, cls: "f-std", txt: "40 / 42" }, { label: "Masking + balancing", v: 38, cls: "f-std", txt: "38 / 42" },
+            { label: "Conditional adversary", v: 27, cls: "f-std", txt: "27 / 42" }], 0, 42, { top: 46, rh: 42, inLabel: true, ticks: [0, 10, 20, 30, 42], dp: 0, axis: "Components met" }),
+        what: "Round 9, the last remedy round, tried three penalties from the invariance literature with mask_cmc re-run as a reference on new seeds.",
+        result: "Again no candidate dominated. IRM tied mask_cmc at 41 of 42; every arm lost a little on ISIC 2020.", next: "We kept mask_cmc: as good as the best, closed form, no extra training. Later exploratory variants (LEACE-style, adversarial) did not beat it." },
+      { label: "8 · The fix", dur: 6000,
+        draw: () => `<rect x="20" y="20" width="600" height="250" rx="8" class="f-paper s-line"/>` + featCollapse(60, 10, 1.05, 600, { labels: true }) +
+          t(320, 292, "Circles: benign · squares: malignant · orange ring: image with the artifact", "t-s", "middle") + fin(3200, t(320, 314, "Within each class, the artifact no longer separates images", "roi b t-s", "middle")),
+        what: "The final fix: mask, take frozen features, measure how the artifact shifts the features inside each diagnosis (δ benign, δ malignant), project those shifts out, then fit an ordinary classifier.",
+        result: "Better than masking in every in-ROI trap (+0.12 to +0.33); 40 of 42 registered components; loses 0.021 overall on ISIC 2020.", next: "Needs artifact labels for training only. At test time it needs just the masked image." },
+    ],
+    epvt: [
+      { label: "Their data", dur: 4800, draw: () => trapRows(dT, ["ruler", "hair", "gel"], [null, null, null], [null, null, null], ["ruler", "hair", "gel"], "Melanoma", "Benign") +
+          fin(2400, t(320, 290, "Bias 1: every artifact follows one label in training. Bias 0.9: 90% of the time.", "ink t-s", "middle")),
+        what: "Bissoto's trap sets: dermoscopy images where rulers, hair, gel and dark corners go with one diagnosis in training, and with the other at test time.", result: "Many of these artifacts lie on the lesion, so masking alone cannot remove them." },
+      { label: "Their method", dur: 5200, draw: () => { const o = derm(20, 110, 130, "hair");
+          let s = draw(o) + t(85, 230, "Dermoscopy image", "ink t-s", "middle") + fin(300, arrow(158, 158, 176, 158));
+          [0, 1, 2, 3, 4, 5].forEach(i => { s += fin(400 + i * 100, `<rect x="${360 + i * 44}" y="130" width="34" height="34" rx="4" class="f-roisoft s-roi"/>`); });
+          s += fin(800, t(470, 190, "image patches", "t-s", "middle"));
+          let p = ""; [["hair", "f-third"], ["ruler", "f-art"], ["gel", "f-std"], ["shared", "f-roi"]].forEach(([n, c], i) => { p += `<rect x="${180 + i * 44}" y="40" width="34" height="34" rx="4" class="${c}"/>` + t(197 + i * 44, 92, n, "t-s", "middle"); });
+          s += fin(1000, t(180, 28, "One learned prompt per artifact domain", "ink b t-s")) + fin(1000, mv(0, 90, 2000, p));
+          s += fin(2800, `<rect x="180" y="214" width="440" height="40" rx="8" class="f-surface s-line"/>` + t(400, 239, "Vision transformer → melanoma or benign", "ink b t-s", "middle"));
+          s += fin(3400, t(400, 290, "An adapter weights the prompts per image; domains are mixed during training", "t-s", "middle"));
+          return s; },
+        what: "EPVT (MICCAI 2023, extended as PLDG) treats each artifact type as a domain, learns one prompt per domain plus a shared one, and feeds the weighted prompts with the image patches to a vision transformer.", result: "Reproduced after a 37-item audit of its code: bias 1 gap 0.0497, bias 0.9 gap 0.017." },
+      { label: "Our fix", dur: 6000, draw: () => ourFix(derm(20, 70, 170, "ruler", true), "Frozen DINOv2|encoder"),
+        what: "Our fix on the same images: lesion mask, frozen DINOv2 features, remove each class's artifact shift, logistic head.", result: "Selected on validation data only; each test set scored once." },
+      { label: "Result", dur: 5200, draw: () => bars([{ head: "Bias 1" }, { label: "ERM", v: 0.668, cls: "f-maskgrey" }, { label: "EPVT", v: 0.696, cls: "f-art" }, { label: "Ours", v: 0.782, cls: "f-roi", bold: true },
+          { head: "Bias 0.9" }, { label: "ERM", v: 0.762, cls: "f-maskgrey" }, { label: "EPVT", v: 0.775, cls: "f-art" }, { label: "Ours", v: 0.806, cls: "f-roi", bold: true }], 0.5, 0.85, { top: 20, rh: 31, ticks: [0.5, 0.6, 0.7, 0.8], chance: 0.5, axis: "AUROC on EPVT's test, 5 seeds" }),
+        what: "Formal comparison under the registered rule: +0.086 [+0.064, +0.107] at bias 1 and +0.031 [+0.009, +0.054] at bias 0.9.", tag: ["win", "formal win"],
+        result: "Caveat: EPVT passed the reproduction check only under the tolerance widened from 0.03 to 0.05, by 0.0003 at bias 1. Under 0.03 the comparison would be descriptive, with the same differences. On artifact-free images ours is 0.02–0.04 lower." },
+    ],
+    isnet: [
+      { label: "Their data", dur: 4400, draw: () => { let s = ""; [["circle", "COVID-19"], ["tri", "Pneumonia"], ["sq", "Normal"]].forEach(([m, n], i) => {
+            s += fin(i * 250, draw(cxr(30 + i * 205, 30, 170, m, "corner")) + t(115 + i * 205, 196, n, "ink b", "middle")); });
+          return s + fin(1200, t(320, 250, "Each class carries its own mark, in the image corner (their design)", "ink", "middle")); },
+        what: "ISNet (Nature Communications 2024) is trained on chest radiographs from several sources. To test it, the authors add a class-specific mark in a corner, outside the lungs.", result: "A model that uses the mark fails when marks are removed or swapped." },
+      { label: "Their method", dur: 5200, draw: () => { const o = cxr(40, 25, 220, "circle", "corner");
+          const heat = `<circle cx="${o.mx}" cy="${o.my}" r="26" class="f-art" style="opacity:0.35"/>`, lungHeat = `<circle cx="${o.lx}" cy="${o.ly}" r="34" class="f-art" style="opacity:0.3"/><circle cx="${o.lx + 75}" cy="${o.ly + 10}" r="26" class="f-art" style="opacity:0.25"/>`;
+          return draw(o) + fin(300, lungHeat + fout(1800, heat)) + fin(900, o.roi) + t(150, 232, "Relevance heatmap (LRP)", "ink t-s", "middle") +
+            fin(1000, t(300, 60, "Relevance outside the lung mask", "ink b") + t(300, 82, "is penalised during training", "ink b")) +
+            fin(2400, t(300, 130, "Macro-F1 with own-class / no / swapped marks:", "t-s") + t(300, 156, "0.84 / 0.83 / 0.83", "roi b big-s num") + t(300, 184, "The corner mark is ignored, as published.", "t-s")); },
+        what: "ISNet adds a loss on its explanation heatmap: relevance outside the segmented lungs is penalised, so the network learns to look inside them.", result: "With marks in the corner it works as designed." },
+      { label: "Marks inside", dur: 5600, draw: () => { const o = cxr(40, 25, 220, "circle", "corner"), dx = o.lx - o.mx, dy = o.ly - o.my;
+          return o.s + o.roi + mv(dx, dy, 500, o.a + `<circle cx="${o.mx}" cy="${o.my}" r="26" class="f-art" style="opacity:0.4"/>`) + t(150, 232, "Same mark, moved into the lung", "ink t-s", "middle") +
+            fin(1400, t(300, 44, "Macro-F1, marks inside the lungs", "ink b")) +
+            bars([{ label: "Own-class", v: 0.998, cls: "f-art" }, { label: "No mark", v: 0.167, cls: "f-art" }, { label: "Swapped", v: 0.000, cls: "f-art", txt: "0.000" }], 0, 1, { L: 400, top: 70, rh: 46, d: 1600, ticks: [0, 0.5, 1] }); },
+        what: "Our test in their pipeline: the same marks, moved from the corner into the lungs. The penalty only acts outside the lungs, so it cannot reach them.",
+        result: "ISNet went from ignoring the marks to relying on them alone. Descriptive: ISNet's published external-test level did not reproduce." },
+      { label: "Our fix", dur: 6000, draw: () => ourFix(us(20, 70, 170, "in"), "Frozen DINOv2|encoder"),
+        what: "In our registered test on real thyroid calipers inside the nodule, we trained ISNet with its published recipe and compared it with our fix.", result: "Three folds, one selection rule for every method, registered before any result." },
+      { label: "Result", dur: 5000, draw: () => bars([{ label: "Ours, DINOv2 (inside)", v: 0.716, cls: "f-roi", bold: true }, { label: "Ours, EfficientNet-B0 (inside)", v: 0.690, cls: "f-third" },
+          { label: "ISNet, caliper inside", v: 0.561, cls: "f-art" }, { label: "ISNet, caliper outside", v: 0.673, cls: "f-artsoft s-art" }, { label: "Plain training (inside)", v: 0.440, cls: "f-maskgrey" }], 0.4, 0.8, { top: 30, rh: 44, ticks: [0.4, 0.5, 0.6, 0.7, 0.8], chance: 0.5, axis: "Reversed-test AUROC, thyroid calipers (TN3K)" }),
+        what: "Ours vs ISNet with calipers inside: +0.155 [+0.019, +0.316] (DINOv2) and +0.129 [+0.035, +0.239] (EfficientNet-B0).", tag: ["win", "formal win"],
+        result: "ISNet did better with the caliper outside the nodule (0.673) than inside it (0.561): the location effect, in a published method. Its inside result varied strongly across folds (0.681, 0.637, 0.365)." },
+    ],
+    rrclarc: [
+      { label: "Their data", dur: 4800, draw: () => trapRows(uT, ["in", "in", "in"], [null, null, null], [null, null, null], ["in", "in", "in"], "Malignant", "Benign") +
+          fin(2400, t(320, 290, "Trap A: the caliper sits inside the nodule, on 90% of one class in training", "ink t-s", "middle")),
+        what: "Our environment: real thyroid ultrasound (TN3K) with real sonographer calipers. In Trap A the caliper lies inside the nodule, so masking cannot remove it.", result: "RR-ClArC's own paper (AAAI 2024) reproduced on an invisible whole-image trigger, where it was not beaten." },
+      { label: "Their method", dur: 5400, draw: () => { let s = `<rect x="20" y="20" width="600" height="250" rx="8" class="f-paper s-line"/>`;
+          const A = [[150, 180], [180, 210], [130, 215], [200, 170], [165, 150]], B = [[400, 110], [430, 140], [380, 140], [450, 100], [415, 80]];
+          A.forEach(([x, y]) => { s += `<circle cx="${x}" cy="${y}" r="7" class="f-std"/>`; }); B.forEach(([x, y]) => { s += `<circle cx="${x}" cy="${y}" r="7" class="f-std s-art" style="stroke-width:2.5"/>`; });
+          s += t(150, 250, "no caliper", "t-s", "middle") + t(430, 62, "with caliper", "art t-s", "middle");
+          s += fin(600, arrow(185, 180, 400, 115, "s-art", "f-art", 3) + t(255, 122, "caliper direction (CAV)", "art b t-s", "middle"));
+          s += fin(1400, t(80, 150, "model gradient", "ink b t-s", "middle"));
+          s += `<g style="transform:rotate(0deg);transform-box:view-box;transform-origin:80px 120px" data-end="transform:rotate(-73deg);transform-box:view-box;transform-origin:80px 120px" data-d="2300">${fin(1400, arrow(80, 120, 160, 96, "s-ink", "f-ink", 3))}</g>`;
+          s += fin(3200, t(320, 296, "Penalise the model's sensitivity along the caliper direction", "ink b", "middle"));
+          return s; },
+        what: "RR-ClArC learns a concept activation vector (CAV) that separates images with and without the artifact, then fine-tunes the network with a penalty on its gradient along that direction.", result: "We trained it on a ResNet-50d with its published recipe; λ and layer chosen on clean validation data." },
+      { label: "Our fix", dur: 6000, draw: () => ourFix(us(20, 70, 170, "in"), "Frozen DINOv2|encoder"),
+        what: "Our fix: nodule mask, frozen features, remove each class's caliper shift, logistic head.", result: "Also run on a small EfficientNet-B0 trained on masked images (5.3 M parameters)." },
+      { label: "Result", dur: 5000, draw: () => bars([{ label: "Ours, DINOv2", v: 0.716, cls: "f-roi", bold: true }, { label: "Ours, EfficientNet-B0", v: 0.690, cls: "f-third" }, { label: "ISNet", v: 0.561, cls: "f-art" },
+          { label: "RR-ClArC", v: 0.467, cls: "f-std" }, { label: "Plain training", v: 0.440, cls: "f-maskgrey" }], 0.4, 0.8, { top: 30, rh: 44, ticks: [0.4, 0.5, 0.6, 0.7, 0.8], chance: 0.5, axis: "Reversed-test AUROC, caliper inside the nodule (Trap A), 3 folds" }),
+        what: "Ours vs RR-ClArC: +0.249 [+0.192, +0.304] (DINOv2) and +0.224 [+0.159, +0.292] (EfficientNet-B0), Holm over four.", tag: ["win", "formal win"],
+        result: "RR-ClArC stayed below chance with the caliper inside. Our fix was also better on clean images (0.797 vs 0.643)." },
+    ],
+    disc: [
+      { label: "Their data", dur: 5400, draw: () => { let s = t(320, 24, "The same five dermoscopy trap sets as EPVT", "ink b", "middle");
+          [0, 1, 2, 3, 4].forEach(i => { const x = 30 + i * 120; s += fin(i * 150, `<path d="M${x},60 h30 l8,8 h62 v78 h-100 Z" class="f-surface s-line"/>` + draw(derm(x + 12, 78, 76, i ? "hair" : "ruler")) + t(x + 50, 166, `Trap set ${i + 1}`, "ink t-s", "middle")); });
+          s += fin(1300, `<rect x="230" y="220" width="180" height="40" rx="8" class="f-artsoft s-art"/>` + t(320, 245, "one shared image cache", "ink b t-s", "middle") + arrow(80, 172, 240, 222, "s-roi", "f-roi"));
+          [1, 2, 3, 4].forEach(i => { s += fin(2000 + i * 150, arrow(330 + (i - 2.5) * 30, 218, 80 + i * 120, 174, "s-art", "f-art", 2)); });
+          return s + fin(2900, t(320, 296, "Released code: trap sets 2–5 read set 1's images", "art b", "middle")); },
+        what: "DISC (ICML 2023) reports results on Bissoto's trap sets. Its released code writes one image cache shared by all five trap sets, so every set after the first is evaluated on the first set's images.",
+        result: "With the bug, our ERM run (0.368) matched the published ERM value (0.364). With one cache per set: ERM 0.507, DISC 0.489 (published 0.551). We told the authors." },
+      { label: "Their method", dur: 5400, draw: () => { let s = t(20, 26, "Concept bank", "ink b");
+          [["hair", "hair"], ["ruler", "ruler"], ["corner", "dark corner"], ["gel", "gel"]].forEach(([a, n], i) => { s += fin(i * 150, draw(derm(20, 40 + i * 64, 70, a)) + t(100, 78 + i * 64, n, "t-s")); });
+          s += fin(800, t(220, 26, "How much each concept predicts the class", "ink b"));
+          [0.85, 0.35, 0.25, 0.15].forEach((v, i) => { s += G("transform:scaleX(0)", "transform:scaleX(1)", 1000 + i * 150, `<rect x="220" y="${58 + i * 64}" width="${v * 180}" height="22" rx="3" class="${i ? "f-std" : "f-art"}"/>`, ` class="o-left"`); });
+          const a = derm(470, 60, 70, null), b = derm(550, 60, 70, "hair"), c = derm(510, 170, 80, "hair");
+          s += fin(2200, t(540, 40, "Mix the concept in", "ink b t-s", "middle") + draw(a) + t(545, 92, "+", "ink b", "middle") + draw(b) + arrow(545, 118, 545, 166) + draw(c) + t(550, 248, "hair on both classes", "t-s", "middle"));
+          return s + fin(3200, t(320, 296, "Intervene so the spurious concept stops predicting the class", "ink b", "middle")); },
+        what: "DISC (Discover and Cure) scores a bank of visual concepts, finds the ones that predict the class spuriously, and mixes images of those concepts into training images.", result: "Run from the official code, with the cache fixed, under identical conditions to ours." },
+      { label: "Our fix", dur: 6000, draw: () => ourFix(derm(20, 70, 170, "hair", true), "Frozen DINOv2|encoder"), what: "Our fix on the same trap sets, with DISC's own validation images.", result: "Higher on each of the five trap sets." },
+      { label: "Result", dur: 5000, draw: () => bars([{ label: "ERM (our run)", v: 0.507, cls: "f-maskgrey" }, { label: "DISC, official code", v: 0.489, cls: "f-art", ref: 0.551, refLabel: "published 0.551" },
+          { label: "CBDebug (published)", v: 0.580, cls: "f-artsoft s-art" }, { label: "Ours, DINOv2", v: 0.736, cls: "f-roi", bold: true }], 0.4, 0.8, { top: 40, rh: 52, ticks: [0.4, 0.5, 0.6, 0.7, 0.8], chance: 0.5, axis: "Mean AUROC over five trap sets" }),
+        what: "Ours vs DISC's official code: +0.247 [+0.204, +0.290]. Also above the published DISC (0.551) and CBDebug (0.580) values.", tag: ["desc", "descriptive win"],
+        result: "DISC did not reproduce, so this is a descriptive comparison with our run of its code, not a claim against its published number." },
+    ],
+    vignette: [
+      { label: "Their data", dur: 4800, draw: () => { let s = t(20, 26, "Training: ISIC 2019, eight classes", "ink b") + t(340, 26, "Biased test", "art b");
+          const tr = [["vignette", "Melanoma"], [null, "Melanoma"], [null, "Nevus"]], te = [["vignette", "Melanoma"], ["vignette", "Nevus"], ["vignette", "BCC"]];
+          tr.forEach(([a, n], i) => { s += fin(i * 200, draw(derm(20 + i * 100, 50, 92, a)) + t(66 + i * 100, 136, n, "t-s", "middle")); });
+          te.forEach(([a, n], i) => { s += fin(1500 + i * 200, draw(derm(340 + i * 100, 50, 92, a)) + t(386 + i * 100, 136, n, "t-s", "middle")); });
+          return s + fin(2400, t(20, 180, "A dark \"microscope\" vignette is inserted into 20% of melanomas in training.", "ink") + t(20, 206, "In the biased test every class carries it, so a model that learned", "ink") + t(20, 230, "\"vignette means melanoma\" fails.", "ink")); },
+        what: "Pahde et al. (Machine Learning 2025) insert a dark vignette into some melanoma images of ISIC 2019 and test on images where every class carries it.", result: "Our vanilla model matched theirs on this test (0.311 vs 0.28), so the test was built as theirs." },
+      { label: "Their method", dur: 5400, draw: () => STORIES.rrclarc[1].draw().replace("no caliper", "no vignette").replace("with caliper", "with vignette").replace("caliper direction (CAV)", "vignette direction (CAV)").replace("along the caliper direction", "along the vignette direction"),
+        what: "RR-ClArC again: a concept direction for the vignette, and a penalty on the network's gradient along it, on a ResNet-50.", result: "At the paper's stated settings our run reached 0.524 biased-test accuracy, against 0.76 published." },
+      { label: "Our fix", dur: 6000, draw: () => ourFix(derm(20, 70, 170, "vignette"), "EfficientNet-B0|trained on masked"),
+        what: "Our fix on a small EfficientNet-B0 trained on lesion-masked images, with the class-conditional constraint on its features.", result: "Lesion masks: HAM10000 and ISIC 2018 manual masks, otherwise a lesion U-Net." },
+      { label: "Result", dur: 5000, draw: () => bars([{ label: "Vanilla (our run)", v: 0.311, cls: "f-maskgrey" }, { label: "RR-ClArC, our run", v: 0.524, cls: "f-art", ref: 0.76, refLabel: "published 0.76" },
+          { label: "Ours, EfficientNet-B0", v: 0.785, cls: "f-roi", bold: true }], 0, 1, { top: 50, rh: 60, ticks: [0, 0.25, 0.5, 0.75, 1], dp: 2, axis: "Accuracy on the biased test (8 classes)" }),
+        what: "Ours 0.785 [0.769, 0.801] against 0.524 for RR-ClArC run from its official code, at 0.807 clean accuracy (0.86 published for RR-ClArC).", tag: ["desc", "descriptive win"],
+        result: "RR-ClArC did not reproduce, so this comparison is descriptive. The vignette sits outside the lesion, so masking does most of the work here." },
+    ],
+  };
+
+  /* ---------------- story player ---------------- */
+  const players = [];
+  document.querySelectorAll(".story[data-story]").forEach(el => {
+    const steps = STORIES[el.dataset.story];
+    el.innerHTML = `<div class="seg storysteps" role="group" aria-label="Steps"></div><div class="stage"></div>
+      <div class="storytext"><div><p class="storywhat"></p></div><div class="storyres"></div></div>
+      <div class="storyctl"><button type="button" class="btn" data-act="play" aria-pressed="false">Play all steps</button><button type="button" class="btn" data-act="replay">Replay this step</button><span class="small muted storycount"></span></div>`;
+    const seg = el.querySelector(".storysteps"), stage = el.querySelector(".stage"), playBtn = el.querySelector('[data-act="play"]');
+    steps.forEach((s, i) => { const b = document.createElement("button"); b.type = "button"; b.textContent = s.label; b.addEventListener("click", () => { stop(); render(i); }); seg.appendChild(b); });
+    let cur = 0, timer = null;
+    function render(i) {
+      cur = i; const s = steps[i];
+      [...seg.children].forEach((b, j) => b.setAttribute("aria-pressed", j === i ? "true" : "false"));
+      stage.innerHTML = s.html ? s.draw() : svgw(s.draw(), s.label);
+      el.querySelector(".storywhat").textContent = s.what;
+      el.querySelector(".storyres").innerHTML = (s.tag ? `<span class="tag ${s.tag[0]}">${s.tag[1]}</span>` : "") + `<p class="small"><b>${s.result}</b></p>` + (s.next ? `<p class="small muted">Next: ${s.next}</p>` : "");
+      el.querySelector(".storycount").textContent = `Step ${i + 1} of ${steps.length}`;
+      animate(stage);
+    }
+    function stop() { clearTimeout(timer); timer = null; playBtn.setAttribute("aria-pressed", "false"); playBtn.textContent = "Play all steps"; }
+    function tick() { timer = setTimeout(() => { if (cur < steps.length - 1) { render(cur + 1); tick(); } else stop(); }, steps[cur].dur || 5200); }
+    playBtn.addEventListener("click", () => { if (timer) { stop(); return; } if (cur === steps.length - 1) render(0); else render(cur); playBtn.setAttribute("aria-pressed", "true"); playBtn.textContent = "Pause"; tick(); });
+    el.querySelector('[data-act="replay"]').addEventListener("click", () => render(cur));
+    render(0);
+    players.push({ el, render: () => render(cur), stop });
+  });
+  document.addEventListener("slidechange", e => { players.forEach(p => { p.stop(); if (e.detail && e.detail.contains(p.el)) p.render(); }); });
 })();
 </script>

@@ -15,7 +15,7 @@ Branch: `claude/festive-bohr-95evo5`. Editorial pass: 2026-11-22.
 | Neutral-paste control | The Results now say the transplant does not separate the artifact from the paste edge in ovary and capsule. There, the location evidence rests on the real and matched traps. This is also limitation 5. |
 | Patient-level clustering | Limitation 4 now says that TN3K has no patient IDs, so the intervals for the unaltered thyroid analysis treat images as independent. The grouped bootstrap covered the trap crossovers only. |
 | Ovarian detector | The Methods give the audit result (31/40 calipers; other hits were overlays) and redefine "artifact-free" as caliper-free. The final limitation repeats this. |
-| EPVT / tolerance | Methods: the initial registration used 0.03, widened to 0.05 for all papers after the first reproduction checks and before EPVT's head-to-head comparison. Results: the bias-1 gap is 0.0497, so EPVT passes 0.05 by 0.0003. That margin is smaller than the ≈0.005 figure-reading uncertainty, and the gap would fail 0.03. Bias 0.9 (gap 0.017) passes both tolerances. Table 4 and limitation 7 repeat this. |
+| EPVT / tolerance | Methods: the initial registration used 0.03, widened to 0.05 for all papers after the first reproduction checks and before EPVT's head-to-head comparison. Results: the bias-1 gap is 0.0497, so EPVT passes 0.05 by 0.0003. That margin is smaller than the ≈0.005 figure-reading uncertainty, and the gap would fail 0.03. Bias 0.9 (gap 0.017) passes both tolerances. Table 4 and limitation 7 repeat this. Added (2026-11-23): under 0.03 the EPVT comparison would be descriptive, with the same differences in favour of the constraint, so the conclusion does not depend on the tolerance. |
 | Audit categories | Reproduced, preliminary, not reproduced and descriptive are defined in Methods and used consistently in the Abstract, Results and Table 4. |
 | Viviano | The original-method reproduction (1 seed, preliminary, no verdict) is now separate from the three-seed location experiment (masked model 0.615 inside vs 0.896 outside; constraint 0.856–0.880 per seed; gain over their standard model not significant). |
 | Claims of superiority | EPVT: outperformed under the registered rule, with the reproduction caveat, and 0.02–0.04 AUROC lower on clean images. RR-ClArC 2024: not outperformed. Saab et al.: tie. DISC, RR-ClArC 2025 and ISNet: descriptive only. |
@@ -81,6 +81,7 @@ No experiments were run in this pass, and none were needed: every claim could be
 5. **Authors' contributions.** CRediT roles for H.E., N.G. and S.H., agreed by all three authors.
 6. **Co-author approval.** "All authors read and approved the final manuscript." Do not submit until both co-authors have actually approved.
 7. **Acknowledgements.**
+8. **Repository URL.** The authors plan a new public repository holding only code and pre-registrations (export: `python scripts/release/make_code_release.py <dir>`). Replace the URL in *Availability of data and materials* once it exists; the pre-registrations, including amendment A38, must be in it because the manuscript's "registered before results" statements rest on them.
 
 ## 5. Remaining scientific weaknesses (for reviewers)
 

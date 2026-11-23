@@ -278,7 +278,8 @@ only outside the ROI; its in-ROI result varied strongly across folds (0.681, 0.6
 \emph{Reproduced papers (their test designs).} EPVT \cite{yan2023epvt} reproduced on Bissoto's dermoscopy trap sets
 \cite{bissoto2022artifact} after an audit of its code (five seeds). At bias~1 the gap to the value read from the published
 figure was 0.0497 (0.696 vs 0.746): this met the widened tolerance of 0.05 by a margin of 0.0003, smaller than the
-approximate 0.005 uncertainty of reading a value from a figure, and would not have met the original 0.03. At bias~0.9 the
+approximate 0.005 uncertainty of reading a value from a figure, and would not have met the original 0.03; under the original tolerance EPVT would not have reproduced and
+this comparison would be descriptive, with the same differences in favour of the constraint. At bias~0.9 the
 gap was 0.017 (0.775 vs 0.792), within both tolerances. The constraint on frozen DINOv2 features outperformed EPVT at both
 bias levels ($+0.086$ [$+0.064, +0.107$] and $+0.031$ [$+0.009, +0.054$]; Holm over eight), and applying the constraint to
 EPVT's own features also improved on EPVT. On artifact-free images it was 0.02--0.04 AUROC below EPVT; this clean
