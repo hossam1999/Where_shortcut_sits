@@ -143,25 +143,30 @@ def caliper_score(mask, roi, inside, min_extent=60, max_rms=3.0, border=20, top_
     return best, best_px
 
 
-def _label_spot(target, roi, dist=120, margin=45):
-    """Label position at `dist` px from the target that keeps the label box off the ROI and the arrow's path over
-    the ROI as short as possible (ties: the first of 16 directions)."""
+def _label_spot(target, roi, dists=(120, 160, 200, 240, 280, 300, 320), margin=38):
+    """Label position that keeps the label box off the ROI, with the arrow's path over the ROI as short as possible.
+    Searches 16 directions at increasing distances from the target out to the image margin. If no spot inside the
+    image is clear of the ROI (e.g. a tumour filling the frame), returns a spot just below the image, outside it
+    (the caller draws it with annotation_clip=False and saves with bbox_inches="tight")."""
     import cv2
     tx, ty = target
     r = cv2.dilate((np.asarray(roi) > 0).astype(np.uint8), np.ones((25, 25), np.uint8)) > 0
-    best, best_key = None, None
-    for k in range(16):
-        a = 2 * np.pi * k / 16
-        lx, ly = tx + dist * np.cos(a), ty + dist * np.sin(a)
-        if not (margin <= lx <= IMG - margin and margin <= ly <= IMG - margin):
-            continue
-        box = r[int(ly) - 14:int(ly) + 15, int(lx) - 40:int(lx) + 41].sum()
-        t = np.linspace(0, 1, 60)
-        path = r[(ty + (ly - ty) * t).astype(int).clip(0, IMG - 1), (tx + (lx - tx) * t).astype(int).clip(0, IMG - 1)].sum()
-        key = (box > 0, path)
-        if best_key is None or key < best_key:
-            best, best_key = (lx, ly), key
-    return best or (tx, max(margin, ty - dist))
+    best, best_path = None, None
+    for dist in dists:
+        for k in range(16):
+            a = 2 * np.pi * k / 16
+            lx, ly = tx + dist * np.cos(a), ty + dist * np.sin(a)
+            if not (margin <= lx <= IMG - margin and margin <= ly <= IMG - margin):
+                continue
+            if r[int(ly) - 14:int(ly) + 15, int(lx) - 40:int(lx) + 41].any():
+                continue
+            t = np.linspace(0, 1, 60)
+            path = int(r[(ty + (ly - ty) * t).astype(int).clip(0, IMG - 1), (tx + (lx - tx) * t).astype(int).clip(0, IMG - 1)].sum())
+            if best_path is None or path < best_path:
+                best, best_path = (lx, ly), path
+        if best is not None:
+            return best
+    return (min(max(tx, margin), IMG - margin), IMG + 40)
 
 
 def examples():
@@ -224,9 +229,10 @@ def examples():
             tx, ty = float(xs[k]), float(ys[k])
             lx, ly = _label_spot((tx, ty), ROI[j])
             ax.annotate(label, xy=(tx, ty), xytext=(lx, ly), color="white", fontsize=10, fontweight="bold", va="center",
+                        annotation_clip=False,
                         ha="center", arrowprops=dict(arrowstyle="-|>", color="white", lw=2),
                         bbox=dict(boxstyle="round,pad=0.25", fc="black", ec="none", alpha=0.6))
-    fig.tight_layout(); fig.savefig(F / "examples.pdf"); fig.savefig(F / "examples.png", dpi=200)
+    fig.tight_layout(); fig.savefig(F / "examples.pdf", bbox_inches="tight"); fig.savefig(F / "examples.png", dpi=200, bbox_inches="tight")
     pd.DataFrame(rows).to_csv(F / "examples_selection.csv", index=False)
 
 
