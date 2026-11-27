@@ -137,3 +137,21 @@ None of these blocks submission, but expect reviewer questions on EPVT and on cl
 - separate figure files at upload.
 
 With these resolved, readiness would rise to about 8/10.
+
+## 8. Editorial and transparency update — 2026-11-27
+
+Commit `b5da3926024b87bd89ccb75bf554d6cc44302b60` directly updates `manuscript_bmc/manuscript.tex` on `claude/festive-bohr-95evo5`. It changes writing and documentation only; no experiment or statistical result was changed.
+
+- Removed the explicit `\\clearpage` after the abstract; final page flow must be visually checked after recompilation.
+- Corrected the description of artifact transplants: fixed recipient anatomy reduces that confound, but the neutral-paste control still shows a paste-edge effect.
+- Clarified that primary training/model-selection thresholds are chosen on validation data, while the separately registered test-set-matched specificity calculation is an oracle-only sensitivity analysis.
+- Corrected ovary-versus-capsule evidence: matching was feasible for ovary, but **capsule matching was infeasible**. The capsule real-trap estimate is descriptive and the transplant does not isolate an artifact-only effect.
+- Qualified the main conclusion: artifact location **strongly conditions** effectiveness, rather than mechanically determining every classifier outcome.
+- Removed an unverified assertion that all per-image predictions, registrations and result files are already publicly accessible. The data statement identifies the development repo and now requests a verified, public reproducibility URL and a precise inventory of released files.
+- Added an `AUTHOR CONFIRMATION REQUIRED` field for accurate generative-AI assistance disclosure; no tool use or compliance claim was fabricated.
+
+**Build status:** The updated LaTeX source has been committed through GitHub. The existing `manuscript_bmc/manuscript.pdf` was **not rebuilt as part of this change**. Recompile (`pdflatex` → `bibtex` → `pdflatex` → `pdflatex`), inspect the three figure pages and tables, commit the new PDF if the project tracks it, and update the earlier 20-page/two-figure notes in sections 3 and 6, which are now stale.
+
+**Remaining publication gates:** Confirm the seven pre-existing author/declaration items plus the new public-code release inventory and accurate AI-assisted-writing statement. Do not submit any red confirmation placeholders. These are author decisions and documented facts, not editorial fields that can be filled from inference.
+
+**Research score:** No change in experimental evidence. The narrower causal and reproducibility claims improve defensibility; they do not raise the numerical performance or resolve the journal's administrative requirements.
