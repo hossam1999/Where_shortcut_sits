@@ -59,7 +59,6 @@ masked models should report artifact location and performance on shortcut-confli
 \paragraph{Keywords} Shortcut learning; Spurious correlation; Region of interest; Masking; Artifacts; Thyroid
 ultrasound; Dermoscopy; Capsule endoscopy; Reproducibility
 
-\clearpage
 \section*{Background}
 Deep classifiers for medical images often rely on features that correlate with the label in the training data but are
 not evidence of disease \cite{geirhos2020shortcut,degrave2021ai}. Surgical skin markings \cite{winkler2019markings} and
@@ -110,7 +109,7 @@ the artifact, and is tested in three environments: correlated (same rates), reve
 independent of the label). This follows earlier reversed-test designs
 \cite{arjovsky2019irm,bissoto2020debiasing,puli2022nurd,viviano2021saliency,bassi2024isnet}. Because images with in-ROI
 and out-of-ROI artifacts may differ in other respects, we also matched them 1:1 on propensity scores (caliper 0.2 standard
-deviations). The \emph{transplant} design removes this confounding: one real artifact instance is pasted inside
+deviations). The \emph{transplant} design reduces confounding from recipient anatomy by holding the recipient image fixed: one real artifact instance is pasted inside
 ($r\ge0.95$) or outside ($r=0$) the ROI of the same artifact-free images, and neutral tissue pasted through the same mask,
 position and blending serves as a paste-edge control (Fig.~\ref{fig:design}; real examples in Figs.~\ref{fig:examples}
 and~\ref{fig:transplant}).
@@ -147,7 +146,7 @@ head was fitted; replications used MedSigLIP, ConvNeXt-Base, DINOv2 at three mod
 the unaltered thyroid analyses we additionally fine-tuned a ConvNeXt-T pretrained on ImageNet-22k, with a recipe chosen on
 validation images only (five seeds; test AUROC 0.769, close to the published cross-entropy baseline of 0.773
 \cite{gong2022acl}). The inverse regularisation strength and the decision threshold (maximising balanced accuracy) were
-chosen on clean validation data; test sets were never used for a choice.
+chosen on clean validation data; test results were not used to choose models or operational thresholds. The separately registered oracle analysis below deliberately uses test labels to match specificity for diagnostic sensitivity analysis only.
 
 \subsection*{Class-conditional constraint}
 The constraint uses the image-level artifact label $a$, obtained from the automatic detectors above, during training
@@ -223,7 +222,8 @@ four cohorts (Table~\ref{tab:law}; examples in Fig.~\ref{fig:transplant}). Pasti
 $+0.204$, thyroid $+0.145$, ovary $+0.052$, capsule $+0.459$), so part of the transplant effect is caused by pasting
 itself. The artifact exceeded this control in hair ($+0.049$) and thyroid ($+0.132$); in ovary and capsule the difference
 was not significant, so the transplant alone does not separate the artifact from the paste edge in those cohorts, and the
-location evidence there rests on the real and matched traps.
+location evidence for ovary is supported by real and matched traps. Capsule matching was infeasible, so its
+real-trap crossover is descriptive and the transplant result does not isolate an artifact-specific effect.
 
 \begin{table}[t]\centering\small
 \caption{Location crossover $[\text{mask}-\text{ERM}]_{\text{out}}-[\text{mask}-\text{ERM}]_{\text{in}}$ in
@@ -387,7 +387,7 @@ differently from the paper; we followed the paper. Comparisons with published mi
 comparator was reproduced.
 
 \section*{Conclusions}
-The location of an artifact relative to the ROI determines whether ROI masking removes the shortcut it creates. When
+Artifact location relative to the ROI strongly conditions the effectiveness of ROI masking against localized shortcuts. When
 artifacts lie inside the ROI, masking can leave the shortcut intact and harm shortcut-conflicting patients while overall
 metrics appear unchanged. Where such artifacts are expected and image-level artifact labels are available, a
 class-conditional constraint on masked features is a promising alternative, with the trade-offs reported here.
@@ -409,9 +409,11 @@ further approval or consent, with its reference number and date; do not state an
 All methods were carried out in accordance with relevant guidelines and regulations.
 \paragraph{Consent for publication} Not applicable.
 \paragraph{Clinical trial number} Not applicable.
-\paragraph{Availability of data and materials} All datasets are publicly available from their original sources (see
-Methods). Code, pre-registration documents, per-image predictions and result files are available at
+\paragraph{Availability of data and materials} The source datasets are hosted by their respective providers,
+subject to the licences and access conditions described in Methods. The development repository is
 \url{https://github.com/hossam1999/Where_shortcut_sits}.
+\confirm{before submission, give a verified publicly accessible code and preregistration release URL;
+state exactly which per-image predictions, results and registration amendments are deposited and any access restrictions}
 \paragraph{Competing interests} \confirm{each author confirms: ``The authors declare that they have no competing
 interests.''}
 \paragraph{Funding} \confirm{funding sources and grant numbers, or ``This research received no specific grant from any
@@ -419,6 +421,9 @@ funding agency.''}
 \paragraph{Authors' contributions} \confirm{CRediT-style contributions of H.E., N.G. and S.H., agreed by all authors}
 \confirm{``All authors read and approved the final manuscript.''}
 \paragraph{Acknowledgements} \confirm{acknowledgements, or ``Not applicable''}
+\paragraph{AI-assisted manuscript preparation} \confirm{accurately document the tools and extent of any
+generative-AI assistance with writing, restructuring, code, analyses or figures; describe author verification and
+accountability, as required by the current Springer Nature AI policy}
 
 \bibliographystyle{vancouver}
 \bibliography{../paper/refs}
