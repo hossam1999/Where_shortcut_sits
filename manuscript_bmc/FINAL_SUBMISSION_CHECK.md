@@ -1,6 +1,6 @@
 # Final submission check: BMC Medical Imaging (Research article)
 
-Manuscript: `manuscript_bmc/manuscript.tex` → `manuscript_bmc/manuscript.pdf` (20 pages, double-spaced, line-numbered).
+Manuscript: `manuscript_bmc/manuscript.tex` → `manuscript_bmc/manuscript.pdf` (21 pages, double-spaced, line-numbered).
 Branch: `claude/festive-bohr-95evo5`. Editorial pass: 2026-11-22.
 
 ## 1. Summary of changes
@@ -66,7 +66,7 @@ No experiments were run in this pass, and none were needed: every claim could be
 | Clinical trial number ("Not applicable") | ✓ (included per recent BMC templates) |
 | Vancouver-style numbered references | ✓ `vancouver.bst`, 0 unresolved |
 | Line numbers and double spacing | ✓ |
-| Figures uploaded as separate files at submission | ⚠ embedded for review. Upload `paper/figures/design.pdf` and `examples.pdf` separately (BMC accepts PDF/EPS/TIFF/PNG) |
+| Figures uploaded as separate files at submission | ⚠ embedded for review. Upload `paper/figures/design.pdf`, `examples.pdf` and `transplant_examples.pdf` separately (BMC accepts PDF/EPS/TIFF/PNG) |
 | Tables within the text, numbered and captioned | ✓ 4 tables |
 | Supplementary files | None cited. The repository serves as the data and materials source. |
 | Word limit | BMC Medical Imaging sets no strict limit for Research articles. The main text is ≈3,300 words excluding tables. |
@@ -101,8 +101,8 @@ No experiments were run in this pass, and none were needed: every claim could be
 
 - Build: `pdflatex → bibtex → pdflatex → pdflatex` in `manuscript_bmc/`.
 - LaTeX errors: **0**. Undefined citations or references: **0**. Overfull boxes: **0** (after the table fixes).
-- Figures: both found (`../paper/figures/design.pdf`, `examples.pdf`).
-- Pages: 20.
+- Figures: all three found (`../paper/figures/design.pdf`, `examples.pdf`, `transplant_examples.pdf`).
+- Pages: 21 (rebuilt 2026-11-27).
 - BibTeX warnings: only "empty pages", "missing publisher" and "empty author and editor" on `@misc` entries (arXiv preprints, Kaggle dataset). Authors still print in the bibliography, so these are cosmetic.
 - The rendered title page and the Table 1–4 pages were checked visually.
 - Build files (`.aux`, `.bbl`, `.blg`, `.log`, `.out`) are ignored by `.gitignore` and not committed.
@@ -149,7 +149,7 @@ Commit `b5da3926024b87bd89ccb75bf554d6cc44302b60` directly updates `manuscript_b
 - Qualified the main conclusion: artifact location **strongly conditions** effectiveness, rather than mechanically determining every classifier outcome.
 - Removed an unverified assertion that all per-image predictions, registrations and result files are already publicly accessible. The data statement identifies the development repo and now requests a verified, public reproducibility URL and a precise inventory of released files.
 
-**Build status:** The updated LaTeX source has been committed through GitHub. The existing `manuscript_bmc/manuscript.pdf` was **not rebuilt as part of this change**. Recompile (`pdflatex` → `bibtex` → `pdflatex` → `pdflatex`), inspect the three figure pages and tables, commit the new PDF if the project tracks it, and update the earlier 20-page/two-figure notes in sections 3 and 6, which are now stale.
+**Build status:** Rebuilt on 2026-11-27 (`pdflatex` → `bibtex` → `pdflatex` ×3): 21 pages, 0 errors, 0 undefined citations, no overfull boxes or float warnings. The PDF is committed. The page-count and figure notes in sections 3 and 6 have been updated.
 
 **Remaining publication gates:** Confirm the seven pre-existing author/declaration items plus the new public-code release inventory. Do not submit any red confirmation placeholders. These are author decisions and documented facts, not editorial fields that can be filled from inference.
 
